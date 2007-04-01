@@ -5,7 +5,7 @@ logger = logging.getLogger("imvu." + __name__)
 import ctypes
 
 if __debug__:
-    cal3d_dll  = ctypes.cdll.cal3d_d
+    cal3d_dll  = ctypes.cdll.cal3d_debug
 else:
     cal3d_dll = ctypes.cdll.cal3d
 

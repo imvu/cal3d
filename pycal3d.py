@@ -4,7 +4,7 @@ import ctypes
 import tempfile
 
 if __debug__:
-    cal3d_dll  = ctypes.cdll.cal3d_d
+    cal3d_dll  = ctypes.cdll.cal3d_debug
 else:
     cal3d_dll = ctypes.cdll.cal3d
 
