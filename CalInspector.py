@@ -1,6 +1,8 @@
 import imvu
+import md5
 import logging
 logger = logging.getLogger("imvu." + __name__)
+import util.timing_samples
 
 import ctypes
 
@@ -15,9 +17,17 @@ cal3d_dll.CalCoreMaterial_GetMapType.restype = ctypes.c_char_p
 
 gLoader = cal3d_dll.CalLoader_New()
 
+gMaterialInfoCache = {}
+gMeshInfoCache = {}
+
 class Cal3dException(Exception): pass
 
 def getMaterialInfo(materialBuffer):
+    global gMaterialInfoCache
+    cachekey = md5.md5(materialBuffer).hexdigest()
+    cached = gMaterialInfoCache.get(cachekey, None)
+    if cached: return cached
+
     global gLoader
     material = cal3d_dll.CalLoader_LoadCoreMaterialFromBuffer(gLoader, materialBuffer, len(materialBuffer))
     if not material:
@@ -30,9 +40,17 @@ def getMaterialInfo(materialBuffer):
         mapName = cal3d_dll.CalCoreMaterial_GetMapFilename(material, i)
         materialInfo['maps'][mapType] = mapName
     cal3d_dll.CalCoreMaterial_Destroy(material)
+    gMaterialInfoCache[cachekey] = materialInfo
     return materialInfo
+getMaterialInfo = util.timing_samples.profiledFunction(getMaterialInfo)
 
 def getMeshInfo(meshBuffer):
+    global gMeshInfoCache
+    cachekey = md5.md5(meshBuffer).hexdigest()
+    cached = gMeshInfoCache.get(cachekey, None)
+    if cached:
+        return cached
+
     global gLoader
     mesh = cal3d_dll.CalLoader_LoadCoreMeshFromBuffer(gLoader, meshBuffer, len(meshBuffer))
     if not mesh:
@@ -49,4 +67,6 @@ def getMeshInfo(meshBuffer):
         result[i]['vertexCount'] = cal3d_dll.CalCoreSubmesh_GetVertexCount(submesh)
         result[i]['tangentsEnabled'] = cal3d_dll.CalCoreSubmesh_IsTangentsEnabled(submesh)
     cal3d_dll.CalCoreMesh_Destroy(mesh)
+    gMeshInfoCache[cachekey] = result
     return result
+getMeshInfo = util.timing_samples.profiledFunction(getMeshInfo)
