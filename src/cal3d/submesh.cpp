@@ -234,7 +234,9 @@ int CalSubmesh::getFaceCount()
 int CalSubmesh::getFaces(CalIndex *pFaceBuffer)
 {
   // copy the face vector to the face buffer
-  memcpy(pFaceBuffer, &m_vectorFace[0], m_faceCount * sizeof(Face));
+  if (m_faceCount) {
+    memcpy(pFaceBuffer, &m_vectorFace[0], m_faceCount * sizeof(Face));
+  }
 
   return m_faceCount;
 }

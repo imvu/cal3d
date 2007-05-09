@@ -2,6 +2,7 @@ Import('*')
 
 sources = Split('''
     testLoader.cpp
+    testSubmesh.cpp
     testTinyXml.cpp
     testVector.cpp
 ''')
