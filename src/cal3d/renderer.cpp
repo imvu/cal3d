@@ -348,6 +348,7 @@ int CalRenderer::getTangentSpaces(int mapId, float *pTangentSpaceBuffer)
     tangentSpaceCount = m_pSelectedSubmesh->getVertexCount();
 
     // copy the internal normal data to the provided normal buffer
+    // this will fail in VC8 if the list is empty
     memcpy(pTangentSpaceBuffer, &vectorTangentSpace[0], tangentSpaceCount * sizeof(CalCoreSubmesh::TangentSpace));
 
     return tangentSpaceCount;
@@ -498,11 +499,12 @@ int CalRenderer::getTextureCoordinates(int mapId, float *pTextureCoordinateBuffe
   }
 
   // get the number of texture coordinates to return
-  int textureCoordinateCount;
-  textureCoordinateCount = m_pSelectedSubmesh->getVertexCount();
+  int textureCoordinateCount = m_pSelectedSubmesh->getVertexCount();
 
   // copy the texture coordinate vector to the face buffer
-  memcpy(pTextureCoordinateBuffer, &vectorvectorTextureCoordinate[mapId][0], textureCoordinateCount * sizeof(CalCoreSubmesh::TextureCoordinate));
+  if (textureCoordinateCount) {
+    memcpy(pTextureCoordinateBuffer, &vectorvectorTextureCoordinate[mapId][0], textureCoordinateCount * sizeof(CalCoreSubmesh::TextureCoordinate));
+  }
 
   return textureCoordinateCount;
 }

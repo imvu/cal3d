@@ -11,41 +11,22 @@
 #ifndef CAL_RENDERER_H
 #define CAL_RENDERER_H
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/global.h"
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalModel;
 class CalSubmesh;
 
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The renderer class.
-  *****************************************************************************/
-
 class CAL3D_API CalRenderer
 {
-// member variables
-public:
+private:
   CalModel *m_pModel;
   CalSubmesh *m_pSelectedSubmesh;
 
-// constructors/destructor
 public:
   CalRenderer();
   CalRenderer(CalRenderer* pRenderer); 
   virtual ~CalRenderer();
 
-// member functions	
 public:
   bool beginRendering();
   bool create(CalModel *pModel);
@@ -80,5 +61,3 @@ public:
 };
 
 #endif
-
-//****************************************************************************//
