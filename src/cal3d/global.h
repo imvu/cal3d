@@ -66,6 +66,16 @@ namespace Cal
   inline bool versionHasCompressionFlag(int version) {
     return version >= 919;
   }
+
+  template<typename T>
+  const T* pointerFromVector(const std::vector<T>& v) {
+    if (v.empty()) {
+      return 0;
+    } else {
+      return &v[0];
+    }
+  }
+
 };
 
 struct CalHeader
