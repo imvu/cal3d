@@ -231,7 +231,7 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & mo
       blendVertex.normal = (*iteratorVectorVertex).normal;
       blendVertex.textureCoords.clear();
       blendVertex.textureCoords.reserve(textCoordVector.size());
-      for( int tcI = 0; tcI < textCoordVector.size(); tcI++ ) {
+      for( size_t tcI = 0; tcI < textCoordVector.size(); tcI++ ) {
         blendVertex.textureCoords.push_back(textCoordVector[tcI][i]);
       }  
       if(!pCalCoreSubMorphTarget->setBlendVertex(i,blendVertex)) return -1;
