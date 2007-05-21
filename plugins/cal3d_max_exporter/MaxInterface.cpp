@@ -90,7 +90,6 @@ bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface, I
 //----------------------------------------------------------------------------//
 bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface, StdMat* _MatFromMaxScript)
 {
-	int i = 0;
 	m_pExpInterface = pExpInterface;
 	m_pInterface	= pInterface;
 	

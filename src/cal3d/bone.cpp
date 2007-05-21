@@ -639,7 +639,7 @@ void CalBone::calculateBoundingBox()
    if(!getCoreBone()->isBoundingBoxPrecomputed())
 	   return;
 
-   int boneId =  m_pSkeleton->getCoreSkeleton()->getCoreBoneId(getCoreBone()->getName());
+   m_pSkeleton->getCoreSkeleton()->getCoreBoneId(getCoreBone()->getName());
 
    
    CalVector dir = CalVector(1.0f,0.0f,0.0f);

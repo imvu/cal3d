@@ -417,7 +417,6 @@ CalCoreAnimation *CalLoader::loadCoreAnimationFromBuffer(const void* inputBuffer
      } else {
        return 0;
      }
-     return 0;
    }
 }
 
@@ -917,9 +916,6 @@ CalCoreMesh *CalLoader::loadCoreMesh(CalDataSource& dataSrc)
     return 0;
   }
 
-  bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
-  bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
-  
   // get the number of submeshes
   int submeshCount;
   if(!dataSrc.readInteger(submeshCount))
@@ -1513,7 +1509,10 @@ CalLoader::readCompressedKeyframe(
   unsigned int steps;
   unsigned int bytesRead = ReadQuatAndExtra( buf, quat, & steps, keyframeBitsPerOriComponent, keyframeBitsPerTime );
   buf += 6;
+
+  (void)bytesRead;
   assert( bytesRead == 6 );
+
   quatResult->set( quat[ 0 ], quat[ 1 ], quat[ 2 ], quat[ 3 ] );
   * timeResult = steps / 30.0f;
   return buf - bufStart;
@@ -1551,7 +1550,7 @@ CalLoader::writeCompressedKeyframe( unsigned char * buf, unsigned int bufLen, co
     BitWriter bw( buf );
     float len;
     unsigned int sign;
-    unsigned int data;
+    unsigned int data = 0;
     unsigned int i;
     for( i = 0; i < 3; i++ ) {
       sign = 0;
@@ -1591,6 +1590,7 @@ CalLoader::writeCompressedKeyframe( unsigned char * buf, unsigned int bufLen, co
   */
 
   unsigned int bw = WriteQuatAndExtra( buf, wquat, steps, CalLoader::keyframeBitsPerOriComponent, CalLoader::keyframeBitsPerTime );
+  (void)bw;
   assert( bw == 6 );
   buf += 6;
   bytesWritten += 6;

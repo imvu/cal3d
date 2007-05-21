@@ -288,7 +288,7 @@ bool TiXmlBase::StringEqual( const char* p,
   } else {
     return false;
   }
-#endif
+#else
 	assert( p );
 	if ( !p || !*p )
 	{
@@ -328,6 +328,7 @@ bool TiXmlBase::StringEqual( const char* p,
 		}
 	}
 	return false;
+#endif
 }
 
 const char* TiXmlBase::ReadText(	const char* p, 

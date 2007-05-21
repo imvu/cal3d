@@ -244,9 +244,6 @@ void CSkeletonHierarchyPage::SetAllChecked(bool checked, HTREEITEM root) {
     HTREEITEM hItem = stackItem.top();
     stackItem.pop();
 
-    // get bone candidate id
-    int boneCandidateId = (int)m_hierarchyCtrl.GetItemData(hItem);
-
     // set new select state of the bone candidate
     m_hierarchyCtrl.SetItemState(hItem, INDEXTOSTATEIMAGEMASK(checked ? 2 : 1), TVIS_STATEIMAGEMASK);
 

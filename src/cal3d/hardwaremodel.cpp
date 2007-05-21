@@ -626,10 +626,6 @@ bool CalHardwareModel::load(int baseVertexIndex, int startIndex,int maxBonesPerM
 	int vertexCount=baseVertexIndex;
 	int faceIndexCount = startIndex;
 				
-	CalCoreSkeleton * pCoreSkeleton = m_pCoreModel->getCoreSkeleton();
-	
-	std::vector< CalCoreBone *>& vectorBone = pCoreSkeleton->getVectorCoreBone();
-	
 	int meshId;
 	for(meshId = 0;meshId< m_pCoreModel->getCoreMeshCount();meshId++)
 	{

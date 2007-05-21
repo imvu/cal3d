@@ -113,7 +113,6 @@ char * CMaxMaterialExportDesc::GetRsrcString(long n)
 def_visible_primitive( ExportCalMat,	"ExportCalMat" );
 Value* ExportCalMat_cf(Value** arg_list, int count)
 {	
-	int i = 0;
 	char* fullpathfilename;
 
 	check_arg_count(ExportCalMat, 2, count);

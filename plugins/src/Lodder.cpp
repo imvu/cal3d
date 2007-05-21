@@ -501,9 +501,6 @@ void CLodder::FreezeBorders()
 		std::set<int>::iterator iteratorNeighbourId;
 		for(iteratorNeighbourId = vertex.setNeighbourId.begin(); iteratorNeighbourId != vertex.setNeighbourId.end(); ++iteratorNeighbourId)
 		{
-			// get the neighbour vertex
-			Vertex& neighbourVertex = m_vectorVertex[*iteratorNeighbourId];
-
 			// count the number of vertex faces containing this edge and store one of them
 			int faceCount;
 			faceCount = 0;
@@ -528,29 +525,6 @@ void CLodder::FreezeBorders()
 			// check if the edge is a border, if so, freeze the vertex
 			if(faceCount < 2)
 			{
-				// get the one face we stored earlier
-				Face& face = m_vectorFace[oneFaceId];
-/*
-				// calculate the face normal from the three face vertex normals
-				float nx, ny, nz;
-				nx = m_vectorVertex[face.vertexId[0]].nx + m_vectorVertex[face.vertexId[1]].nx + m_vectorVertex[face.vertexId[2]].nx;
-				ny = m_vectorVertex[face.vertexId[0]].ny + m_vectorVertex[face.vertexId[1]].ny + m_vectorVertex[face.vertexId[2]].ny;
-				nz = m_vectorVertex[face.vertexId[0]].nz + m_vectorVertex[face.vertexId[1]].nz + m_vectorVertex[face.vertexId[2]].nz;
-
-				// normalize the face normal
-				float length;
-				length = sqrt(nx * nx + ny * ny + nz * nz);
-				nx /= length;
-				ny /= length;
-				nz /= length;
-
-				// create the quadric for the border edge
-				CQuadric q(vertex.x, vertex.y, vertex.z, neighbourVertex.x, neighbourVertex.y, neighbourVertex.z, nx, ny, nz);
-
-				// adjust the quadric of the two vertices of the edge
-				vertex.quadric.Add(q);
-				neighbourVertex.quadric.Add(q);
-*/
 				// freeze the vertex
 				vertex.bFreezed = true;
 
