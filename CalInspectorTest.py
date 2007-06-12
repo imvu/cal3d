@@ -5,9 +5,9 @@ logger = logging.getLogger("imvu." + __name__)
 import cal3d.CalInspector
 import os
 import pyCFL.CflManager
-import testing.ut
+import imvu.test
 
-class CalInspectorTest(testing.ut.TestCase):
+class CalInspectorTest(imvu.test.TestCase):
     def setUp(self):
         self.cflManager = pyCFL.CflManager.CflManager()
         self.cflFilename = os.path.dirname(os.path.abspath(__file__)) + "/../test_data/product191.cfl"
@@ -62,4 +62,4 @@ class CalInspectorTest(testing.ut.TestCase):
         self.assertEqual(result, expected)
 
 if __name__ == "__main__":
-    testing.ut.main()
+    imvu.test.main()

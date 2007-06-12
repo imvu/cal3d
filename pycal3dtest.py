@@ -10,7 +10,7 @@ from log.StdLogger import logger
 
 from testing.mock import MockObject, MockOpenFunc
 import testing.mock
-import testing.ut
+import imvu.test
 
 from cal3d import pycal3d
 
@@ -951,4 +951,4 @@ animmorph1 = """<HEADER VERSION="910" MAGIC="XPF" />
 </ANIMATION>"""
         
 if __name__ == "__main__":
-    testing.ut.main()
+    imvu.test.main()
