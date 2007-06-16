@@ -128,9 +128,13 @@ public:
 	  z=0.0f;		  
   }
 
-  inline float length()
+  inline float lengthSquared() const
   {
-	  return (float)sqrt(x * x + y * y + z * z);
+      return (float)(x * x + y * y + z * z);
+  }
+  inline float length() const
+  {
+      return (float)sqrt(lengthSquared());
   }
   inline float normalize()
   {

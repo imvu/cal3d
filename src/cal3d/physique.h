@@ -50,6 +50,7 @@ public:
   int calculateNormals(CalSubmesh *pSubmesh, float *pNormalBuffer);
   int calculateVertices(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVertexBuffer);
+  int calculateVerticesAndNormals_slow(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesNormalsAndTexCoords(CalSubmesh *pSubmesh, float *pVertexBuffer,int NumTexCoords=1);  
   bool create(CalModel *pModel);
   void destroy();
