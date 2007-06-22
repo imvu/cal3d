@@ -302,6 +302,8 @@ extern "C"
   CAL3D_WRAPPER_API void CalCoreModel_Destroy(struct CalCoreModel *self);
   CAL3D_WRAPPER_API struct CalCoreAnimation *CalCoreModel_GetCoreAnimation(struct CalCoreModel *self, int coreAnimationId);
   CAL3D_WRAPPER_API int CalCoreModel_GetCoreAnimationMaxId(struct CalCoreModel *self);
+  CAL3D_WRAPPER_API struct CalCoreAnimatedMorph *CalCoreModel_GetCoreAnimatedMorph(struct CalCoreModel *self, int coreAnimatedMorphId);
+  CAL3D_WRAPPER_API int CalCoreModel_GetCoreAnimatedMorphCount(struct CalCoreModel *self);
   CAL3D_WRAPPER_API struct CalCoreMaterial *CalCoreModel_GetCoreMaterial(struct CalCoreModel *self, int coreMaterialId);
   CAL3D_WRAPPER_API int CalCoreModel_GetCoreMaterialCount(struct CalCoreModel *self);
   CAL3D_WRAPPER_API int CalCoreModel_GetCoreMaterialId(struct CalCoreModel *self, int coreMaterialThreadId, int coreMaterialSetId);
@@ -310,6 +312,7 @@ extern "C"
   CAL3D_WRAPPER_API struct CalCoreSkeleton *CalCoreModel_GetCoreSkeleton(struct CalCoreModel *self);
   CAL3D_WRAPPER_API CalUserData CalCoreModel_GetUserData(struct CalCoreModel *self);
   CAL3D_WRAPPER_API int CalCoreModel_LoadCoreAnimation(struct CalCoreModel *self, char *strFilename);
+  CAL3D_WRAPPER_API int CalCoreModel_LoadCoreAnimatedMorph(struct CalCoreModel *self, char *strFilename);
   CAL3D_WRAPPER_API int CalCoreModel_LoadCoreMaterial(struct CalCoreModel *self, char *strFilename);
   CAL3D_WRAPPER_API int CalCoreModel_LoadCoreMesh(struct CalCoreModel *self, char *strFilename);
   CAL3D_WRAPPER_API enum Boolean CalCoreModel_LoadCoreSkeleton(struct CalCoreModel *self, char *strFilename);
@@ -611,6 +614,9 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
   CAL3D_WRAPPER_API struct CalSubmesh *CalSubmesh_New();
   CAL3D_WRAPPER_API void CalSubmesh_SetCoreMaterialId(struct CalSubmesh *self, int coreMaterialId);
   CAL3D_WRAPPER_API void CalSubmesh_SetLodLevel(struct CalSubmesh *self, float lodLevel);
+  CAL3D_WRAPPER_API int CalSubmesh_GetMorphTargetWeightCount(struct CalSubmesh *self);
+  CAL3D_WRAPPER_API float CalSubmesh_GetBaseWeight(struct CalSubmesh *self);
+  CAL3D_WRAPPER_API void CalSubmesh_SetMorphTargetWeight(struct CalSubmesh *self, int blendid, float weight);
 
 //****************************************************************************//
 // CalVector wrapper functions declaration                                    //

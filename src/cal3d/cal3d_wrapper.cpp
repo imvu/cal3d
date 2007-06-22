@@ -738,6 +738,11 @@ int CalCoreModel_LoadCoreAnimation(CalCoreModel *self, char *strFilename)
   return self->loadCoreAnimation(strFilename);
 }
 
+int CalCoreModel_LoadCoreAnimatedMorph(CalCoreModel *self, char *strFilename)
+{
+  return self->loadCoreAnimatedMorph(strFilename);
+}
+
 int CalCoreModel_LoadCoreMaterial(CalCoreModel *self, char *strFilename)
 {
   return self->loadCoreMaterial(strFilename);
@@ -1824,6 +1829,19 @@ void CalSubmesh_SetLodLevel(CalSubmesh *self, float lodLevel)
 {
   self->setLodLevel(lodLevel);
 }
+
+int CalSubmesh_GetMorphTargetWeightCount(struct CalSubmesh *self) {
+  return self->getMorphTargetWeightCount();
+}
+
+float CalSubmesh_GetBaseWeight(struct CalSubmesh *self) {
+  return self->getBaseWeight();
+}
+
+void CalSubmesh_SetMorphTargetWeight(struct CalSubmesh *self, int blendid, float weight) {
+    self->setMorphTargetWeight(blendid, weight);
+}
+
 
 //****************************************************************************//
 // CalVector wrapper functions definition                                     //

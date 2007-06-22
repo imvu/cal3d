@@ -171,8 +171,17 @@ CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(const std::string& strFil
 {
   if(strFilename.size()>= 3 && stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)==0)
     return loadXmlCoreAnimatedMorph(strFilename);
-  else
-    return loadCoreAnimatedMorph(strFilename);
+  else {
+    std::ifstream file(strFilename.c_str(), std::ios::in | std::ios::binary);
+    if(!file) {
+      CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
+      return 0;
+    }
+    CalStreamSource streamSrc( file );
+    CalCoreAnimatedMorph* result = loadCoreAnimatedMorph(streamSrc);
+    file.close();
+    return result;
+  }
 }
 
  /*****************************************************************************/
