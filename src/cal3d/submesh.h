@@ -90,12 +90,15 @@ public:
 
 // member functions	
 public:
+  int getVertColorsAsStandardPixels2(VertexComponentReceiver& vcr) { return m_pCoreSubmesh->getVertColorsAsStandardPixels2(vcr); }
+
   bool create(CalCoreSubmesh *pCoreSubmesh);
   void destroy();
   CalCoreSubmesh *getCoreSubmesh();
   int getCoreMaterialId();
   int getFaceCount();
   int getFaces(CalIndex *pFaceBuffer);
+  int getFaces2(VertexComponentReceiver& vcr);
   std::vector<CalVector>& getVectorNormal();
   std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
   std::vector<PhysicalProperty>& getVectorPhysicalProperty();

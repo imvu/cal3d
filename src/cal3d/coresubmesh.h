@@ -111,6 +111,8 @@ protected:
   std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
   bool m_hasNonWhiteVertexColors;
 
+  std::vector<unsigned int> m_colorsAsStandardPixelsCache;
+
 // constructors/destructor
 public:
   CalCoreSubmesh();
@@ -118,6 +120,8 @@ public:
 
 // member functions	
 public:
+  int getVertColorsAsStandardPixels2(VertexComponentReceiver& vcr);
+
   typedef std::vector<CalCoreSubMorphTarget *> CoreSubMorphTargetVector;
   typedef std::vector<Face> VectorFace;
   typedef std::vector<PhysicalProperty> VectorPhysicalProperty;

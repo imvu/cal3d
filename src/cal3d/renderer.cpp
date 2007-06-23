@@ -215,35 +215,6 @@ void CalRenderer::getDiffuseColor(unsigned char *pColorBuffer)
 }
 
  /*****************************************************************************/
-/** Returns the number of faces.
-  *
-  * This function returns the number of faces in the selected mesh/submesh.
-  *
-  * @return The number of faces.
-  *****************************************************************************/
-
-int CalRenderer::getFaceCount()
-{
-  return m_pSelectedSubmesh->getFaceCount();
-}
-
- /*****************************************************************************/
-/** Provides access to the face data.
-  *
-  * This function returns the face data (vertex indices) of the selected
-  * mesh/submesh. The LOD setting is taken into account.
-  *
-  * @param pFaceBuffer A pointer to the user-provided buffer where the face
-  *                    data is written to.
-  *
-  * @return The number of faces written to the buffer.
-  *****************************************************************************/
-int CalRenderer::getFaces(CalIndex *pFaceBuffer)
-{
-  return m_pSelectedSubmesh->getFaces(pFaceBuffer);
-}
-
- /*****************************************************************************/
 /** Returns the number of maps.
   *
   * This function returns the number of maps in the selected mesh/submesh.
@@ -521,7 +492,7 @@ int CalRenderer::getTextureCoordinates2(int mapId, VertexComponentReceiver& rece
   }
 
   receiver.data = &vectorvectorTextureCoordinate[mapId][0];
-  receiver.space_between_verts = 0;
+  receiver.stride = 8;
 
   return m_pSelectedSubmesh->getVertexCount();
 }
@@ -675,6 +646,10 @@ int CalRenderer::getVertColorsAsStandardPixels( unsigned int *pVertexBuffer)
   return vertexCount;
 }
 
+int CalRenderer::getVertColorsAsStandardPixels2(VertexComponentReceiver& receiver) {
+    return m_pSelectedSubmesh->getVertColorsAsStandardPixels2(receiver);
+}
+
 
 bool
 CalRenderer::hasNonWhiteVertexColors() 
@@ -722,6 +697,23 @@ int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
 
   // submesh does not handle the vertex data internally, so let the physique calculate it now
   return m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, pVertexBuffer);
+}
+
+struct CachedVertNormals {
+   
+};
+
+std::vector<float> VertNormalCache;
+
+int CalRenderer::getVerticesAndNormals2(VertexComponentReceiver& pos_vcr, VertexComponentReceiver& nml_vcr) {
+    int vertexCount = m_pSelectedSubmesh->getVertexCount();
+    enlargeStdVectorCache(VertNormalCache, 6*vertexCount);
+    m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, (float*)pointerFromVector(VertNormalCache));
+    pos_vcr.data = &VertNormalCache[0];
+    pos_vcr.stride = 24;
+    nml_vcr.data = &VertNormalCache[3];
+    nml_vcr.stride = 24;
+    return vertexCount;
 }
 
  /*****************************************************************************/

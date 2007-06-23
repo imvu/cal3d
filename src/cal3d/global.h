@@ -67,21 +67,36 @@ namespace Cal
     return version >= 919;
   }
 
-  template<typename T>
-  const T* pointerFromVector(const std::vector<T>& v) {
-    if (v.empty()) {
-      return 0;
-    } else {
-      return &v[0];
-    }
-  }
-
 };
 
-struct CalHeader
-{
-  int version;
-  char const* magic;
+struct VertexComponentReceiver {
+    void* data;
+    unsigned int stride;
+};
+
+template<typename T>
+const T* pointerFromVector(const std::vector<T>& v) {
+    if (v.empty()) {
+        return 0;
+    } else {
+        return &v[0];
+    }
+}
+
+template<typename T>
+void enlargeStdVectorCache(std::vector<T>& v, size_t size) {
+    size_t dest_size = size;
+    if(v.capacity() < size) {
+        dest_size = (size_t)(size * 1.414f);
+    }
+    if(v.size() < dest_size) {
+        v.resize(dest_size);
+    }
+}
+
+struct CalHeader {
+    int version;
+    char const* magic;
 };
 
 #endif
