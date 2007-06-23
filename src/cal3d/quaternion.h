@@ -67,7 +67,24 @@ public:
 		z = q.z;
 		w = q.w;
 	}
-	
+
+    inline bool operator==(const CalQuaternion& q) const
+    {
+        return (x == q.x)
+            && (y == q.y)
+            && (z == q.z)
+            && (w == q.w);
+    }
+
+    inline bool epsilonEquals(const CalQuaternion& q, float epsilon=0.001) const
+    {
+        return float_epsilonEquals(x, q.x)
+            && float_epsilonEquals(y, q.y)
+            && float_epsilonEquals(z, q.z)
+            && float_epsilonEquals(w, q.w)
+            ;
+    }
+
 	inline void operator*=(const CalQuaternion& q)
 	{
 		float qx, qy, qz, qw;

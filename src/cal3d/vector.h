@@ -113,6 +113,16 @@ public:
   {
 	  return ((x == v.x) && (y == v.y) && (z == v.z));
   }
+  inline bool operator!=(const CalVector& q) const {
+      return !(operator==(q));
+  }
+  inline bool epsilonEquals(const CalVector& q, float epsilon=0.001) const
+  {
+      return float_epsilonEquals(x, q.x)
+          && float_epsilonEquals(y, q.y)
+          && float_epsilonEquals(z, q.z)
+          ;
+  }
 
   inline void blend(float d, const CalVector& v)
   {

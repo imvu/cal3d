@@ -17,6 +17,7 @@
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
+#include "cal3d/bone.h"
 
 
 //****************************************************************************//
@@ -60,6 +61,13 @@ protected:
 public: 
   CalModel();
   virtual ~CalModel();
+
+  struct CachedTransformedVerts {
+      std::vector<std::pair<CalQuaternion, CalVector> > bones;
+      std::vector<float> morphWeights;
+      std::vector<float> verts;
+  };
+  std::map<class CalSubmesh*, CachedTransformedVerts> mTransformedVertCache;
 
 // member functions
 public:

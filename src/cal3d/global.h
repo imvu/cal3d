@@ -83,6 +83,12 @@ const T* pointerFromVector(const std::vector<T>& v) {
     }
 }
 
+inline bool float_epsilonEquals(float a, float b, float epsilon=0.001) {
+    float d = a-b;    
+    if(d<0) d =-d;
+    return d < epsilon;
+}
+
 template<typename T>
 void enlargeStdVectorCache(std::vector<T>& v, size_t size) {
     size_t dest_size = size;

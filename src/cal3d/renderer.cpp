@@ -699,19 +699,100 @@ int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
   return m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, pVertexBuffer);
 }
 
-struct CachedVertNormals {
-   
-};
-
-std::vector<float> VertNormalCache;
+size_t SubmeshFrameCacheHitCount = 0;
+size_t SubmeshFrameCacheMissCount = 0;
 
 int CalRenderer::getVerticesAndNormals2(VertexComponentReceiver& pos_vcr, VertexComponentReceiver& nml_vcr) {
     int vertexCount = m_pSelectedSubmesh->getVertexCount();
-    enlargeStdVectorCache(VertNormalCache, 6*vertexCount);
-    m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, (float*)pointerFromVector(VertNormalCache));
-    pos_vcr.data = &VertNormalCache[0];
+    std::vector<CalBone*> bones = m_pModel->getSkeleton()->getVectorBone();
+
+    size_t diffbone = -1;
+    CalModel::CachedTransformedVerts* ctv;
+    bool transform = true;
+
+    std::map<CalSubmesh*, CalModel::CachedTransformedVerts>::iterator iter1 = m_pModel->mTransformedVertCache.find(m_pSelectedSubmesh);
+    if(iter1 != m_pModel->mTransformedVertCache.end()) {
+        ctv = &iter1->second;
+
+        if(0 && ctv->morphWeights == m_pSelectedSubmesh->getVectorMorphTargetWeight()) {
+            printf("morphs different\n");
+        } else {
+            if(ctv->bones.size() != bones.size()) {
+                printf("bone counts different\n");
+            } else {
+                size_t boneCount = bones.size();
+                size_t i;
+                for(i=0; i<boneCount; i++) {
+                    std::pair<CalQuaternion, CalVector>& ctvbone = ctv->bones[i];
+                    CalBone* bone = bones[i];
+                    if(!ctvbone.first.epsilonEquals(bone->getRotationBoneSpace())) {
+                        /*
+                        printf("bone rotation different %d (%.3f,%.3f,%.3f,%.3f) (%.3f,%.3f,%.3f,%.3f)\n", i,
+                            bone->getRotationBoneSpace().x, bone->getRotationBoneSpace().y, bone->getRotationBoneSpace().z, bone->getRotationBoneSpace().w,
+                            ctvbone.first.x, ctvbone.first.y, ctvbone.first.z, ctvbone.first.w
+                        );
+                        */
+                        break;
+                    }
+                    if(!ctvbone.second.epsilonEquals(bone->getTranslationBoneSpace())) {
+                        /*
+                        printf("bone translation different %d (%.3f,%.3f,%.3f) (%.3f,%.3f,%.3f)\n", i,
+                            bone->getTranslationBoneSpace().x, bone->getTranslationBoneSpace().y, bone->getTranslationBoneSpace().z,
+                            ctvbone.second.x, ctvbone.second.y, ctvbone.second.z
+                        );
+                        diffbone = i;
+                        */
+                        break;
+                    }
+                }
+                if(i == boneCount) {
+                    //printf("cache hit!\n");
+                    transform = false;
+                }
+            }
+        }
+    } else {
+        //printf("submesh not found\n");
+        m_pModel->mTransformedVertCache[m_pSelectedSubmesh] = CalModel::CachedTransformedVerts();
+        ctv = &m_pModel->mTransformedVertCache[m_pSelectedSubmesh];
+    }
+
+    if(transform) {
+        ++SubmeshFrameCacheMissCount;
+        size_t boneCount = bones.size();
+        enlargeStdVectorCache(ctv->bones, boneCount);
+        ctv->bones.resize(boneCount);
+        for(size_t i=0; i<boneCount; i++) {
+            std::pair<CalQuaternion, CalVector>& ctvbone = ctv->bones[i];
+            CalBone* bone = bones[i];
+            ctvbone.first = bone->getRotationBoneSpace();
+            ctvbone.second = bone->getTranslationBoneSpace();
+            /*printf("bone rotation now %d (%.3f,%.3f,%.3f,%.3f) (%.3f,%.3f,%.3f,%.3f)\n", i,
+                bone->getRotationBoneSpace().x, bone->getRotationBoneSpace().y, bone->getRotationBoneSpace().z, bone->getRotationBoneSpace().w,
+                ctvbone.first.x, ctvbone.first.y, ctvbone.first.z, ctvbone.first.w
+            );*/
+            /*
+            if(i==diffbone) printf("bone translation now %d (%.3f,%.3f,%.3f) (%.3f,%.3f,%.3f)\n", i,
+                bone->getTranslationBoneSpace().x, bone->getTranslationBoneSpace().y, bone->getTranslationBoneSpace().z,
+                ctvbone.second.x, ctvbone.second.y, ctvbone.second.z
+            );
+            */
+        }
+        ctv->morphWeights = m_pSelectedSubmesh->getVectorMorphTargetWeight();
+
+        enlargeStdVectorCache(ctv->verts, 6*vertexCount);
+        m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, &ctv->verts[0]);
+    } else {
+        ++SubmeshFrameCacheHitCount;
+    }
+
+    if(0 == (SubmeshFrameCacheMissCount % 10000)) {
+        printf("SubmeshFrameCache %d/%d\n", SubmeshFrameCacheHitCount, SubmeshFrameCacheMissCount);
+    }
+
+    pos_vcr.data = &ctv->verts[0];
     pos_vcr.stride = 24;
-    nml_vcr.data = &VertNormalCache[3];
+    nml_vcr.data = &ctv->verts[3];
     nml_vcr.stride = 24;
     return vertexCount;
 }
