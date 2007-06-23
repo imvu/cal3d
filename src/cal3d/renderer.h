@@ -16,6 +16,11 @@
 class CalModel;
 class CalSubmesh;
 
+struct VertexComponentReceiver {
+    void* data;
+    unsigned int space_between_verts;
+};
+
 class CAL3D_API CalRenderer
 {
 private:
@@ -45,6 +50,7 @@ public:
   void getSpecularColor(unsigned char *pColorBuffer);
   int getSubmeshCount(int meshId);
   int getTextureCoordinates(int mapId, float *pTextureCoordinateBuffer);
+  int getTextureCoordinates2(int mapId, VertexComponentReceiver& receiver);
   int getVertexCount();
   int getVertices(float *pVertexBuffer);
   int getVertColors(float *pVertexBuffer);

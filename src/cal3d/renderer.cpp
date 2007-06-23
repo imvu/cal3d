@@ -509,6 +509,23 @@ int CalRenderer::getTextureCoordinates(int mapId, float *pTextureCoordinateBuffe
   return textureCoordinateCount;
 }
 
+int CalRenderer::getTextureCoordinates2(int mapId, VertexComponentReceiver& receiver)
+{
+  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = m_pSelectedSubmesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
+
+  // check if the map id is valid
+  if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size()))
+  {
+    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+    return -1;
+  }
+
+  receiver.data = &vectorvectorTextureCoordinate[mapId][0];
+  receiver.space_between_verts = 0;
+
+  return m_pSelectedSubmesh->getVertexCount();
+}
+
 
  /*****************************************************************************/
 /** Returns true if texture coordinates exist for the given map.
