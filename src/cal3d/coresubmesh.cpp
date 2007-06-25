@@ -150,6 +150,20 @@ CalCoreSubmesh::sizeWithoutSubMorphTargets()
   return r;
 }
 
+const std::set<int>& CalCoreSubmesh::getUsedBoneIds() {
+    if(!m_usedBoneIds.empty()) { return m_usedBoneIds; }
+    int vertexCount = m_vectorVertex.size();
+    for(int vertexId=0; vertexId<vertexCount; ++vertexId) {
+        Vertex& vertex = m_vectorVertex[vertexId];
+        int influenceCount = vertex.vectorInfluence.size();
+        for(int influenceId=0; influenceId<influenceCount; ++influenceId) {
+            Influence& influence = vertex.vectorInfluence[influenceId];
+            m_usedBoneIds.insert(influence.boneId);
+        }
+    }
+    return m_usedBoneIds;
+}
+
 
 unsigned int
 CalCoreSubmesh::size()

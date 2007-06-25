@@ -121,6 +121,7 @@ public:
   float getBaseWeight();
   int getMorphTargetWeightCount();
   std::vector<float>& getVectorMorphTargetWeight();
+  float getMorphsHash() const;
   void clearMorphTargetScales();
   void clearMorphTargetState( std::string const & morphName );
   void blendMorphTargetScale( std::string const & morphName, 

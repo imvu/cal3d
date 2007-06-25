@@ -62,13 +62,6 @@ public:
   CalModel();
   virtual ~CalModel();
 
-  struct CachedTransformedVerts {
-      std::vector<std::pair<CalQuaternion, CalVector> > bones;
-      std::vector<float> morphWeights;
-      std::vector<float> verts;
-  };
-  std::map<class CalSubmesh*, CachedTransformedVerts> mTransformedVertCache;
-
 // member functions
 public:
   bool attachMesh(int coreMeshId);

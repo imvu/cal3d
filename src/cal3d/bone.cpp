@@ -175,6 +175,18 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
   }
 }
 
+float CalBone::getFloatHash() const {
+    float result = 0.f;
+    result = result * 29.f + m_rotationBoneSpace.x;
+    result = result * 29.f + m_rotationBoneSpace.y;
+    result = result * 29.f + m_rotationBoneSpace.z;
+    result = result * 29.f + m_rotationBoneSpace.w;
+    result = result * 29.f + m_translationBoneSpace.x;
+    result = result * 29.f + m_translationBoneSpace.y;
+    result = result * 29.f + m_translationBoneSpace.z;
+    return result;
+}
+
  /*****************************************************************************/
 /** Calculates the current state.
   *
