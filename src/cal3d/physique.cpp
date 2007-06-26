@@ -456,7 +456,7 @@ float FastInvSqrt(float x) {
 
 int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVertexBuffer) {
     bool hasSprings = pSubmesh->getCoreSubmesh()->getSpringCount() > 0 && pSubmesh->hasInternalData();
-    if(hasSprings) {
+    if(1 || hasSprings) {
         return calculateVerticesAndNormals_slow(pSubmesh, pVertexBuffer);
     }
 
