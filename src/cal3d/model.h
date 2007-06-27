@@ -17,7 +17,6 @@
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
-#include "cal3d/bone.h"
 
 
 //****************************************************************************//

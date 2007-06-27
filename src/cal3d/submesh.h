@@ -90,15 +90,12 @@ public:
 
 // member functions	
 public:
-  int getVertColorsAsStandardPixels2(VertexComponentReceiver& vcr) { return m_pCoreSubmesh->getVertColorsAsStandardPixels2(vcr); }
-
   bool create(CalCoreSubmesh *pCoreSubmesh);
   void destroy();
   CalCoreSubmesh *getCoreSubmesh();
   int getCoreMaterialId();
   int getFaceCount();
   int getFaces(CalIndex *pFaceBuffer);
-  int getFaces2(VertexComponentReceiver& vcr);
   std::vector<CalVector>& getVectorNormal();
   std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
   std::vector<PhysicalProperty>& getVectorPhysicalProperty();
@@ -121,7 +118,6 @@ public:
   float getBaseWeight();
   int getMorphTargetWeightCount();
   std::vector<float>& getVectorMorphTargetWeight();
-  float getMorphsHash() const;
   void clearMorphTargetScales();
   void clearMorphTargetState( std::string const & morphName );
   void blendMorphTargetScale( std::string const & morphName, 

@@ -77,7 +77,6 @@ public:
   CalCoreBone *getCoreBone();
   void setCoreState();
   void setCoreStateRecursive();
-  float getFloatHash() const;
   void setRotation(const CalQuaternion& rotation);
   const CalQuaternion& getRotation();
   const CalQuaternion& getRotationAbsolute();

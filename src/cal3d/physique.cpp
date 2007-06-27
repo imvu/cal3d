@@ -1018,11 +1018,11 @@ void CalPhysique::update()
       {
         // calculate the transformed vertices and store them in the submesh
         std::vector<CalVector>& vectorVertex = (*iteratorSubmesh)->getVectorVertex();
-        calculateVertices(*iteratorSubmesh, (float *)pointerFromVector(vectorVertex));
+        calculateVertices(*iteratorSubmesh, (float *)Cal::pointerFromVector(vectorVertex));
 
         // calculate the transformed normals and store them in the submesh
         std::vector<CalVector>& vectorNormal = (*iteratorSubmesh)->getVectorNormal();
-        calculateNormals(*iteratorSubmesh, (float *)pointerFromVector(vectorNormal));
+        calculateNormals(*iteratorSubmesh, (float *)Cal::pointerFromVector(vectorNormal));
 
         unsigned mapId;
         for(mapId=0;mapId< (*iteratorSubmesh)->getVectorVectorTangentSpace().size();mapId++)
@@ -1030,7 +1030,7 @@ void CalPhysique::update()
           if((*iteratorSubmesh)->isTangentsEnabled(mapId))
           {
             std::vector<CalSubmesh::TangentSpace>& vectorTangentSpace = (*iteratorSubmesh)->getVectorVectorTangentSpace()[mapId];
-            calculateTangentSpaces(*iteratorSubmesh, mapId,(float *)pointerFromVector(vectorTangentSpace));
+            calculateTangentSpaces(*iteratorSubmesh, mapId,(float *)Cal::pointerFromVector(vectorTangentSpace));
           }
         }
 

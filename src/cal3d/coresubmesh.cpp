@@ -77,27 +77,6 @@ CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int
 }
 
 
-int CalCoreSubmesh::getVertColorsAsStandardPixels2(VertexComponentReceiver& vcr) {
-    int vertexCount = m_vectorVertex.size();
-    if(m_colorsAsStandardPixelsCache.size() != vertexCount) {
-        enlargeStdVectorCache(m_colorsAsStandardPixelsCache, m_vectorVertex.size());
-
-        for(int vertexId = 0; vertexId < vertexCount; ++vertexId) {
-            CalCoreSubmesh::Vertex& vertex = m_vectorVertex[vertexId];
-            // Win32 StandardPixels are ARGB8 with low byte first, which means BGRA byte order.
-            unsigned int color = 
-                  (((unsigned int) (vertex.vertexColor.z * 0xff)) << 0)
-                + (((unsigned int) (vertex.vertexColor.y * 0xff)) << 8)
-                + (((unsigned int) (vertex.vertexColor.y * 0xff)) << 16)
-                + 0xff000000;
-            m_colorsAsStandardPixelsCache[vertexId] = color;
-        }
-    }
-    vcr.data = (void*)pointerFromVector(m_colorsAsStandardPixelsCache);
-    vcr.stride = 4;
-    return m_colorsAsStandardPixelsCache.size();
-}
-
  /*****************************************************************************/
 /** Destroys the core submesh instance.
   *
@@ -148,20 +127,6 @@ CalCoreSubmesh::sizeWithoutSubMorphTargets()
     r += sizeof( TextureCoordinate ) * (*iter3).size();
   }
   return r;
-}
-
-const std::set<int>& CalCoreSubmesh::getUsedBoneIds() {
-    if(!m_usedBoneIds.empty()) { return m_usedBoneIds; }
-    int vertexCount = m_vectorVertex.size();
-    for(int vertexId=0; vertexId<vertexCount; ++vertexId) {
-        Vertex& vertex = m_vectorVertex[vertexId];
-        int influenceCount = vertex.vectorInfluence.size();
-        for(int influenceId=0; influenceId<influenceCount; ++influenceId) {
-            Influence& influence = vertex.vectorInfluence[influenceId];
-            m_usedBoneIds.insert(influence.boneId);
-        }
-    }
-    return m_usedBoneIds;
 }
 
 

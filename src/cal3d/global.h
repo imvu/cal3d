@@ -67,42 +67,21 @@ namespace Cal
     return version >= 919;
   }
 
-};
-
-struct VertexComponentReceiver {
-    void* data;
-    unsigned int stride;
-};
-
-template<typename T>
-const T* pointerFromVector(const std::vector<T>& v) {
+  template<typename T>
+  const T* pointerFromVector(const std::vector<T>& v) {
     if (v.empty()) {
-        return 0;
+      return 0;
     } else {
-        return &v[0];
+      return &v[0];
     }
-}
+  }
 
-inline bool float_epsilonEquals(float a, float b, float epsilon=0.001) {
-    float d = a-b;    
-    if(d<0) d =-d;
-    return d < epsilon;
-}
+};
 
-template<typename T>
-void enlargeStdVectorCache(std::vector<T>& v, size_t size) {
-    size_t dest_size = size;
-    if(v.capacity() < size) {
-        dest_size = (size_t)(size * 1.414f);
-    }
-    if(v.size() < dest_size) {
-        v.resize(dest_size);
-    }
-}
-
-struct CalHeader {
-    int version;
-    char const* magic;
+struct CalHeader
+{
+  int version;
+  char const* magic;
 };
 
 #endif

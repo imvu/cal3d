@@ -12,7 +12,6 @@
 #define CAL_RENDERER_H
 
 #include "cal3d/global.h"
-#include "cal3d/submesh.h"
 
 class CalModel;
 class CalSubmesh;
@@ -35,9 +34,8 @@ public:
   void endRendering();
   void getAmbientColor(unsigned char *pColorBuffer);
   void getDiffuseColor(unsigned char *pColorBuffer);
-  int getFaceCount() { return m_pSelectedSubmesh->getFaceCount(); }
-  int getFaces(CalIndex *pFaceBuffer) { return m_pSelectedSubmesh->getFaces(pFaceBuffer); }
-  int getFaces2(VertexComponentReceiver& vcr) { return m_pSelectedSubmesh->getFaces2(vcr); }
+  int getFaceCount();
+  int getFaces(CalIndex *pFaceBuffer);
   CalModel * getModel() { return m_pModel; }
   int getMapCount();
   Cal::UserData getMapUserData(int mapId);
@@ -47,15 +45,12 @@ public:
   void getSpecularColor(unsigned char *pColorBuffer);
   int getSubmeshCount(int meshId);
   int getTextureCoordinates(int mapId, float *pTextureCoordinateBuffer);
-  int getTextureCoordinates2(int mapId, VertexComponentReceiver& vcr);
   int getVertexCount();
   int getVertices(float *pVertexBuffer);
   int getVertColors(float *pVertexBuffer);
   int getVertColorsAsStandardPixels( unsigned int *pVertexBuffer);
-  int getVertColorsAsStandardPixels2(VertexComponentReceiver& vcr);
   int getTangentSpaces(int mapId, float *pTangentSpaceBuffer);
   int getVerticesAndNormals(float *pVertexBuffer);
-  int getVerticesAndNormals2(VertexComponentReceiver& pos_vcr, VertexComponentReceiver& nml_vcr);
   int getVerticesNormalsAndTexCoords(float *pVertexBuffer,int NumTexCoords=1);
   bool isTangentsEnabled(int mapId);
   bool selectMeshSubmesh(int meshId, int submeshId);

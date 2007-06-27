@@ -5,7 +5,6 @@ sources = Split('''
     testSubmesh.cpp
     testTinyXml.cpp
     testVector.cpp
-    testlrucache.cpp
 ''')
 
 # Build the unit tests.

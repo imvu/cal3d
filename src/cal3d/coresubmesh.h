@@ -17,7 +17,6 @@
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
-#include "cal3d/lrucache.h"
 
 //****************************************************************************//
 // Forward declarations                                                       //
@@ -41,30 +40,6 @@ enum CalMorphTargetType {
  /*****************************************************************************/
 /** The core submesh class.
   *****************************************************************************/
-struct CachedTransformedVertsKey {
-    CachedTransformedVertsKey(float bh, float mh) : boneHash(bh), morphHash(mh) {}
-    CachedTransformedVertsKey(const CachedTransformedVertsKey& rhs) : boneHash(rhs.boneHash), morphHash(rhs.morphHash) {}
-    CachedTransformedVertsKey& operator=(const CachedTransformedVertsKey& rhs) { boneHash = rhs.boneHash; morphHash = rhs.morphHash; return *this; }
-    float boneHash;
-    float morphHash;
-    bool operator<(CachedTransformedVertsKey const & rhs) const {
-        if(float_epsilonEquals(boneHash, rhs.boneHash)) {
-            if(float_epsilonEquals(morphHash, rhs.morphHash)) {
-                return false;
-            } else {
-                return morphHash < rhs.morphHash;
-            }
-        } else {
-            return boneHash < rhs.boneHash;
-        }
-    }
-    bool operator==(CachedTransformedVertsKey const & rhs) const {
-        return float_epsilonEquals(boneHash, rhs.boneHash) && float_epsilonEquals(morphHash, rhs.morphHash);
-    }
-    bool operator<=(CachedTransformedVertsKey const & rhs) const {
-        return operator==(rhs) || operator<(rhs);
-    }
-};
 
 class CAL3D_API CalCoreSubmesh
 {
@@ -121,8 +96,6 @@ public:
     float idleLength;
   } Spring;
 
-  lrucache<CachedTransformedVertsKey, std::vector<float> > mTransformedVertCache;
-
 // member variables
 protected:
   std::vector<Vertex> m_vectorVertex;
@@ -138,9 +111,6 @@ protected:
   std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
   bool m_hasNonWhiteVertexColors;
 
-  std::vector<unsigned int> m_colorsAsStandardPixelsCache;
-  std::set<int> m_usedBoneIds;
-
 // constructors/destructor
 public:
   CalCoreSubmesh();
@@ -148,8 +118,6 @@ public:
 
 // member functions	
 public:
-  int getVertColorsAsStandardPixels2(VertexComponentReceiver& vcr);
-
   typedef std::vector<CalCoreSubMorphTarget *> CoreSubMorphTargetVector;
   typedef std::vector<Face> VectorFace;
   typedef std::vector<PhysicalProperty> VectorPhysicalProperty;
@@ -160,7 +128,6 @@ public:
   typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
   typedef std::vector<Vertex> VectorVertex;
   typedef std::vector<Influence> VectorInfluence;
-  const std::set<int>& getUsedBoneIds();
   unsigned int size();
   unsigned int sizeWithoutSubMorphTargets();
   bool create();

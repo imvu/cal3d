@@ -215,6 +215,35 @@ void CalRenderer::getDiffuseColor(unsigned char *pColorBuffer)
 }
 
  /*****************************************************************************/
+/** Returns the number of faces.
+  *
+  * This function returns the number of faces in the selected mesh/submesh.
+  *
+  * @return The number of faces.
+  *****************************************************************************/
+
+int CalRenderer::getFaceCount()
+{
+  return m_pSelectedSubmesh->getFaceCount();
+}
+
+ /*****************************************************************************/
+/** Provides access to the face data.
+  *
+  * This function returns the face data (vertex indices) of the selected
+  * mesh/submesh. The LOD setting is taken into account.
+  *
+  * @param pFaceBuffer A pointer to the user-provided buffer where the face
+  *                    data is written to.
+  *
+  * @return The number of faces written to the buffer.
+  *****************************************************************************/
+int CalRenderer::getFaces(CalIndex *pFaceBuffer)
+{
+  return m_pSelectedSubmesh->getFaces(pFaceBuffer);
+}
+
+ /*****************************************************************************/
 /** Returns the number of maps.
   *
   * This function returns the number of maps in the selected mesh/submesh.
@@ -480,23 +509,6 @@ int CalRenderer::getTextureCoordinates(int mapId, float *pTextureCoordinateBuffe
   return textureCoordinateCount;
 }
 
-int CalRenderer::getTextureCoordinates2(int mapId, VertexComponentReceiver& receiver)
-{
-  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = m_pSelectedSubmesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
-
-  // check if the map id is valid
-  if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
-
-  receiver.data = &vectorvectorTextureCoordinate[mapId][0];
-  receiver.stride = 8;
-
-  return m_pSelectedSubmesh->getVertexCount();
-}
-
 
  /*****************************************************************************/
 /** Returns true if texture coordinates exist for the given map.
@@ -646,10 +658,6 @@ int CalRenderer::getVertColorsAsStandardPixels( unsigned int *pVertexBuffer)
   return vertexCount;
 }
 
-int CalRenderer::getVertColorsAsStandardPixels2(VertexComponentReceiver& receiver) {
-    return m_pSelectedSubmesh->getVertColorsAsStandardPixels2(receiver);
-}
-
 
 bool
 CalRenderer::hasNonWhiteVertexColors() 
@@ -697,76 +705,6 @@ int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
 
   // submesh does not handle the vertex data internally, so let the physique calculate it now
   return m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, pVertexBuffer);
-}
-
-float getFloatVectorHash(const std::vector<float>& v) {
-    float result = 0.f;
-    for(std::vector<float>::const_iterator i = v.begin(); i != v.end(); ++i) {
-        result = (result + *i)*23.f;
-    }
-    return result;
-}
-
-size_t SubmeshFrameCacheHitCount = 0;
-size_t SubmeshFrameCacheMissCount = 0;
-
-std::vector<float> gScratchVertices;
-
-int CalRenderer::getVerticesAndNormals2(VertexComponentReceiver& pos_vcr, VertexComponentReceiver& nml_vcr) {
-    std::vector<float>& morphWeights = m_pSelectedSubmesh->getVectorMorphTargetWeight();
-    int morphWeightCount = morphWeights.size();
-    int usedMorphCount = 0;
-    std::vector<float>* verts = 0;
-    bool transform = true;
-    int vertexCount = m_pSelectedSubmesh->getVertexCount();
-
-    for(int i=0; i<morphWeightCount; ++i) {
-        if(morphWeights[i] != 0.f) {
-            ++usedMorphCount;
-        }
-    }
-    //don't cache vert buffers if they're in the middle of blending
-    if(usedMorphCount > 1) {
-        verts = &gScratchVertices;
-    } else {
-        float morphHash = getFloatVectorHash(morphWeights);
-        const std::set<int>& usedBoneIds = m_pSelectedSubmesh->getCoreSubmesh()->getUsedBoneIds();
-        std::vector<CalBone*>& bones = m_pModel->getSkeleton()->getVectorBone();
-        float boneHash = 0.f;
-        std::set<int>::const_iterator boneIdIter;
-        for(boneIdIter=usedBoneIds.begin(); boneIdIter!=usedBoneIds.end(); ++boneIdIter) {
-            CalBone* bone = bones[*boneIdIter];
-            boneHash = (boneHash + bone->getFloatHash())*23.f;
-        }
-        CachedTransformedVertsKey ctvk(boneHash, morphHash);
-        verts = m_pSelectedSubmesh->getCoreSubmesh()->mTransformedVertCache.get(ctvk);
-        if(verts) {
-            transform = false;
-        } else {
-            m_pSelectedSubmesh->getCoreSubmesh()->mTransformedVertCache.set(ctvk, std::vector<float>());
-            verts = m_pSelectedSubmesh->getCoreSubmesh()->mTransformedVertCache.get(ctvk);
-        }
-    }
-
-    if(transform) {
-        //printf("cache miss\n");
-        ++SubmeshFrameCacheMissCount;
-        enlargeStdVectorCache(*verts, 6*vertexCount);
-        m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, &(*verts)[0]);
-    } else {
-        //printf("cache hit\n");
-        ++SubmeshFrameCacheHitCount;
-    }
-
-    if(0 == (SubmeshFrameCacheMissCount % 10000)) {
-        printf("SubmeshFrameCache %d/%d\n", SubmeshFrameCacheHitCount, SubmeshFrameCacheMissCount);
-    }
-
-    pos_vcr.data = &(*verts)[0];
-    pos_vcr.stride = 24;
-    nml_vcr.data = &(*verts)[3];
-    nml_vcr.stride = 24;
-    return vertexCount;
 }
 
  /*****************************************************************************/

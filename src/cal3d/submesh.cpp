@@ -241,12 +241,6 @@ int CalSubmesh::getFaces(CalIndex *pFaceBuffer)
   return m_faceCount;
 }
 
-int CalSubmesh::getFaces2(VertexComponentReceiver& vcr) {
-    vcr.data = &m_vectorFace[0];
-    vcr.stride = 4;
-    return m_faceCount;
-}
-
  /*****************************************************************************/
 /** Returns the normal vector.
   *
