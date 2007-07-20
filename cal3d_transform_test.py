@@ -52,6 +52,12 @@ class Cal3dTransformTest(imvu.test.TestCase):
         test_data_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test_data"))
         self.testDataFs = imvu.fs.FileSystem(test_data_dir)
         self.cflManager = pyCFL.CflManager.CflManager(self.testDataFs)
+        
+        self.__tempFiles = []
+
+    def tearDown(self):
+        for file in self.__tempFiles:
+            os.unlink(file)
 
     def getFilenameForCflResource(self, cfl_name, resource_name):
         data = self.cflManager.getCflEntryData(cfl_name, resource_name)
@@ -59,6 +65,8 @@ class Cal3dTransformTest(imvu.test.TestCase):
         f = file(filename, 'wb')
         f.write(data)
         f.close()
+
+        self.__tempFiles.append(filename)
         return filename
 
     def loadModelWithEverything(self, cfl_name):
