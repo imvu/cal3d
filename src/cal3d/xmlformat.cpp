@@ -915,6 +915,9 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
       SetTranslationInvalid( & tx, & ty, & tz );
       if( skel ) {
         CalCoreBone * cb = skel->getCoreBone( coreBoneId );
+        if (!cb) {
+            throw std::runtime_error("loadXmlCoreAnimation: keyframe refers to a bone that does not exist");
+        }
         CalVector const & cbtrans = cb->getTranslation();
         tx = cbtrans.x;
         ty = cbtrans.y;
