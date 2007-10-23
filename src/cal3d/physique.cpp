@@ -462,7 +462,6 @@ int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVerte
 
     std::vector<CalBone *>& vectorBone = m_pModel->getSkeleton()->getVectorBone();
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pSubmesh->getCoreSubmesh()->getVectorVertex();
-    std::vector<CalCoreSubmesh::PhysicalProperty>& vectorPhysicalProperty = pSubmesh->getCoreSubmesh()->getVectorPhysicalProperty();
     int vertexCount = pSubmesh->getVertexCount();
     std::vector<CalCoreSubMorphTarget*>& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
 

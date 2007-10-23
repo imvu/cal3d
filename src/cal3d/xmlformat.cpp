@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
 #include "cal3d/matrix.h"
@@ -20,13 +21,7 @@
 #include "cal3d/streamsource.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
-
-
-#ifdef WIN32
 #include "cal3d/calxmlbindings.h"
-#else
-#include "cal3d/calxmlbindings.cpp"
-#endif
 
 
 static inline void ReadPair( char const * buffer, float * f1, float * f2 )

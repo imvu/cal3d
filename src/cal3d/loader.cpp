@@ -38,12 +38,7 @@
 #include "cal3d/streamsource.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
-
-#ifdef WIN32
 #include "cal3d/calxmlbindings.h"
-#else
-#include "cal3d/calxmlbindings.cpp"
-#endif
 
 int CalLoader::loadingMode;
 double CalLoader::translationTolerance = 0.25;

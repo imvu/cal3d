@@ -206,7 +206,7 @@ public:
     {
         MT & mv = const_cast<MT &>(mvPolicy_->getMemberValue(thisPtr));
         TiXmlBinding<MT> const * binding = GetTiXmlBinding( mv,  Identity<MT>()  );
-        if( binding->fromXml(elem, &mv, params()) ) {
+        if( binding->fromXml(elem, &mv, IMemberHolder<T>::params()) ) {
             mvPolicy_->setMemberValue(thisPtr, mv);
             return true;
         } else {
@@ -245,10 +245,10 @@ public:
   
     virtual bool fromXml( TiXmlElement const & elem, T * thisPtr)
     {
-        if( !stricmp(elem.Value(), tag()) ) {
+        if( !stricmp(elem.Value(), IMemberHolder<T>::tag()) ) {
             MT mv;
             TiXmlBinding<MT> const * binding = GetTiXmlBinding( mv,  Identity<MT>()  );
-            if( binding->fromXml(elem, &mv, params()) ) {
+            if( binding->fromXml(elem, &mv, IMemberHolder<T>::params()) ) {
                 mvPolicy_->setMemberValue(thisPtr, mv);
                 return true;
             } else {
@@ -276,7 +276,7 @@ public:
     virtual bool fromXml( TiXmlElement const & elem, T * thisPtr)
     {
         MT mv;
-        const char * attributeValue = elem.Attribute( tag() );
+        const char * attributeValue = elem.Attribute( IMemberHolder<T>::tag() );
         if( attributeValue && *attributeValue ) {
             ConvertFromString( attributeValue, &mv );
             mvPolicy_->setMemberValue(thisPtr, mv);

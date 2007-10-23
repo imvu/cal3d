@@ -200,10 +200,15 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & mo
 
     if( count1 != count2 )
     {
-		char buf[2048];
-		_snprintf(buf, sizeof(buf), "This mesh has a morph target child with different number of vertices: %s (%d vs child's %d)", morphTargetName.c_str(), count1, count2);
-      CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, buf);
-      return -1;
+        char buf[2048] = {0}; // zero-initialize
+#ifdef _MSC_VER
+        _snprintf
+#else
+        snprintf
+#endif
+            (buf, sizeof(buf) - 1, "This mesh has a morph target child with different number of vertices: %s (%d vs child's %d)", morphTargetName.c_str(), count1, count2);
+        CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, buf);
+        return -1;
     }
     ++iteratorCoreSubmesh;
     ++otherIteratorCoreSubmesh;
