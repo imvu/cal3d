@@ -16,7 +16,7 @@
 // Includes                                                                   //
 //****************************************************************************//
 
-#include "cal3d/coreanimatedMorph.h"
+#include "cal3d/coreanimatedmorph.h"
 #include "cal3d/coremorphtrack.h"
 
  /*****************************************************************************/
