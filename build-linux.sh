@@ -1,3 +1,6 @@
+#!/bin/sh
+cd "`dirname \"$0\"`"
+
 SOURCES="
     src/cal3d/animation.cpp
     src/cal3d/animation_action.cpp
@@ -46,4 +49,4 @@ SOURCES="
     src/cal3d/vector.cpp
     src/cal3d/xmlformat.cpp"
 
-g++ -Wall -shared -Isrc -fpermissive -Wno-non-virtual-dtor -Wno-sign-compare -Wno-reorder -o cal3d $SOURCES
+g++ -Wl,--demangle -Wall -shared -Isrc -fpermissive -Wno-non-virtual-dtor -Wno-sign-compare -Wno-reorder -o cal3d.so $SOURCES
