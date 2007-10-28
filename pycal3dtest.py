@@ -1,26 +1,16 @@
-import imvu
-
 import re
-import os, gc
+import os
 import sys
 import weakref
 
-import unittest
-from log.StdLogger import logger
-
-from testing.mock import MockObject, MockOpenFunc
-import testing.mock
 import imvu.test
-
+import imvu.fs
 from cal3d import pycal3d
 
-class Test(unittest.TestCase):
+class Test(imvu.test.TestCase):
     def setUp(self):
         self.cal3d_ = pycal3d.Cal3d()
         
-    def tearDown(self):
-        pass
-
     def testSkel(self):
         self.hereAndBackAgain(origData=skeleton1, calCoreType="CoreSkeleton")
 
@@ -46,7 +36,7 @@ class Test(unittest.TestCase):
         f = open("dataB", "w")
         f.write(str(b))
         f.close()
-        unittest.TestCase.assertEqual(self, a,b)
+        imvu.test.TestCase.assertEqual(self, a,b)
        
     def hereAndBackAgain(self, origData, calCoreType):
         data = self.cal3d_.convertToBinary(calCoreType=calCoreType, data=origData)
@@ -72,6 +62,11 @@ class Test(unittest.TestCase):
         self.assertEqual(self.cal3d_.cal3dTypeForPath(path), "CoreSkeleton")
         path = "test.csf"
         self.assertEqual(self.cal3d_.cal3dTypeForPath(path), "CoreSkeleton")
+
+    def test_winding_is_not_changed_in_meshes(self):
+        test_mesh = os.path.join(imvu.fs.getSourceDirectory(), 'Source', 'test_data', 'fuzhuangdian.xmf')
+        data = file(test_mesh, 'rb').read()
+        self.hereAndBackAgain(data, 'CoreMesh')
         
 
 

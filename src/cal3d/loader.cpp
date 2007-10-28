@@ -2011,39 +2011,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       return 0;
     }
 
-    // check if left-handed coord system is used by the object
-    // can be done only once since the object has one system for all faces
-    if (justOnce==0)
-    {
-      // get vertexes of first face
-      std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
-      CalCoreSubmesh::Vertex& v1 = vectorVertex[tmp[0]];
-      CalCoreSubmesh::Vertex& v2 = vectorVertex[tmp[1]];
-      CalCoreSubmesh::Vertex& v3 = vectorVertex[tmp[2]];
-
-      CalVector point1 = CalVector(v1.position.x, v1.position.y, v1.position.z);
-      CalVector point2 = CalVector(v2.position.x, v2.position.y, v2.position.z);
-      CalVector point3 = CalVector(v3.position.x, v3.position.y, v3.position.z);
-
-      // gets vectors (v1-v2) and (v3-v2)
-      CalVector vect1 = point1 - point2;
-      CalVector vect2 = point3 - point2;
-
-      // calculates normal of face
-      CalVector cross = vect1 % vect2;
-      CalVector faceNormal = cross / cross.length();
-
-      // compare the calculated normal with the normal of a vertex
-      CalVector maxNorm = v1.normal;
-
-      // if the two vectors point to the same direction then the poly needs flipping
-      // so if the dot product > 0 it needs flipping
-      if (faceNormal*maxNorm>0)
-		  flipModel = true;
-
-      justOnce = 1;
-    }
-
     // flip if needed
     if (flipModel) {
       tmp[3] = face.vertexId[1];
