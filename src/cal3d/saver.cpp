@@ -746,9 +746,15 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     CalPlatform::writeFloat(file, vertex.normal.x);
     CalPlatform::writeFloat(file, vertex.normal.y);
     CalPlatform::writeFloat(file, vertex.normal.z);
-    CalPlatform::writeFloat(file, vertex.vertexColor.x);
-    CalPlatform::writeFloat(file, vertex.vertexColor.y);
-    CalPlatform::writeFloat(file, vertex.vertexColor.z);
+	if (pCoreSubmesh->hasNonWhiteVertexColors()) {
+		CalPlatform::writeFloat(file, vertex.vertexColor.x);
+		CalPlatform::writeFloat(file, vertex.vertexColor.y);
+		CalPlatform::writeFloat(file, vertex.vertexColor.z);
+	} else {
+		CalPlatform::writeFloat(file, 1);
+		CalPlatform::writeFloat(file, 1);
+		CalPlatform::writeFloat(file, 1);
+	}
     CalPlatform::writeInteger(file, vertex.collapseId);
     CalPlatform::writeInteger(file, vertex.faceCollapseCount);
 

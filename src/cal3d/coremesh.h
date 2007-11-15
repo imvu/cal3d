@@ -40,7 +40,7 @@ protected:
 // constructors/destructor
 public:
   CalCoreMesh();
-  virtual ~CalCoreMesh();
+  ~CalCoreMesh();
 
 // member functions	
 public:

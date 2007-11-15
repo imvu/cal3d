@@ -78,3 +78,32 @@ TEST(CalVectorFromDataSrc) {
   CalVector vec;
   CHECK_EQUAL(false, CalVectorFromDataSrc(bs, &vec));
 }
+
+
+TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
+    CalCoreSubmesh::Vertex v;
+    v.vertexColor = CalVector(0, 0, 0);
+
+    CalCoreSubmesh* sm = new CalCoreSubmesh();
+    sm->getVectorVertex().push_back(v);
+    sm->setHasNonWhiteVertexColors(false);
+
+    CalCoreMesh cm;
+    cm.addCoreSubmesh(sm);
+
+    const char* path = tmpnam(NULL);
+    CalSaver().saveCoreMesh(path, &cm);
+
+    CalCoreMesh* loaded = CalLoader().loadCoreMesh(path);
+	CHECK(loaded);
+    CHECK_EQUAL(1, cm.getCoreSubmeshCount());
+    CHECK_EQUAL(1, loaded->getCoreSubmeshCount());
+
+    CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
+                loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());
+
+	_unlink(path);
+	cm.destroy();
+	loaded->destroy();
+	delete loaded;
+}
