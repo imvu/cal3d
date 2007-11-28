@@ -50,7 +50,6 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     coreSubmesh->reserve(0, 0, 0, 0);
 
     CalCoreMesh* coreMesh = new CalCoreMesh;
-    CHECK(coreMesh->create());
     coreMesh->addCoreSubmesh(coreSubmesh);
 
     CalCoreModel coreModel;
@@ -58,7 +57,6 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     coreModel.addCoreMesh(coreMesh);
 
     CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
-    CHECK(coreSkeleton->create());
     coreModel.setCoreSkeleton(coreSkeleton);
 
     CalModel model;
