@@ -907,11 +907,6 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 
 	// create the core skeleton instance
 	CalCoreSkeleton coreSkeleton;
-	if(!coreSkeleton.create())
-	{
-		SetLastError("Creation of core skeleton instance failed.", __FILE__, __LINE__);
-		return false;
-	}
 
 	// get bone candidate vector
 	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();

@@ -815,7 +815,7 @@ void CalCoreSkeleton_CalculateState(CalCoreSkeleton *self)
 
 Boolean CalCoreSkeleton_Create(CalCoreSkeleton *self)
 {
-  return self->create() ? True : False;
+  return True;
 }
 
 void CalCoreSkeleton_Delete(CalCoreSkeleton *self)

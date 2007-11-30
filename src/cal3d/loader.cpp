@@ -1014,13 +1014,6 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
     return 0;
   }
 
-  // create the core skeleton instance
-  if(!pCoreSkeleton->create())
-  {
-    delete pCoreSkeleton;
-    return 0;
-  }
-
   // load the scene ambient
   if( hasNodeLights ) {
     CalVector sceneColor;

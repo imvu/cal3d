@@ -386,13 +386,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     return 0;
   }
 
-  // create the core skeleton instance
-  if(!pCoreSkeleton->create())
-  {
-    delete pCoreSkeleton;
-    return 0;
-  }
-
   char const * attrStr = skeleton->Attribute("SCENEAMBIENTCOLOR");
   if( attrStr ) {
     CalVector sceneColor;

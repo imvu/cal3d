@@ -25,7 +25,6 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     coreModel.addCoreMesh(coreMesh);
 
     CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
-    CHECK(coreSkeleton->create());
     coreModel.setCoreSkeleton(coreSkeleton);
 
     CalModel model;

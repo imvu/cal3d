@@ -97,21 +97,6 @@ void CalCoreSkeleton::calculateState()
 }
 
  /*****************************************************************************/
-/** Creates the core skeleton instance.
-  *
-  * This function creates the core skeleton instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSkeleton::create()
-{
-  return true;
-}
-
- /*****************************************************************************/
 /** Destroys the core skeleton instance.
   *
   * This function destroys all data stored in the core skeleton instance and
