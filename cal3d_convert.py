@@ -1,7 +1,7 @@
 import imvu
 
 import sys
-from pycal3d import Cal3d
+from cal3d.pycal3d import Cal3d
 
 
 def usage():
@@ -17,7 +17,7 @@ def main(argv=sys.argv):
 
     data = open(c_input, 'rb').read()
 
-    data = Cal3d().convertToBinary("CoreAnimation", data)
+    data = Cal3d().convertToXml("CoreMaterial", data)
 
     open(c_output, 'wb').write(data)
 
