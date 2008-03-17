@@ -49,7 +49,6 @@ protected:
   std::vector<CalCoreMaterial *> m_vectorCoreMaterial;
   std::map<int, std::map<int, int> > m_mapmapCoreMaterialThread;
   Cal::UserData m_userData;
-  std::map<std::string, int> m_animationHelper;
   bool m_coreMeshManagement;
   bool m_coreAnimationManagement;
   unsigned int m_magic;
@@ -103,10 +102,6 @@ public:
   bool setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId);
   void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
   void setUserData(Cal::UserData userData);
-  void addBoneHelper(const std::string& strBoneName, int boneId);
-  void addAnimHelper(const std::string& strAnimName, int animId);
-  int getBoneId(const std::string& strBoneName);
-  int getAnimId(const std::string& strAnimName);
   void scale(float factor);
   void setCoreMeshManagementOn( bool p ) { m_coreMeshManagement = p; }
   bool getCoreMeshManagementOn() { return m_coreMeshManagement; }

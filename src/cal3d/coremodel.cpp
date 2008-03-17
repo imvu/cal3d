@@ -643,28 +643,20 @@ int CalCoreModel::getCoreMaterialCount()
 
 int CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId)
 {
-  // find the core material thread
-  std::map<int, std::map<int, int> >::iterator iteratorCoreMaterialThread;
-  iteratorCoreMaterialThread = m_mapmapCoreMaterialThread.find(coreMaterialThreadId);
-  if(iteratorCoreMaterialThread == m_mapmapCoreMaterialThread.end())
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
+    if (m_mapmapCoreMaterialThread.count(coreMaterialThreadId) == 0) {
+        CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+        return -1;
+    }
 
-  // get the core material thread
-  std::map<int, int>& coreMaterialThread = (*iteratorCoreMaterialThread).second;
+    // get the core material thread
+    std::map<int, int>& coreMaterialThread = m_mapmapCoreMaterialThread[coreMaterialThreadId];
 
-  // find the material id for the given set
-  std::map<int, int>::iterator iteratorSet;
-  iteratorSet = coreMaterialThread.find(coreMaterialSetId);
-  if(iteratorSet == coreMaterialThread.end())
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
+    if (coreMaterialThread.count(coreMaterialSetId) == 0) {
+        CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+        return -1;
+    }
 
-  return (*iteratorSet).second;
+    return coreMaterialThread[coreMaterialSetId];
 }
 
  /*****************************************************************************/
@@ -1105,83 +1097,6 @@ void CalCoreModel::setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton)
 void CalCoreModel::setUserData(Cal::UserData userData)
 {
   m_userData = userData;
-}
-
- /*****************************************************************************/
-/** Creates or overwrites a string-to-boneId mapping
-  *
-  * This function makes a bone ID reference-able by a string name.
-  *
-  * @param strBoneName The string that will be associated with the ID.
-  * @param boneId The ID number of the bone that will be referenced by the string.
-  *****************************************************************************/
-
-void CalCoreModel::addBoneHelper(const std::string& strBoneName, int boneId)
-{
-  //Make sure the skeleton has been loaded first
-  if (m_pCoreSkeleton != NULL)
-  {
-    //Map the bone ID to the name
-    m_pCoreSkeleton->mapCoreBoneName(boneId, strBoneName);
-  }
-}
- /*****************************************************************************/
-/** Creates or overwrites a string-to-animation ID mapping
-  *
-  * This function makes an animation ID reference-able by a string name.
-  * Note that we don't verify that the ID is valid because the animation
-  * may be added later.
-  * Also, if there is already a helper with this name, it will be overwritten
-  * without warning.
-  *
-  * @param strAnimName The string that will be associated with the ID.
-  * @param animId The ID number of the animation to be referenced by the string.
-  *****************************************************************************/
-
-void CalCoreModel::addAnimHelper(const std::string& strAnimName, int animId)
-{
-  m_animationHelper[ strAnimName ] = animId;
-}
-
- /*****************************************************************************/
-/** Retrieves the ID of the bone referenced by a string
-  *
-  * This function returns a bone ID
-  *
-  * @param strBoneName A string that is associated with a bone ID number.
-  * @return Returns:
-  *         \li \b -1 if there is no bone ID associated with the input string
-  *         \li \b the ID number of the bone asssociated with the input string
-  *****************************************************************************/
-
-int CalCoreModel::getBoneId(const std::string& strBoneName)
-{
-  if (m_pCoreSkeleton != NULL)
-  {
-    return m_pCoreSkeleton->getCoreBoneId(strBoneName);
-  }
-  return -1;
-}
-
- /*****************************************************************************/
-/** Retrieves the ID of the animation referenced by a string
-  *
-  * This function returns an animation ID
-  *
-  * @param strAnimName A string that is associated with an anim ID number.
-  * @return Returns:
-  *         \li \b -1 if there is no anim ID associated with the input string
-  *         \li \b the ID number of the anim asssociated with the input string
-  *****************************************************************************/
-
-int CalCoreModel::getAnimId(const std::string& strAnimName)
-{
-  if (m_animationHelper.count( strAnimName ) < 1)
-  {
-    return -1;
-  }
-   
-  return m_animationHelper[strAnimName];
 }
 
  /*****************************************************************************/
