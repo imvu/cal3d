@@ -72,7 +72,7 @@ public:
     bool replace = false, float rampValue = 1.0f );
   void calculateState();
   void clearState();
-  bool create(CalCoreBone *pCoreBone);
+  void create(CalCoreBone *pCoreBone);
   void destroy();
   CalCoreBone *getCoreBone();
   void setCoreState();

@@ -178,7 +178,7 @@ public:
    *         \li \b false if an error happend
    *
    *****************************************************************************/
-  virtual bool create(CalModel *pModel) = 0;
+  virtual void create(CalModel *pModel) = 0;
 
   /*****************************************************************************/
   /**
@@ -263,7 +263,7 @@ public:
 // member functions	
 public:
   virtual bool isDefaultMixer() { return true; }
-  virtual bool create(CalModel *pModel);
+  virtual void create(CalModel *pModel);
   virtual void destroy();
   bool executeAction(int id, float delayIn, float delayOut, float weightTarget = 1.0f, bool autoLock=false);
   virtual void updateAnimation(float deltaTime);

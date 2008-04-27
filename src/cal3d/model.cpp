@@ -131,29 +131,16 @@ bool CalModel::attachMesh(int coreMeshId)
 
 bool CalModel::create(CalCoreModel *pCoreModel)
 {
-  if(pCoreModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pCoreModel);
 
   m_pCoreModel = pCoreModel;
 
   // allocate a new skeleton instance
   CalSkeleton *pSkeleton;
   pSkeleton = new CalSkeleton();
-  if(pSkeleton == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return false;
-  }
 
   // create the skeleton from the core skeleton
-  if(!pSkeleton->create(pCoreModel->getCoreSkeleton()))
-  {
-    delete pSkeleton;
-    return false;
-  }
+  pSkeleton->create(pCoreModel->getCoreSkeleton());
 
   m_pSkeleton = pSkeleton;
 
@@ -167,23 +154,8 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   } else
     pMixer = new CalMixer();
   
-  if(pMixer == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    return false;
-  }
-
   // create the mixer from this model
-  if(!pMixer->create(this))
-  {
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    delete pMixer;
-    return false;
-  }
-
+  pMixer->create(this);
   m_pMixer = pMixer;
 
   // Create the morph target mixer from this model
@@ -193,15 +165,6 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   // allocate a new physqiue instance
   CalPhysique *pPhysique;
   pPhysique = new CalPhysique();
-  if(pPhysique == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    m_pMixer->destroy();
-    delete m_pMixer;
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    return false;
-  }
 
   // create the physique from this model
   if(!pPhysique->create(this))
@@ -219,17 +182,6 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   // allocate a new spring system instance
   CalSpringSystem *pSpringSystem;
   pSpringSystem = new CalSpringSystem();
-  if(pSpringSystem == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    m_pPhysique->destroy();
-    delete m_pPhysique;
-    m_pMixer->destroy();
-    delete m_pMixer;
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    return false;
-  }
 
   // create the spring system from this model
   if(!pSpringSystem->create(this))
@@ -249,19 +201,6 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   // allocate a new renderer instance
   CalRenderer *pRenderer;
   pRenderer = new CalRenderer();
-  if(pRenderer == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    m_pSpringSystem->destroy();
-    delete m_pSpringSystem;
-    m_pPhysique->destroy();
-    delete m_pPhysique;
-    m_pMixer->destroy();
-    delete m_pMixer;
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    return false;
-  }
 
   // create the renderer from this model
   if(!pRenderer->create(this))

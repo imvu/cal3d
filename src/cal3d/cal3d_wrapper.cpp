@@ -161,9 +161,9 @@ void CalBone_ClearState(CalBone *self)
   self->clearState();
 }
 
-Boolean CalBone_Create(CalBone *self, CalCoreBone *pCoreBone)
+void CalBone_Create(CalBone *self, CalCoreBone *pCoreBone)
 {
-  return self->create(pCoreBone) ? True : False;
+  return self->create(pCoreBone);
 }
 
 void CalBone_Delete(CalBone *self)
@@ -1206,9 +1206,9 @@ void CalMesh_SetModel(CalMesh *self, CalModel *pModel)
 // CalMixer wrapper functions definition                                      //
 //****************************************************************************//
 
-Boolean CalMixer_Create(CalMixer *self, CalModel *pModel)
+void CalMixer_Create(CalMixer *self, CalModel *pModel)
 {
-  return self->create(pModel) ? True : False;
+  return self->create(pModel);
 }
 
 void CalMixer_Delete(CalMixer *self)
@@ -1641,9 +1641,9 @@ void CalSkeleton_ClearState(CalSkeleton *self)
   self->clearState();
 }
 
-Boolean CalSkeleton_Create(CalSkeleton *self, CalCoreSkeleton *pCoreSkeleton)
+void CalSkeleton_Create(CalSkeleton *self, CalCoreSkeleton *pCoreSkeleton)
 {
-  return self->create(pCoreSkeleton) ? True : False;
+  return self->create(pCoreSkeleton);
 }
 
 void CalSkeleton_Delete(CalSkeleton *self)

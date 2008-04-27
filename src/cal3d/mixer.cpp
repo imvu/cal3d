@@ -463,34 +463,21 @@ CalMixer::stopAction( int coreAnimationId )
 
 
 
-bool CalMixer::create(CalModel *pModel)
+void CalMixer::create(CalModel *pModel)
 {
-
-  // By default, all created animations do automatic sequencing as actions
-  // or cycles.
-  if(pModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pModel);
 
   m_pModel = pModel;
 
   CalCoreModel *pCoreModel;
   pCoreModel = m_pModel->getCoreModel();
-  if(pCoreModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pCoreModel);
 
   // set the animation time/duration values to default
   m_animationTime = 0.0f;
   m_animationDuration = 0.0f;
   m_timeFactor = 1.0f;
   m_numBoneAdjustments = 0;
-
-  return true;
 }
 
 void CalMixer::destroy()

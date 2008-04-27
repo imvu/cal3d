@@ -366,17 +366,10 @@ void CalBone::clearState()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalBone::create(CalCoreBone *pCoreBone)
+void CalBone::create(CalCoreBone *pCoreBone)
 {
-  if(pCoreBone == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
+  assert(pCoreBone);
   m_pCoreBone = pCoreBone;
-
-  return true;
 }
 
  /*****************************************************************************/

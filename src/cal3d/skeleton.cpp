@@ -96,13 +96,9 @@ void CalSkeleton::clearState()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSkeleton::create(CalCoreSkeleton *pCoreSkeleton)
+void CalSkeleton::create(CalCoreSkeleton *pCoreSkeleton)
 {
-  if(pCoreSkeleton == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pCoreSkeleton);
 
   m_pCoreSkeleton = pCoreSkeleton;
 
@@ -120,20 +116,10 @@ bool CalSkeleton::create(CalCoreSkeleton *pCoreSkeleton)
   int boneId;
   for(boneId = 0; boneId < boneCount; ++boneId)
   {
-    CalBone *pBone;
-    pBone = new CalBone();
-    if(pBone == 0)
-    {
-      CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-      return false;
-    }
+    CalBone *pBone = new CalBone();
 
     // create a bone for every core bone
-    if(!pBone->create(vectorCoreBone[boneId]))
-    {
-      delete pBone;
-      return false;
-    }
+    pBone->create(vectorCoreBone[boneId]);
 
     // set skeleton in the bone instance
     pBone->setSkeleton(this);
@@ -141,8 +127,6 @@ bool CalSkeleton::create(CalCoreSkeleton *pCoreSkeleton)
     // insert bone into bone vector
     m_vectorBone.push_back(pBone);
   }
-
-  return true;
 }
 
  /*****************************************************************************/

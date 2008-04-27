@@ -50,7 +50,7 @@ public:
 public:
   void calculateState();
   void clearState();
-  bool create(CalCoreSkeleton *pCoreSkeleton);
+  void create(CalCoreSkeleton *pCoreSkeleton);
   void destroy();
   CalBone *getBone(int boneId);
   CalCoreSkeleton *getCoreSkeleton();

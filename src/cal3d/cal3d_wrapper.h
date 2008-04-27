@@ -173,7 +173,7 @@ extern "C"
   CAL3D_WRAPPER_API void CalBone_BlendState(struct CalBone *self, float weight, struct CalVector *pTranslation, struct CalQuaternion *pRotation);
   CAL3D_WRAPPER_API void CalBone_CalculateState(struct CalBone *self);
   CAL3D_WRAPPER_API void CalBone_ClearState(struct CalBone *self);
-  CAL3D_WRAPPER_API enum Boolean CalBone_Create(struct CalBone *self, struct CalCoreBone *pCoreBone);
+  CAL3D_WRAPPER_API void CalBone_Create(struct CalBone *self, struct CalCoreBone *pCoreBone);
   CAL3D_WRAPPER_API void CalBone_Delete(struct CalBone *self);
   CAL3D_WRAPPER_API void CalBone_Destroy(struct CalBone *self);
   CAL3D_WRAPPER_API struct CalCoreBone *CalBone_GetCoreBone(struct CalBone *self);
@@ -452,7 +452,7 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 
   CAL3D_WRAPPER_API enum Boolean CalMixer_BlendCycle(struct CalMixer *self, int id, float weight, float delay);
   CAL3D_WRAPPER_API enum Boolean CalMixer_ClearCycle(struct CalMixer *self, int id, float delay);
-  CAL3D_WRAPPER_API enum Boolean CalMixer_Create(struct CalMixer *self, struct CalModel *pModel);
+  CAL3D_WRAPPER_API void CalMixer_Create(struct CalMixer *self, struct CalModel *pModel);
   CAL3D_WRAPPER_API void CalMixer_Delete(struct CalMixer *self);
   CAL3D_WRAPPER_API void CalMixer_Destroy(struct CalMixer *self);
   CAL3D_WRAPPER_API enum Boolean CalMixer_ExecuteAction(struct CalMixer *self, int id, float delayIn, float delayOut);
@@ -567,7 +567,7 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 
   CAL3D_WRAPPER_API void CalSkeleton_CalculateState(struct CalSkeleton *self);
   CAL3D_WRAPPER_API void CalSkeleton_ClearState(struct CalSkeleton *self);
-  CAL3D_WRAPPER_API enum Boolean CalSkeleton_Create(struct CalSkeleton *self, struct CalCoreSkeleton *pCoreSkeleton);
+  CAL3D_WRAPPER_API void CalSkeleton_Create(struct CalSkeleton *self, struct CalCoreSkeleton *pCoreSkeleton);
   CAL3D_WRAPPER_API void CalSkeleton_Delete(struct CalSkeleton *self);
   CAL3D_WRAPPER_API void CalSkeleton_Destroy(struct CalSkeleton *self);
   CAL3D_WRAPPER_API struct CalBone *CalSkeleton_GetBone(struct CalSkeleton *self, int boneId);
