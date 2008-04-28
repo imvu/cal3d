@@ -129,7 +129,7 @@ bool CalModel::attachMesh(int coreMeshId)
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalModel::create(CalCoreModel *pCoreModel)
+void CalModel::create(CalCoreModel *pCoreModel)
 {
   assert(pCoreModel);
 
@@ -160,7 +160,7 @@ bool CalModel::create(CalCoreModel *pCoreModel)
 
   // Create the morph target mixer from this model
   m_pMorphTargetMixer = new CalMorphTargetMixer();
-  if(!m_pMorphTargetMixer->create(this)) return false;
+  m_pMorphTargetMixer->create(this);
 
   // allocate a new physqiue instance
   CalPhysique *pPhysique;
@@ -191,8 +191,6 @@ bool CalModel::create(CalCoreModel *pCoreModel)
 
   // initialize the user data
   m_userData = 0;
-
-  return true;
 }
 
  /*****************************************************************************/

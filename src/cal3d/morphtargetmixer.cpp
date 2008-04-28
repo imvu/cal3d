@@ -145,13 +145,9 @@ float CalMorphTargetMixer::getCurrentWeightBase()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalMorphTargetMixer::create(CalModel *pModel)
+void CalMorphTargetMixer::create(CalModel *pModel)
 {
-  if(pModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pModel);
   m_pModel = pModel;
   
   if(pModel->getCoreModel()->getCoreMorphAnimationCount() != 0)
@@ -177,8 +173,6 @@ bool CalMorphTargetMixer::create(CalModel *pModel)
       ++iteratorDuration;
     }
   }
-
-  return true;
 }
 
  /*****************************************************************************/

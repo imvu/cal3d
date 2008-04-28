@@ -51,7 +51,7 @@ public:
   float getCurrentWeight(int id);
   float getCurrentWeightBase();
   int getMorphTargetCount();
-  bool create(CalModel *pModel);
+  void create(CalModel *pModel);
   void destroy();
   void update(float deltaTime);
 };

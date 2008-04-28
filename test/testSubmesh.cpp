@@ -28,7 +28,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     coreModel.setCoreSkeleton(coreSkeleton);
 
     CalModel model;
-    CHECK(model.create(&coreModel));
+    model.create(&coreModel);
     CHECK(model.attachMesh(0));
 
     CalRenderer renderer;
@@ -59,7 +59,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     coreModel.setCoreSkeleton(coreSkeleton);
 
     CalModel model;
-    CHECK(model.create(&coreModel));
+    model.create(&coreModel);
     CHECK(model.attachMesh(0));
 
     CalRenderer renderer;

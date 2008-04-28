@@ -64,7 +64,7 @@ public:
 // member functions
 public:
   bool attachMesh(int coreMeshId);
-  bool create(CalCoreModel *pCoreModel);
+  void create(CalCoreModel *pCoreModel);
   void destroy();
   bool detachMesh(int coreMeshId);
   CalCoreModel *getCoreModel();

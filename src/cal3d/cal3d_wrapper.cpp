@@ -1250,9 +1250,9 @@ Boolean CalModel_AttachMesh(CalModel *self, int coreMeshId)
   return self->attachMesh(coreMeshId) ? True : False;
 }
 
-Boolean CalModel_Create(CalModel *self, CalCoreModel *pCoreModel)
+void CalModel_Create(CalModel *self, CalCoreModel *pCoreModel)
 {
-  return self->create(pCoreModel) ? True : False;
+  return self->create(pCoreModel);
 }
 
 void CalModel_Delete(CalModel *self)
