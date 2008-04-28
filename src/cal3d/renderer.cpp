@@ -104,17 +104,11 @@ bool CalRenderer::beginRendering()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalRenderer::create(CalModel *pModel)
+void CalRenderer::create(CalModel *pModel)
 {
-  if(pModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pModel);
 
   m_pModel = pModel;
-
-  return true;
 }
 
  /*****************************************************************************/

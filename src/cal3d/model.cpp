@@ -167,15 +167,7 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   pPhysique = new CalPhysique();
 
   // create the physique from this model
-  if(!pPhysique->create(this))
-  {
-    m_pMixer->destroy();
-    delete m_pMixer;
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    delete pPhysique;
-    return false;
-  }
+  pPhysique->create(this);
 
   m_pPhysique = pPhysique;
 
@@ -184,17 +176,7 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   pSpringSystem = new CalSpringSystem();
 
   // create the spring system from this model
-  if(!pSpringSystem->create(this))
-  {
-    m_pPhysique->destroy();
-    delete m_pPhysique;
-    m_pMixer->destroy();
-    delete m_pMixer;
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    delete pSpringSystem;
-    return false;
-  }
+  pSpringSystem->create(this);
 
   m_pSpringSystem = pSpringSystem;
 
@@ -203,19 +185,7 @@ bool CalModel::create(CalCoreModel *pCoreModel)
   pRenderer = new CalRenderer();
 
   // create the renderer from this model
-  if(!pRenderer->create(this))
-  {
-    m_pSpringSystem->destroy();
-    delete m_pSpringSystem;
-    m_pPhysique->destroy();
-    delete m_pPhysique;
-    m_pMixer->destroy();
-    delete m_pMixer;
-    m_pSkeleton->destroy();
-    delete m_pSkeleton;
-    delete pRenderer;
-    return false;
-  }
+  pRenderer->create(this);
 
   m_pRenderer = pRenderer;
 

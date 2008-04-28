@@ -956,25 +956,15 @@ int CalPhysique::calculateVerticesNormalsAndTexCoords(CalSubmesh *pSubmesh, floa
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalPhysique::create(CalModel *pModel)
+void CalPhysique::create(CalModel *pModel)
 {
-  if(pModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+  assert(pModel);
 
   m_pModel = pModel;
 
   CalCoreModel *pCoreModel;
   pCoreModel = m_pModel->getCoreModel();
-  if(pCoreModel == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  return true;
+  assert(pCoreModel);
 }
 
  /*****************************************************************************/

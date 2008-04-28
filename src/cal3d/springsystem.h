@@ -52,7 +52,7 @@ public:
 public:
   void calculateForces(CalSubmesh *pSubmesh, float deltaTime);
   void calculateVertices(CalSubmesh *pSubmesh, float deltaTime);
-  bool create(CalModel *pModel);
+  void create(CalModel *pModel);
   void destroy();
   void update(float deltaTime);
   

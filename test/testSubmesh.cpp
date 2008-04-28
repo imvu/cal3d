@@ -32,7 +32,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CHECK(model.attachMesh(0));
 
     CalRenderer renderer;
-    CHECK(renderer.create(&model));
+    renderer.create(&model);
 
     CHECK(renderer.beginRendering());
     renderer.getTextureCoordinates(0, 0);
@@ -63,7 +63,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CHECK(model.attachMesh(0));
 
     CalRenderer renderer;
-    CHECK(renderer.create(&model));
+    renderer.create(&model);
 
     CHECK(renderer.beginRendering());
     renderer.getNormals(0);

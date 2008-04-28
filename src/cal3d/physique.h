@@ -52,7 +52,7 @@ public:
   int calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesAndNormals_slow(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesNormalsAndTexCoords(CalSubmesh *pSubmesh, float *pVertexBuffer,int NumTexCoords=1);  
-  bool create(CalModel *pModel);
+  void create(CalModel *pModel);
   void destroy();
   void update();
   void setNormalization(bool normalize);

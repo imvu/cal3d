@@ -493,7 +493,7 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
   CAL3D_WRAPPER_API int CalPhysique_CalculateVerticesAndNormals(struct CalPhysique *self, struct CalSubmesh *pSubmesh, float *pVertexBuffer);
   CAL3D_WRAPPER_API int CalPhysique_CalculateVerticesNormalsAndTexCoords(struct CalPhysique *self, struct CalSubmesh *pSubmesh, float *pVertexBuffer, int NumTexCoords);
   CAL3D_WRAPPER_API int CalPhysique_CalculateTangentSpaces(struct CalPhysique *self, struct CalSubmesh *pSubmesh, int mapId, float *pTangentSpaceBuffer);
-  CAL3D_WRAPPER_API enum Boolean CalPhysique_Create(struct CalPhysique *self, struct CalModel *pModel);
+  CAL3D_WRAPPER_API void CalPhysique_Create(struct CalPhysique *self, struct CalModel *pModel);
   CAL3D_WRAPPER_API void CalPhysique_Delete(struct CalPhysique *self);
   CAL3D_WRAPPER_API void CalPhysique_Destroy(struct CalPhysique *self);
   CAL3D_WRAPPER_API struct CalPhysique *CalPhysique_New();
@@ -524,7 +524,7 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 //****************************************************************************//
 
   CAL3D_WRAPPER_API enum Boolean CalRenderer_BeginRendering(struct CalRenderer *self);
-  CAL3D_WRAPPER_API enum Boolean CalRenderer_Create(struct CalRenderer *self, struct CalModel *pModel);
+  CAL3D_WRAPPER_API void CalRenderer_Create(struct CalRenderer *self, struct CalModel *pModel);
   CAL3D_WRAPPER_API void CalRenderer_Delete(struct CalRenderer *self);
   CAL3D_WRAPPER_API void CalRenderer_Destroy(struct CalRenderer *self);
   CAL3D_WRAPPER_API void CalRenderer_EndRendering(struct CalRenderer *self);
@@ -588,7 +588,7 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 
   CAL3D_WRAPPER_API void CalSpringSystem_CalculateForces(struct CalSpringSystem *self, struct CalSubmesh *pSubmesh, float deltaTime);
   CAL3D_WRAPPER_API void CalSpringSystem_CalculateVertices(struct CalSpringSystem *self, struct CalSubmesh *pSubmesh, float deltaTime);
-  CAL3D_WRAPPER_API enum Boolean CalSpringSystem_Create(struct CalSpringSystem *self, struct CalModel *pModel);
+  CAL3D_WRAPPER_API void CalSpringSystem_Create(struct CalSpringSystem *self, struct CalModel *pModel);
   CAL3D_WRAPPER_API void CalSpringSystem_Delete(struct CalSpringSystem *self);
   CAL3D_WRAPPER_API void CalSpringSystem_Destroy(struct CalSpringSystem *self);
   CAL3D_WRAPPER_API struct CalSpringSystem *CalSpringSystem_New();

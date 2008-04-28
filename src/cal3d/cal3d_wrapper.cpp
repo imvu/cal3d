@@ -1371,9 +1371,9 @@ int CalPhysique_CalculateTangentSpaces(CalPhysique *self, CalSubmesh *pSubmesh, 
   return self->calculateTangentSpaces(pSubmesh, mapId, pTangentSpaceBuffer);
 }
 
-Boolean CalPhysique_Create(CalPhysique *self, CalModel *pModel)
+void CalPhysique_Create(CalPhysique *self, CalModel *pModel)
 {
-  return self->create(pModel) ? True : False;
+  return self->create(pModel);
 }
 
 void CalPhysique_Delete(CalPhysique *self)
@@ -1468,9 +1468,9 @@ Boolean CalRenderer_BeginRendering(CalRenderer *self)
   return self->beginRendering() ? True : False;
 }
 
-Boolean CalRenderer_Create(CalRenderer *self, CalModel *pModel)
+void CalRenderer_Create(CalRenderer *self, CalModel *pModel)
 {
-  return self->create(pModel) ? True : False;
+  return self->create(pModel);
 }
 
 void CalRenderer_Delete(CalRenderer *self)
@@ -1721,9 +1721,9 @@ void CalSpringSystem_CalculateVertices(CalSpringSystem *self, CalSubmesh *pSubme
   self->calculateVertices(pSubmesh, deltaTime);
 }
 
-Boolean CalSpringSystem_Create(CalSpringSystem *self, CalModel *pModel)
+void CalSpringSystem_Create(CalSpringSystem *self, CalModel *pModel)
 {
-  return self->create(pModel) ? True : False;
+  return self->create(pModel);
 }
 
 void CalSpringSystem_Delete(CalSpringSystem *self)

@@ -29,7 +29,7 @@ public:
 
 public:
   bool beginRendering();
-  bool create(CalModel *pModel);
+  void create(CalModel *pModel);
   void destroy();
   void endRendering();
   void getAmbientColor(unsigned char *pColorBuffer);
