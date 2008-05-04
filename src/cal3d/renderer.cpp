@@ -546,7 +546,7 @@ int CalRenderer::getVertexCount()
 
 bool CalRenderer::isTangentsEnabled(int mapId)
 {
-	return m_pSelectedSubmesh->isTangentsEnabled(mapId);
+    return m_pSelectedSubmesh->isTangentsEnabled(mapId);
 }
 
  /*****************************************************************************/
@@ -684,7 +684,7 @@ int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
   {
     // get the vertex vector of the submesh
     std::vector<CalVector>& vectorVertex = m_pSelectedSubmesh->getVectorVertex();
-	// get the normal vector of the submesh
+    // get the normal vector of the submesh
     std::vector<CalVector>& vectorNormal = m_pSelectedSubmesh->getVectorNormal();
 
 
@@ -693,12 +693,12 @@ int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
     vertexCount = m_pSelectedSubmesh->getVertexCount();
 
     // copy the internal vertex data to the provided vertex buffer
-	for(int i=0; i < vertexCount; ++i)
-	{
-		memcpy(&pVertexBuffer[0], &vectorVertex[i], sizeof(CalVector));		
-		memcpy(&pVertexBuffer[3], &vectorNormal[i], sizeof(CalVector));
-		pVertexBuffer+=6;
-	}
+    for(int i=0; i < vertexCount; ++i)
+    {
+        memcpy(&pVertexBuffer[0], &vectorVertex[i], sizeof(CalVector));		
+        memcpy(&pVertexBuffer[3], &vectorNormal[i], sizeof(CalVector));
+        pVertexBuffer+=6;
+    }
 
     return vertexCount;
   }
@@ -727,65 +727,65 @@ int CalRenderer::getVerticesNormalsAndTexCoords(float *pVertexBuffer,int NumTexC
   {
     // get the vertex vector of the submesh
     std::vector<CalVector>& vectorVertex = m_pSelectedSubmesh->getVectorVertex();
-	// get the normal vector of the submesh
+    // get the normal vector of the submesh
     std::vector<CalVector>& vectorNormal = m_pSelectedSubmesh->getVectorNormal();	
-	// get the texture coordinate vector vector
+    // get the texture coordinate vector vector
     std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = m_pSelectedSubmesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
 
-	int TextureCoordinateCount =(int)vectorvectorTextureCoordinate.size();
-	
-	// check if the map id is valid
+    int TextureCoordinateCount =(int)vectorvectorTextureCoordinate.size();
+    
+    // check if the map id is valid
     if((NumTexCoords < 0) || (NumTexCoords > TextureCoordinateCount))
-	{
-	   if(TextureCoordinateCount!=0)
-	   {
-		   CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-		   return -1;
-	   }
-	}
+    {
+       if(TextureCoordinateCount!=0)
+       {
+           CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+           return -1;
+       }
+    }
 
     // get the number of vertices in the submesh
     int vertexCount;
     vertexCount = m_pSelectedSubmesh->getVertexCount();
 
     // copy the internal vertex data to the provided vertex buffer
-	
-	if(TextureCoordinateCount==0)
-	{
-		for(int vertexId=0; vertexId < vertexCount; ++vertexId)
-		{
-			memcpy(&pVertexBuffer[0], &vectorVertex[vertexId], sizeof(CalVector));
-			memcpy(&pVertexBuffer[3], &vectorNormal[vertexId], sizeof(CalVector));
-			pVertexBuffer+=6+2*NumTexCoords;			
-		}
-	}
-	else
-	{
-		if(NumTexCoords==1)
-		{
-			for(int vertexId=0; vertexId < vertexCount; ++vertexId)
-			{
-				memcpy(&pVertexBuffer[0], &vectorVertex[vertexId], sizeof(CalVector));
-				memcpy(&pVertexBuffer[3], &vectorNormal[vertexId], sizeof(CalVector));
-				memcpy(&pVertexBuffer[6], &vectorvectorTextureCoordinate[0][vertexId], sizeof(CalCoreSubmesh::TextureCoordinate));
-				pVertexBuffer+=8;
-			}
-		}
-	    else
-		{
-			for(int vertexId=0; vertexId < vertexCount; ++vertexId)
-			{
-				memcpy(&pVertexBuffer[0], &vectorVertex[vertexId], sizeof(CalVector));			
-				memcpy(&pVertexBuffer[3], &vectorNormal[vertexId], sizeof(CalVector));
-			    pVertexBuffer+=6;
-				for(int mapId=0; mapId < NumTexCoords; ++mapId)
-				{
-					memcpy(&pVertexBuffer[0], &vectorvectorTextureCoordinate[mapId][vertexId], sizeof(CalCoreSubmesh::TextureCoordinate));
-					pVertexBuffer+=2;
-				}
-			}
-		}		
-	}
+    
+    if(TextureCoordinateCount==0)
+    {
+        for(int vertexId=0; vertexId < vertexCount; ++vertexId)
+        {
+            memcpy(&pVertexBuffer[0], &vectorVertex[vertexId], sizeof(CalVector));
+            memcpy(&pVertexBuffer[3], &vectorNormal[vertexId], sizeof(CalVector));
+            pVertexBuffer+=6+2*NumTexCoords;			
+        }
+    }
+    else
+    {
+        if(NumTexCoords==1)
+        {
+            for(int vertexId=0; vertexId < vertexCount; ++vertexId)
+            {
+                memcpy(&pVertexBuffer[0], &vectorVertex[vertexId], sizeof(CalVector));
+                memcpy(&pVertexBuffer[3], &vectorNormal[vertexId], sizeof(CalVector));
+                memcpy(&pVertexBuffer[6], &vectorvectorTextureCoordinate[0][vertexId], sizeof(CalCoreSubmesh::TextureCoordinate));
+                pVertexBuffer+=8;
+            }
+        }
+        else
+        {
+            for(int vertexId=0; vertexId < vertexCount; ++vertexId)
+            {
+                memcpy(&pVertexBuffer[0], &vectorVertex[vertexId], sizeof(CalVector));			
+                memcpy(&pVertexBuffer[3], &vectorNormal[vertexId], sizeof(CalVector));
+                pVertexBuffer+=6;
+                for(int mapId=0; mapId < NumTexCoords; ++mapId)
+                {
+                    memcpy(&pVertexBuffer[0], &vectorvectorTextureCoordinate[mapId][vertexId], sizeof(CalCoreSubmesh::TextureCoordinate));
+                    pVertexBuffer+=2;
+                }
+            }
+        }		
+    }
 
     return vertexCount;
   }
@@ -837,7 +837,7 @@ bool CalRenderer::selectMeshSubmesh(int meshId, int submeshId)
 
 void CalRenderer::setNormalization(bool normalize)
 { 
-	m_pModel->getPhysique()->setNormalization(normalize); 
+    m_pModel->getPhysique()->setNormalization(normalize); 
 }
 
 
