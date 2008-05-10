@@ -2,7 +2,6 @@ import imvu
 import md5
 import logging
 logger = logging.getLogger("imvu." + __name__)
-import util.timing_samples
 
 import ctypes
 
@@ -42,7 +41,6 @@ def getMaterialInfo(materialBuffer):
     cal3d_dll.CalCoreMaterial_Destroy(material)
     gMaterialInfoCache[cachekey] = materialInfo
     return materialInfo
-getMaterialInfo = util.timing_samples.profiledFunction(getMaterialInfo)
 
 def getMeshInfo(meshBuffer):
     global gMeshInfoCache
@@ -69,4 +67,3 @@ def getMeshInfo(meshBuffer):
     cal3d_dll.CalCoreMesh_Destroy(mesh)
     gMeshInfoCache[cachekey] = result
     return result
-getMeshInfo = util.timing_samples.profiledFunction(getMeshInfo)
