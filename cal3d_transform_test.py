@@ -70,6 +70,8 @@ class Cal3dTransformTest(imvu.test.TestCase):
         return filename
 
     def loadModelWithEverything(self, cfl_name):
+        cfl_name = self.testDataFs.getRealFileSystemPath(cfl_name)
+        
         PRINT = logger.info
         PRINT = lambda *args: None
 
