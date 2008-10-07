@@ -172,7 +172,7 @@ AnimExportParams::AnimExportParams(const char* _skeletonfilepath, INodeTab& _tab
 {
 	int i = 0;
 
-	m_skeletonfilepath	= strdup(_skeletonfilepath);
+	m_skeletonfilepath	= _strdup(_skeletonfilepath);
 	m_startframe		= _startframe;
 	m_endframe			= _endframe;
 	m_frameoffset		= _frameoffset;

@@ -141,7 +141,7 @@ unsigned int CMaxMeshExport::Version()
 MeshMaxscriptExportParams::MeshMaxscriptExportParams(INode* _MeshNode, const char* _SkeletonFilename, int _MaxNumBonesPerVertex, float _WeightThreshold, int _LODCreation, int _springsystem)
 {
 	m_MeshNode				= _MeshNode;
-	m_SkeletonFilename		= strdup(_SkeletonFilename);
+	m_SkeletonFilename		= _strdup(_SkeletonFilename);
 	m_MaxNumBonesPerVertex	= _MaxNumBonesPerVertex;
 	m_WeightThreshold		= _WeightThreshold;
 	m_LODCreation			= _LODCreation;

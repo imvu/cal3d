@@ -126,7 +126,7 @@ void CalLoader::setLoadingMode(int flags)
 CalCoreAnimation *CalLoader::loadCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
 {
   if(strFilename.size() >= 3 &&
-    stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION) == 0)
+    _stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION) == 0)
     return loadXmlCoreAnimation(strFilename, skel);
 
   // open the file
@@ -164,7 +164,7 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(const std::string& strFilename, C
 
 CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(const std::string& strFilename)
 {
-  if(strFilename.size()>= 3 && stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)==0)
     return loadXmlCoreAnimatedMorph(strFilename);
   else {
     std::ifstream file(strFilename.c_str(), std::ios::in | std::ios::binary);
@@ -194,7 +194,7 @@ CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(const std::string& strFil
 CalCoreMaterial *CalLoader::loadCoreMaterial(const std::string& strFilename)
 {
 
-  if(strFilename.size()>= 3 && stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MATERIAL_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MATERIAL_XMLFILE_EXTENSION)==0)
     return loadXmlCoreMaterial(strFilename);
 
   // open the file
@@ -235,7 +235,7 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(const std::string& strFilename)
 CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
 {
 
-  if(strFilename.size()>= 3 && stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
     return loadXmlCoreMesh(strFilename);
 
   // open the file
@@ -276,7 +276,7 @@ CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
 CalCoreSkeleton *CalLoader::loadCoreSkeleton(const std::string& strFilename)
 {
 
-  if(strFilename.size()>= 3 && stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
     return loadXmlCoreSkeletonFromFile(strFilename);
 
   // open the file

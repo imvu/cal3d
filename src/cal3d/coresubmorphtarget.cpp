@@ -205,13 +205,13 @@ CalCoreSubMorphTarget::setName( std::string s )
   char const * dot = strrchr( s2, '.' );
   if( dot ) {
     dot++;
-    if( stricmp( dot, "exclusive" ) == 0 ) {
+    if( _stricmp( dot, "exclusive" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeExclusive;
-    } else if( stricmp( dot, "additive" ) == 0 ) {
+    } else if( _stricmp( dot, "additive" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeAdditive;
-    } else if( stricmp( dot, "clamped" ) == 0 ) {
+    } else if( _stricmp( dot, "clamped" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeClamped;
-    } else if( stricmp( dot, "average" ) == 0 ) {
+    } else if( _stricmp( dot, "average" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeAverage;
     }
   }

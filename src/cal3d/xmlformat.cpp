@@ -63,7 +63,7 @@ static inline bool _ValidateTag( T * element, char const * requiredTag,
     ok = false;
   }
   
-  if(ok && requiredTag && stricmp(element->Value(),requiredTag)!=0)
+  if(ok && requiredTag && _stricmp(element->Value(),requiredTag)!=0)
   {
     ok = false;
   }
@@ -352,13 +352,13 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
 
   TiXmlNode* node;
   TiXmlElement*header = doc.FirstChildElement();
-  if(!header || stricmp(header->Value(),"HEADER")!=0)
+  if(!header || _stricmp(header->Value(),"HEADER")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       return 0;
   }  
   
-  if(stricmp(header->Attribute("MAGIC"),Cal::SKELETON_XMLFILE_EXTENSION)!=0)
+  if(_stricmp(header->Attribute("MAGIC"),Cal::SKELETON_XMLFILE_EXTENSION)!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return false;
@@ -371,7 +371,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
   }
 
   TiXmlElement*skeleton = header->NextSiblingElement();
-  if(!skeleton || stricmp(skeleton->Value(),"SKELETON")!=0)
+  if(!skeleton || _stricmp(skeleton->Value(),"SKELETON")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       return false;
@@ -396,7 +396,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
   TiXmlElement* bone;
   for( bone = skeleton->FirstChildElement();bone;bone = bone->NextSiblingElement() )
   {
-    if(stricmp(bone->Value(),"BONE")!=0)
+    if(_stricmp(bone->Value(),"BONE")!=0)
     {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreSkeleton->destroy();
@@ -423,7 +423,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     // get the translation of the bone
 
     TiXmlElement* translation = bone->FirstChildElement();
-    if(!translation || stricmp( translation->Value(),"TRANSLATION")!=0)
+    if(!translation || _stricmp( translation->Value(),"TRANSLATION")!=0)
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       pCoreSkeleton->destroy();
@@ -456,7 +456,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
       // get the rotation of the bone
 
     TiXmlElement* rotation = translation->NextSiblingElement();
-    if(!rotation || stricmp(rotation->Value(),"ROTATION")!=0)
+    if(!rotation || _stricmp(rotation->Value(),"ROTATION")!=0)
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       pCoreSkeleton->destroy();
@@ -490,7 +490,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
       
     
     TiXmlElement* translationBoneSpace = rotation->NextSiblingElement();
-    if(!rotation || stricmp(translationBoneSpace->Value(),"LOCALTRANSLATION")!=0)
+    if(!rotation || _stricmp(translationBoneSpace->Value(),"LOCALTRANSLATION")!=0)
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       pCoreSkeleton->destroy();
@@ -523,7 +523,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
       // get the bone space rotation of the bone
 
     TiXmlElement* rotationBoneSpace = translationBoneSpace->NextSiblingElement();
-    if(!rotationBoneSpace || stricmp(rotationBoneSpace->Value(),"LOCALROTATION")!=0)
+    if(!rotationBoneSpace || _stricmp(rotationBoneSpace->Value(),"LOCALROTATION")!=0)
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       pCoreSkeleton->destroy();
@@ -556,7 +556,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     // get the parent bone id
 
     TiXmlElement* parent = rotationBoneSpace->NextSiblingElement();
-    if(!parent ||stricmp(parent->Value(),"PARENTID")!=0)
+    if(!parent ||_stricmp(parent->Value(),"PARENTID")!=0)
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       pCoreSkeleton->destroy();
@@ -637,7 +637,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     TiXmlElement* child;
     for( child = parent->NextSiblingElement();child;child = child->NextSiblingElement() )
     {
-      if(stricmp(child->Value(),"CHILDID")!=0)
+      if(_stricmp(child->Value(),"CHILDID")!=0)
       {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         pCoreSkeleton->destroy();
@@ -759,7 +759,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
   TiXmlNode* node;
 
   TiXmlElement*header = doc.FirstChildElement();
-  if(!header || stricmp(header->Value(),"HEADER")!=0)
+  if(!header || _stricmp(header->Value(),"HEADER")!=0)
   {
     str.clear();
     str << "Header element is " << (header ? header->Value() : "<unknown>");
@@ -768,7 +768,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
   }
   
   
-  if(stricmp(header->Attribute("MAGIC"),Cal::ANIMATION_XMLFILE_EXTENSION)!=0)
+  if(_stricmp(header->Attribute("MAGIC"),Cal::ANIMATION_XMLFILE_EXTENSION)!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -781,7 +781,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
   }
 
   TiXmlElement*animation = header->NextSiblingElement();
-  if(!animation || stricmp(animation->Value(),"ANIMATION")!=0)
+  if(!animation || _stricmp(animation->Value(),"ANIMATION")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       return 0;
@@ -817,7 +817,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
   // load all core bones
   for(int trackId = 0; trackId < trackCount; ++trackId)
   {
-    if(!track || stricmp(track->Value(),"TRACK")!=0)
+    if(!track || _stricmp(track->Value(),"TRACK")!=0)
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       pCoreAnimation->destroy();
@@ -881,7 +881,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
     for(keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
     {
       // load the core keyframe
-      if(!keyframe|| stricmp(keyframe->Value(),"KEYFRAME")!=0)
+      if(!keyframe|| _stricmp(keyframe->Value(),"KEYFRAME")!=0)
       {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         pCoreAnimation->destroy();
@@ -931,7 +931,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         delete pCoreTrack;
         return 0;
       }
-      if( stricmp(translation->Value(),"TRANSLATION") ==0) {
+      if( _stricmp(translation->Value(),"TRANSLATION") ==0) {
         node = translation->FirstChild();
         if(!node)
         {
@@ -957,7 +957,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         rotation = rotation->NextSiblingElement();
       }
 
-      if(!rotation || stricmp(rotation->Value(),"ROTATION")!=0)
+      if(!rotation || _stricmp(rotation->Value(),"ROTATION")!=0)
       {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         pCoreAnimation->destroy();
@@ -1096,7 +1096,7 @@ CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
   }
   
   
-  if(stricmp(headerData.magic,Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)!=0)
+  if(_stricmp(headerData.magic,Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     return 0;
@@ -1126,7 +1126,7 @@ CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
 
 
   TiXmlElement*animatedMorph = header->NextSiblingElement();
-  if(!animatedMorph || stricmp(animatedMorph->Value(),"ANIMATION")!=0)
+  if(!animatedMorph || _stricmp(animatedMorph->Value(),"ANIMATION")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreAnimatedMorph->destroy();
@@ -1199,14 +1199,14 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
   TiXmlNode* node;
 
   TiXmlElement*header = doc.FirstChildElement();
-  if(!header || stricmp(header->Value(),"HEADER")!=0)
+  if(!header || _stricmp(header->Value(),"HEADER")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
   }
    
   
-  if(stricmp(header->Attribute("MAGIC"),Cal::MESH_XMLFILE_EXTENSION)!=0)
+  if(_stricmp(header->Attribute("MAGIC"),Cal::MESH_XMLFILE_EXTENSION)!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -1222,7 +1222,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
   bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
 
   TiXmlElement*mesh = header->NextSiblingElement();
-  if(!mesh || stricmp(mesh->Value(),"MESH")!=0)
+  if(!mesh || _stricmp(mesh->Value(),"MESH")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       return 0;
@@ -1253,7 +1253,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
   int submeshId;
   for(submeshId = 0; submeshId < submeshCount; ++submeshId)
   {
-    if(!submesh || stricmp(submesh->Value(),"SUBMESH")!=0)
+    if(!submesh || _stricmp(submesh->Value(),"SUBMESH")!=0)
     {
       pCoreMesh->destroy();
       delete pCoreMesh;
@@ -1377,7 +1377,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 
       TiXmlElement *vertColor = norm->NextSiblingElement();
       TiXmlElement *collapse = 0;
-      if(!vertColor||stricmp(vertColor->Value(),"COLOR")!=0)
+      if(!vertColor||_stricmp(vertColor->Value(),"COLOR")!=0)
       {
         if( hasVertexColors ) {
           pCoreMesh->destroy();
@@ -1428,7 +1428,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
       }
-      if(stricmp(collapse->Value(),"COLLAPSEID")==0)
+      if(_stricmp(collapse->Value(),"COLLAPSEID")==0)
       {
         node = collapse->FirstChild();
         if(!node)
@@ -1453,7 +1453,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         Vertex.collapseId = atoi(collapseid->Value());
 
         TiXmlElement *collapseCount= collapse->NextSiblingElement();
-        if(!collapseCount|| stricmp(collapseCount->Value(),"COLLAPSECOUNT")!=0)
+        if(!collapseCount|| _stricmp(collapseCount->Value(),"COLLAPSECOUNT")!=0)
         {
           pCoreMesh->destroy();
             delete pCoreMesh;
@@ -1502,7 +1502,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         CalCoreSubmesh::TextureCoordinate textureCoordinate;
         // load data of the influence
 #if CAL3D_VALIDATE_XML_TAGS
-        if(!texcoord || stricmp(texcoord->Value(),"TEXCOORD")!=0)
+        if(!texcoord || _stricmp(texcoord->Value(),"TEXCOORD")!=0)
         {
           pCoreMesh->destroy();
           delete pCoreMesh;
@@ -1570,7 +1570,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       for(influenceId = 0; influenceId < influenceCount; ++influenceId)
       {
 #if CAL3D_VALIDATE_XML_TAGS
-        if(!influence ||stricmp(influence->Value(),"INFLUENCE")!=0)
+        if(!influence ||_stricmp(influence->Value(),"INFLUENCE")!=0)
         {
           pCoreMesh->destroy();
           delete pCoreMesh;
@@ -1620,7 +1620,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       {
         CalCoreSubmesh::PhysicalProperty physicalProperty;
         
-        if(!physique || stricmp(physique->Value(),"PHYSIQUE")!=0)
+        if(!physique || _stricmp(physique->Value(),"PHYSIQUE")!=0)
         {
           pCoreMesh->destroy();
           delete pCoreMesh;
@@ -1668,7 +1668,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
    for(springId = 0; springId < springCount; ++springId)
    {
       CalCoreSubmesh::Spring Spring;
-      if(!spring ||stricmp(spring->Value(),"SPRING")!=0)
+      if(!spring ||_stricmp(spring->Value(),"SPRING")!=0)
       {
         pCoreMesh->destroy();
         delete pCoreMesh;
@@ -1690,7 +1690,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 
          TiXmlElement * morph = face;
          for( int morphId = 0; morphId < morphCount; morphId++ ) {
-           if( stricmp(morph->Value(), "MORPH") != 0 ) {
+           if( _stricmp(morph->Value(), "MORPH") != 0 ) {
              pCoreMesh->destroy();
              delete pCoreMesh;
              pCoreSubmesh->destroy();
@@ -1725,7 +1725,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
              Vertex.textureCoords.reserve(textureCoordinateCount);
 
              bool copyOrig = true;
-             if( blendVert && !stricmp(blendVert->Value(), "BLENDVERTEX") ) {
+             if( blendVert && !_stricmp(blendVert->Value(), "BLENDVERTEX") ) {
                int vertId = atoi(blendVert->Attribute("VERTEXID"));
 
                if( vertId == blendVertI ) {
@@ -1792,7 +1792,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       CalCoreSubmesh::Face Face;
 
 #if CAL3D_VALIDATE_XML_TAGS
-      if(!face || stricmp(face->Value(),"FACE")!=0)
+      if(!face || _stricmp(face->Value(),"FACE")!=0)
       {
         pCoreMesh->destroy();
         delete pCoreMesh;
@@ -1895,7 +1895,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   TiXmlNode* node;
 
   TiXmlElement*header = doc.FirstChildElement();
-  if(!header || stricmp(header->Value(),"HEADER")!=0)
+  if(!header || _stricmp(header->Value(),"HEADER")!=0)
   {
     str.clear();
     str << "Header element is " << (header ? header->Value() : "<unknown>");
@@ -1904,7 +1904,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   }
   
   
-  if(stricmp(header->Attribute("MAGIC"),Cal::MATERIAL_XMLFILE_EXTENSION)!=0)
+  if(_stricmp(header->Attribute("MAGIC"),Cal::MATERIAL_XMLFILE_EXTENSION)!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     return 0;
@@ -1917,7 +1917,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   }
 
   TiXmlElement*material = header->NextSiblingElement();
-  if(!material||stricmp(material->Value(),"MATERIAL")!=0)
+  if(!material||_stricmp(material->Value(),"MATERIAL")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       return 0;
@@ -1940,7 +1940,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   }
 
   TiXmlElement* ambient = material->FirstChildElement();
-  if(!ambient ||stricmp(ambient->Value(),"AMBIENT")!=0)
+  if(!ambient ||_stricmp(ambient->Value(),"AMBIENT")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreMaterial->destroy();
@@ -1976,7 +1976,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   ambientColor.alpha = (unsigned char)a; 
 
   TiXmlElement* diffuse = ambient->NextSiblingElement();
-  if(!diffuse || stricmp(diffuse->Value(),"DIFFUSE")!=0)
+  if(!diffuse || _stricmp(diffuse->Value(),"DIFFUSE")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreMaterial->destroy();
@@ -2011,7 +2011,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   
 
   TiXmlElement* specular = diffuse->NextSiblingElement();
-  if(!specular||stricmp(specular->Value(),"SPECULAR")!=0)
+  if(!specular||_stricmp(specular->Value(),"SPECULAR")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreMaterial->destroy();
@@ -2046,7 +2046,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
 
 
   TiXmlElement* shininess = specular->NextSiblingElement();
-  if(!shininess||stricmp(shininess->Value(),"SHININESS")!=0)
+  if(!shininess||_stricmp(shininess->Value(),"SHININESS")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreMaterial->destroy();
@@ -2086,7 +2086,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
 
   for( map = shininess->NextSiblingElement();map;map = map->NextSiblingElement() )
   {
-    if(!map||stricmp(map->Value(),"MAP")!=0)
+    if(!map||_stricmp(map->Value(),"MAP")!=0)
     {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
     pCoreMaterial->destroy();
