@@ -255,18 +255,13 @@ int CalRenderer::getMapCount()
   return pCoreMaterial->getMapCount();
 }
 
- /*****************************************************************************/
-/** Provides access to a specified map user data.
-  *
-  * This function returns the user data stored in the specified map of the
-  * material of the selected mesh/submesh.
-  *
-  * @param mapId The ID of the map.
-  *
-  * @return One of the following values:
-  *         \li the user data stored in the specified map
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
+Cal::UserData CalRenderer::getMaterialUserData()
+{
+  // get the core material
+  CalCoreMaterial *pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
+  if(pCoreMaterial == 0) return 0;
+  return pCoreMaterial->getUserData();
+}
 
 Cal::UserData CalRenderer::getMapUserData(int mapId)
 {
