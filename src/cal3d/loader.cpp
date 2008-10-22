@@ -789,13 +789,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
     return 0;
   }
 
-  // create the core material instance
-  if(!pCoreMaterial->create())
-  {
-    delete pCoreMaterial;
-    return 0;
-  }
-
   // get the ambient color of the core material
   CalCoreMaterial::Color ambientColor;
   if( !dataSrc.readBytes(&ambientColor, sizeof(ambientColor)) ) {
@@ -825,7 +818,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
   if(!dataSrc.ok())
   {
     dataSrc.setError();
-    pCoreMaterial->destroy();
     delete pCoreMaterial;
     return 0;
   }
@@ -848,7 +840,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
   if(!pCoreMaterial->reserve(mapCount))
   {
     CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    pCoreMaterial->destroy();
     delete pCoreMaterial;
     return 0;
   }
@@ -874,7 +865,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
     if(!dataSrc.ok())
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      pCoreMaterial->destroy();
       delete pCoreMaterial;
       return 0;
     }
@@ -931,13 +921,6 @@ CalCoreMesh *CalLoader::loadCoreMesh(CalDataSource& dataSrc)
   if(pCoreMesh == 0)
   {
     CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
-
-  // create the core mesh instance
-  if(!pCoreMesh->create())
-  {
-    delete pCoreMesh;
     return 0;
   }
 
@@ -1341,13 +1324,6 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
     return 0;
   }
 
-  // create the core keyframe instance
-  if(!pCoreKeyframe->create())
-  {
-    delete pCoreKeyframe;
-    return 0;
-  }
-
   // set all attributes of the keyframe
   pCoreKeyframe->setTime(time);
   pCoreKeyframe->setTranslation(CalVector(tx, ty, tz));
@@ -1714,13 +1690,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   if(pCoreSubmesh == 0)
   {
     CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
-
-  // create the core submesh instance
-  if(!pCoreSubmesh->create())
-  {
-    delete pCoreSubmesh;
     return 0;
   }
 

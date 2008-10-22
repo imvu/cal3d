@@ -38,7 +38,6 @@ def getMaterialInfo(materialBuffer):
         mapType = cal3d_dll.CalCoreMaterial_GetMapType(material, i)
         mapName = cal3d_dll.CalCoreMaterial_GetMapFilename(material, i)
         materialInfo['maps'][mapType] = mapName
-    cal3d_dll.CalCoreMaterial_Destroy(material)
     gMaterialInfoCache[cachekey] = materialInfo
     return materialInfo
 
@@ -64,6 +63,5 @@ def getMeshInfo(meshBuffer):
         result[i]['springCount'] = cal3d_dll.CalCoreSubmesh_GetSpringCount(submesh)
         result[i]['vertexCount'] = cal3d_dll.CalCoreSubmesh_GetVertexCount(submesh)
         result[i]['tangentsEnabled'] = cal3d_dll.CalCoreSubmesh_IsTangentsEnabled(submesh)
-    cal3d_dll.CalCoreMesh_Destroy(mesh)
     gMeshInfoCache[cachekey] = result
     return result

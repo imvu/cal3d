@@ -95,11 +95,6 @@ bool CExporter::ExportMaterialFromMaxscriptCall	(const std::string& strFilename)
 
 	// create the core material instance
 	CalCoreMaterial coreMaterial;
-	if(!coreMaterial.create())
-	{
-		SetLastError("Creation of core material instance failed.", __FILE__, __LINE__);
-		return false;
-	}
 
 	// set the ambient color
 	CalCoreMaterial::Color coreColor;
@@ -157,12 +152,8 @@ bool CExporter::ExportMaterialFromMaxscriptCall	(const std::string& strFilename)
 	if(!CalSaver::saveCoreMaterial(strFilename, &coreMaterial))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreMaterial.destroy();
 		return false;
 	}
-
-	// destroy the core mesh
-	coreMaterial.destroy();
 
 	return true;
 }

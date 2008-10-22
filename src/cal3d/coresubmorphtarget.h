@@ -37,8 +37,6 @@ public:
     CalVector position;
     CalVector normal;
     std::vector<CalCoreSubmesh::TextureCoordinate> textureCoords;
-    bool create() { return true; }
-    bool destroy() { return true; }
   } BlendVertex;
   
 // member variables

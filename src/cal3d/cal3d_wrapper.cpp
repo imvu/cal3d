@@ -413,19 +413,9 @@ void CalCoreBone_SetTranslationBoneSpace(CalCoreBone *self, CalVector *pTranslat
 // CalCoreKeyframe wrapper functions definition                               //
 //****************************************************************************//
 
-Boolean CalCoreKeyframe_Create(CalCoreKeyframe *self)
-{
-  return self->create() ? True : False;
-}
-
 void CalCoreKeyframe_Delete(CalCoreKeyframe *self)
 {
   delete self;
-}
-
-void CalCoreKeyframe_Destroy(CalCoreKeyframe *self)
-{
-  self->destroy();
 }
 
 CalQuaternion *CalCoreKeyframe_GetRotation(CalCoreKeyframe *self)
@@ -467,34 +457,10 @@ void CalCoreKeyframe_SetTranslation(CalCoreKeyframe *self, CalVector *pTranslati
 // CalCoreMaterial wrapper functions definition                               //
 //****************************************************************************//
 
-Boolean CalCoreMaterial_Create(CalCoreMaterial *self)
-{
-  return self->create() ? True : False;
-}
-
 void CalCoreMaterial_Delete(CalCoreMaterial *self)
 {
   delete self;
 }
-
-void CalCoreMaterial_Destroy(CalCoreMaterial *self)
-{
-  self->destroy();
-}
-
-/*
-CalCoreMaterial::Color *CalCoreMaterial_GetAmbientColor(CalCoreMaterial *self)
-{
-  return &(self->getAmbientColor());
-}
-*/
-
-/*
-CalCoreMaterial::Color *CalCoreMaterial_GetDiffuseColor(CalCoreMaterial *self)
-{
-  return &(self->getDiffuseColor());
-}
-*/
 
 int CalCoreMaterial_GetMapCount(CalCoreMaterial *self)
 {
@@ -538,11 +504,6 @@ void CalCoreMaterial_SetShininess(CalCoreMaterial *self, float shininess)
 int CalCoreMesh_AddCoreSubmesh(CalCoreMesh *self, CalCoreSubmesh *pCoreSubmesh)
 {
   return self->addCoreSubmesh(pCoreSubmesh);
-}
-
-Boolean CalCoreMesh_Create(CalCoreMesh *self)
-{
-  return self->create() ? True : False;
 }
 
 void CalCoreMesh_Delete(CalCoreMesh *self)
@@ -779,11 +740,6 @@ CalCoreSkeleton *CalCoreSkeleton_New()
 //****************************************************************************//
 // CalCoreSubmesh wrapper functions definition                                //
 //****************************************************************************//
-
-Boolean CalCoreSubmesh_Create(CalCoreSubmesh *self)
-{
-  return self->create() ? True : False;
-}
 
 void CalCoreSubmesh_Delete(CalCoreSubmesh *self)
 {

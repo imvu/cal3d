@@ -50,21 +50,6 @@ CalCoreSubmesh::~CalCoreSubmesh()
   assert( m_vectorSubMorphTargetGroupIndex.empty() );
 }
 
- /*****************************************************************************/
-/** Creates the core submesh instance.
-  *
-  * This function creates the core submesh instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSubmesh::create()
-{
-  return true;
-}
-
 void
 CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray )
 {

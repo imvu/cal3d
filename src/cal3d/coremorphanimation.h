@@ -40,7 +40,6 @@ public:
 // member functions	
 public:
   bool addMorphTarget(int coreMeshID,int morphTargetID);
-  bool create();
   void destroy();
   std::vector<int>& getVectorCoreMeshID();
   std::vector<int>& getVectorMorphTargetID();

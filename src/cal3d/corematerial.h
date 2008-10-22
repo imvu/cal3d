@@ -57,8 +57,6 @@ public:
 
 // member functions
 public:
-  bool create();
-  void destroy();
   Color& getAmbientColor();
   Color& getDiffuseColor();
   int getMapCount() const;

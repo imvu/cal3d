@@ -47,7 +47,6 @@ public:
   typedef std::vector<CalCoreSubmesh *> CalCoreSubmeshVector;
   unsigned int size();
   int addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh);
-  bool create();
   void destroy();
   CalCoreSubmesh *getCoreSubmesh(int id);
   int getCoreSubmeshCount();

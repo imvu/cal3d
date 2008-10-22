@@ -1005,16 +1005,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         return 0;
       }
  
-      // create the core keyframe instance
-      if(!pCoreKeyframe->create())
-      {
-        pCoreAnimation->destroy();
-          delete pCoreAnimation;
-          pCoreTrack->destroy();
-          delete pCoreTrack;
-        delete pCoreKeyframe;
-        return 0;       
-      }
       // set all attributes of the keyframe
       pCoreKeyframe->setTime(time);
       pCoreKeyframe->setTranslation(CalVector(tx, ty, tz));
@@ -1240,13 +1230,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     return 0;
   }
 
-  // create the core mesh instance
-  if(!pCoreMesh->create())
-  {
-    delete pCoreMesh;
-    return 0;
-  }
-
   TiXmlElement*submesh = mesh->FirstChildElement();
 
   // load all core submeshes
@@ -1292,14 +1275,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       return 0;
     }
 
-    // create the core submesh instance
-    if(!pCoreSubmesh->create())
-    {
-      pCoreMesh->destroy();
-      delete pCoreMesh;
-      delete pCoreSubmesh;
-      return 0;
-    }
     pCoreSubmesh->setHasNonWhiteVertexColors( false );
 
     // set the LOD step count
@@ -1932,18 +1907,10 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     return 0;
   }
 
-  // create the core material instance
-  if(!pCoreMaterial->create())
-  {
-    delete pCoreMaterial;
-    return 0;
-  }
-
   TiXmlElement* ambient = material->FirstChildElement();
   if(!ambient ||_stricmp(ambient->Value(),"AMBIENT")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -1953,7 +1920,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!node)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -1961,7 +1927,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!ambientdata)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -1979,7 +1944,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!diffuse || _stricmp(diffuse->Value(),"DIFFUSE")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -1989,7 +1953,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!node)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -1997,7 +1960,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!diffusedata)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2014,7 +1976,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!specular||_stricmp(specular->Value(),"SPECULAR")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2024,7 +1985,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!node)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2032,7 +1992,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!speculardata)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2049,7 +2008,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!shininess||_stricmp(shininess->Value(),"SHININESS")!=0)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2059,7 +2017,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!node)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2067,7 +2024,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   if(!shininessdata)
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
   }
@@ -2089,7 +2045,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     if(!map||_stricmp(map->Value(),"MAP")!=0)
     {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
     }
@@ -2099,7 +2054,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     if(!node)
     {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
     }
@@ -2108,7 +2062,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     if(!mapfile)
     {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-    pCoreMaterial->destroy();
         delete pCoreMaterial;    
         return 0;
     }

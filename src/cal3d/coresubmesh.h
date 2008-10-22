@@ -130,7 +130,6 @@ public:
   typedef std::vector<Influence> VectorInfluence;
   unsigned int size();
   unsigned int sizeWithoutSubMorphTargets();
-  bool create();
   void destroy();
   int getCoreMaterialThreadId();
   int getFaceCount();

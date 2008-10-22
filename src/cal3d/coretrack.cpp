@@ -304,13 +304,6 @@ CalCoreTrack::compress( double translationTolerance, double rotationToleranceDeg
   }
   assert( numKept == numFrames - numFramesEliminated );
 
-  // Delete the eliminated keyframes.
-  for( i = 0; i < numFrames; i++ ) {
-    KeyLink * kl = & keyLinkArray[ i ];
-    if( kl->eliminated_ ) {
-      kl->keyframe_->destroy();
-    }
-  }
   m_keyframes.resize( numKept );
 
   // Update the flag saying whether the translation, which I have loaded, is actually required.
@@ -408,13 +401,6 @@ CalCoreTrack::collapseSequences( double translationTolerance, double rotationTol
   }
   assert( numKept == numFrames - numFramesEliminated );
 
-  // Delete the eliminated keyframes.
-  for( i = 0; i < numFrames; i++ ) {
-    KeyLink * kl = & keyLinkArray[ i ];
-    if( kl->eliminated_ ) {
-      kl->keyframe_->destroy();
-    }
-  }
   m_keyframes.resize( numKept );
 }
 
@@ -501,7 +487,6 @@ void CalCoreTrack::destroy()
   // destroy all core keyframes
   for (unsigned i = 0; i < m_keyframes.size(); ++i)
   {
-    m_keyframes[i]->destroy();
     delete m_keyframes[i];
   }
   m_keyframes.clear();

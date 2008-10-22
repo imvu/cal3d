@@ -223,16 +223,6 @@ OutputDebugString(str);
 					return false;
 				}
 
-				// create the core keyframe instance
-				if(!pCoreKeyframe->create())
-				{
-					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-					delete pCoreKeyframe;
-					coreAnimation.destroy();
-					m_pInterface->StopProgressInfo();
-					return false;
-				}
-
 				// set the frame time
 				pCoreKeyframe->setTime((float)outputFrame / (float)sheet.GetFps() + wrapTime);
 
@@ -515,12 +505,6 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
 
 	// create the core material instance
 	CalCoreMaterial coreMaterial;
-	if(!coreMaterial.create())
-	{
-		SetLastError("Creation of core material instance failed.", __FILE__, __LINE__);
-		return false;
-	}
-
 	// set the ambient color
 	CalCoreMaterial::Color coreColor;
 	float color[4];
@@ -578,12 +562,8 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
 	if(!CalSaver::saveCoreMaterial(strFilename, &coreMaterial))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreMaterial.destroy();
 		return false;
 	}
-
-	// destroy the core mesh
-	coreMaterial.destroy();
 
 	return true;
 }
@@ -616,11 +596,6 @@ bool CExporter::ExportMesh(const std::string& strFilename)
 
 	// create the core mesh instance
 	CalCoreMesh coreMesh;
-        if(!coreMesh.create(  ))
-        {
-          SetLastError("Creation of core mesh instance failed.", __FILE__, __LINE__);
-          return false;
-        }
 
         CalVector zero;
         bool r = meshCandidateToCoreMesh(meshCandidate, coreMesh, zero);
@@ -648,12 +623,6 @@ bool CExporter::ExportMesh(const std::string& strFilename)
           }
           
           CalCoreMesh morphCoreMesh;
-          if(!morphCoreMesh.create())
-          {
-            SetLastError("Creation of core mesh instance failed.", __FILE__, __LINE__);
-			coreMesh.destroy();
-            return false;
-          }
 
           CalVector trans;
           CalQuaternion rot;
@@ -721,16 +690,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 			if(pCoreSubmesh == 0)
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				coreMesh.destroy();
-				m_pInterface->StopProgressInfo();
-				return false;
-			}
-
-			// create the core submesh instance
-			if(!pCoreSubmesh->create())
-			{
-				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-				delete pCoreSubmesh;
 				coreMesh.destroy();
 				m_pInterface->StopProgressInfo();
 				return false;

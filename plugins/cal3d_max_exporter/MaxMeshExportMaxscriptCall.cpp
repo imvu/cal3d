@@ -156,11 +156,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 
 	// create the core mesh instance
 	CalCoreMesh coreMesh;
-	if(!coreMesh.create())
-	{
-		SetLastError("Creation of core mesh instance failed.", __FILE__, __LINE__);
-		return false;
-	}
 
 	// get the submesh candidate vector
 	std::vector<CSubmeshCandidate *> const & vectorSubmeshCandidate = meshCandidate.GetVectorSubmeshCandidate();
@@ -190,16 +185,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			if(pCoreSubmesh == 0)
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				coreMesh.destroy();
-				m_pInterface->StopProgressInfo();
-				return false;
-			}
-
-			// create the core submesh instance
-			if(!pCoreSubmesh->create())
-			{
-				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-				delete pCoreSubmesh;
 				coreMesh.destroy();
 				m_pInterface->StopProgressInfo();
 				return false;

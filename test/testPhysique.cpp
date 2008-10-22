@@ -36,10 +36,8 @@ CalCoreSkeleton * createTestCoreSkeleton(int numBones) {
 
 CalCoreMesh * createTestCoreMesh() {
     CalCoreSubmesh * coreSubMesh = new CalCoreSubmesh();
-    coreSubMesh->create();
     
     CalCoreMesh * coreMesh = new CalCoreMesh();
-    coreMesh->create();
     coreMesh->addCoreSubmesh(coreSubMesh);
     return coreMesh;
 }

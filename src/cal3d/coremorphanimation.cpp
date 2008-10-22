@@ -61,21 +61,6 @@ bool CalCoreMorphAnimation::addMorphTarget(int coreMeshID,int morphTargetID)
 }
 
  /*****************************************************************************/
-/** Creates the core morph animation instance.
-  *
-  * This function creates the core morph animation instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreMorphAnimation::create()
-{
-  return true;
-}
-
- /*****************************************************************************/
 /** Destroys the core morph animation instance.
   *
   * This function destroys all data stored in the core morph animation instance 

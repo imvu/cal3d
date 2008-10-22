@@ -248,16 +248,6 @@ OutputDebugString(str);
 					return false;
 				}
 
-				// create the core keyframe instance
-				if(!pCoreKeyframe->create())
-				{
-					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-					delete pCoreKeyframe;
-					coreAnimation.destroy();
-					m_pInterface->StopProgressInfo();
-					return false;
-				}
-
 				// set the frame time
 				pCoreKeyframe->setTime((float)outputFrame / (float)param->m_framerate + wrapTime);
 

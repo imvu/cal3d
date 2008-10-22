@@ -394,7 +394,6 @@ void CalCoreModel::destroy()
   std::vector<CalCoreMaterial *>::iterator iteratorCoreMaterial;
   for(iteratorCoreMaterial = m_vectorCoreMaterial.begin(); iteratorCoreMaterial != m_vectorCoreMaterial.end(); ++iteratorCoreMaterial)
   {
-    (*iteratorCoreMaterial)->destroy();
     delete (*iteratorCoreMaterial);
   }
   m_vectorCoreMaterial.clear();

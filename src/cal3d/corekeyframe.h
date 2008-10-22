@@ -46,9 +46,7 @@ public:
   static unsigned int numCalCoreKeyframes();
   static unsigned int numCalCoreKeyframeBytes();
 
-  bool create();
   unsigned int size();
-  void destroy();
   const CalQuaternion& getRotation();
   float getTime();
   const CalVector& getTranslation();

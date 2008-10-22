@@ -59,32 +59,6 @@ CalCoreKeyframe::~CalCoreKeyframe()
 }
 
  /*****************************************************************************/
-/** Creates the core keyframe instance.
-  *
-  * This function creates the core keyframe instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreKeyframe::create()
-{
-  return true;
-}
-
- /*****************************************************************************/
-/** Destroys the core keyframe instance.
-  *
-  * This function destroys all data stored in the core keyframe instance and
-  * frees all allocated memory.
-  *****************************************************************************/
-
-void CalCoreKeyframe::destroy()
-{
-}
-
- /*****************************************************************************/
 /** Returns the rotation.
   *
   * This function returns the rotation of the core keyframe instance.

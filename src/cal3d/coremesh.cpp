@@ -77,21 +77,6 @@ int CalCoreMesh::addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh)
 }
 
  /*****************************************************************************/
-/** Creates the core mesh instance.
-  *
-  * This function creates the core mesh instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreMesh::create()
-{
-  return true;
-}
-
- /*****************************************************************************/
 /** Destroys the core mesh instance.
   *
   * This function destroys all data stored in the core mesh instance and frees
