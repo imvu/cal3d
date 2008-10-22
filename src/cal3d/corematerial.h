@@ -39,7 +39,6 @@ public:
   {
     std::string strFilename;
     std::string mapType;
-    Cal::UserData userData;
   } Map;
 
 // member variables
@@ -65,7 +64,6 @@ public:
   int getMapCount() const;
   const std::string& getMapFilename(int mapId) const;
   const std::string& getMapType(int mapId) const;
-  Cal::UserData getMapUserData(int mapId) const;
   float getShininess();
   Color& getSpecularColor();
   Cal::UserData getUserData();
@@ -74,7 +72,6 @@ public:
   void setAmbientColor(const Color& ambientColor);
   void setDiffuseColor(const Color& diffuseColor);
   bool setMap(int mapId, const Map& map);
-  bool setMapUserData(int mapId, Cal::UserData userData);
   void setShininess(float shininess);
   void setSpecularColor(const Color& specularColor);
   void setUserData(Cal::UserData userData);

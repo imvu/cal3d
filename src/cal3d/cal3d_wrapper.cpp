@@ -374,11 +374,6 @@ CalVector *CalCoreBone_GetTranslationBoneSpace(CalCoreBone *self)
   return &(const_cast<CalVector&>(self->getTranslationBoneSpace()));
 }
 
-CalUserData CalCoreBone_GetUserData(CalCoreBone *self)
-{
-  return self->getUserData();
-}
-
 CalCoreBone *CalCoreBone_New()
 {
   return new CalCoreBone();
@@ -412,11 +407,6 @@ void CalCoreBone_SetTranslation(CalCoreBone *self, CalVector *pTranslation)
 void CalCoreBone_SetTranslationBoneSpace(CalCoreBone *self, CalVector *pTranslation)
 {
   self->setTranslationBoneSpace(*pTranslation);
-}
-
-void CalCoreBone_SetUserData(CalCoreBone *self, CalUserData userData)
-{
-  self->setUserData(userData);
 }
 
 //****************************************************************************//
@@ -521,34 +511,10 @@ char *CalCoreMaterial_GetMapType(CalCoreMaterial *self, int mapId)
   return const_cast<char *>(self->getMapType(mapId).c_str());
 }
 
-CalUserData CalCoreMaterial_GetMapUserData(CalCoreMaterial *self, int mapId)
-{
-  return self->getMapUserData(mapId);
-}
-
 float CalCoreMaterial_GetShininess(CalCoreMaterial *self)
 {
   return self->getShininess();
 }
-
-/*
-CalCoreMaterial::Color *CalCoreMaterial_GetSpecularColor(CalCoreMaterial *self)
-{
-  return &(self->getSpecularColor());
-}
-*/
-
-CalUserData CalCoreMaterial_GetUserData(CalCoreMaterial *self)
-{
-  return self->getUserData();
-}
-
-/*
-std::vector<Map>& CalCoreMaterial_GetVectorMap(CalCoreMaterial *self)
-{
-  return self->getVectorMap();
-}
-*/
 
 CalCoreMaterial *CalCoreMaterial_New()
 {
@@ -560,47 +526,9 @@ Boolean CalCoreMaterial_Reserve(CalCoreMaterial *self, int mapCount)
   return self->reserve(mapCount) ? True : False;
 }
 
-/*
-void CalCoreMaterial_SetAmbientColor(CalCoreMaterial *self, CalCoreMaterial::Color *pAmbientColor)
-{
-  return self->setAmbientColor(*pAmbientColor);
-}
-*/
-
-/*
-void CalCoreMaterial_SetDiffuseColor(CalCoreMaterial *self, CalCoreMaterial::Color *pDiffuseColor)
-{
-  self->setDiffuseColor(*pDiffuseColor);
-}
-*/
-
-/*
-Boolean CalCoreMaterial_SetMap(CalCoreMaterial *self, int mapId, CalCoreMaterial::Map *pMap)
-{
-  return self->setMap(mapId, *pMap) ? True : False;
-}
-*/
-
-Boolean CalCoreMaterial_SetMapUserData(CalCoreMaterial *self, int mapId, CalUserData userData)
-{
-  return self->setMapUserData(mapId, userData) ? True : False;
-}
-
 void CalCoreMaterial_SetShininess(CalCoreMaterial *self, float shininess)
 {
   self->setShininess(shininess);
-}
-
-/*
-void CalCoreMaterial_SetSpecularColor(CalCoreMaterial *self, CalCoreMaterial::Color *pSpecularColor)
-{
-  self->setSpecularColor(*pSpecularColor);
-}
-*/
-
-void CalCoreMaterial_SetUserData(CalCoreMaterial *self, CalUserData userData)
-{
-  self->setUserData(userData);
 }
 
 //****************************************************************************//
@@ -728,11 +656,6 @@ CalCoreSkeleton *CalCoreModel_GetCoreSkeleton(CalCoreModel *self)
   return self->getCoreSkeleton();
 }
 
-CalUserData CalCoreModel_GetUserData(CalCoreModel *self)
-{
-  return self->getUserData();
-}
-
 int CalCoreModel_LoadCoreAnimation(CalCoreModel *self, char *strFilename)
 {
   return self->loadCoreAnimation(strFilename);
@@ -791,11 +714,6 @@ Boolean CalCoreModel_SetCoreMaterialId(CalCoreModel *self, int coreMaterialThrea
 void CalCoreModel_SetCoreSkeleton(CalCoreModel *self, CalCoreSkeleton *pCoreSkeleton)
 {
   self->setCoreSkeleton(pCoreSkeleton);
-}
-
-void CalCoreModel_SetUserData(CalCoreModel *self, CalUserData userData)
-{
-  self->setUserData(userData);
 }
 
 //****************************************************************************//
@@ -1305,11 +1223,6 @@ CalSpringSystem *CalModel_GetSpringSystem(CalModel *self)
   return self->getSpringSystem();
 }
 
-CalUserData CalModel_GetUserData(CalModel *self)
-{
-  return self->getUserData();
-}
-
 /*
 std::vector<CalMesh *>& CalModel_GetVectorMesh(CalModel *self)
 {
@@ -1330,16 +1243,6 @@ void CalModel_SetLodLevel(CalModel *self, float lodLevel)
 void CalModel_SetMaterialSet(CalModel *self, int setId)
 {
   self->setMaterialSet(setId);
-}
-
-void CalModel_SetUserData(CalModel *self, CalUserData userData)
-{
-  self->setUserData(userData);
-}
-
-void CalModel_Update(CalModel *self, float deltaTime)
-{
-  self->update(deltaTime);
 }
 
 //****************************************************************************//
@@ -1511,11 +1414,6 @@ int CalRenderer_GetFaces(CalRenderer *self, CalIndex *pFaceBuffer)
 int CalRenderer_GetMapCount(CalRenderer *self)
 {
   return self->getMapCount();
-}
-
-CalUserData CalRenderer_GetMapUserData(CalRenderer *self, int mapId)
-{
-  return (CalUserData)self->getMapUserData(mapId);
 }
 
 int CalRenderer_GetMeshCount(CalRenderer *self)

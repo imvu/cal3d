@@ -48,7 +48,15 @@ shared_ptr<CalModel> createTestModel(shared_ptr<CalCoreModel> coreModel) {
     shared_ptr<CalModel> model(new CalModel(), &caldestroy<CalModel>);
     model->create(coreModel.get());
     CHECK(model->attachMesh(0));
-    model->update(0.0f); // This sets up the transforms for the skeleton's bones so that we get vertex data out of the pipeline
+
+    // This sets up the transforms for the skeleton's bones so that we get vertex data out of the pipeline
+    model->getMixer()->updateAnimation(0.0f);
+    model->getMixer()->updateSkeleton();
+    // std::vector<CalMesh *>::iterator iteratorVectorMesh = m_vectorMesh.begin();
+    // m_pMorpher->update(...);
+    //m_pMorphTargetMixer->update(deltaTime);
+    //m_pPhysique->update();
+    //m_pSpringSystem->update(deltaTime);
     return model;
 }
 

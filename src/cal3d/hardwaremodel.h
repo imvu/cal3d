@@ -8,32 +8,14 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_HARDWAREMODEL_H
-#define CAL_HARDWAREMODEL_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/coresubmesh.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalCoreModel;
 class CalSkeleton;
 class CalCoreMaterial;
-
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
-/*****************************************************************************/
-/** The hardware model class.
-*****************************************************************************/
 
 class CAL3D_API CalHardwareModel
 {
@@ -120,9 +102,7 @@ private:
 
 		int getTotalFaceCount();
 		int getTotalVertexCount();		
-	
-		Cal::UserData getMapUserData(int mapId);
-		
+			
 		bool selectHardwareMesh(int meshId);  
 		
 	private:
@@ -131,7 +111,3 @@ private:
 		int  addBoneIndice(CalHardwareMesh &hardwareMesh, int Indice, int maxBonesPerMesh);  
 		
 };
-
-#endif
-
-//****************************************************************************//

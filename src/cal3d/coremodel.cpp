@@ -40,7 +40,7 @@ static unsigned int const CalCoreModelMagic = 0x77884455;
   *****************************************************************************/
 
 CalCoreModel::CalCoreModel()
-  : m_pCoreSkeleton(0), m_userData(0)
+  : m_pCoreSkeleton(0)
 {
   m_magic = CalCoreModelMagic;
 }
@@ -711,19 +711,6 @@ CalCoreSkeleton *CalCoreModel::getCoreSkeleton()
 }
 
  /*****************************************************************************/
-/** Provides access to the user data.
-  *
-  * This function returns the user data stored in the core model instance.
-  *
-  * @return The user data stored in the core model instance.
-  *****************************************************************************/
-
-Cal::UserData CalCoreModel::getUserData()
-{
-  return m_userData;
-}
-
- /*****************************************************************************/
 /** Loads a core animation.
   *
   * This function loads a core animation from a file.
@@ -1084,19 +1071,6 @@ void CalCoreModel::setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton)
   }
 
   m_pCoreSkeleton = pCoreSkeleton;
-}
-
- /*****************************************************************************/
-/** Stores user data.
-  *
-  * This function stores user data in the core model instance.
-  *
-  * @param userData The user data that should be stored.
-  *****************************************************************************/
-
-void CalCoreModel::setUserData(Cal::UserData userData)
-{
-  m_userData = userData;
 }
 
  /*****************************************************************************/

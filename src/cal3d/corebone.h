@@ -8,9 +8,7 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREBONE_H
-#define CAL_COREBONE_H
-
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/matrix.h"
@@ -55,14 +53,12 @@ public:
   const CalVector& getTranslation();
   const CalVector& getTranslationAbsolute();
   const CalVector& getTranslationBoneSpace();
-  Cal::UserData getUserData();
   void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
   void setParentId(int parentId);
   void setRotation(const CalQuaternion& rotation);
   void setRotationBoneSpace(const CalQuaternion& rotation);
   void setTranslation(const CalVector& translation);
   void setTranslationBoneSpace(const CalVector& translation);
-  void setUserData(Cal::UserData userData);
 
   void calculateBoundingBox(CalCoreModel * pCoreModel);
   CalBoundingBox & getBoundingBox();
@@ -87,7 +83,6 @@ private:
   CalQuaternion m_rotationAbsolute;
   CalVector m_translationBoneSpace;
   CalQuaternion m_rotationBoneSpace;
-  Cal::UserData m_userData;
 
   CalBoundingBox m_boundingBox;
   CalVector m_boundingPosition[6];
@@ -96,7 +91,3 @@ private:
   CalVector m_lightColor;
   CalLightType m_lightType;
 };
-
-#endif
-
-//****************************************************************************//

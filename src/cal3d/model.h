@@ -8,20 +8,11 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_MODEL_H
-#define CAL_MODEL_H
+#pragma once
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
-
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalCoreModel;
 class CalSkeleton;
@@ -32,14 +23,6 @@ class CalPhysique;
 class CalSpringSystem;
 class CalRenderer;
 class CalMesh;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The model class.
-  *****************************************************************************/
 
 class CAL3D_API CalModel
 {
@@ -52,14 +35,12 @@ protected:
   CalPhysique *m_pPhysique;
   CalSpringSystem *m_pSpringSystem;
   CalRenderer *m_pRenderer;
-  Cal::UserData m_userData;
   std::vector<CalMesh *> m_vectorMesh;
-  CalBoundingBox m_boundingBox;
 
 // constructors/destructor
 public: 
   CalModel();
-  virtual ~CalModel();
+  ~CalModel();
 
 // member functions
 public:
@@ -77,16 +58,9 @@ public:
   CalRenderer *getRenderer();
   CalSkeleton *getSkeleton();
   CalSpringSystem *getSpringSystem();
-  CalBoundingBox & getBoundingBox(bool precision = false);
-  Cal::UserData getUserData();
   std::vector<CalMesh *>& getVectorMesh();
   void setLodLevel(float lodLevel);
   void setMaterialSet(int setId);
-  void setUserData(Cal::UserData userData);
-  void update(float deltaTime);
+  //void update(float deltaTime);
   void disableInternalData();
 };
-
-#endif
-
-//****************************************************************************//

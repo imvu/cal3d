@@ -2129,8 +2129,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
   for (unsigned int mapId=0; mapId < MatFileName.size(); ++mapId)
   {
     CalCoreMaterial::Map Map;
-    // initialize the user data
-    Map.userData = 0;
 
     Map.strFilename= MatFileName[mapId];    
     Map.mapType = MatTypes[mapId];

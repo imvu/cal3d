@@ -159,31 +159,6 @@ const std::string& CalCoreMaterial::getMapType(int mapId) const
 }
 
  /*****************************************************************************/
-/** Provides access to a specified map user data.
-  *
-  * This function returns the user data stored in the specified map of the core
-  * material instance.
-  *
-  * @param mapId The ID of the map.
-  *
-  * @return One of the following values:
-  *         \li the user data stored in the specified map
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-Cal::UserData CalCoreMaterial::getMapUserData(int mapId) const
-{
-  // check if the map id is valid
-  if((mapId < 0) || (mapId >= (int)m_vectorMap.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
-  }
-
-  return m_vectorMap[mapId].userData;
-}
-
- /*****************************************************************************/
 /** Returns the shininess factor.
   *
   * This function returns the shininess factor of the core material instance.
@@ -307,29 +282,6 @@ bool CalCoreMaterial::setMap(int mapId, const Map& map)
 }
 
  /*****************************************************************************/
-/** Stores specified map user data.
-  *
-  * This function stores user data in a specified map of the core material
-  * instance.
-  *
-  * @param mapId  The ID of the map.
-  * @param userData The user data that should be stored.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreMaterial::setMapUserData(int mapId, Cal::UserData userData)
-{
-  if((mapId < 0) || (mapId >= (int)m_vectorMap.size())) return false;
-
-  m_vectorMap[mapId].userData = userData;
-
-  return true;
-}
-
- /*****************************************************************************/
 /** Sets the shininess factor.
   *
   * This function sets the shininess factor of the core material instance.
@@ -355,17 +307,7 @@ void CalCoreMaterial::setSpecularColor(const CalCoreMaterial::Color& specularCol
   m_specularColor = specularColor;
 }
 
- /*****************************************************************************/
-/** Stores user data.
-  *
-  * This function stores user data in the core material instance.
-  *
-  * @param userData The user data that should be stored.
-  *****************************************************************************/
-
 void CalCoreMaterial::setUserData(Cal::UserData userData)
 {
   m_userData = userData;
 }
-
-//****************************************************************************//

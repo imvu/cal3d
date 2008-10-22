@@ -27,7 +27,6 @@
 CalCoreBone::CalCoreBone()
   : m_pCoreSkeleton(0)
   , m_parentId(-1)
-  , m_userData(0)
   , m_boundingBoxPrecomputed(false)
 {
 }
@@ -269,19 +268,6 @@ const CalVector& CalCoreBone::getTranslationBoneSpace()
 }
 
  /*****************************************************************************/
-/** Provides access to the user data.
-  *
-  * This function returns the user data stored in the core bone instance.
-  *
-  * @return The user data stored in the core bone instance.
-  *****************************************************************************/
-
-Cal::UserData CalCoreBone::getUserData()
-{
-  return m_userData;
-}
-
- /*****************************************************************************/
 /** Sets the core skeleton.
   *
   * This function sets the core skeleton to which the core bone instance is
@@ -378,18 +364,6 @@ void CalCoreBone::setTranslationBoneSpace(const CalVector& translation)
   m_translationBoneSpace = translation;
 }
 
- /*****************************************************************************/
-/** Stores user data.
-  *
-  * This function stores user data in the core bone instance.
-  *
-  * @param userData The user data that should be stored.
-  *****************************************************************************/
-
-void CalCoreBone::setUserData(Cal::UserData userData)
-{
-  m_userData = userData;
-}
  /*****************************************************************************/
 /** Calculates the bounding box.
   *

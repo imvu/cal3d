@@ -39,7 +39,7 @@
 
 CalModel::CalModel()
   :  m_pCoreModel(0), m_pSkeleton(0), m_pMixer(0), m_pPhysique(0), 
-     m_pSpringSystem(0), m_pRenderer(0), m_userData(0), m_pMorphTargetMixer(0)
+     m_pSpringSystem(0), m_pRenderer(0), m_pMorphTargetMixer(0)
 {
 }
 
@@ -188,9 +188,6 @@ void CalModel::create(CalCoreModel *pCoreModel)
   pRenderer->create(this);
 
   m_pRenderer = pRenderer;
-
-  // initialize the user data
-  m_userData = 0;
 }
 
  /*****************************************************************************/
@@ -513,96 +510,6 @@ CalSpringSystem *CalModel::getSpringSystem()
 }
 
  /*****************************************************************************/
-/** Returns the global bounding box of the model.
-  *
-  * This function returns the global bounding box of the model.
-  *
-  * @param precision : indicate if the function need to compute a 
-  *        correct bounding box
-  *
-  * @return bounding box.
-  *****************************************************************************/
-
-
-CalBoundingBox & CalModel::getBoundingBox(bool precision)
-{
-	CalVector v;
-	v = CalVector(1.0f,0.0f,0.0f);	
-	m_boundingBox.plane[0].setNormal(v);
-	v = CalVector(-1.0f,0.0f,0.0f);	
-	m_boundingBox.plane[1].setNormal(v);
-	v = CalVector(0.0f,1.0f,0.0f);	
-	m_boundingBox.plane[2].setNormal(v);
-	v = CalVector(0.0f,-1.0f,0.0f);	
-	m_boundingBox.plane[3].setNormal(v);
-	v = CalVector(0.0f,0.0f,1.0f);	
-	m_boundingBox.plane[4].setNormal(v);
-	v = CalVector(0.0f,0.0f,-1.0f);	
-	m_boundingBox.plane[5].setNormal(v);
-
-	if(precision)
-		m_pSkeleton->calculateBoundingBoxes();
-
-	
-	std::vector<CalBone *> & vectorBone =  m_pSkeleton->getVectorBone();
-		
-	std::vector<CalBone *>::iterator iteratorBone;
-	for(iteratorBone = vectorBone.begin(); iteratorBone != vectorBone.end(); ++iteratorBone)
-	{
-		// If it's just an approximation that are needed then
-		// we just compute the bounding box from the skeleton
-
-		if(!precision || !(*iteratorBone)->getCoreBone()->isBoundingBoxPrecomputed())
-		{
-			
-			CalVector translation = (*iteratorBone)->getTranslationAbsolute();
-			
-			int planeId;
-			for(planeId = 0; planeId < 6; ++planeId)
-			{
-				if(m_boundingBox.plane[planeId].eval(translation) < 0.0f)
-				{
-					m_boundingBox.plane[planeId].setPosition(translation);
-				}
-			}
-		}
-		else
-		{
-			CalBoundingBox localBoundingBox = (*iteratorBone)->getBoundingBox();
-			CalVector points[8];
-			localBoundingBox.computePoints(points);
-			
-			for(int i=0; i < 8; i++)
-			{				
-				int planeId;
-				for(planeId = 0; planeId < 6; ++planeId)
-				{
-					if(m_boundingBox.plane[planeId].eval(points[i]) < 0.0f)
-					{
-						m_boundingBox.plane[planeId].setPosition(points[i]);
-					}
-				}
-			}				
-		}
-	}
-	
-	return m_boundingBox;
-}
-
- /*****************************************************************************/
-/** Provides access to the user data.
-  *
-  * This function returns the user data stored in the model instance.
-  *
-  * @return The user data stored in the model instance.
-  *****************************************************************************/
-
-Cal::UserData CalModel::getUserData()
-{
-  return m_userData;
-}
-
- /*****************************************************************************/
 /** Returns the mesh vector.
   *
   * This function returns the vector that contains all attached meshes of the
@@ -652,38 +559,6 @@ void CalModel::setMaterialSet(int setId)
     // set the material set in the mesh
     (*iteratorMesh)->setMaterialSet(setId);
   }
-}
-
- /*****************************************************************************/
-/** Stores user data.
-  *
-  * This function stores user data in the model instance.
-  *
-  * @param userData The user data that should be stored.
-  *****************************************************************************/
-
-void CalModel::setUserData(Cal::UserData userData)
-{
-  m_userData = userData;
-}
-
- /*****************************************************************************/
-/** Updates the model instance.
-  *
-  * This function updates the model instance for a given amount of time.
-  *
-  * @param deltaTime The elapsed time in seconds since the last update.
-  *****************************************************************************/
-
-void CalModel::update(float deltaTime)
-{
-  m_pMixer->updateAnimation(deltaTime);
-  m_pMixer->updateSkeleton();
-  // std::vector<CalMesh *>::iterator iteratorVectorMesh = m_vectorMesh.begin();
-  // m_pMorpher->update(...);
-  m_pMorphTargetMixer->update(deltaTime);
-  m_pPhysique->update();
-  m_pSpringSystem->update(deltaTime);
 }
 
 /*****************************************************************************/

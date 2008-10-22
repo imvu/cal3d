@@ -870,9 +870,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
       map.mapType = "";
     }
     
-    // initialize the user data
-    map.userData = 0;
-
     // check if an error happened
     if(!dataSrc.ok())
     {

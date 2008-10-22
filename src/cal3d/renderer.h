@@ -39,7 +39,6 @@ public:
   CalModel * getModel() { return m_pModel; }
   int getMapCount();
   Cal::UserData getMaterialUserData();
-  Cal::UserData getMapUserData(int mapId);
   int getMeshCount();
   int getNormals(float *pNormalBuffer);
   float getShininess();

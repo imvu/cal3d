@@ -263,26 +263,6 @@ Cal::UserData CalRenderer::getMaterialUserData()
   return pCoreMaterial->getUserData();
 }
 
-Cal::UserData CalRenderer::getMapUserData(int mapId)
-{
-  // get the core material
-  CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
-  if(pCoreMaterial == 0) return 0;
-
-  // get the map vector
-  std::vector<CalCoreMaterial::Map>& vectorMap = pCoreMaterial->getVectorMap();
-
-  // check if the map id is valid
-  if((mapId < 0) || (mapId >= (int)vectorMap.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
-  }
-
-  return vectorMap[mapId].userData;
-}
-
  /*****************************************************************************/
 /** Returns the number of attached meshes.
   *

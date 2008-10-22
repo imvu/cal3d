@@ -8,18 +8,9 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREMODEL_H
-#define CAL_COREMODEL_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalCoreSkeleton;
 class CalCoreAnimation;
@@ -27,14 +18,6 @@ class CalCoreAnimatedMorph;
 class CalCoreMorphAnimation;
 class CalCoreMesh;
 class CalCoreMaterial;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core model class.
-  *****************************************************************************/
 
 class CAL3D_API CalCoreModel
 {
@@ -48,7 +31,6 @@ protected:
   std::vector<CalCoreMesh *> m_vectorCoreMesh;
   std::vector<CalCoreMaterial *> m_vectorCoreMaterial;
   std::map<int, std::map<int, int> > m_mapmapCoreMaterialThread;
-  Cal::UserData m_userData;
   bool m_coreMeshManagement;
   bool m_coreAnimationManagement;
   unsigned int m_magic;
@@ -89,7 +71,6 @@ public:
   CalCoreMesh *getCoreMesh(int coreMeshId);
   int getCoreMeshCount();
   CalCoreSkeleton *getCoreSkeleton();
-  Cal::UserData getUserData();
   int loadCoreAnimation(const std::string& strFilename);
   int loadCoreAnimatedMorph(const std::string& strFilename);
   int loadCoreMaterial(const std::string& strFilename);
@@ -101,7 +82,6 @@ public:
   bool saveCoreSkeleton(const std::string& strFilename);
   bool setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId);
   void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
-  void setUserData(Cal::UserData userData);
   void scale(float factor);
   void setCoreMeshManagementOn( bool p ) { m_coreMeshManagement = p; }
   bool getCoreMeshManagementOn() { return m_coreMeshManagement; }
@@ -109,7 +89,3 @@ public:
   bool getCoreAnimationManagementOn() { return m_coreAnimationManagement; }
 
 };
-
-#endif
-
-//****************************************************************************//
