@@ -38,7 +38,7 @@ public:
   int getFaces(CalIndex *pFaceBuffer);
   CalModel * getModel() { return m_pModel; }
   int getMapCount();
-  Cal::UserData getMaterialUserData();
+  Cal::UserData* getMaterialUserData();
   int getMeshCount();
   int getNormals(float *pNormalBuffer);
   float getShininess();

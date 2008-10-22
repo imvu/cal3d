@@ -255,7 +255,7 @@ int CalRenderer::getMapCount()
   return pCoreMaterial->getMapCount();
 }
 
-Cal::UserData CalRenderer::getMaterialUserData()
+Cal::UserData* CalRenderer::getMaterialUserData()
 {
   // get the core material
   CalCoreMaterial *pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());

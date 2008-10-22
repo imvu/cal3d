@@ -38,6 +38,7 @@ CalCoreMaterial::CalCoreMaterial()
 
 CalCoreMaterial::~CalCoreMaterial()
 {
+    delete m_userData;
 }
 
  /*****************************************************************************/
@@ -166,7 +167,7 @@ CalCoreMaterial::Color& CalCoreMaterial::getSpecularColor()
   * @return The user data stored in the core material instance.
   *****************************************************************************/
 
-Cal::UserData CalCoreMaterial::getUserData()
+Cal::UserData* CalCoreMaterial::getUserData()
 {
   return m_userData;
 }
@@ -281,7 +282,7 @@ void CalCoreMaterial::setSpecularColor(const CalCoreMaterial::Color& specularCol
   m_specularColor = specularColor;
 }
 
-void CalCoreMaterial::setUserData(Cal::UserData userData)
+void CalCoreMaterial::setUserData(Cal::UserData* userData)
 {
   m_userData = userData;
 }
