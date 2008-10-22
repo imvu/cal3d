@@ -62,10 +62,10 @@ public:
   void destroy();
   Color& getAmbientColor();
   Color& getDiffuseColor();
-  int getMapCount();
-  const std::string& getMapFilename(int mapId);
-  const std::string& getMapType(int mapId);
-  Cal::UserData getMapUserData(int mapId);
+  int getMapCount() const;
+  const std::string& getMapFilename(int mapId) const;
+  const std::string& getMapType(int mapId) const;
+  Cal::UserData getMapUserData(int mapId) const;
   float getShininess();
   Color& getSpecularColor();
   Cal::UserData getUserData();
@@ -78,9 +78,9 @@ public:
   void setShininess(float shininess);
   void setSpecularColor(const Color& specularColor);
   void setUserData(Cal::UserData userData);
-  bool getAlphaBlending() { return false; } // No check box available in max.
-  bool getTwoSided() { return getMapCount() > 1; } // Should come from check box.
-  bool getSelfIllumination() { return false; } // Should come from check box.
+  bool getAlphaBlending() const { return false; } // No check box available in max.
+  bool getTwoSided() const { return getMapCount() > 1; } // Should come from check box.
+  bool getSelfIllumination() const { return false; } // Should come from check box.
 };
 
 #endif

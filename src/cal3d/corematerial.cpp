@@ -100,7 +100,7 @@ CalCoreMaterial::Color& CalCoreMaterial::getDiffuseColor()
   * @return The number of maps.
   *****************************************************************************/
 
-int CalCoreMaterial::getMapCount()
+int CalCoreMaterial::getMapCount() const
 {
   return m_vectorMap.size();
 }
@@ -118,7 +118,7 @@ int CalCoreMaterial::getMapCount()
   *         \li an empty string if an error happend
   *****************************************************************************/
 
-const std::string& CalCoreMaterial::getMapFilename(int mapId)
+const std::string& CalCoreMaterial::getMapFilename(int mapId) const
 {
   // check if the map id is valid
   if((mapId < 0) || (mapId >= (int)m_vectorMap.size()))
@@ -145,7 +145,7 @@ const std::string& CalCoreMaterial::getMapFilename(int mapId)
   *         \li an empty string if an error happend
   *****************************************************************************/
 
-const std::string& CalCoreMaterial::getMapType(int mapId)
+const std::string& CalCoreMaterial::getMapType(int mapId) const
 {
   // check if the map id is valid
   if((mapId < 0) || (mapId >= (int)m_vectorMap.size()))
@@ -171,7 +171,7 @@ const std::string& CalCoreMaterial::getMapType(int mapId)
   *         \li \b 0 if an error happend
   *****************************************************************************/
 
-Cal::UserData CalCoreMaterial::getMapUserData(int mapId)
+Cal::UserData CalCoreMaterial::getMapUserData(int mapId) const
 {
   // check if the map id is valid
   if((mapId < 0) || (mapId >= (int)m_vectorMap.size()))
