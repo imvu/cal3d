@@ -34,16 +34,7 @@
 #include "cal3d/animation_action.h"
 #include "cal3d/animation_cycle.h"
 
- /*****************************************************************************/
-/** Constructs the mixer instance.
-  *
-  * This function is the default constructor of the mixer instance.
-  *****************************************************************************/
-
-CalMixer::CalMixer()
-{
-}
-
+ 
  /*****************************************************************************/
 /** Destructs the mixer instance.
   *
