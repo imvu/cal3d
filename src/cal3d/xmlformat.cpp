@@ -70,11 +70,9 @@ static inline bool _ValidateTag( T * element, char const * requiredTag,
 
   if( ! ok ) {
     if( pCoreMesh ) {
-      pCoreMesh->destroy();
       delete pCoreMesh;
     }
     if( pCoreSubmesh ) {
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
     }
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, file, line);
@@ -1238,7 +1236,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
   {
     if(!submesh || _stricmp(submesh->Value(),"SUBMESH")!=0)
     {
-      pCoreMesh->destroy();
       delete pCoreMesh;
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
       return 0;
@@ -1270,7 +1267,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     if(pCoreSubmesh == 0)
     {
       CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-      pCoreMesh->destroy();
       delete pCoreMesh;
       return 0;
     }
@@ -1287,9 +1283,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     if(!pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount))
     {
       CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__, strFilename);
-      pCoreMesh->destroy();
       delete pCoreMesh;
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       return 0;
     }
@@ -1330,9 +1324,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       node = norm->FirstChild();
       if(!node)
       {
-          pCoreMesh->destroy();
         delete pCoreMesh;
-        pCoreSubmesh->destroy();
           delete pCoreSubmesh;
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -1340,9 +1332,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       TiXmlText* normdata = node->ToText();
       if(!normdata)
       {
-          pCoreMesh->destroy();
         delete pCoreMesh;
-        pCoreSubmesh->destroy();
           delete pCoreSubmesh;
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -1355,9 +1345,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       if(!vertColor||_stricmp(vertColor->Value(),"COLOR")!=0)
       {
         if( hasVertexColors ) {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1368,9 +1356,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         node = vertColor->FirstChild();
         if(!node)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1378,9 +1364,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlText* vcdata = node->ToText();
         if(!vcdata)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1396,9 +1380,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       }        
       if(!collapse)
       {
-          pCoreMesh->destroy();
         delete pCoreMesh;
-        pCoreSubmesh->destroy();
           delete pCoreSubmesh;
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -1408,9 +1390,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         node = collapse->FirstChild();
         if(!node)
         {
-              pCoreMesh->destroy();
             delete pCoreMesh;
-            pCoreSubmesh->destroy();
               delete pCoreSubmesh;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
@@ -1418,9 +1398,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlText* collapseid = node->ToText();
         if(!collapseid)
         {
-              pCoreMesh->destroy();
             delete pCoreMesh;
-            pCoreSubmesh->destroy();
               delete pCoreSubmesh;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
@@ -1430,9 +1408,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlElement *collapseCount= collapse->NextSiblingElement();
         if(!collapseCount|| _stricmp(collapseCount->Value(),"COLLAPSECOUNT")!=0)
         {
-          pCoreMesh->destroy();
             delete pCoreMesh;
-          pCoreSubmesh->destroy();
             delete pCoreSubmesh;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
@@ -1441,9 +1417,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         node = collapseCount->FirstChild();
         if(!node)
         {
-              pCoreMesh->destroy();
             delete pCoreMesh;
-            pCoreSubmesh->destroy();
               delete pCoreSubmesh;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
@@ -1451,9 +1425,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlText* collapseCountdata = node->ToText();
         if(!collapseCountdata)
         {
-              pCoreMesh->destroy();
             delete pCoreMesh;
-            pCoreSubmesh->destroy();
               delete pCoreSubmesh;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
@@ -1479,9 +1451,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 #if CAL3D_VALIDATE_XML_TAGS
         if(!texcoord || _stricmp(texcoord->Value(),"TEXCOORD")!=0)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1490,9 +1460,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         node = texcoord->FirstChild();
         if(!node)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1500,9 +1468,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlText* texcoorddata = node->ToText();
         if(!texcoorddata)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1527,8 +1493,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       if(influenceCount < 0)
       {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        pCoreSubmesh->destroy();
-        pCoreMesh->destroy();
         delete pCoreMesh;
         delete pCoreSubmesh;
         return 0;
@@ -1547,9 +1511,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 #if CAL3D_VALIDATE_XML_TAGS
         if(!influence ||_stricmp(influence->Value(),"INFLUENCE")!=0)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1558,9 +1520,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         node = influence->FirstChild();
         if(!node)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1568,9 +1528,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlText* influencedata = node->ToText();
         if(!influencedata)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1597,9 +1555,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         
         if(!physique || _stricmp(physique->Value(),"PHYSIQUE")!=0)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1607,9 +1563,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         node = physique->FirstChild();
         if(!node)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1617,9 +1571,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         TiXmlText* physiquedata = node->ToText();
         if(!physiquedata)
         {
-          pCoreMesh->destroy();
           delete pCoreMesh;
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
@@ -1645,9 +1597,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       CalCoreSubmesh::Spring Spring;
       if(!spring ||_stricmp(spring->Value(),"SPRING")!=0)
       {
-        pCoreMesh->destroy();
         delete pCoreMesh;
-        pCoreSubmesh->destroy();
         delete pCoreSubmesh;
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -1666,26 +1616,20 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
          TiXmlElement * morph = face;
          for( int morphId = 0; morphId < morphCount; morphId++ ) {
            if( _stricmp(morph->Value(), "MORPH") != 0 ) {
-             pCoreMesh->destroy();
              delete pCoreMesh;
-             pCoreSubmesh->destroy();
              delete pCoreSubmesh;
              CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
              return 0;
            }
            CalCoreSubMorphTarget * morphTarget = new CalCoreSubMorphTarget();
            if( !morphTarget->create() ) {
-             pCoreMesh->destroy();
              delete pCoreMesh;
-             pCoreSubmesh->destroy();
              delete pCoreSubmesh;
              CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
              return 0;
            }
            if( !morphTarget->reserve(vertexCount) ) {
-             pCoreMesh->destroy();
              delete pCoreMesh;
-             pCoreSubmesh->destroy();
              delete pCoreSubmesh;
              CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
              return 0;
@@ -1769,9 +1713,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 #if CAL3D_VALIDATE_XML_TAGS
       if(!face || _stricmp(face->Value(),"FACE")!=0)
       {
-        pCoreMesh->destroy();
         delete pCoreMesh;
-        pCoreSubmesh->destroy();
         delete pCoreSubmesh;
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
@@ -1793,7 +1735,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         if(tmp[0]>65535 || tmp[1]>65535 || tmp[2]>65535)
         {
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           return 0;
         }

@@ -403,7 +403,6 @@ void CalCoreModel::destroy()
   for(iteratorCoreMesh = m_vectorCoreMesh.begin(); iteratorCoreMesh != m_vectorCoreMesh.end(); ++iteratorCoreMesh)
   {
     if( m_coreMeshManagement ) {
-      (*iteratorCoreMesh)->destroy();
       delete (*iteratorCoreMesh);
     }
   }

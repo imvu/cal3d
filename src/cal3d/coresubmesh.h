@@ -8,19 +8,10 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_CORESUBMESH_H
-#define CAL_CORESUBMESH_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalCoreSubMorphTarget;
 
@@ -32,14 +23,6 @@ enum CalMorphTargetType {
   CalMorphTargetTypeAverage,
   CalMorphTargetTypeExclusive
 };
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core submesh class.
-  *****************************************************************************/
 
 class CAL3D_API CalCoreSubmesh
 {
@@ -114,7 +97,7 @@ protected:
 // constructors/destructor
 public:
   CalCoreSubmesh();
-  virtual ~CalCoreSubmesh();
+  ~CalCoreSubmesh();
 
 // member functions	
 public:
@@ -130,7 +113,6 @@ public:
   typedef std::vector<Influence> VectorInfluence;
   unsigned int size();
   unsigned int sizeWithoutSubMorphTargets();
-  void destroy();
   int getCoreMaterialThreadId();
   int getFaceCount();
   int getLodCount();
@@ -167,7 +149,3 @@ public:
 protected:
   void UpdateTangentVector(int v0, int v1, int v2, int channel);
 };
-
-#endif
-
-//****************************************************************************//

@@ -8,8 +8,7 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_CAL3D_WRAPPER_H
-#define CAL_CAL3D_WRAPPER_H
+#pragma once
 
 #ifdef __cplusplus
 #include "cal3d/global.h"
@@ -283,7 +282,6 @@ extern "C"
   CAL3D_WRAPPER_API int CalCoreMesh_AddCoreSubmesh(struct CalCoreMesh *self, struct CalCoreSubmesh *pCoreSubmesh);
   CAL3D_WRAPPER_API enum Boolean CalCoreMesh_Create(struct CalCoreMesh *self);
   CAL3D_WRAPPER_API void CalCoreMesh_Delete(struct CalCoreMesh *self);
-  CAL3D_WRAPPER_API void CalCoreMesh_Destroy(struct CalCoreMesh *self);
   CAL3D_WRAPPER_API struct CalCoreSubmesh *CalCoreMesh_GetCoreSubmesh(struct CalCoreMesh *self, int id);
   CAL3D_WRAPPER_API int CalCoreMesh_GetCoreSubmeshCount(struct CalCoreMesh *self);
 //  CAL3D_WRAPPER_API std::vector<CalCoreSubmesh *>& CalCoreMesh_GetVectorCoreSubmesh(struct CalCoreMesh *self);
@@ -346,7 +344,6 @@ extern "C"
 
   CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_Create(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API void CalCoreSubmesh_Delete(struct CalCoreSubmesh *self);
-  CAL3D_WRAPPER_API void CalCoreSubmesh_Destroy(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetCoreMaterialThreadId(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetFaceCount(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetLodCount(struct CalCoreSubmesh *self);
@@ -600,7 +597,6 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 
   CAL3D_WRAPPER_API enum Boolean CalSubmesh_Create(struct CalSubmesh *self, struct CalCoreSubmesh *pCoreSubmesh);
   CAL3D_WRAPPER_API void CalSubmesh_Delete(struct CalSubmesh *self);
-  CAL3D_WRAPPER_API void CalSubmesh_Destroy(struct CalSubmesh *self);
   CAL3D_WRAPPER_API struct CalCoreSubmesh *CalSubmesh_GetCoreSubmesh(struct CalSubmesh *self);
   CAL3D_WRAPPER_API int CalSubmesh_GetCoreMaterialId(struct CalSubmesh *self);
   CAL3D_WRAPPER_API int CalSubmesh_GetFaceCount(struct CalSubmesh *self);
@@ -646,7 +642,3 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 #ifdef __cplusplus
 }
 #endif
-
-#endif
-
-//****************************************************************************//

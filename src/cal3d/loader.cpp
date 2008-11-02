@@ -933,7 +933,6 @@ CalCoreMesh *CalLoader::loadCoreMesh(CalDataSource& dataSrc)
     pCoreSubmesh = loadCoreSubmesh(dataSrc, version);
     if(pCoreSubmesh == 0)
     {
-      pCoreMesh->destroy();
       delete pCoreMesh;
       return 0;
     }
@@ -1703,7 +1702,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   if(!pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount))
   {
     CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    pCoreSubmesh->destroy();
     delete pCoreSubmesh;
     return 0;
   }
@@ -1749,7 +1747,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     if(!dataSrc.ok())
     {
       dataSrc.setError();
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       return 0;
     }
@@ -1773,7 +1770,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       if(!dataSrc.ok())
       {
         dataSrc.setError();
-        pCoreSubmesh->destroy();
         delete pCoreSubmesh;
         return 0;
       }
@@ -1787,7 +1783,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     if(!dataSrc.readInteger(influenceCount) || (influenceCount < 0))
     {
       dataSrc.setError();
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       return 0;
     }
@@ -1808,7 +1803,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       if(!dataSrc.ok())
       {
         dataSrc.setError();
-        pCoreSubmesh->destroy();
         delete pCoreSubmesh;
         return 0;
       }
@@ -1829,7 +1823,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       if(!dataSrc.ok())
       {
         dataSrc.setError();
-        pCoreSubmesh->destroy();
         delete pCoreSubmesh;
         return 0;
       }
@@ -1855,7 +1848,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     if(!dataSrc.ok())
     {
       dataSrc.setError();
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       return 0;
     }
@@ -1867,13 +1859,11 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   for( int morphId = 0; morphId < morphCount; morphId++ ) {
     CalCoreSubMorphTarget * morphTarget = new CalCoreSubMorphTarget();
     if( !morphTarget->create() ) {
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       dataSrc.setError();
       return false;
     }
     if( !morphTarget->reserve(vertexCount) ) {
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       dataSrc.setError();
       return false;
@@ -1917,7 +1907,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
           Vertex.textureCoords.push_back(textureCoordinate);
         }
         if( ! dataSrc.ok() ) {
-          pCoreSubmesh->destroy();
           delete pCoreSubmesh;
           morphTarget->destroy();
           delete morphTarget;
@@ -1952,7 +1941,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 		if(tmp[0]>65535 || tmp[1]>65535 || tmp[2]>65535)
 		{			
 			CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-			pCoreSubmesh->destroy();
 			delete pCoreSubmesh;
 			return 0;
 		}
@@ -1965,7 +1953,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     if(!dataSrc.ok())
     {
       dataSrc.setError();
-      pCoreSubmesh->destroy();
       delete pCoreSubmesh;
       return 0;
     }

@@ -511,11 +511,6 @@ void CalCoreMesh_Delete(CalCoreMesh *self)
   delete self;
 }
 
-void CalCoreMesh_Destroy(CalCoreMesh *self)
-{
-  self->destroy();
-}
-
 CalCoreSubmesh *CalCoreMesh_GetCoreSubmesh(CalCoreMesh *self, int id)
 {
   return self->getCoreSubmesh(id);
@@ -744,11 +739,6 @@ CalCoreSkeleton *CalCoreSkeleton_New()
 void CalCoreSubmesh_Delete(CalCoreSubmesh *self)
 {
   delete self;
-}
-
-void CalCoreSubmesh_Destroy(CalCoreSubmesh *self)
-{
-  self->destroy();
 }
 
 int CalCoreSubmesh_GetCoreMaterialThreadId(CalCoreSubmesh *self)
@@ -1612,11 +1602,6 @@ Boolean CalSubmesh_Create(CalSubmesh *self, CalCoreSubmesh *pCoreSubmesh)
 void CalSubmesh_Delete(CalSubmesh *self)
 {
   delete self;
-}
-
-void CalSubmesh_Destroy(CalSubmesh *self)
-{
-  self->destroy();
 }
 
 CalCoreSubmesh *CalSubmesh_GetCoreSubmesh(CalSubmesh *self)

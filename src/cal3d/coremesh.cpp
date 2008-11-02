@@ -21,16 +21,6 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
- /*****************************************************************************/
-/** Constructs the core mesh instance.
-  *
-  * This function is the default constructor of the core mesh instance.
-  *****************************************************************************/
-
-CalCoreMesh::CalCoreMesh()
-{
-}
-
 unsigned int
 CalCoreMesh::size()
 {
@@ -50,7 +40,12 @@ CalCoreMesh::size()
 
 CalCoreMesh::~CalCoreMesh()
 {
-  assert(m_vectorCoreSubmesh.empty());
+  // destroy all core submeshes
+  std::vector<CalCoreSubmesh *>::iterator iteratorCoreSubmesh;
+  for(iteratorCoreSubmesh = m_vectorCoreSubmesh.begin(); iteratorCoreSubmesh != m_vectorCoreSubmesh.end(); ++iteratorCoreSubmesh)
+  {
+    delete (*iteratorCoreSubmesh);
+  }
 }
 
  /*****************************************************************************/
@@ -74,26 +69,6 @@ int CalCoreMesh::addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh)
   m_vectorCoreSubmesh.push_back(pCoreSubmesh);
 
   return submeshId;
-}
-
- /*****************************************************************************/
-/** Destroys the core mesh instance.
-  *
-  * This function destroys all data stored in the core mesh instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalCoreMesh::destroy()
-{
-  // destroy all core submeshes
-  std::vector<CalCoreSubmesh *>::iterator iteratorCoreSubmesh;
-  for(iteratorCoreSubmesh = m_vectorCoreSubmesh.begin(); iteratorCoreSubmesh != m_vectorCoreSubmesh.end(); ++iteratorCoreSubmesh)
-  {
-    (*iteratorCoreSubmesh)->destroy();
-    delete (*iteratorCoreSubmesh);
-  }
-
-  m_vectorCoreSubmesh.clear();
 }
 
  /*****************************************************************************/

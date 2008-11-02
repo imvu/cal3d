@@ -8,36 +8,19 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_SUBMESH_H
-#define CAL_SUBMESH_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/coresubmesh.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalCoreSubmesh;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
 
 // Structure used to return an array of the morphs that have non-zero weights.
 struct MorphIdAndWeight {
   int morphId_;
   float weight_;
 };
-
- /*****************************************************************************/
-/** The submesh class.
-  *****************************************************************************/
 
 class CAL3D_API CalSubmesh
 {
@@ -86,12 +69,11 @@ protected:
 // constructors/destructor
 public:
   CalSubmesh();
-  virtual ~CalSubmesh();
+  ~CalSubmesh();
 
 // member functions	
 public:
   bool create(CalCoreSubmesh *pCoreSubmesh);
-  void destroy();
   CalCoreSubmesh *getCoreSubmesh();
   int getCoreMaterialId();
   int getFaceCount();
@@ -128,7 +110,3 @@ public:
   void setSubMorphTargetGroupAttenuatorArray( unsigned int len, int const * morphTargetIdArray );
   void setSubMorphTargetGroupAttenuationArray( unsigned int len, float const * attenuationArray );
 };
-
-#endif
-
-//****************************************************************************//

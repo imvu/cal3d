@@ -8,46 +8,24 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREMESH_H
-#define CAL_COREMESH_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalCoreSubmesh;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core mesh class.
-  *****************************************************************************/
 
 class CAL3D_API CalCoreMesh
 {
-// member variables
 protected:
   std::vector<CalCoreSubmesh *> m_vectorCoreSubmesh;
 
-// constructors/destructor
 public:
-  CalCoreMesh();
   ~CalCoreMesh();
 
-// member functions	
 public:
   typedef std::vector<CalCoreSubmesh *> CalCoreSubmeshVector;
   unsigned int size();
   int addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh);
-  void destroy();
   CalCoreSubmesh *getCoreSubmesh(int id);
   int getCoreSubmeshCount();
   void reserve(int submeshes) { m_vectorCoreSubmesh.reserve(submeshes); }
@@ -55,7 +33,3 @@ public:
   int addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & morphTargetName);
   void scale(float factor);
 };
-
-#endif
-
-//****************************************************************************//

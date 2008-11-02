@@ -46,11 +46,21 @@ CalSubmesh::CalSubmesh()
 
 CalSubmesh::~CalSubmesh()
 {
-  assert( m_vectorMorphTargetWeight.empty() );
-  assert( m_vectorAccumulatedWeight.empty() );
-  assert( m_vectorReplacementAttenuation.empty() );
-  assert( m_vectorSubMorphTargetGroupAttenuator.empty() );
-  assert( m_vectorSubMorphTargetGroupAttenuation.empty() );
+  m_vectorFace.clear();
+  m_vectorMorphTargetWeight.clear();
+  m_vectorAccumulatedWeight.clear();
+  m_vectorReplacementAttenuation.clear();
+  m_vectorSubMorphTargetGroupAttenuator.clear();
+  m_vectorSubMorphTargetGroupAttenuation.clear();
+  if(m_bInternalData)
+  {
+    m_vectorVertex.clear();
+    m_vectorNormal.clear();
+    m_vectorvectorTangentSpace.clear();
+    m_vectorPhysicalProperty.clear();
+  }
+
+  m_pCoreSubmesh = 0;
 }
 
  /*****************************************************************************/
@@ -148,32 +158,6 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
   }
 
   return true;
-}
-
- /*****************************************************************************/
-/** Destroys the submesh instance.
-  *
-  * This function destroys all data stored in the submesh instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalSubmesh::destroy()
-{
-  m_vectorFace.clear();
-  m_vectorMorphTargetWeight.clear();
-  m_vectorAccumulatedWeight.clear();
-  m_vectorReplacementAttenuation.clear();
-  m_vectorSubMorphTargetGroupAttenuator.clear();
-  m_vectorSubMorphTargetGroupAttenuation.clear();
-  if(m_bInternalData)
-  {
-    m_vectorVertex.clear();
-    m_vectorNormal.clear();
-    m_vectorvectorTangentSpace.clear();
-    m_vectorPhysicalProperty.clear();
-  }
-
-  m_pCoreSubmesh = 0;
 }
 
  /*****************************************************************************/

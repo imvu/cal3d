@@ -612,13 +612,11 @@ bool CExporter::ExportMesh(const std::string& strFilename)
               sheet.GetWeightThreshold()))
           {
             SetLastError("Creation of core mesh instance failed.", __FILE__, __LINE__);
-			coreMesh.destroy();
 			return false;
           }
 
           if( !morphCandidate.DisableLOD() ) {
             SetLastError("CalculateLOD failed.", __FILE__, __LINE__);
-			coreMesh.destroy();
 			return false;
           }
           
@@ -631,30 +629,21 @@ bool CExporter::ExportMesh(const std::string& strFilename)
           
           if( !meshCandidateToCoreMesh(morphCandidate, morphCoreMesh, trans) ) {
             SetLastError("Creation of core mesh instance failed.", __FILE__, __LINE__);
-             morphCoreMesh.destroy();
-			coreMesh.destroy();
 			return false;
           }
           if( coreMesh.addAsMorphTarget(&morphCoreMesh, morphNode->GetName()) == -1 ) {
             SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-            morphCoreMesh.destroy();
-			coreMesh.destroy();
             return false;
           }
             
-          morphCoreMesh.destroy();
         }
         
 	// save core mesh to the file
 	if(!CalSaver::saveCoreMesh(strFilename, &coreMesh))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreMesh.destroy();
 		return false;
 	}
-
-	// destroy the core mesh
-	coreMesh.destroy();
 
         return true;
 }
@@ -690,7 +679,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 			if(pCoreSubmesh == 0)
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				coreMesh.destroy();
 				m_pInterface->StopProgressInfo();
 				return false;
 			}
@@ -709,7 +697,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 			{
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreSubmesh;
-				coreMesh.destroy();
 				m_pInterface->StopProgressInfo();
 				return false;
 			}

@@ -118,7 +118,6 @@ void CalMesh::destroy()
   std::vector<CalSubmesh *>::iterator iteratorSubmesh;
   for(iteratorSubmesh = m_vectorSubmesh.begin(); iteratorSubmesh != m_vectorSubmesh.end(); ++iteratorSubmesh)
   {
-    (*iteratorSubmesh)->destroy();
     delete (*iteratorSubmesh);
   }
   m_vectorSubmesh.clear();

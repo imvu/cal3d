@@ -102,8 +102,6 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
                 loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());
 
-	_unlink(path);
-	cm.destroy();
-	loaded->destroy();
-	delete loaded;
+    _unlink(path);
+    delete loaded;
 }

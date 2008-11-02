@@ -185,7 +185,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			if(pCoreSubmesh == 0)
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				coreMesh.destroy();
 				m_pInterface->StopProgressInfo();
 				return false;
 			}
@@ -204,7 +203,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			{
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreSubmesh;
-				coreMesh.destroy();
 				m_pInterface->StopProgressInfo();
 				return false;
 			}
@@ -328,12 +326,8 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 	if(!CalSaver::saveCoreMesh(strFilename, &coreMesh))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreMesh.destroy();
 		return false;
 	}
-
-	// destroy the core mesh
-	coreMesh.destroy();
 
 	return true;
 }
