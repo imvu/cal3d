@@ -8,8 +8,7 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_RENDERER_H
-#define CAL_RENDERER_H
+#pragma once
 
 #include "cal3d/global.h"
 
@@ -25,7 +24,7 @@ private:
 public:
   CalRenderer();
   CalRenderer(CalRenderer* pRenderer); 
-  virtual ~CalRenderer();
+  ~CalRenderer();
 
 public:
   bool beginRendering();
@@ -34,8 +33,9 @@ public:
   void endRendering();
   void getAmbientColor(unsigned char *pColorBuffer);
   void getDiffuseColor(unsigned char *pColorBuffer);
-  int getFaceCount();
-  int getFaces(CalIndex *pFaceBuffer);
+  CalSubmesh* getSelectedSubmesh() const {
+      return m_pSelectedSubmesh;
+  }
   CalModel * getModel() { return m_pModel; }
   int getMapCount();
   Cal::UserData* getMaterialUserData();
@@ -57,7 +57,4 @@ public:
   void setNormalization(bool normalize);
   bool textureCoordinatesForMapValid( int mapId );
   bool hasNonWhiteVertexColors();
-
 };
-
-#endif

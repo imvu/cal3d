@@ -12,7 +12,7 @@
 
 #include "cal3d/platform.h"
 
-typedef int CalIndex; 
+typedef unsigned short CalIndex;
 
 namespace Cal {
 

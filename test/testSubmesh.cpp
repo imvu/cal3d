@@ -7,7 +7,7 @@ TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
     CalSubmesh sm;
     sm.create(&csm);
 
-    CHECK_EQUAL(0, sm.getFaces(0));
+    sm.getVectorFace();
 }
 
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {

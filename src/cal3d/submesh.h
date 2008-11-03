@@ -76,11 +76,13 @@ public:
   bool create(CalCoreSubmesh *pCoreSubmesh);
   CalCoreSubmesh *getCoreSubmesh();
   int getCoreMaterialId();
-  int getFaceCount();
-  int getFaces(CalIndex *pFaceBuffer);
+  const std::vector<Face>& getVectorFace() const {
+      return m_vectorFace;
+  }
   std::vector<CalVector>& getVectorNormal();
   std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
   std::vector<PhysicalProperty>& getVectorPhysicalProperty();
+  int getFaceCount() { return m_faceCount; }
   std::vector<CalVector>& getVectorVertex();
   int getVertexCount();
   bool hasInternalData();

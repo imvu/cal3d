@@ -209,35 +209,6 @@ void CalRenderer::getDiffuseColor(unsigned char *pColorBuffer)
 }
 
  /*****************************************************************************/
-/** Returns the number of faces.
-  *
-  * This function returns the number of faces in the selected mesh/submesh.
-  *
-  * @return The number of faces.
-  *****************************************************************************/
-
-int CalRenderer::getFaceCount()
-{
-  return m_pSelectedSubmesh->getFaceCount();
-}
-
- /*****************************************************************************/
-/** Provides access to the face data.
-  *
-  * This function returns the face data (vertex indices) of the selected
-  * mesh/submesh. The LOD setting is taken into account.
-  *
-  * @param pFaceBuffer A pointer to the user-provided buffer where the face
-  *                    data is written to.
-  *
-  * @return The number of faces written to the buffer.
-  *****************************************************************************/
-int CalRenderer::getFaces(CalIndex *pFaceBuffer)
-{
-  return m_pSelectedSubmesh->getFaces(pFaceBuffer);
-}
-
- /*****************************************************************************/
 /** Returns the number of maps.
   *
   * This function returns the number of maps in the selected mesh/submesh.

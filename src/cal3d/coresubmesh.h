@@ -29,33 +29,33 @@ class CAL3D_API CalCoreSubmesh
 // misc
 public:
   /// The core submesh TextureCoordinate.
-  typedef struct
+  struct TextureCoordinate
   {
     float u, v;
-  } TextureCoordinate;
+  };
 
-  typedef struct 
+  struct TangentSpace
   {
     CalVector tangent;
     float crossFactor;  // To get the binormal, use ((N x T) * crossFactor)
-  } TangentSpace;
+  };
 
 
   /// The core submesh Influence.
-  typedef struct
+  struct Influence
   {
     int boneId;
     float weight;
-  } Influence;
+  };
 
   /// The core submesh PhysicalProperty.
-  typedef struct
+  struct PhysicalProperty
   {
     float weight;
-  } PhysicalProperty;
+  };
 
   /// The core submesh Vertex.
-  typedef struct
+  struct Vertex
   {
     CalVector position;
     CalVector normal;
@@ -63,21 +63,19 @@ public:
     int collapseId;
     int faceCollapseCount;
     CalVector vertexColor; 
-  } Vertex;
+  };
 
-  /// The core submesh Face.
-  typedef struct
-  {
-	  CalIndex vertexId[3];
-  } Face;
+  struct Face {
+      CalIndex vertexId[3];
+  };
   
   /// The core submesh Spring.
-  typedef struct
+  struct Spring
   {
     int vertexId[2];
     float springCoefficient;
     float idleLength;
-  } Spring;
+  };
 
 // member variables
 protected:

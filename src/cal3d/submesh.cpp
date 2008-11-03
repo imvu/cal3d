@@ -12,15 +12,13 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
+#include <boost/static_assert.hpp>
 #include "cal3d/submesh.h"
 #include "cal3d/error.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
+BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 
 // For Exclusive type morph targets, we record a replacement attenuation after
 // encountering the first Replace blend.  Until then, we recognize that we do
@@ -189,40 +187,6 @@ int CalSubmesh::getCoreMaterialId()
 CalCoreSubmesh *CalSubmesh::getCoreSubmesh()
 {
   return m_pCoreSubmesh;
-}
-
- /*****************************************************************************/
-/** Returns the number of faces.
-  *
-  * This function returns the number of faces in the submesh instance.
-  *
-  * @return The number of faces.
-  *****************************************************************************/
-
-int CalSubmesh::getFaceCount()
-{
-  return m_faceCount;
-}
-
- /*****************************************************************************/
-/** Provides access to the face data.
-  *
-  * This function returns the face data (vertex indices) of the submesh
-  * instance. The LOD setting of the submesh instance is taken into account.
-  *
-  * @param pFaceBuffer A pointer to the user-provided buffer where the face
-  *                    data is written to.
-  *
-  * @return The number of faces written to the buffer.
-  *****************************************************************************/
-int CalSubmesh::getFaces(CalIndex *pFaceBuffer)
-{
-  // copy the face vector to the face buffer
-  if (m_faceCount) {
-    memcpy(pFaceBuffer, &m_vectorFace[0], m_faceCount * sizeof(Face));
-  }
-
-  return m_faceCount;
 }
 
  /*****************************************************************************/

@@ -1347,16 +1347,6 @@ void CalRenderer_GetDiffuseColor(CalRenderer *self, unsigned char *pColorBuffer)
   self->getDiffuseColor(pColorBuffer);
 }
 
-int CalRenderer_GetFaceCount(CalRenderer *self)
-{
-  return self->getFaceCount();
-}
-
-int CalRenderer_GetFaces(CalRenderer *self, CalIndex *pFaceBuffer)
-{
-  return self->getFaces(pFaceBuffer);
-}
-
 int CalRenderer_GetMapCount(CalRenderer *self)
 {
   return self->getMapCount();
@@ -1612,16 +1602,6 @@ CalCoreSubmesh *CalSubmesh_GetCoreSubmesh(CalSubmesh *self)
 int CalSubmesh_GetCoreMaterialId(CalSubmesh *self)
 {
   return self->getCoreMaterialId();
-}
-
-int CalSubmesh_GetFaceCount(CalSubmesh *self)
-{
-  return self->getFaceCount();
-}
-
-int CalSubmesh_GetFaces(CalSubmesh *self, CalIndex *pFaceBuffer)
-{
-  return self->getFaces(pFaceBuffer);
 }
 
 /*

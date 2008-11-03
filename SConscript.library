@@ -23,7 +23,6 @@ sources = Split('''
     coresubmorphtarget.cpp
     coretrack.cpp
     error.cpp
-    global.cpp
     hardwaremodel.cpp
     loader.cpp
     matrix.cpp
@@ -119,7 +118,7 @@ exporter_sources = ['plugins/cal3d_max_exporter/' + s for s in exporter_sources]
 exporter_src_sources = ['plugins/src/' + s for s in exporter_src_sources]
 exporter_win32_sources = ['plugins/src/win32/' + s for s in exporter_win32_sources]
 
-shared_lib_env = env.Copy()
+shared_lib_env = env.Copy(tools=[boost])
 shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
     CPPPATH=['../src'])
