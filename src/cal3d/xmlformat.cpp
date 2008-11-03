@@ -902,7 +902,9 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
       if( skel ) {
         CalCoreBone * cb = skel->getCoreBone( coreBoneId );
         if (!cb) {
-            throw std::runtime_error("loadXmlCoreAnimation: keyframe refers to a bone that does not exist");
+            std::stringstream buf;
+            buf << "loadXmlCoreAnimation: track " << trackId << " keyframe " << keyframeId << " refers to a bone (" << coreBoneId << ") that does not exist";
+            throw std::runtime_error(buf.str().c_str());
         }
         CalVector const & cbtrans = cb->getTranslation();
         tx = cbtrans.x;
