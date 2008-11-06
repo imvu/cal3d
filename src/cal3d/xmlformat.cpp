@@ -1282,13 +1282,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
     // reserve memory for all the submesh data
-    if(!pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount))
-    {
-      CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__, strFilename);
-      delete pCoreMesh;
-      delete pCoreSubmesh;
-      return 0;
-    }
+    pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount);
 
     TiXmlElement *vertex = submesh->FirstChildElement();
     
@@ -1623,19 +1617,8 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
              CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
              return 0;
            }
-           CalCoreSubMorphTarget * morphTarget = new CalCoreSubMorphTarget();
-           if( !morphTarget->create() ) {
-             delete pCoreMesh;
-             delete pCoreSubmesh;
-             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-             return 0;
-           }
-           if( !morphTarget->reserve(vertexCount) ) {
-             delete pCoreMesh;
-             delete pCoreSubmesh;
-             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-             return 0;
-           }
+           boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget);
+           morphTarget->reserve(vertexCount);
 
            morphTarget->setName(morph->Attribute("NAME"));
            
@@ -1684,21 +1667,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                }
                blendVert = blendVert->NextSiblingElement();
                morphTarget->setBlendVertex(blendVertI, Vertex);
-             } else {
-#if 0
-               CalCoreSubmesh::Vertex & origVertex = vectorVertex[blendVertI];
-               // use the origVertex
-               Vertex.position = origVertex.position;
-               Vertex.normal = origVertex.normal;
-               std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate =
-                 pCoreSubmesh->getVectorVectorTextureCoordinate();
-
-               for( int tcI = 0; tcI < textureCoordinateCount; tcI++ ) {
-                 Vertex.textureCoords.push_back( vectorvectorTextureCoordinate[tcI][blendVertI] );
-               }
-#endif
              }
-
            }
            pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
 

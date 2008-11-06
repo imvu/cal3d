@@ -12,32 +12,23 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/coresubmorphtarget.h"
-
- /*****************************************************************************/
-/** Constructs the core sub morph target instance.
-  *
-  * This function is the default constructor of the core sub morph target 
-  * instance.
-  *****************************************************************************/
 
 CalCoreSubMorphTarget::CalCoreSubMorphTarget()
 {
+  m_morphTargetType = CalMorphTargetTypeAdditive;
 }
-
- /*****************************************************************************/
-/** Destructs the core sub morph target instance.
-  *
-  * This function is the destructor of the core sub morph target instance.
-  *****************************************************************************/
 
 CalCoreSubMorphTarget::~CalCoreSubMorphTarget()
 {
-  assert(m_vectorBlendVertex.empty());
+  // destroy all data
+  for( int i = 0; i < m_vectorBlendVertex.size(); i++ ) {
+    if( m_vectorBlendVertex[i] ) {
+      delete m_vectorBlendVertex[i];
+      m_vectorBlendVertex[i] = NULL;
+    }
+  }
+  m_vectorBlendVertex.clear();
 }
 
 unsigned int
@@ -52,41 +43,6 @@ CalCoreSubMorphTarget::size()
   return r;
 }
 
-
- /*****************************************************************************/
-/** Creates the core sub morph target instance.
-  *
-  * This function creates the core sub morph target instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSubMorphTarget::create()
-{
-  m_morphTargetType = CalMorphTargetTypeAdditive;
-  return true;
-}
-
- /*****************************************************************************/
-/** Destroys the core sub morph target instance.
-  *
-  * This function destroys all data stored in the core sub morph target instance and
-  * frees all allocated memory.
-  *****************************************************************************/
-
-void CalCoreSubMorphTarget::destroy()
-{
-  // destroy all data
-  for( int i = 0; i < m_vectorBlendVertex.size(); i++ ) {
-    if( m_vectorBlendVertex[i] ) {
-      delete m_vectorBlendVertex[i];
-      m_vectorBlendVertex[i] = NULL;
-    }
-  }
-  m_vectorBlendVertex.clear();
-}
 
  /*****************************************************************************/
 /** Returns the blend vertex vector.
@@ -132,7 +88,7 @@ int CalCoreSubMorphTarget::getBlendVertexCount()
  *         \li \b false if an error happend
  *****************************************************************************/
 
-bool CalCoreSubMorphTarget::reserve(int blendVertexCount)
+void CalCoreSubMorphTarget::reserve(int blendVertexCount)
 {
   // reserve the space needed in all the vectors
   m_vectorBlendVertex.reserve(blendVertexCount);
@@ -140,8 +96,6 @@ bool CalCoreSubMorphTarget::reserve(int blendVertexCount)
   for( int i = 0; i < m_vectorBlendVertex.size(); i++ ) {
     m_vectorBlendVertex[i] = NULL;
   }
-
-  return true;
 }
 
 

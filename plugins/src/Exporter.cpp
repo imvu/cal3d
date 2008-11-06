@@ -539,11 +539,7 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
 	std::vector<CMaterialCandidate::Map>& vectorMap = pMaterialCandidate->GetVectorMap();
 
 	// reserve memory for all the material data
-	if(!coreMaterial.reserve(vectorMap.size()))
-	{
-		SetLastError("Memory reservation for maps failed.", __FILE__, __LINE__);
-		return false;
-	}
+	coreMaterial.reserve(vectorMap.size());
 
 	// load all maps
 	for(size_t mapId = 0; mapId < vectorMap.size(); mapId++)
@@ -693,13 +689,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 			std::vector<CSubmeshCandidate::Spring>& vectorSpring = pSubmeshCandidate->GetVectorSpring();
 
 			// reserve memory for all the submesh data
-			if(!pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size(), vectorSpring.size()))
-			{
-				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-				delete pCoreSubmesh;
-				m_pInterface->StopProgressInfo();
-				return false;
-			}
+			pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size(), vectorSpring.size());
 
 			size_t vertexCandidateId;
 			for(vertexCandidateId = 0; vertexCandidateId < vectorVertexCandidate.size(); vertexCandidateId++)

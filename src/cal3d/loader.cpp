@@ -836,13 +836,7 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
     return 0;
   }
 
-  // reserve memory for all the material data
-  if(!pCoreMaterial->reserve(mapCount))
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    delete pCoreMaterial;
-    return 0;
-  }
+  pCoreMaterial->reserve(mapCount);
 
   // load all maps
   int mapId;
@@ -1698,13 +1692,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   // set the core material id
   pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
-  // reserve memory for all the submesh data
-  if(!pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount))
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    delete pCoreSubmesh;
-    return 0;
-  }
+  pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount);
 
   // load the tangent space enable flags.
   int textureCoordinateId;
@@ -1857,17 +1845,8 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   }
 
   for( int morphId = 0; morphId < morphCount; morphId++ ) {
-    CalCoreSubMorphTarget * morphTarget = new CalCoreSubMorphTarget();
-    if( !morphTarget->create() ) {
-      delete pCoreSubmesh;
-      dataSrc.setError();
-      return false;
-    }
-    if( !morphTarget->reserve(vertexCount) ) {
-      delete pCoreSubmesh;
-      dataSrc.setError();
-      return false;
-    }
+    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget);
+    morphTarget->reserve(vertexCount);
 
     std::string morphName;
     dataSrc.readString(morphName);
@@ -1908,8 +1887,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         }
         if( ! dataSrc.ok() ) {
           delete pCoreSubmesh;
-          morphTarget->destroy();
-          delete morphTarget;
           dataSrc.setError();
           return false;
         }

@@ -179,9 +179,8 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & mo
   while(iteratorCoreSubmesh != m_vectorCoreSubmesh.end())
   {
     int vertexCount = (*otherIteratorCoreSubmesh)->getVertexCount();
-    CalCoreSubMorphTarget *pCalCoreSubMorphTarget = new CalCoreSubMorphTarget();
-    if(!pCalCoreSubMorphTarget->create()) return -1;
-    if(!pCalCoreSubMorphTarget->reserve(vertexCount)) return -1;
+    boost::shared_ptr<CalCoreSubMorphTarget> pCalCoreSubMorphTarget(new CalCoreSubMorphTarget);
+    pCalCoreSubMorphTarget->reserve(vertexCount);
     pCalCoreSubMorphTarget->setName( morphTargetName );
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
     std::vector<CalCoreSubmesh::Vertex>::iterator iteratorVectorVertex = vectorVertex.begin();

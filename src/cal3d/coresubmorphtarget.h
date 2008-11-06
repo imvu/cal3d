@@ -8,28 +8,14 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_CORESUBMORPHTARGET_H
-#define CAL_CORESUBMORPHTARGET_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/coresubmesh.h"
 
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core sub morph target class.
-  *****************************************************************************/
-
 class CAL3D_API CalCoreSubMorphTarget
 {
-// misc
 public:
   /// The core sub morph target BlendVertex.
   typedef struct
@@ -39,23 +25,12 @@ public:
     std::vector<CalCoreSubmesh::TextureCoordinate> textureCoords;
   } BlendVertex;
   
-// member variables
-protected:
-  std::vector<BlendVertex *> m_vectorBlendVertex;
-  std::string m_morphTargetName;
-  CalMorphTargetType m_morphTargetType;
-
-// constructors/destructor
 public:
   CalCoreSubMorphTarget();
-  virtual ~CalCoreSubMorphTarget();
+  ~CalCoreSubMorphTarget();
 
-// member functions
-public:
   typedef std::vector<BlendVertex *> VectorBlendVertex;
-  bool create();
   unsigned int size();
-  void destroy();
   int getBlendVertexCount();
   std::vector<BlendVertex *>& getVectorBlendVertex();
   inline bool hasBlendVertex( int blendVertexId ) {
@@ -64,12 +39,15 @@ public:
   inline BlendVertex const * getBlendVertex( int blendVertexId ) {
     return m_vectorBlendVertex[blendVertexId];
   }
-  bool reserve(int blendVertexCount);
+  void reserve(int blendVertexCount);
   bool setBlendVertex(int vertexId, const BlendVertex& vertex);
   CalMorphTargetType morphTargetType();
 
   void setName( std::string );
   std::string name() const;
+
+private:
+  std::vector<BlendVertex *> m_vectorBlendVertex;
+  std::string m_morphTargetName;
+  CalMorphTargetType m_morphTargetType;
 };
-#endif
-//****************************************************************************//

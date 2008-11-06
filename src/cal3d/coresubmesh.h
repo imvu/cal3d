@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
@@ -26,7 +27,6 @@ enum CalMorphTargetType {
 
 class CAL3D_API CalCoreSubmesh
 {
-// misc
 public:
   /// The core submesh TextureCoordinate.
   struct TextureCoordinate
@@ -77,29 +77,7 @@ public:
     float idleLength;
   };
 
-// member variables
-protected:
-  std::vector<Vertex> m_vectorVertex;
-  std::vector<bool> m_vectorTangentsEnabled;
-  std::vector<std::vector<TangentSpace> > m_vectorvectorTangentSpace;
-  std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
-  std::vector<PhysicalProperty> m_vectorPhysicalProperty;
-  std::vector<Face> m_vectorFace;
-  std::vector<Spring> m_vectorSpring;
-  std::vector<CalCoreSubMorphTarget *> m_vectorCoreSubMorphTarget;
-  int m_coreMaterialThreadId;
-  int m_lodCount;
-  std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
-  bool m_hasNonWhiteVertexColors;
-
-// constructors/destructor
-public:
-  CalCoreSubmesh();
-  ~CalCoreSubmesh();
-
-// member functions	
-public:
-  typedef std::vector<CalCoreSubMorphTarget *> CoreSubMorphTargetVector;
+  typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
   typedef std::vector<Face> VectorFace;
   typedef std::vector<PhysicalProperty> VectorPhysicalProperty;
   typedef std::vector<Spring> VectorSpring;
@@ -109,6 +87,9 @@ public:
   typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
   typedef std::vector<Vertex> VectorVertex;
   typedef std::vector<Influence> VectorInfluence;
+
+  CalCoreSubmesh();
+
   unsigned int size();
   unsigned int sizeWithoutSubMorphTargets();
   int getCoreMaterialThreadId();
@@ -125,7 +106,7 @@ public:
   int getVertexCount();
   bool isTangentsEnabled(int mapId);
   bool enableTangents(int mapId, bool enabled);
-  bool reserve(int vertexCount, int textureCoordinateCount, int faceCount, int springCount);
+  void reserve(int vertexCount, int textureCoordinateCount, int faceCount, int springCount);
   void setCoreMaterialThreadId(int coreMaterialThreadId);
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
@@ -135,15 +116,30 @@ public:
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
   bool setVertex(int vertexId, const Vertex& vertex);
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
-  int addCoreSubMorphTarget(CalCoreSubMorphTarget *pCoreSubMorphTarget);
-  CalCoreSubMorphTarget *getCoreSubMorphTarget(int id);
+  int addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
+  boost::shared_ptr<CalCoreSubMorphTarget> getCoreSubMorphTarget(int id);
   int getCoreSubMorphTargetCount();
-  std::vector<CalCoreSubMorphTarget *>& getVectorCoreSubMorphTarget();
+  CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
   void scale(float factor);
   void setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray );
   inline unsigned int subMorphTargetGroupIndex( int subMorphTargetId ) { 
     if( size_t(subMorphTargetId) >= m_vectorSubMorphTargetGroupIndex.size() ) return 0xffffffff;
-    return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ]; }
-protected:
+    return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
+  }
+
+private:
   void UpdateTangentVector(int v0, int v1, int v2, int channel);
+
+  std::vector<Vertex> m_vectorVertex;
+  std::vector<bool> m_vectorTangentsEnabled;
+  std::vector<std::vector<TangentSpace> > m_vectorvectorTangentSpace;
+  std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
+  std::vector<PhysicalProperty> m_vectorPhysicalProperty;
+  std::vector<Face> m_vectorFace;
+  std::vector<Spring> m_vectorSpring;
+  CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
+  int m_coreMaterialThreadId;
+  int m_lodCount;
+  std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
+  bool m_hasNonWhiteVertexColors;
 };

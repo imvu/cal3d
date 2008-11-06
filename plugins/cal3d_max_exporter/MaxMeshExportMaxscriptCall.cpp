@@ -199,13 +199,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			std::vector<CSubmeshCandidate::Spring>& vectorSpring = pSubmeshCandidate->GetVectorSpring();
 
 			// reserve memory for all the submesh data
-			if(!pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size(), vectorSpring.size()))
-			{
-				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-				delete pCoreSubmesh;
-				m_pInterface->StopProgressInfo();
-				return false;
-			}
+			pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size(), vectorSpring.size());
 
 			size_t vertexCandidateId;
 			for(vertexCandidateId = 0; vertexCandidateId < vectorVertexCandidate.size(); vertexCandidateId++)

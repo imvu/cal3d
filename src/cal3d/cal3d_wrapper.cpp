@@ -487,11 +487,6 @@ CalCoreMaterial *CalCoreMaterial_New()
   return new CalCoreMaterial();
 }
 
-Boolean CalCoreMaterial_Reserve(CalCoreMaterial *self, int mapCount)
-{
-  return self->reserve(mapCount) ? True : False;
-}
-
 void CalCoreMaterial_SetShininess(CalCoreMaterial *self, float shininess)
 {
   self->setShininess(shininess);
@@ -804,11 +799,6 @@ int CalCoreSubmesh_GetVertexCount(CalCoreSubmesh *self)
 CalCoreSubmesh *CalCoreSubmesh_New()
 {
   return new CalCoreSubmesh();
-}
-
-Boolean CalCoreSubmesh_Reserve(CalCoreSubmesh *self, int vertexCount, int textureCoordinateCount, int faceCount, int springCount)
-{
-  return self->reserve(vertexCount, textureCoordinateCount, faceCount, springCount) ? True : False;
 }
 
 void CalCoreSubmesh_SetCoreMaterialThreadId(CalCoreSubmesh *self, int coreMaterialThreadId)

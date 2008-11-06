@@ -130,11 +130,7 @@ bool CExporter::ExportMaterialFromMaxscriptCall	(const std::string& strFilename)
 	std::vector<CMaterialCandidate::Map>& vectorMap = pMaterialCandidate->GetVectorMap();
 
 	// reserve memory for all the material data
-	if(!coreMaterial.reserve(vectorMap.size()))
-	{
-		SetLastError("Memory reservation for maps failed.", __FILE__, __LINE__);
-		return false;
-	}
+	coreMaterial.reserve(vectorMap.size());
 
 	// load all maps
 	for(size_t mapId = 0; mapId < vectorMap.size(); mapId++)

@@ -53,7 +53,7 @@ public:
   Color& getSpecularColor();
   Cal::UserData* getUserData();
   std::vector<Map>& getVectorMap();
-  bool reserve(int mapCount);
+  void reserve(int mapCount);
   void setAmbientColor(const Color& ambientColor);
   void setDiffuseColor(const Color& diffuseColor);
   bool setMap(int mapId, const Map& map);

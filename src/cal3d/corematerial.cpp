@@ -199,13 +199,9 @@ std::vector<CalCoreMaterial::Map>& CalCoreMaterial::getVectorMap()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalCoreMaterial::reserve(int mapCount)
+void CalCoreMaterial::reserve(int mapCount)
 {
-  // reserve the space needed in all the vectors
-  m_vectorMap.reserve(mapCount);
   m_vectorMap.resize(mapCount);
-
-  return true;
 }
 
  /*****************************************************************************/

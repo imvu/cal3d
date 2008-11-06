@@ -840,10 +840,10 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     }
   }
 
-  std::vector<CalCoreSubMorphTarget *>& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
+  CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
 
   for( int morphId = 0; morphId < morphCount; morphId++ ) {
-    CalCoreSubMorphTarget * morphTarget = vectorMorphs[morphId];
+    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget = vectorMorphs[morphId];
     CalPlatform::writeString(file, morphTarget->name());
     int morphVertCount = 0;
 
@@ -1450,7 +1450,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
     std::vector<CalCoreSubmesh::PhysicalProperty>& vectorPhysicalProperty = pCoreSubmesh->getVectorPhysicalProperty();
     std::vector<CalCoreSubmesh::Spring>& vectorSpring = pCoreSubmesh->getVectorSpring();
-                std::vector<CalCoreSubMorphTarget *>& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
+    CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
     // get the texture coordinate vector vector
         std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
@@ -1604,7 +1604,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
                 int morphId;
                 for(morphId = 0; morphId < (int)pCoreSubmesh->getCoreSubMorphTargetCount(); ++morphId)
     {
-                  CalCoreSubMorphTarget * morphTarget = vectorMorphs[morphId];
+                  boost::shared_ptr<CalCoreSubMorphTarget> morphTarget = vectorMorphs[morphId];
                     
                   TiXmlElement morph("MORPH");
                   str.str("");

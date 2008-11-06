@@ -78,8 +78,7 @@ int CalPhysique::calculateVertices(CalSubmesh *pSubmesh, float *pVertexBuffer)
   vertexCount = pSubmesh->getVertexCount();
   
   // get the sub morph target vector from the core sub mesh
-  std::vector<CalCoreSubMorphTarget*>& vectorSubMorphTarget =
-  pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
+  CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
 
   // calculate the base weight
   float baseWeight = pSubmesh->getBaseWeight();
@@ -313,8 +312,7 @@ int CalPhysique::calculateNormals(CalSubmesh *pSubmesh, float *pNormalBuffer)
   vertexCount = pSubmesh->getVertexCount();
 
   // get the sub morph target vector from the core sub mesh
-  std::vector<CalCoreSubMorphTarget*>& vectorSubMorphTarget =
-  pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
+  CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
 
   // calculate the base weight
   float baseWeight = pSubmesh->getBaseWeight();
@@ -463,7 +461,7 @@ int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVerte
     std::vector<CalBone *>& vectorBone = m_pModel->getSkeleton()->getVectorBone();
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pSubmesh->getCoreSubmesh()->getVectorVertex();
     int vertexCount = pSubmesh->getVertexCount();
-    std::vector<CalCoreSubMorphTarget*>& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
+    CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
 
     int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
     EnlargeMiawCacheAsNecessary( morphTargetCount );
@@ -576,8 +574,7 @@ int CalPhysique::calculateVerticesAndNormals_slow(CalSubmesh *pSubmesh, float *p
   int vertexCount = pSubmesh->getVertexCount();
 
   // get the sub morph target vector from the core sub mesh
-  std::vector<CalCoreSubMorphTarget*>& vectorSubMorphTarget =
-    pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
+  CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
   int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
   EnlargeMiawCacheAsNecessary( morphTargetCount );
   unsigned int numMiaws;
@@ -777,8 +774,7 @@ int CalPhysique::calculateVerticesNormalsAndTexCoords(CalSubmesh *pSubmesh, floa
   vertexCount = pSubmesh->getVertexCount();
 
   // get the sub morph target vector from the core sub mesh
-  std::vector<CalCoreSubMorphTarget*>& vectorSubMorphTarget =
-  pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
+  CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
 
   // calculate the base weight
   float baseWeight = pSubmesh->getBaseWeight();

@@ -37,28 +37,6 @@ CalCoreSubmesh::CalCoreSubmesh()
   * This function is the destructor of the core submesh instance.
   *****************************************************************************/
 
-CalCoreSubmesh::~CalCoreSubmesh()
-{
-  m_vectorSubMorphTargetGroupIndex.clear();
-  m_vectorFace.clear();
-  m_vectorVertex.clear();
-  m_vectorPhysicalProperty.clear();
-  m_vectorvectorTextureCoordinate.clear();
-  m_vectorSpring.clear();
-  m_vectorTangentsEnabled.clear();
-  m_vectorvectorTangentSpace.clear();
-  // destroy all core sub morph targets
-  std::vector<CalCoreSubMorphTarget *>::iterator iteratorCoreSubMorphTarget;
-  for( iteratorCoreSubMorphTarget = m_vectorCoreSubMorphTarget.begin(); 
-    iteratorCoreSubMorphTarget != m_vectorCoreSubMorphTarget.end(); 
-    ++iteratorCoreSubMorphTarget )
-  {
-    (*iteratorCoreSubMorphTarget)->destroy();
-    delete (*iteratorCoreSubMorphTarget);
-  }
-  m_vectorCoreSubMorphTarget.clear();
-}
-
 void
 CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray )
 {
@@ -97,7 +75,7 @@ unsigned int
 CalCoreSubmesh::size()
 {
   unsigned int r = sizeWithoutSubMorphTargets();
-  std::vector<CalCoreSubMorphTarget *>::iterator iter1;
+  CoreSubMorphTargetVector::iterator iter1;
   for( iter1 = m_vectorCoreSubMorphTarget.begin(); iter1 != m_vectorCoreSubMorphTarget.end(); ++iter1 ) {
     r += (*iter1)->size();
   }
@@ -381,7 +359,7 @@ int CalCoreSubmesh::getVertexCount()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int faceCount, int springCount)
+void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int faceCount, int springCount)
 {
   // reserve the space needed in all the vectors
   m_vectorVertex.reserve(vertexCount);
@@ -425,8 +403,6 @@ bool CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int fa
     m_vectorPhysicalProperty.reserve(vertexCount);
     m_vectorPhysicalProperty.resize(vertexCount);
   }
-
-  return true;
 }
 
  /*****************************************************************************/
@@ -611,7 +587,7 @@ bool CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex)
   *         \li \b -1 if an error happend
   *****************************************************************************/
 
-int CalCoreSubmesh::addCoreSubMorphTarget(CalCoreSubMorphTarget *pCoreSubMorphTarget)
+int CalCoreSubmesh::addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget)
 {
   // get next sub morph target id
   int subMorphTargetId;
@@ -634,11 +610,12 @@ int CalCoreSubmesh::addCoreSubMorphTarget(CalCoreSubMorphTarget *pCoreSubMorphTa
   *         \li \b 0 if an error happend
   *****************************************************************************/
 
-CalCoreSubMorphTarget *CalCoreSubmesh::getCoreSubMorphTarget(int id)
+boost::shared_ptr<CalCoreSubMorphTarget> CalCoreSubmesh::getCoreSubMorphTarget(int id)
 {
   if((id < 0) || (id >= (int)m_vectorCoreSubMorphTarget.size()))
   {
-    return 0;
+    // should assert
+    return boost::shared_ptr<CalCoreSubMorphTarget>();
   }
 
   return m_vectorCoreSubMorphTarget[id];
@@ -667,7 +644,7 @@ int CalCoreSubmesh::getCoreSubMorphTargetCount()
   * @return A reference to the core sub morph target vector.
   *****************************************************************************/
 
-std::vector<CalCoreSubMorphTarget *>& CalCoreSubmesh::getVectorCoreSubMorphTarget()
+CalCoreSubmesh::CoreSubMorphTargetVector& CalCoreSubmesh::getVectorCoreSubMorphTarget()
 {
   return m_vectorCoreSubMorphTarget;
 }
