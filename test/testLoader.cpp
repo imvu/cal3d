@@ -1,4 +1,5 @@
 #include "TestPrologue.h"
+#include <sstream>
 
 
 const char* animationText =
@@ -105,3 +106,26 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     _unlink(path);
     delete loaded;
 }
+
+#if 0
+TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
+    CalCoreAnimation* anim1 = CalLoader::loadXmlCoreAnimation(animationText, 0);
+    CHECK(anim1);
+
+    std::stringstream buf1;
+    CalSaver::saveXmlCoreAnimation(buf1, anim1);
+
+    const char* path = tmpnam(NULL);
+    CalSaver::saveCoreAnimation(path, anim1);
+
+    CalCoreAnimation* anim2 = CalLoader::loadCoreAnimation(path, 0);
+    CHECK(anim2);
+
+    _unlink(path);
+
+    std::stringstream buf2;
+    CalSaver::saveXmlCoreAnimation(buf2, anim2);
+
+    CHECK_EQUAL_STR(buf1.str().c_str(), buf2.str().c_str());
+}
+#endif
