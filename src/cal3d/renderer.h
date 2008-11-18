@@ -48,7 +48,7 @@ public:
   int getVertexCount();
   int getVertices(float *pVertexBuffer);
   int getVertColors(float *pVertexBuffer);
-  int getVertColorsAsStandardPixels( unsigned int *pVertexBuffer);
+  int getVertColorsAsStandardPixels( unsigned long *pVertexBuffer);
   int getTangentSpaces(int mapId, float *pTangentSpaceBuffer);
   int getVerticesAndNormals(float *pVertexBuffer);
   int getVerticesNormalsAndTexCoords(float *pVertexBuffer,int NumTexCoords=1);

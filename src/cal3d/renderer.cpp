@@ -568,7 +568,7 @@ int CalRenderer::getVertColors(float *pVertexBuffer)
 //
 //    Win32 is low byte first, ARGB8 (i.e., the first byte is B, the second is G).
 //
-int CalRenderer::getVertColorsAsStandardPixels( unsigned int *pVertexBuffer)
+int CalRenderer::getVertColorsAsStandardPixels( unsigned long *pVertexBuffer)
 {
   // get the number of vertices
   int vertexCount;
@@ -582,7 +582,7 @@ int CalRenderer::getVertColorsAsStandardPixels( unsigned int *pVertexBuffer)
   {
     // get the vertex
     CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
-    unsigned color;
+    unsigned long color;
 
 #ifdef WIN32
     // Win32 StandardPixels are ARGB8 with low byte first, which means BGRA byte order.
