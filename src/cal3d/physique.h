@@ -51,7 +51,6 @@ public:
   int calculateVertices(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesAndNormals_slow(CalSubmesh *pSubmesh, float *pVertexBuffer);
-  int calculateVerticesNormalsAndTexCoords(CalSubmesh *pSubmesh, float *pVertexBuffer,int NumTexCoords=1);  
   void create(CalModel *pModel);
   void destroy();
   void update();

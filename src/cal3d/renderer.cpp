@@ -270,20 +270,3 @@ int CalRenderer::getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer
   // submesh does not handle the vertex data internally, so let the physique calculate it now
   return m_pModel->getPhysique()->calculateVerticesAndNormals(submesh, pVertexBuffer);
 }
-
- /*****************************************************************************/
-/** Sets the normalization flag to true or false.
-  *
-  * This function sets the normalization flag on or off. If off, the normals
-  * calculated by Cal3D will not be normalized. Instead, this transform is left
-  * up to the user.
-  *****************************************************************************/
-
-void CalRenderer::setNormalization(bool normalize)
-{ 
-    m_pModel->getPhysique()->setNormalization(normalize); 
-}
-
-
-//****************************************************************************//
-

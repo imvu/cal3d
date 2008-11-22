@@ -101,7 +101,6 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
     m_vectorvectorTangentSpace.reserve(m_pCoreSubmesh->getVectorVectorTangentSpace().size());
     m_vectorvectorTangentSpace.resize(m_pCoreSubmesh->getVectorVectorTangentSpace().size());
 
-    m_vectorPhysicalProperty.reserve(m_pCoreSubmesh->getVertexCount());
     m_vectorPhysicalProperty.resize(m_pCoreSubmesh->getVertexCount());
 
     // get the vertex vector of the core submesh
@@ -231,24 +230,6 @@ int CalSubmesh::getVertexCount()
 bool CalSubmesh::hasInternalData()
 {
   return m_bInternalData;
-}
-
-/*****************************************************************************/
-/** Disable internal data (and thus springs system)
-  *
-  *****************************************************************************/
-
-void CalSubmesh::disableInternalData()
-{
-  if(m_bInternalData)
-  {
-    m_vectorVertex.clear();
-    m_vectorNormal.clear();
-    m_vectorvectorTangentSpace.clear();
-    m_vectorPhysicalProperty.clear();
-    m_bInternalData=false;
-  }
-
 }
 
  /*****************************************************************************/

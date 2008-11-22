@@ -32,6 +32,5 @@ public:
   int getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer);
   int getVertColorsAsStandardPixels( CalSubmesh* submesh, unsigned long *pVertexBuffer);
   int getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer);
-  void setNormalization(bool normalize);
   bool textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId );
 };

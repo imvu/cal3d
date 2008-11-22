@@ -62,5 +62,4 @@ public:
   void setLodLevel(float lodLevel);
   void setMaterialSet(int setId);
   //void update(float deltaTime);
-  void disableInternalData();
 };

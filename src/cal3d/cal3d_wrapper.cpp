@@ -736,41 +736,6 @@ int CalCoreSubmesh_GetSpringCount(CalCoreSubmesh *self)
   return self->getSpringCount();
 }
 
-/*
-std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh_GetVectorFace(CalCoreSubmesh *self)
-{
-  return self->getVectorFace();
-}
-*/
-
-/*
-std::vector<CalCoreSubmesh::PhysicalProperty>& CalCoreSubmesh_GetVectorPhysicalProperty(CalCoreSubmesh *self)
-{
-  return self->getVectorPhysicalProperty();
-}
-*/
-
-/*
-std::vector<CalCoreSubmesh::Spring>& CalCoreSubmesh_GetVectorSpring(CalCoreSubmesh *self)
-{
-  return self->getVectorSpring();
-}
-*/
-
-/*
-std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& CalCoreSubmesh_GetVectorVectorTextureCoordinate(CalCoreSubmesh *self)
-{
-  return self->getVectorVectorTextureCoordinate();
-}
-*/
-
-/*
-std::vector<CalCoreSubmesh::Vertex>& CalCoreSubmesh_GetVectorVertex(CalCoreSubmesh *self)
-{
-  return self->getVectorVertex();
-}
-*/
-
 int CalCoreSubmesh_GetVertexCount(CalCoreSubmesh *self)
 {
   return self->getVertexCount();
@@ -786,45 +751,10 @@ void CalCoreSubmesh_SetCoreMaterialThreadId(CalCoreSubmesh *self, int coreMateri
   self->setCoreMaterialThreadId(coreMaterialThreadId);
 }
 
-/*
-Boolean CalCoreSubmesh_SetFace(CalCoreSubmesh *self, int faceId, CalCoreSubmesh::Face *pFace)
-{
-  return self->setFace(faceId, *pFace) ? True : False;
-}
-*/
-
 void CalCoreSubmesh_SetLodCount(CalCoreSubmesh *self, int lodCount)
 {
   self->setLodCount(lodCount);
 }
-
-/*
-Boolean CalCoreSubmesh_SetPhysicalProperty(CalCoreSubmesh *self, int vertexId, CalCoreSubmesh::PhysicalProperty *pPhysicalProperty)
-{
-  return self->setPhysicalProperty(vertexId, *pPhysicalProperty) ? True : False;
-}
-*/
-
-/*
-Boolean CalCoreSubmesh_SetSpring(CalCoreSubmesh *self, int springId, CalCoreSubmesh::Spring *pSpring)
-{
-  return self->setSpring(springId, *pSpring) ? True : False;
-}
-*/
-
-/*
-Boolean CalCoreSubmesh_SetTextureCoordinate(CalCoreSubmesh *self, int vertexId, int textureCoordinateId, CalCoreSubmesh::TextureCoordinate *pTextureCoordinate)
-{
-  return self->setTextureCoordinate(vertexId, textureCoordinateId, *pTextureCoordinate) ? True : False;
-}
-*/
-
-/*
-Boolean CalCoreSubmesh_SetVertex(CalCoreSubmesh *self, int vertexId, CalCoreSubmesh::Vertex *pVertex)
-{
-  return self->setVertex(vertexId, *pVertex) ? True : False;
-}
-*/
 
 Boolean CalCoreSubmesh_IsTangentsEnabled(CalCoreSubmesh *self, int mapId)
 {
@@ -1074,64 +1004,6 @@ void CalMixer_UpdateSkeleton(CalMixer *self)
 {
   self->updateSkeleton();
 }
-
-//****************************************************************************//
-// CalPhysique wrapper functions definition                                   //
-//****************************************************************************//
-
-int CalPhysique_CalculateNormals(CalPhysique *self, CalSubmesh *pSubmesh, float *pNormalBuffer)
-{
-  return self->calculateNormals(pSubmesh, pNormalBuffer);
-}
-
-int CalPhysique_CalculateVertices(CalPhysique *self, CalSubmesh *pSubmesh, float *pVertexBuffer)
-{
-  return self->calculateVertices(pSubmesh, pVertexBuffer);
-}
-
-int CalPhysique_CalculateVerticesAndNormals(CalPhysique *self, CalSubmesh *pSubmesh, float *pVertexBuffer)
-{
-  return self->calculateVerticesAndNormals(pSubmesh, pVertexBuffer);
-}
-
-int CalPhysique_CalculateVerticesNormalsAndTexCoords(CalPhysique *self, CalSubmesh *pSubmesh, float *pVertexBuffer, int NumTexCoords)
-{
-  return self->calculateVerticesNormalsAndTexCoords(pSubmesh, pVertexBuffer, NumTexCoords);
-}
-
-int CalPhysique_CalculateTangentSpaces(CalPhysique *self, CalSubmesh *pSubmesh, int mapId, float *pTangentSpaceBuffer)
-{
-  return self->calculateTangentSpaces(pSubmesh, mapId, pTangentSpaceBuffer);
-}
-
-void CalPhysique_Create(CalPhysique *self, CalModel *pModel)
-{
-  return self->create(pModel);
-}
-
-void CalPhysique_Delete(CalPhysique *self)
-{
-  delete self;
-}
-
-void CalPhysique_Destroy(CalPhysique *self)
-{
-  self->destroy();
-}
-
-CalPhysique *CalPhysique_New()
-{
-  return new CalPhysique();
-}
-
-void CalPhysique_Update(CalPhysique *self)
-{
-  self->update();
-}
-
-//****************************************************************************//
-// CalPlatform wrapper functions definition                                   //
-//****************************************************************************//
 
 //****************************************************************************//
 // CalQuaternion wrapper functions definition                                 //

@@ -348,21 +348,11 @@ extern "C"
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetFaceCount(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetLodCount(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetSpringCount(struct CalCoreSubmesh *self);
-//  CAL3D_WRAPPER_API std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh_GetVectorFace(struct CalCoreSubmesh *self);
-//  CAL3D_WRAPPER_API std::vector<CalCoreSubmesh::PhysicalProperty>& CalCoreSubmesh_GetVectorPhysicalProperty(struct CalCoreSubmesh *self);
-//  CAL3D_WRAPPER_API std::vector<CalCoreSubmesh::Spring>& CalCoreSubmesh_GetVectorSpring(struct CalCoreSubmesh *self);
-//  CAL3D_WRAPPER_API std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& CalCoreSubmesh_GetVectorVectorTextureCoordinate(struct CalCoreSubmesh *self);
-//  CAL3D_WRAPPER_API std::vector<CalCoreSubmesh::Vertex>& CalCoreSubmesh_GetVectorVertex(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API int CalCoreSubmesh_GetVertexCount(struct CalCoreSubmesh *self);
   CAL3D_WRAPPER_API struct CalCoreSubmesh *CalCoreSubmesh_New();
   CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_Reserve(struct CalCoreSubmesh *self, int vertexCount, int textureCoordinateCount, int faceCount, int springCount);
   CAL3D_WRAPPER_API void CalCoreSubmesh_SetCoreMaterialThreadId(struct CalCoreSubmesh *self, int coreMaterialThreadId);
-//  CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_SetFace(struct CalCoreSubmesh *self, int faceId, struct CalCoreSubmesh::Face *pFace);
   CAL3D_WRAPPER_API void CalCoreSubmesh_SetLodCount(struct CalCoreSubmesh *self, int lodCount);
-//  CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_SetPhysicalProperty(struct CalCoreSubmesh *self, int vertexId, struct CalCoreSubmesh::PhysicalProperty *pPhysicalProperty);
-//  CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_SetSpring(struct CalCoreSubmesh *self, int springId, struct CalCoreSubmesh::Spring *pSpring);
-//  CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_SetTextureCoordinate(struct CalCoreSubmesh *self, int vertexId, int textureCoordinateId, struct CalCoreSubmesh::TextureCoordinate *pTextureCoordinate);
-//  CAL3D_WRAPPER_API enum Boolean CalCoreSubmesh_SetVertex(struct CalCoreSubmesh *self, int vertexId, struct CalCoreSubmesh::Vertex *pVertex);
 CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_IsTangentsEnabled(struct CalCoreSubmesh *self, int mapId);
 CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubmesh *self, int mapId, bool enabled);
 
@@ -480,25 +470,6 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
   CAL3D_WRAPPER_API void CalModel_SetMaterialSet(struct CalModel *self, int setId);
   CAL3D_WRAPPER_API void CalModel_SetUserData(struct CalModel *self, CalUserData userData);
   CAL3D_WRAPPER_API void CalModel_Update(struct CalModel *self, float deltaTime);
-
-//****************************************************************************//
-// CalPhysique wrapper functions declaration                                  //
-//****************************************************************************//
-
-  CAL3D_WRAPPER_API int CalPhysique_CalculateNormals(struct CalPhysique *self, struct CalSubmesh *pSubmesh, float *pNormalBuffer);
-  CAL3D_WRAPPER_API int CalPhysique_CalculateVertices(struct CalPhysique *self, struct CalSubmesh *pSubmesh, float *pVertexBuffer);
-  CAL3D_WRAPPER_API int CalPhysique_CalculateVerticesAndNormals(struct CalPhysique *self, struct CalSubmesh *pSubmesh, float *pVertexBuffer);
-  CAL3D_WRAPPER_API int CalPhysique_CalculateVerticesNormalsAndTexCoords(struct CalPhysique *self, struct CalSubmesh *pSubmesh, float *pVertexBuffer, int NumTexCoords);
-  CAL3D_WRAPPER_API int CalPhysique_CalculateTangentSpaces(struct CalPhysique *self, struct CalSubmesh *pSubmesh, int mapId, float *pTangentSpaceBuffer);
-  CAL3D_WRAPPER_API void CalPhysique_Create(struct CalPhysique *self, struct CalModel *pModel);
-  CAL3D_WRAPPER_API void CalPhysique_Delete(struct CalPhysique *self);
-  CAL3D_WRAPPER_API void CalPhysique_Destroy(struct CalPhysique *self);
-  CAL3D_WRAPPER_API struct CalPhysique *CalPhysique_New();
-  CAL3D_WRAPPER_API void CalPhysique_Update(struct CalPhysique *self);
-
-//****************************************************************************//
-// CalPlatform wrapper functions declaration                                  //
-//****************************************************************************//
 
 //****************************************************************************//
 // CalQuaternion wrapper functions declaration                                //

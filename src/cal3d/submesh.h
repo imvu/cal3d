@@ -89,7 +89,6 @@ public:
   std::vector<CalVector>& getVectorVertex();
   int getVertexCount();
   bool hasInternalData();
-  void disableInternalData();
   void setLodLevel(float lodLevel);
   bool isTangentsEnabled(int mapId);
   bool enableTangents(int mapId, bool enabled);
