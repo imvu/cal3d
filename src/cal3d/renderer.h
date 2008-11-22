@@ -19,26 +19,21 @@ class CAL3D_API CalRenderer
 {
 private:
   CalModel *m_pModel;
-  CalSubmesh *m_pSelectedSubmesh;
 
 public:
   CalRenderer();
-  CalRenderer(CalRenderer* pRenderer); 
-  ~CalRenderer();
 
 public:
-  bool beginRendering();
   void create(CalModel *pModel);
   void destroy();
-  void endRendering();
-  int getMapCount();
-  Cal::UserData* getMaterialUserData();
-  void getSpecularColor(unsigned char *pColorBuffer);
+  int getMapCount(CalSubmesh* submesh);
+  Cal::UserData* getMaterialUserData(CalSubmesh* submesh);
+  void getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer);
   int getSubmeshCount(int meshId);
-  int getTextureCoordinates(int mapId, float *pTextureCoordinateBuffer);
-  int getVertColorsAsStandardPixels( unsigned long *pVertexBuffer);
-  int getVerticesAndNormals(float *pVertexBuffer);
+  int getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer);
+  int getVertColorsAsStandardPixels( CalSubmesh* submesh, unsigned long *pVertexBuffer);
+  int getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer);
   CalSubmesh* selectMeshSubmesh(int meshId, int submeshId);
   void setNormalization(bool normalize);
-  bool textureCoordinatesForMapValid( int mapId );
+  bool textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId );
 };

@@ -36,59 +36,7 @@
   *****************************************************************************/
 
 CalRenderer::CalRenderer()
-  : m_pSelectedSubmesh(0)
 {
-}
-
- /*****************************************************************************/
-/** Copy-constructor for the renderer instance.
-  *
-  * This function is the copy constructor of the renderer instance.
-  * This is useful for multi-pipe parallel rendering.
-  *****************************************************************************/
-
-CalRenderer::CalRenderer(CalRenderer* pRenderer)
-{
-  m_pModel = pRenderer->m_pModel ;
-  m_pSelectedSubmesh = pRenderer->m_pSelectedSubmesh ;
-}
-
- /*****************************************************************************/
-/** Destructs the renderer instance.
-  *
-  * This function is the destructor of the renderer instance.
-  *****************************************************************************/
-
-CalRenderer::~CalRenderer()
-{
-}
-
- /*****************************************************************************/
-/** Initializes the rendering query phase.
-  *
-  * This function initializes the rendering query phase. It must be called
-  * before any rendering queries are executed.
-  *****************************************************************************/
-
-bool CalRenderer::beginRendering()
-{
-  assert( m_pModel );
-
-  // get the attached meshes vector
-  std::vector<CalMesh *>& vectorMesh = m_pModel->getVectorMesh();
-
-  // check if there are any meshes attached to the model
-  if(vectorMesh.size() == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  // select the default submesh
-  m_pSelectedSubmesh = vectorMesh[0]->getSubmesh(0);
-  if(m_pSelectedSubmesh == 0) return false;
-
-  return true;
 }
 
  /*****************************************************************************/
@@ -124,19 +72,6 @@ void CalRenderer::destroy()
 }
 
  /*****************************************************************************/
-/** Finishes the rendering query phase.
-  *
-  * This function finishes the rendering query phase. It must be called
-  * after all rendering queries have been executed.
-  *****************************************************************************/
-
-void CalRenderer::endRendering()
-{
-  // clear selected submesh
-  m_pSelectedSubmesh = 0;
-}
-
- /*****************************************************************************/
 /** Returns the number of maps.
   *
   * This function returns the number of maps in the selected mesh/submesh.
@@ -144,20 +79,20 @@ void CalRenderer::endRendering()
   * @return The number of maps.
   *****************************************************************************/
 
-int CalRenderer::getMapCount()
+int CalRenderer::getMapCount(CalSubmesh* submesh)
 {
   // get the core material
   CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
+  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
   if(pCoreMaterial == 0) return 0;
 
   return pCoreMaterial->getMapCount();
 }
 
-Cal::UserData* CalRenderer::getMaterialUserData()
+Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
 {
   // get the core material
-  CalCoreMaterial *pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
+  CalCoreMaterial *pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
   if(pCoreMaterial == 0) return 0;
   return pCoreMaterial->getUserData();
 }
@@ -172,11 +107,11 @@ Cal::UserData* CalRenderer::getMaterialUserData()
   *                     data is written to.
   *****************************************************************************/
 
-void CalRenderer::getSpecularColor(unsigned char *pColorBuffer)
+void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer)
 {
   // get the core material
   CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
+  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
   if(pCoreMaterial == 0)
   {
     // write default values to the color buffer
@@ -237,10 +172,10 @@ int CalRenderer::getSubmeshCount(int meshId)
   * @return The number of texture coordinates written to the buffer.
   *****************************************************************************/
 
-int CalRenderer::getTextureCoordinates(int mapId, float *pTextureCoordinateBuffer)
+int CalRenderer::getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer)
 {
   // get the texture coordinate vector vector
-  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = m_pSelectedSubmesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
+  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
 
   // check if the map id is valid
   if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size()))
@@ -250,7 +185,7 @@ int CalRenderer::getTextureCoordinates(int mapId, float *pTextureCoordinateBuffe
   }
 
   // get the number of texture coordinates to return
-  int textureCoordinateCount = m_pSelectedSubmesh->getVertexCount();
+  int textureCoordinateCount = submesh->getVertexCount();
 
   // copy the texture coordinate vector to the face buffer
   if (textureCoordinateCount) {
@@ -270,9 +205,9 @@ int CalRenderer::getTextureCoordinates(int mapId, float *pTextureCoordinateBuffe
   * @return true if texture coordinates for the given map are valid.
   *****************************************************************************/
 bool 
-CalRenderer::textureCoordinatesForMapValid( int mapId )
+CalRenderer::textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId )
 {
-  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = m_pSelectedSubmesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
+  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
   if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size())) {
     return false;
   }
@@ -286,14 +221,14 @@ CalRenderer::textureCoordinatesForMapValid( int mapId )
 //
 //    Win32 is low byte first, ARGB8 (i.e., the first byte is B, the second is G).
 //
-int CalRenderer::getVertColorsAsStandardPixels( unsigned long *pVertexBuffer)
+int CalRenderer::getVertColorsAsStandardPixels(CalSubmesh* submesh, unsigned long *pVertexBuffer)
 {
   // get the number of vertices
   int vertexCount;
-  vertexCount = m_pSelectedSubmesh->getVertexCount();
+  vertexCount = submesh->getVertexCount();
 
   // get vertex vector of the core submesh
-  std::vector<CalCoreSubmesh::Vertex>& vectorVertex = m_pSelectedSubmesh->getCoreSubmesh()->getVectorVertex();
+  std::vector<CalCoreSubmesh::Vertex>& vectorVertex = submesh->getCoreSubmesh()->getVectorVertex();
 
   int vertexId;
   for(vertexId = 0; vertexId < vertexCount; ++vertexId)
@@ -334,20 +269,20 @@ int CalRenderer::getVertColorsAsStandardPixels( unsigned long *pVertexBuffer)
   * @return The number of vertex written to the buffer.
   *****************************************************************************/
 
-int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
+int CalRenderer::getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer)
 {
   // check if the submesh handles vertex data internally
-  if(m_pSelectedSubmesh->hasInternalData())
+  if(submesh->hasInternalData())
   {
     // get the vertex vector of the submesh
-    std::vector<CalVector>& vectorVertex = m_pSelectedSubmesh->getVectorVertex();
+    std::vector<CalVector>& vectorVertex = submesh->getVectorVertex();
     // get the normal vector of the submesh
-    std::vector<CalVector>& vectorNormal = m_pSelectedSubmesh->getVectorNormal();
+    std::vector<CalVector>& vectorNormal = submesh->getVectorNormal();
 
 
     // get the number of vertices in the submesh
     int vertexCount;
-    vertexCount = m_pSelectedSubmesh->getVertexCount();
+    vertexCount = submesh->getVertexCount();
 
     // copy the internal vertex data to the provided vertex buffer
     for(int i=0; i < vertexCount; ++i)
@@ -361,7 +296,7 @@ int CalRenderer::getVerticesAndNormals(float *pVertexBuffer)
   }
 
   // submesh does not handle the vertex data internally, so let the physique calculate it now
-  return m_pModel->getPhysique()->calculateVerticesAndNormals(m_pSelectedSubmesh, pVertexBuffer);
+  return m_pModel->getPhysique()->calculateVerticesAndNormals(submesh, pVertexBuffer);
 }
 
  /*****************************************************************************/
@@ -384,16 +319,8 @@ CalSubmesh* CalRenderer::selectMeshSubmesh(int meshId, int submeshId)
   // get the attached meshes vector
   std::vector<CalMesh *>& vectorMesh = m_pModel->getVectorMesh();
 
-  // check if the mesh id is valid
-  if((meshId < 0) || (meshId >= (int)vectorMesh.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
   // get the core submesh
-  m_pSelectedSubmesh = vectorMesh[meshId]->getSubmesh(submeshId);
-  return m_pSelectedSubmesh;
+  return vectorMesh[meshId]->getSubmesh(submeshId);
 }
 
  /*****************************************************************************/

@@ -73,13 +73,12 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     shared_ptr<CalModel> model(createTestModel(coreModel));
     CalRenderer * r = model->getRenderer();
 
-    CHECK(r->beginRendering());
     CalSubmesh* sm = r->selectMeshSubmesh(0, 0);
     int numVertices = sm->getVertexCount() * 6;
     CHECK_EQUAL(numVertices, 6);
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
-    int numResultVertices = r->getVerticesAndNormals(vertexBuffer.get());
+    int numResultVertices = r->getVerticesAndNormals(sm, vertexBuffer.get());
     CHECK_EQUAL(numResultVertices, 1);
     CHECK_EQUAL(vertexBuffer[0], 1);
     CHECK_EQUAL(vertexBuffer[1], 2);
@@ -87,8 +86,6 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CHECK_EQUAL(vertexBuffer[3], 0);
     CHECK_EQUAL(vertexBuffer[4], 1);
     CHECK_EQUAL(vertexBuffer[5], 0);
-
-    r->endRendering();
 }
 
 TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_unit_vectors) {
@@ -105,15 +102,12 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_uni
     shared_ptr<CalModel> model(createTestModel(coreModel));
     CalRenderer * r = model->getRenderer();
 
-    CHECK(r->beginRendering());
     CalSubmesh* sm = r->selectMeshSubmesh(0, 0);
     int numVertices = sm->getVertexCount() * 6;
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
-    int numResultVertices = r->getVerticesAndNormals(vertexBuffer.get());
+    int numResultVertices = r->getVerticesAndNormals(sm, vertexBuffer.get());
     CHECK_EQUAL(numResultVertices, 1);
     CHECK_CLOSE(1.0f, sqrt(pow(vertexBuffer[3], 2) + pow(vertexBuffer[4], 2) + pow(vertexBuffer[5], 2)), 0.0001f);
-
-    r->endRendering();
 }
 
