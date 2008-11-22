@@ -8,29 +8,12 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_PHYSIQUE_H
-#define CAL_PHYSIQUE_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalModel;
 class CalSubmesh;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The physique class.
-  *****************************************************************************/
 
 class CAL3D_API CalPhysique
 {
@@ -42,7 +25,7 @@ public:
 // constructors/destructor
 public:
   CalPhysique();
-  virtual ~CalPhysique();
+  ~CalPhysique();
 
 // member functions	
 public:
@@ -53,10 +36,5 @@ public:
   int calculateVerticesAndNormals_slow(CalSubmesh *pSubmesh, float *pVertexBuffer);
   void create(CalModel *pModel);
   void destroy();
-  void update();
   void setNormalization(bool normalize);
 };
-
-#endif
-
-//****************************************************************************//

@@ -617,55 +617,6 @@ void CalPhysique::destroy()
 }
 
  /*****************************************************************************/
-/** Updates all the internally handled attached meshes.
-  *
-  * This function updates all the attached meshes of the model that are handled
-  * internally.
-  *****************************************************************************/
-
-void CalPhysique::update()
-{
-  // get the attached meshes vector
-  std::vector<CalMesh *>& vectorMesh = m_pModel->getVectorMesh();
-
-  // loop through all the attached meshes
-  std::vector<CalMesh *>::iterator iteratorMesh;
-  for(iteratorMesh = vectorMesh.begin(); iteratorMesh != vectorMesh.end(); ++iteratorMesh)
-  {
-    // get the submesh vector of the mesh
-    std::vector<CalSubmesh *>& vectorSubmesh = (*iteratorMesh)->getVectorSubmesh();
-
-    // loop through all the submeshes of the mesh
-    std::vector<CalSubmesh *>::iterator iteratorSubmesh;
-    for(iteratorSubmesh = vectorSubmesh.begin(); iteratorSubmesh != vectorSubmesh.end(); ++iteratorSubmesh)
-    {
-      // check if the submesh handles vertex data internally
-      if((*iteratorSubmesh)->hasInternalData())
-      {
-        // calculate the transformed vertices and store them in the submesh
-        std::vector<CalVector>& vectorVertex = (*iteratorSubmesh)->getVectorVertex();
-        calculateVertices(*iteratorSubmesh, (float *)Cal::pointerFromVector(vectorVertex));
-
-        // calculate the transformed normals and store them in the submesh
-        std::vector<CalVector>& vectorNormal = (*iteratorSubmesh)->getVectorNormal();
-        calculateNormals(*iteratorSubmesh, (float *)Cal::pointerFromVector(vectorNormal));
-
-        unsigned mapId;
-        for(mapId=0;mapId< (*iteratorSubmesh)->getVectorVectorTangentSpace().size();mapId++)
-        {
-          if((*iteratorSubmesh)->isTangentsEnabled(mapId))
-          {
-            std::vector<CalSubmesh::TangentSpace>& vectorTangentSpace = (*iteratorSubmesh)->getVectorVectorTangentSpace()[mapId];
-            calculateTangentSpaces(*iteratorSubmesh, mapId,(float *)Cal::pointerFromVector(vectorTangentSpace));
-          }
-        }
-
-      }
-    }
-  }
-}
-
- /*****************************************************************************/
 /** Sets the normalization flag to true or false.
   *
   * This function sets the normalization flag on or off. If off, the normals

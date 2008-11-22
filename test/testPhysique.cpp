@@ -2,6 +2,7 @@
 #include <cal3d/renderer.h>
 #include <cal3d/model.h>
 #include <cal3d/submesh.h>
+#include <cal3d/physique.h>
 
 template <class T> void caldestroy(T* ptr) {
     ptr->destroy();
@@ -73,14 +74,13 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     coreModel->setCoreSkeleton(createTestCoreSkeleton(1)); // No coreSkeleton == model->create() returns false
 
     shared_ptr<CalModel> model(createTestModel(coreModel));
-    CalRenderer * r = model->getRenderer();
 
     CalSubmesh* sm = model->getMesh(0)->getSubmesh(0);
     int numVertices = sm->getVertexCount() * 6;
     CHECK_EQUAL(numVertices, 6);
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
-    int numResultVertices = r->getVerticesAndNormals(sm, vertexBuffer.get());
+    int numResultVertices = model->getPhysique()->calculateVerticesAndNormals(sm, vertexBuffer.get());
     CHECK_EQUAL(numResultVertices, 1);
     CHECK_EQUAL(vertexBuffer[0], 1);
     CHECK_EQUAL(vertexBuffer[1], 2);
@@ -102,13 +102,12 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_uni
     coreModel->setCoreSkeleton(createTestCoreSkeleton(2)); // No coreSkeleton == model->create() returns false
 
     shared_ptr<CalModel> model(createTestModel(coreModel));
-    CalRenderer * r = model->getRenderer();
 
     CalSubmesh* sm = model->getMesh(0)->getSubmesh(0);
     int numVertices = sm->getVertexCount() * 6;
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
-    int numResultVertices = r->getVerticesAndNormals(sm, vertexBuffer.get());
+    int numResultVertices = model->getPhysique()->calculateVerticesAndNormals(sm, vertexBuffer.get());
     CHECK_EQUAL(numResultVertices, 1);
     CHECK_CLOSE(1.0f, sqrt(pow(vertexBuffer[3], 2) + pow(vertexBuffer[4], 2) + pow(vertexBuffer[5], 2)), 0.0001f);
 }

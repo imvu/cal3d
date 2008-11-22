@@ -15,22 +15,12 @@
 class CalModel;
 class CalSubmesh;
 
-class CAL3D_API CalRenderer
+namespace CalRenderer
 {
-private:
-  CalModel *m_pModel;
-
-public:
-  CalRenderer();
-
-public:
-  void create(CalModel *pModel);
-  void destroy();
-  int getMapCount(CalSubmesh* submesh);
-  Cal::UserData* getMaterialUserData(CalSubmesh* submesh);
-  void getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer);
-  int getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer);
-  int getVertColorsAsStandardPixels( CalSubmesh* submesh, unsigned long *pVertexBuffer);
-  int getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer);
-  bool textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId );
+  CAL3D_API int getMapCount(CalSubmesh* submesh);
+  CAL3D_API Cal::UserData* getMaterialUserData(CalSubmesh* submesh);
+  CAL3D_API void getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer);
+  CAL3D_API int getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer);
+  CAL3D_API int getVertColorsAsStandardPixels( CalSubmesh* submesh, unsigned long *pVertexBuffer);
+  CAL3D_API bool textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId );
 };

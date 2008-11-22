@@ -2,6 +2,7 @@
 #include <cal3d/renderer.h>
 #include <cal3d/model.h>
 #include <cal3d/submesh.h>
+#include <cal3d/physique.h>
 
 
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
@@ -31,13 +32,9 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     model.create(&coreModel);
     CHECK(model.attachMesh(0));
 
-    CalRenderer renderer;
-    renderer.create(&model);
-
     CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
-    renderer.getTextureCoordinates(submesh, 0, 0);
+    CalRenderer::getTextureCoordinates(submesh, 0, 0);
 
-    renderer.destroy();
     model.destroy();
     coreModel.destroy();
 }
@@ -60,13 +57,9 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     model.create(&coreModel);
     CHECK(model.attachMesh(0));
 
-    CalRenderer renderer;
-    renderer.create(&model);
-
     CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
-    renderer.getVerticesAndNormals(submesh, 0);
+    model.getPhysique()->calculateVerticesAndNormals(submesh, 0);
 
-    renderer.destroy();
     model.destroy();
     coreModel.destroy();
 }

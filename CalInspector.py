@@ -60,7 +60,6 @@ def getMeshInfo(meshBuffer):
         result[i]['materialId'] = cal3d_dll.CalCoreSubmesh_GetCoreMaterialThreadId(submesh)
         result[i]['faceCount'] = cal3d_dll.CalCoreSubmesh_GetFaceCount(submesh)
         result[i]['lodCount'] = cal3d_dll.CalCoreSubmesh_GetLodCount(submesh)
-        result[i]['springCount'] = cal3d_dll.CalCoreSubmesh_GetSpringCount(submesh)
         result[i]['vertexCount'] = cal3d_dll.CalCoreSubmesh_GetVertexCount(submesh)
         result[i]['tangentsEnabled'] = cal3d_dll.CalCoreSubmesh_IsTangentsEnabled(submesh)
     gMeshInfoCache[cachekey] = result

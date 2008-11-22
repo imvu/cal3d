@@ -37,8 +37,11 @@
   *****************************************************************************/
 
 CalModel::CalModel()
-  :  m_pCoreModel(0), m_pSkeleton(0), m_pMixer(0), m_pPhysique(0), 
-     m_pRenderer(0), m_pMorphTargetMixer(0)
+  : m_pCoreModel(0)
+  , m_pSkeleton(0)
+  , m_pMixer(0)
+  , m_pPhysique(0)
+  , m_pMorphTargetMixer(0)
 {
 }
 
@@ -169,15 +172,6 @@ void CalModel::create(CalCoreModel *pCoreModel)
   pPhysique->create(this);
 
   m_pPhysique = pPhysique;
-
-  // allocate a new renderer instance
-  CalRenderer *pRenderer;
-  pRenderer = new CalRenderer();
-
-  // create the renderer from this model
-  pRenderer->create(this);
-
-  m_pRenderer = pRenderer;
 }
 
  /*****************************************************************************/
@@ -197,14 +191,6 @@ void CalModel::destroy()
     delete m_vectorMesh[meshId];
   }
   m_vectorMesh.clear();
-
-  // destroy the renderer instance
-  if(m_pRenderer != 0)
-  {
-    m_pRenderer->destroy();
-    delete m_pRenderer;
-    m_pRenderer = 0;
-  }
 
   // destroy the physique instance
   if(m_pPhysique != 0)
@@ -444,21 +430,6 @@ CalMorphTargetMixer *CalModel::getMorphTargetMixer()
 CalPhysique *CalModel::getPhysique()
 {
   return m_pPhysique;
-}
-
- /*****************************************************************************/
-/** Provides access to the renderer.
-  *
-  * This function returns the renderer.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the renderer
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalRenderer *CalModel::getRenderer()
-{
-  return m_pRenderer;
 }
 
 CalSkeleton *CalModel::getSkeleton()

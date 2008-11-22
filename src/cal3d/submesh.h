@@ -65,7 +65,6 @@ protected:
   int m_vertexCount;
   int m_faceCount;
   boost::shared_ptr<CalCoreMaterial> m_material;
-  bool m_bInternalData;
 
 public:
   CalSubmesh();
@@ -88,7 +87,6 @@ public:
   int getFaceCount() { return m_faceCount; }
   std::vector<CalVector>& getVectorVertex();
   int getVertexCount();
-  bool hasInternalData();
   void setLodLevel(float lodLevel);
   bool isTangentsEnabled(int mapId);
   bool enableTangents(int mapId, bool enabled);

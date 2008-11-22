@@ -90,8 +90,6 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
     m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
   }
 
-  m_bInternalData = false;
-
   return true;
 }
 
@@ -183,22 +181,6 @@ int CalSubmesh::getVertexCount()
 }
 
  /*****************************************************************************/
-/** Returns if the submesh instance handles vertex data internally.
-  *
-  * This function returns wheter the submesh instance handles vertex data
-  * internally.
-  *
-  * @return One of the following values:
-  *         \li \b true if vertex data is handled internally
-  *         \li \b false if not
-  *****************************************************************************/
-
-bool CalSubmesh::hasInternalData()
-{
-  return m_bInternalData;
-}
-
- /*****************************************************************************/
 /** Returns true if tangent vectors are enabled.
   *
   * This function returns true if the submesh contains tangent vectors.
@@ -222,31 +204,7 @@ bool CalSubmesh::enableTangents(int mapId, bool enabled)
   if(!m_pCoreSubmesh->enableTangents(mapId,enabled))
     return false;
 
-  if(!m_bInternalData)
-    return true;
-
-  if(!enabled)
-  {
-    m_vectorvectorTangentSpace[mapId].clear();
-    return true;
-  }
-
-  m_vectorvectorTangentSpace[mapId].reserve(m_pCoreSubmesh->getVertexCount());
-  m_vectorvectorTangentSpace[mapId].resize(m_pCoreSubmesh->getVertexCount());
-	
-  // get the tangent space vector of the core submesh
-  std::vector<CalCoreSubmesh::TangentSpace >& vectorTangentSpace = m_pCoreSubmesh->getVectorVectorTangentSpace()[mapId];
-
-  // copy the data from the core submesh as default values
-  int vertexId;
-  for(vertexId = 0; vertexId < m_pCoreSubmesh->getVertexCount(); vertexId++)
-  {      
-    // copy the tangent space data
-    m_vectorvectorTangentSpace[mapId][vertexId].tangent=vectorTangentSpace[vertexId].tangent;
-    m_vectorvectorTangentSpace[mapId][vertexId].crossFactor=vectorTangentSpace[vertexId].crossFactor;
-  }
-
-  return true;    
+  return true;
 }
 
 

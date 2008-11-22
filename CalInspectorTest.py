@@ -33,28 +33,24 @@ class CalInspectorTest(imvu.test.TestCase):
             0: {'faceCount': 1430,
                 'lodCount': 0,
                 'materialId': 2,
-                'springCount': 0,
                 'tangentsEnabled': 0,
                 'vertexCount': 959
             },
             1: {'faceCount': 336,
                 'lodCount': 0,
                 'materialId': 3,
-                'springCount': 0,
                 'tangentsEnabled': 0,
                 'vertexCount': 172
             },
             2: {'faceCount': 66,
                 'lodCount': 0,
                 'materialId': 5,
-                'springCount': 0,
                 'tangentsEnabled': 0,
                 'vertexCount': 66
             },
             3: {'faceCount': 64,
                 'lodCount': 0,
                 'materialId': 6,
-                'springCount': 0,
                 'tangentsEnabled': 0,
                 'vertexCount': 48
             }

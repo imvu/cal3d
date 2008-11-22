@@ -20,7 +20,6 @@ class CalAbstractMixer;
 class CalMixer;
 class CalMorphTargetMixer;
 class CalPhysique;
-class CalRenderer;
 class CalMesh;
 
 class CAL3D_API CalModel
@@ -32,7 +31,6 @@ protected:
   CalAbstractMixer *m_pMixer;
   CalMorphTargetMixer *m_pMorphTargetMixer;
   CalPhysique *m_pPhysique;
-  CalRenderer *m_pRenderer;
   std::vector<CalMesh *> m_vectorMesh;
 
 // constructors/destructor
@@ -53,7 +51,6 @@ public:
   void setAbstractMixer(CalAbstractMixer* pMixer);
   CalMorphTargetMixer *getMorphTargetMixer();
   CalPhysique *getPhysique();
-  CalRenderer *getRenderer();
   CalSkeleton *getSkeleton();
   std::vector<CalMesh *>& getVectorMesh();
   void setLodLevel(float lodLevel);

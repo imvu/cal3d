@@ -30,48 +30,6 @@
 #include "cal3d/physique.h"
 
  /*****************************************************************************/
-/** Constructs the renderer instance.
-  *
-  * This function is the default constructor of the renderer instance.
-  *****************************************************************************/
-
-CalRenderer::CalRenderer()
-{
-}
-
- /*****************************************************************************/
-/** Creates the renderer instance.
-  *
-  * This function creates the renderer instance.
-  *
-  * @param pModel A pointer to the model that should be managed with this
-  *               renderer instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-void CalRenderer::create(CalModel *pModel)
-{
-  assert(pModel);
-
-  m_pModel = pModel;
-}
-
- /*****************************************************************************/
-/** Destroys the renderer instance.
-  *
-  * This function destroys all data stored in the renderer instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalRenderer::destroy()
-{
-  m_pModel = 0;
-}
-
- /*****************************************************************************/
 /** Returns the number of maps.
   *
   * This function returns the number of maps in the selected mesh/submesh.
@@ -227,46 +185,4 @@ int CalRenderer::getVertColorsAsStandardPixels(CalSubmesh* submesh, unsigned lon
     *pVertexBuffer++ = color;
   }
   return vertexCount;
-}
-
-
- /*****************************************************************************/
-/** Provides access to the submesh data.
-  *
-  * This function returns the vertex and normal data of the selected mesh/submesh.
-  *
-  * @param pVertexBuffer A pointer to the user-provided buffer where the vertex
-  *                      and normal data is written to.
-  *
-  * @return The number of vertex written to the buffer.
-  *****************************************************************************/
-
-int CalRenderer::getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer)
-{
-  // check if the submesh handles vertex data internally
-  if(submesh->hasInternalData())
-  {
-    // get the vertex vector of the submesh
-    std::vector<CalVector>& vectorVertex = submesh->getVectorVertex();
-    // get the normal vector of the submesh
-    std::vector<CalVector>& vectorNormal = submesh->getVectorNormal();
-
-
-    // get the number of vertices in the submesh
-    int vertexCount;
-    vertexCount = submesh->getVertexCount();
-
-    // copy the internal vertex data to the provided vertex buffer
-    for(int i=0; i < vertexCount; ++i)
-    {
-        memcpy(&pVertexBuffer[0], &vectorVertex[i], sizeof(CalVector));		
-        memcpy(&pVertexBuffer[3], &vectorNormal[i], sizeof(CalVector));
-        pVertexBuffer+=6;
-    }
-
-    return vertexCount;
-  }
-
-  // submesh does not handle the vertex data internally, so let the physique calculate it now
-  return m_pModel->getPhysique()->calculateVerticesAndNormals(submesh, pVertexBuffer);
 }
