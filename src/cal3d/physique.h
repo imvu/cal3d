@@ -15,23 +15,7 @@
 class CalModel;
 class CalSubmesh;
 
-class CAL3D_API CalPhysique
+namespace CalPhysique
 {
-// member variables
-public:
-  CalModel *m_pModel;
-
-// constructors/destructor
-public:
-  CalPhysique();
-  ~CalPhysique();
-
-// member functions	
-public:
-  int calculateTangentSpaces(CalSubmesh *pSubmesh, int mapId, float *pTangentSpaceBuffer);
-  int calculateNormals(CalSubmesh *pSubmesh, float *pNormalBuffer);
-  int calculateVertices(CalSubmesh *pSubmesh, float *pVertexBuffer);
-  int calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVertexBuffer);
-  void create(CalModel *pModel);
-  void destroy();
+  CAL3D_API int calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubmesh, float *pVertexBuffer);
 };

@@ -40,7 +40,6 @@ CalModel::CalModel()
   : m_pCoreModel(0)
   , m_pSkeleton(0)
   , m_pMixer(0)
-  , m_pPhysique(0)
   , m_pMorphTargetMixer(0)
 {
 }
@@ -163,15 +162,6 @@ void CalModel::create(CalCoreModel *pCoreModel)
   // Create the morph target mixer from this model
   m_pMorphTargetMixer = new CalMorphTargetMixer();
   m_pMorphTargetMixer->create(this);
-
-  // allocate a new physqiue instance
-  CalPhysique *pPhysique;
-  pPhysique = new CalPhysique();
-
-  // create the physique from this model
-  pPhysique->create(this);
-
-  m_pPhysique = pPhysique;
 }
 
  /*****************************************************************************/
@@ -191,14 +181,6 @@ void CalModel::destroy()
     delete m_vectorMesh[meshId];
   }
   m_vectorMesh.clear();
-
-  // destroy the physique instance
-  if(m_pPhysique != 0)
-  {
-    m_pPhysique->destroy();
-    delete m_pPhysique;
-    m_pPhysique = 0;
-  }
 
   // destroy the mixer instance
   if(m_pMixer != 0)
@@ -415,21 +397,6 @@ void CalModel::setAbstractMixer(CalAbstractMixer* pMixer)
 CalMorphTargetMixer *CalModel::getMorphTargetMixer()
 {
   return m_pMorphTargetMixer;
-}
-
- /*****************************************************************************/
-/** Provides access to the physique.
-  *
-  * This function returns the physique.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the physique
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalPhysique *CalModel::getPhysique()
-{
-  return m_pPhysique;
 }
 
 CalSkeleton *CalModel::getSkeleton()
