@@ -20,7 +20,6 @@ class CAL3D_API CalPhysique
 // member variables
 public:
   CalModel *m_pModel;
-  bool m_Normalize;
 
 // constructors/destructor
 public:
@@ -33,8 +32,6 @@ public:
   int calculateNormals(CalSubmesh *pSubmesh, float *pNormalBuffer);
   int calculateVertices(CalSubmesh *pSubmesh, float *pVertexBuffer);
   int calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVertexBuffer);
-  int calculateVerticesAndNormals_slow(CalSubmesh *pSubmesh, float *pVertexBuffer);
   void create(CalModel *pModel);
   void destroy();
-  void setNormalization(bool normalize);
 };

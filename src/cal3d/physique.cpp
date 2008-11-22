@@ -34,7 +34,7 @@
   *****************************************************************************/
 
 CalPhysique::CalPhysique()
-  : m_pModel(0), m_Normalize(true)
+  : m_pModel(0)
 {
 }
 
@@ -239,22 +239,9 @@ int CalPhysique::calculateTangentSpaces(CalSubmesh *pSubmesh, int mapId, float *
       tz += influence.weight * v.z;
     }
 
-    // re-normalize tangent if necessary
-    if (m_Normalize)
-    {
-      float scale;
-      scale = (float)( 1.0f / sqrt(tx * tx + ty * ty + tz * tz));
-
-      pTangentSpaceBuffer[0] = tx * scale;
-      pTangentSpaceBuffer[1] = ty * scale;
-      pTangentSpaceBuffer[2] = tz * scale;	  
-    }
-    else
-    {
-      pTangentSpaceBuffer[0] = tx;
-      pTangentSpaceBuffer[1] = ty;
-      pTangentSpaceBuffer[2] = tz;
-    }
+    pTangentSpaceBuffer[0] = tx;
+    pTangentSpaceBuffer[1] = ty;
+    pTangentSpaceBuffer[2] = tz;
 
     pTangentSpaceBuffer[3] = tangentSpace.crossFactor;
     // next vertex position in buffer
@@ -366,21 +353,9 @@ int CalPhysique::calculateNormals(CalSubmesh *pSubmesh, float *pNormalBuffer)
     }
 
     // re-normalize normal if necessary
-    if (m_Normalize)
-    {
-      float scale;
-      scale = (float)( 1.0f / sqrt(nx * nx + ny * ny + nz * nz));
-
-      pNormalBuffer[0] = nx * scale;
-      pNormalBuffer[1] = ny * scale;
-      pNormalBuffer[2] = nz * scale;
-    }
-    else
-    {
-      pNormalBuffer[0] = nx;
-      pNormalBuffer[1] = ny;
-      pNormalBuffer[2] = nz;
-    } 
+    pNormalBuffer[0] = nx;
+    pNormalBuffer[1] = ny;
+    pNormalBuffer[2] = nz;
 
     // next vertex position in buffer
     pNormalBuffer += 3;
@@ -458,9 +433,6 @@ int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVerte
   {
     CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
 
-    // Off unless normalizing set to on and either there are morph targets or multiple influences.
-    bool mustNormalize = false; 
-
     // blend the morph targets
     CalVector position(0,0,0);
     CalVector normal(0,0,0);
@@ -482,7 +454,6 @@ int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVerte
       normal.x = 0;
       normal.y = 0;
       normal.z = 0;
-      mustNormalize = true; // Morph targets can skew normals.
       unsigned int i;
       for( i = 0; i < numMiaws; i++ ) {
         MorphIdAndWeight * miaw = & MiawCache[ i ];
@@ -522,12 +493,8 @@ int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVerte
     nz = 0.0f;
 
     // blend together all vertex influences
-    int influenceId;
     int influenceCount=(int)vertex.vectorInfluence.size();
-    if( influenceCount > 1 ) {
-      mustNormalize = true; // If multiple influences, normalize the normals!
-    }
-    for(influenceId = 0; influenceId < influenceCount; ++influenceId)
+    for(int influenceId = 0; influenceId < influenceCount; ++influenceId)
     {
       // get the influence
       CalCoreSubmesh::Influence& influence = vertex.vectorInfluence[influenceId];
@@ -558,21 +525,10 @@ int CalPhysique::calculateVerticesAndNormals(CalSubmesh *pSubmesh, float *pVerte
     pVertexBuffer[1] = y;
     pVertexBuffer[2] = z;
     
-    // re-normalize normal if necessary
-    if( m_Normalize && mustNormalize ) {
-      float len = sqrtf(nx * nx + ny * ny + nz * nz);
-      if( len > 0.0000001 ) { // Avoid divide by zero error.
-        float scale;
-        scale = (float)( 1.0f / len );
-        pVertexBuffer[3] = nx * scale;
-        pVertexBuffer[4] = ny * scale;
-        pVertexBuffer[5] = nz * scale;
-      }
-    } else {
-      pVertexBuffer[3] = nx;
-      pVertexBuffer[4] = ny;
-      pVertexBuffer[5] = nz;
-    } 
+    pVertexBuffer[3] = nx;
+    pVertexBuffer[4] = ny;
+    pVertexBuffer[5] = nz;
+
     pVertexBuffer += 6;
   }
 
@@ -615,18 +571,3 @@ void CalPhysique::destroy()
 {
   m_pModel = 0;
 }
-
- /*****************************************************************************/
-/** Sets the normalization flag to true or false.
-  *
-  * This function sets the normalization flag on or off. If off, the normals
-  * calculated by Cal3D will not be normalized. Instead, this transform is left
-  * up to the user.
-  *****************************************************************************/
-
-void CalPhysique::setNormalization(bool normalize)
-{
-  m_Normalize = normalize;
-}
-
-//****************************************************************************//
