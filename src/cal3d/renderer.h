@@ -29,11 +29,9 @@ public:
   int getMapCount(CalSubmesh* submesh);
   Cal::UserData* getMaterialUserData(CalSubmesh* submesh);
   void getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer);
-  int getSubmeshCount(int meshId);
   int getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer);
   int getVertColorsAsStandardPixels( CalSubmesh* submesh, unsigned long *pVertexBuffer);
   int getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer);
-  CalSubmesh* selectMeshSubmesh(int meshId, int submeshId);
   void setNormalization(bool normalize);
   bool textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId );
 };

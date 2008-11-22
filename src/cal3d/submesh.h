@@ -67,13 +67,9 @@ protected:
   boost::shared_ptr<CalCoreMaterial> m_material;
   bool m_bInternalData;
 
-// constructors/destructor
 public:
   CalSubmesh();
-  ~CalSubmesh();
 
-// member functions	
-public:
   bool create(CalCoreSubmesh *pCoreSubmesh);
   CalCoreSubmesh *getCoreSubmesh();
   const std::vector<Face>& getVectorFace() const {

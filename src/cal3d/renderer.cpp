@@ -132,32 +132,6 @@ void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuf
 }
 
  /*****************************************************************************/
-/** Returns the number of submeshes.
-  *
-  * This function returns the number of submeshes in a given mesh.
-  *
-  * @param meshId The ID of the mesh for which the number of submeshes should
-  *               be returned..
-  *
-  * @return The number of submeshes.
-  *****************************************************************************/
-
-int CalRenderer::getSubmeshCount(int meshId)
-{
-  // get the attached meshes vector
-  std::vector<CalMesh *>& vectorMesh = m_pModel->getVectorMesh();
-
-  // check if the mesh id is valid
-  if((meshId < 0) || (meshId >= (int)vectorMesh.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
-  }
-
-  return vectorMesh[meshId]->getSubmeshCount();
-}
-
- /*****************************************************************************/
 /** Provides access to the texture coordinate data.
   *
   * This function returns the texture coordinate data for a given map of the
@@ -295,30 +269,6 @@ int CalRenderer::getVerticesAndNormals(CalSubmesh* submesh, float *pVertexBuffer
 
   // submesh does not handle the vertex data internally, so let the physique calculate it now
   return m_pModel->getPhysique()->calculateVerticesAndNormals(submesh, pVertexBuffer);
-}
-
- /*****************************************************************************/
-/** Selects a mesh/submesh for rendering data queries.
-  *
-  * This function selects a mesh/submesh for further rendering data queries.
-  *
-  * @param meshId The ID of the mesh that should be used for further rendering
-  *               data queries.
-  * @param submeshId The ID of the submesh that should be used for further
-  *                  rendering data queries.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-CalSubmesh* CalRenderer::selectMeshSubmesh(int meshId, int submeshId)
-{
-  // get the attached meshes vector
-  std::vector<CalMesh *>& vectorMesh = m_pModel->getVectorMesh();
-
-  // get the core submesh
-  return vectorMesh[meshId]->getSubmesh(submeshId);
 }
 
  /*****************************************************************************/

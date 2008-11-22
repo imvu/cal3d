@@ -37,31 +37,6 @@ CalSubmesh::CalSubmesh()
 }
 
  /*****************************************************************************/
-/** Destructs the submesh instance.
-  *
-  * This function is the destructor of the submesh instance.
-  *****************************************************************************/
-
-CalSubmesh::~CalSubmesh()
-{
-  m_vectorFace.clear();
-  m_vectorMorphTargetWeight.clear();
-  m_vectorAccumulatedWeight.clear();
-  m_vectorReplacementAttenuation.clear();
-  m_vectorSubMorphTargetGroupAttenuator.clear();
-  m_vectorSubMorphTargetGroupAttenuation.clear();
-  if(m_bInternalData)
-  {
-    m_vectorVertex.clear();
-    m_vectorNormal.clear();
-    m_vectorvectorTangentSpace.clear();
-    m_vectorPhysicalProperty.clear();
-  }
-
-  m_pCoreSubmesh = 0;
-}
-
- /*****************************************************************************/
 /** Creates the submesh instance.
   *
   * This function creates the submesh instance based on a core submesh.

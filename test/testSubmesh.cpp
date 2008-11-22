@@ -34,7 +34,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CalRenderer renderer;
     renderer.create(&model);
 
-    CalSubmesh* submesh = renderer.selectMeshSubmesh(0, 0);
+    CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
     renderer.getTextureCoordinates(submesh, 0, 0);
 
     renderer.destroy();
@@ -63,7 +63,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CalRenderer renderer;
     renderer.create(&model);
 
-    CalSubmesh* submesh = renderer.selectMeshSubmesh(0, 0);
+    CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
     renderer.getVerticesAndNormals(submesh, 0);
 
     renderer.destroy();

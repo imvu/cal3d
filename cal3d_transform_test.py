@@ -43,8 +43,7 @@ class Cal3dTransformTest(imvu.test.TestCase):
             self.cal3d  = ctypes.cdll.cal3d_debug
         else:
             self.cal3d = ctypes.cdll.cal3d
-        self.cal3d.CalSubmesh_GetBaseWeight.restype = ctypes.c_float
-        self.cal3d.CalSubmesh_SetMorphTargetWeight.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_float]
+        #self.cal3d.CalSubmesh_SetMorphTargetWeight.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_float]
 
         self.loader = self.cal3d.CalLoader_New()
 
