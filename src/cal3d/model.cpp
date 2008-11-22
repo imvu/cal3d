@@ -29,7 +29,6 @@
 #include "cal3d/mesh.h"
 #include "cal3d/morphtargetmixer.h"
 #include "cal3d/physique.h"
-#include "cal3d/springsystem.h"
 
  /*****************************************************************************/
 /** Constructs the model instance.
@@ -39,7 +38,7 @@
 
 CalModel::CalModel()
   :  m_pCoreModel(0), m_pSkeleton(0), m_pMixer(0), m_pPhysique(0), 
-     m_pSpringSystem(0), m_pRenderer(0), m_pMorphTargetMixer(0)
+     m_pRenderer(0), m_pMorphTargetMixer(0)
 {
 }
 
@@ -171,15 +170,6 @@ void CalModel::create(CalCoreModel *pCoreModel)
 
   m_pPhysique = pPhysique;
 
-  // allocate a new spring system instance
-  CalSpringSystem *pSpringSystem;
-  pSpringSystem = new CalSpringSystem();
-
-  // create the spring system from this model
-  pSpringSystem->create(this);
-
-  m_pSpringSystem = pSpringSystem;
-
   // allocate a new renderer instance
   CalRenderer *pRenderer;
   pRenderer = new CalRenderer();
@@ -214,14 +204,6 @@ void CalModel::destroy()
     m_pRenderer->destroy();
     delete m_pRenderer;
     m_pRenderer = 0;
-  }
-
-  // destroy the spring system instance
-  if(m_pSpringSystem != 0)
-  {
-    m_pSpringSystem->destroy();
-    delete m_pSpringSystem;
-    m_pSpringSystem = 0;
   }
 
   // destroy the physique instance
@@ -479,44 +461,10 @@ CalRenderer *CalModel::getRenderer()
   return m_pRenderer;
 }
 
- /*****************************************************************************/
-/** Provides access to the skeleton.
-  *
-  * This function returns the skeleton.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the skeleton
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
 CalSkeleton *CalModel::getSkeleton()
 {
   return m_pSkeleton;
 }
-
- /*****************************************************************************/
-/** Provides access to the spring system.
-  *
-  * This function returns the spring system.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the spring system
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalSpringSystem *CalModel::getSpringSystem()
-{
-  return m_pSpringSystem;
-}
-
- /*****************************************************************************/
-/** Returns the mesh vector.
-  *
-  * This function returns the vector that contains all attached meshes of the
-  * model instance.
-  *
-  * @return A reference to the mesh vector.
-  *****************************************************************************/
 
 std::vector<CalMesh *>& CalModel::getVectorMesh()
 {

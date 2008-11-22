@@ -55,9 +55,7 @@ CalCoreSubmesh::sizeWithoutSubMorphTargets()
   unsigned int r = sizeof( CalCoreSubmesh );
   r += sizeof( Vertex ) * m_vectorVertex.size();
   r += sizeof( bool ) * m_vectorTangentsEnabled.size();
-  r += sizeof( PhysicalProperty ) * m_vectorPhysicalProperty.size();
   r += sizeof( Face ) * m_vectorFace.size();
-  r += sizeof( Spring ) * m_vectorSpring.size();
   r += sizeof( unsigned int ) * m_vectorSubMorphTargetGroupIndex.size();
   std::vector<std::vector<TangentSpace> >::iterator iter2;
   for( iter2 = m_vectorvectorTangentSpace.begin(); iter2 != m_vectorvectorTangentSpace.end(); ++iter2 ) {
@@ -121,19 +119,6 @@ int CalCoreSubmesh::getFaceCount()
 int CalCoreSubmesh::getLodCount()
 {
   return m_lodCount;
-}
-
- /*****************************************************************************/
-/** Returns the number of springs.
-  *
-  * This function returns the number of springs in the core submesh instance.
-  *
-  * @return The number of springs.
-  *****************************************************************************/
-
-int CalCoreSubmesh::getSpringCount()
-{
-  return m_vectorSpring.size();
 }
 
  /*****************************************************************************/
@@ -253,44 +238,6 @@ std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace()
   return m_vectorFace;
 }
 
- /*****************************************************************************/
-/** Returns the physical property vector.
-  *
-  * This function returns the vector that contains all physical properties of
-  * the core submesh instance.
-  *
-  * @return A reference to the physical property vector.
-  *****************************************************************************/
-
-std::vector<CalCoreSubmesh::PhysicalProperty>& CalCoreSubmesh::getVectorPhysicalProperty()
-{
-  return m_vectorPhysicalProperty;
-}
-
- /*****************************************************************************/
-/** Returns the spring vector.
-  *
-  * This function returns the vector that contains all springs of the core
-  * submesh instance.
-  *
-  * @return A reference to the spring vector.
-  *****************************************************************************/
-
-std::vector<CalCoreSubmesh::Spring>& CalCoreSubmesh::getVectorSpring()
-{
-  return m_vectorSpring;
-}
-
- /*****************************************************************************/
-/** Returns the texture coordinate vector-vector.
-  *
-  * This function returns the vector that contains all texture coordinate
-  * vectors of the core submesh instance. This vector contains another vector
-  * because there can be more than one texture map at each vertex.
-  *
-  * @return A reference to the texture coordinate vector-vector.
-  *****************************************************************************/
-
 std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> > & CalCoreSubmesh::getVectorVectorTextureCoordinate()
 {
   return m_vectorvectorTextureCoordinate;
@@ -359,30 +306,24 @@ int CalCoreSubmesh::getVertexCount()
   *         \li \b false if an error happend
   *****************************************************************************/
 
-void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int faceCount, int springCount)
+void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int faceCount)
 {
   // reserve the space needed in all the vectors
-  m_vectorVertex.reserve(vertexCount);
   m_vectorVertex.resize(vertexCount);
 
-  m_vectorTangentsEnabled.reserve(textureCoordinateCount);
   m_vectorTangentsEnabled.resize(textureCoordinateCount);
 
-  m_vectorvectorTangentSpace.reserve(textureCoordinateCount);
   m_vectorvectorTangentSpace.resize(textureCoordinateCount);
 
-  m_vectorvectorTextureCoordinate.reserve(textureCoordinateCount);
   m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
 
   int textureCoordinateId;
   for(textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
   {
-    m_vectorvectorTextureCoordinate[textureCoordinateId].reserve(vertexCount);
     m_vectorvectorTextureCoordinate[textureCoordinateId].resize(vertexCount);
 	
     if (m_vectorTangentsEnabled[textureCoordinateId])
     {
-      m_vectorvectorTangentSpace[textureCoordinateId].reserve(vertexCount);
       m_vectorvectorTangentSpace[textureCoordinateId].resize(vertexCount);
     }
     else
@@ -391,18 +332,7 @@ void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int fa
     }
   }
 
-  m_vectorFace.reserve(faceCount);
   m_vectorFace.resize(faceCount);
-
-  m_vectorSpring.reserve(springCount);
-  m_vectorSpring.resize(springCount);
-
-  // reserve the space for the physical properties if we have springs in the core submesh instance
-  if(springCount > 0)
-  {
-    m_vectorPhysicalProperty.reserve(vertexCount);
-    m_vectorPhysicalProperty.resize(vertexCount);
-  }
 }
 
  /*****************************************************************************/
@@ -482,51 +412,6 @@ bool CalCoreSubmesh::setTangentSpace(int vertexId, int textureCoordinateId, cons
   return true;
 }
 
-
- /*****************************************************************************/
-/** Sets a specified physical property.
-  *
-  * This function sets a specified physical property in the core submesh
-  * instance.
-  *
-  * @param vertexId  The ID of the vertex.
-  * @param physicalProperty The physical property that should be set.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSubmesh::setPhysicalProperty(int vertexId, const PhysicalProperty& physicalProperty)
-{
-  if((vertexId < 0) || (vertexId >= (int)m_vectorPhysicalProperty.size())) return false;
-
-  m_vectorPhysicalProperty[vertexId] = physicalProperty;
-
-  return true;
-}
-
- /*****************************************************************************/
-/** Sets a specified spring.
-  *
-  * This function sets a specified spring in the core submesh instance.
-  *
-  * @param springId  The ID of the spring.
-  * @param spring The spring that should be set.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSubmesh::setSpring(int springId, const Spring& spring)
-{
-  if((springId < 0) || (springId >= (int)m_vectorSpring.size())) return false;
-
-  m_vectorSpring[springId] = spring;
-
-  return true;
-}
 
  /*****************************************************************************/
 /** Sets a specified texture coordinate.
@@ -668,45 +553,4 @@ void CalCoreSubmesh::scale(float factor)
 	{
 		m_vectorVertex[vertexId].position*=factor;		
 	}
-
-	if(m_vectorSpring.size()>0)
-	{
-
-		// There is a problem when we resize and that there is
-		// a spring system, I was unable to solve this
-		// problem, so I disable the spring system
-		// if the scale are too big
-
-		if( fabs(factor - 1.0f) > 0.10)
-		{
-			m_vectorSpring.clear();
-			m_vectorPhysicalProperty.clear();
-		}
-
-
-/*		
-		for(vertexId = 0; vertexId < m_vectorVertex.size() ; vertexId++)
-		{
-			//m_vectorPhysicalProperty[vertexId].weight *= factor;
-			m_vectorPhysicalProperty[vertexId].weight *= factor*factor;
-			//m_vectorPhysicalProperty[vertexId].weight *= 0.5f;
-		}
-
-
-		int springId;
-		for(springId = 0; springId < m_vectorVertex.size() ; springId++)
-		{
-			//m_vectorSpring[springId].idleLength*=factor;
-			CalVector distance = m_vectorVertex[m_vectorSpring[springId].vertexId[1]].position - m_vectorVertex[m_vectorSpring[springId].vertexId[0]].position;
-			
-			m_vectorSpring[springId].idleLength = distance.length();		
-		}
-
-   */
-	}
-
-	
-
 }
-
-//****************************************************************************//

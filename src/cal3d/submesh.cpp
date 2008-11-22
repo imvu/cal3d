@@ -90,41 +90,7 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
     m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
   }
 
-  // check if the submesh instance must handle the vertex and normal data internally
-  if(m_pCoreSubmesh->getSpringCount() > 0)
-  {
-    m_vectorVertex.reserve(m_pCoreSubmesh->getVertexCount());
-    m_vectorVertex.resize(m_pCoreSubmesh->getVertexCount());
-    m_vectorNormal.reserve(m_pCoreSubmesh->getVertexCount());
-    m_vectorNormal.resize(m_pCoreSubmesh->getVertexCount());
-
-    m_vectorvectorTangentSpace.reserve(m_pCoreSubmesh->getVectorVectorTangentSpace().size());
-    m_vectorvectorTangentSpace.resize(m_pCoreSubmesh->getVectorVectorTangentSpace().size());
-
-    m_vectorPhysicalProperty.resize(m_pCoreSubmesh->getVertexCount());
-
-    // get the vertex vector of the core submesh
-    std::vector<CalCoreSubmesh::Vertex>& vectorVertex = m_pCoreSubmesh->getVectorVertex();
-
-    // copy the data from the core submesh as default values
-    int vertexId;
-    for(vertexId = 0; vertexId < m_pCoreSubmesh->getVertexCount(); ++vertexId)
-    {
-      // copy the vertex data
-      m_vectorVertex[vertexId] = vectorVertex[vertexId].position;
-      m_vectorPhysicalProperty[vertexId].position = vectorVertex[vertexId].position;
-      m_vectorPhysicalProperty[vertexId].positionOld = vectorVertex[vertexId].position;
-
-      // copy the normal data
-      m_vectorNormal[vertexId] = vectorVertex[vertexId].normal;
-    }
-
-    m_bInternalData = true;
-  }
-  else
-  {
-    m_bInternalData = false;
-  }
+  m_bInternalData = false;
 
   return true;
 }

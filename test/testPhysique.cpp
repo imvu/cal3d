@@ -64,7 +64,7 @@ shared_ptr<CalModel> createTestModel(shared_ptr<CalCoreModel> coreModel) {
 TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CalCoreMesh * coreMesh = createTestCoreMesh();
     CalCoreSubmesh * coreSubMesh = coreMesh->getCoreSubmesh(0);
-    coreSubMesh->reserve(1, 0, 1, 0);
+    coreSubMesh->reserve(1, 0, 1);
     coreSubMesh->setVertex(0, createVertex(1, 2, 3, 0, 1, 0, 1));
 
     shared_ptr<CalCoreModel> coreModel(new CalCoreModel(), &caldestroy<CalCoreModel>);
@@ -93,7 +93,7 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
 TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_unit_vectors) {
     CalCoreMesh * coreMesh = createTestCoreMesh();
     CalCoreSubmesh * coreSubMesh = coreMesh->getCoreSubmesh(0);
-    coreSubMesh->reserve(1, 0, 1, 0);
+    coreSubMesh->reserve(1, 0, 1);
     coreSubMesh->setVertex(0, createVertex(1, 2, 3, 1, 1, 0, 2));
 
     shared_ptr<CalCoreModel> coreModel(new CalCoreModel(), &caldestroy<CalCoreModel>);

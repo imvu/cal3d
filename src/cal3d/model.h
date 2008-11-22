@@ -20,7 +20,6 @@ class CalAbstractMixer;
 class CalMixer;
 class CalMorphTargetMixer;
 class CalPhysique;
-class CalSpringSystem;
 class CalRenderer;
 class CalMesh;
 
@@ -33,7 +32,6 @@ protected:
   CalAbstractMixer *m_pMixer;
   CalMorphTargetMixer *m_pMorphTargetMixer;
   CalPhysique *m_pPhysique;
-  CalSpringSystem *m_pSpringSystem;
   CalRenderer *m_pRenderer;
   std::vector<CalMesh *> m_vectorMesh;
 
@@ -57,7 +55,6 @@ public:
   CalPhysique *getPhysique();
   CalRenderer *getRenderer();
   CalSkeleton *getSkeleton();
-  CalSpringSystem *getSpringSystem();
   std::vector<CalMesh *>& getVectorMesh();
   void setLodLevel(float lodLevel);
   void setMaterialSet(int setId);

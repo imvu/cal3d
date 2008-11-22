@@ -1,7 +1,3 @@
-#if defined(_MSC_VER) && _MSC_VER == 1200
-#pragma warning(disable: 4786)
-#endif
-
 //****************************************************************************//
 // saver.cpp                                                                  //
 // Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
@@ -707,14 +703,12 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   // get the vertex, face, physical property and spring vector
   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
   std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
-  std::vector<CalCoreSubmesh::PhysicalProperty>& vectorPhysicalProperty = pCoreSubmesh->getVectorPhysicalProperty();
-  std::vector<CalCoreSubmesh::Spring>& vectorSpring = pCoreSubmesh->getVectorSpring();
 
   // write the number of vertices, faces, level-of-details and springs
   CalPlatform::writeInteger(file, vectorVertex.size());
   CalPlatform::writeInteger(file, vectorFace.size());
   CalPlatform::writeInteger(file, pCoreSubmesh->getLodCount());
-  CalPlatform::writeInteger(file, pCoreSubmesh->getSpringCount());
+  CalPlatform::writeInteger(file, 0); // spring count
 
   // get the texture coordinate vector vector
   std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
@@ -801,43 +795,6 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
       }
     }
 
-    // save the physical property of the vertex if there are springs in the core submesh
-    if(pCoreSubmesh->getSpringCount() > 0)
-    {
-      // write the physical property of this vertex if there are springs in the core submesh
-      CalCoreSubmesh::PhysicalProperty& physicalProperty = vectorPhysicalProperty[vertexId];
-
-      // write the physical property data
-      CalPlatform::writeFloat(file, physicalProperty.weight);
-
-      // check if an error happend
-      if(!file)
-      {
-        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-        return false;
-      }
-    }
-
-  }
-
-  // write all springs
-  int springId;
-  for(springId = 0; springId < (int)pCoreSubmesh->getSpringCount(); ++springId)
-  {
-    CalCoreSubmesh::Spring& spring = vectorSpring[springId];
-
-    // write the spring data
-    CalPlatform::writeInteger(file, spring.vertexId[0]);
-    CalPlatform::writeInteger(file, spring.vertexId[1]);
-    CalPlatform::writeFloat(file, spring.springCoefficient);
-    CalPlatform::writeFloat(file, spring.idleLength);
-
-    // check if an error happend
-    if(!file)
-    {
-      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-      return false;
-    }
   }
 
   CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
@@ -1439,7 +1396,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     submesh.SetAttribute("NUMFACES",pCoreSubmesh->getFaceCount());    
     submesh.SetAttribute("MATERIAL",pCoreSubmesh->getCoreMaterialThreadId());
     submesh.SetAttribute("NUMLODSTEPS",pCoreSubmesh->getLodCount());
-    submesh.SetAttribute("NUMSPRINGS",pCoreSubmesh->getSpringCount());
+    submesh.SetAttribute("NUMSPRINGS",0);
     submesh.SetAttribute("NUMMORPHS",pCoreSubmesh->getCoreSubMorphTargetCount());
     
     submesh.SetAttribute("NUMTEXCOORDS",pCoreSubmesh->getVectorVectorTextureCoordinate().size());
@@ -1448,8 +1405,6 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     // get the vertex, face, physical property and spring vector
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
-    std::vector<CalCoreSubmesh::PhysicalProperty>& vectorPhysicalProperty = pCoreSubmesh->getVectorPhysicalProperty();
-    std::vector<CalCoreSubmesh::Spring>& vectorSpring = pCoreSubmesh->getVectorSpring();
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
     // get the texture coordinate vector vector
         std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
@@ -1557,49 +1512,9 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
         vertex.InsertEndChild(influence);
       }
 
-      // save the physical property of the vertex if there are springs in the core submesh
-      if(pCoreSubmesh->getSpringCount() > 0)
-      {
-        // write the physical property of this vertex if there are springs in the core submesh
-        CalCoreSubmesh::PhysicalProperty& physicalProperty = vectorPhysicalProperty[vertexId];
-
-        TiXmlElement physique("PHYSIQUE");
-
-        str.str("");
-        str << physicalProperty.weight;
-        TiXmlText physiquedata(str.str());
-        physique.InsertEndChild(physiquedata);
-        vertex.InsertEndChild(physique);
-      }
-
       submesh.InsertEndChild(vertex);
     }
 
-    // write all springs
-                int springId;
-                for(springId = 0; springId < (int)pCoreSubmesh->getSpringCount(); ++springId)
-    {
-                  CalCoreSubmesh::Spring& Spring = vectorSpring[springId];
-                  
-                  TiXmlElement spring("SPRING");      
-
-                  str.str("");
-                  str << Spring.vertexId[0]<< " "
-                      << Spring.vertexId[1];
-                  spring.SetAttribute("VERTEXID",str.str());
-
-      
-                  str.str("");
-                  str << Spring.springCoefficient;
-                  spring.SetAttribute("COEF",str.str());  
-      
-                  str.str("");
-                  str << Spring.idleLength;       
-                  spring.SetAttribute("LENGTH",str.str());
-      
-                  submesh.InsertEndChild(spring);
-    }
-                
     // write all morphs
                 int morphId;
                 for(morphId = 0; morphId < (int)pCoreSubmesh->getCoreSubMorphTargetCount(); ++morphId)

@@ -199,7 +199,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			std::vector<CSubmeshCandidate::Spring>& vectorSpring = pSubmeshCandidate->GetVectorSpring();
 
 			// reserve memory for all the submesh data
-			pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size(), vectorSpring.size());
+			pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size());
 
 			size_t vertexCandidateId;
 			for(vertexCandidateId = 0; vertexCandidateId < vectorVertexCandidate.size(); vertexCandidateId++)
@@ -259,21 +259,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 
 				// set vertex in the core submesh instance
 				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex);
-
-				// set the physical property if there is a spring system
-				if(vectorSpring.size() > 0)
-				{
-					// get the physical property vector
-					CVertexCandidate::PhysicalProperty physicalPropertyCandidate;
-					pVertexCandidate->GetPhysicalProperty(physicalPropertyCandidate);
-
-					CalCoreSubmesh::PhysicalProperty physicalProperty;
-					physicalProperty.weight = physicalPropertyCandidate.weight;
-
-					// set the physical property in the core submesh instance
-					pCoreSubmesh->setPhysicalProperty(vertexCandidateId, physicalProperty);
-
-				}
 			}
 
 			size_t faceId;
@@ -288,21 +273,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 
 				// set face in the core submesh instance
 				pCoreSubmesh->setFace(vectorFace[faceId].lodId, face);
-			}
-
-			size_t springId;
-			for(springId = 0; springId < vectorSpring.size(); springId++)
-			{
-				CalCoreSubmesh::Spring spring;
-
-				// set the vertex ids
-				spring.vertexId[0] = vectorSpring[springId].vertexId[0];
-				spring.vertexId[1] = vectorSpring[springId].vertexId[1];
-				spring.springCoefficient = vectorSpring[springId].springCoefficient;
-				spring.idleLength = vectorSpring[springId].idleLength;
-
-				// set face in the core submesh instance
-				pCoreSubmesh->setSpring(springId, spring);
 			}
 
 			// set the LOD step count

@@ -1692,7 +1692,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   // set the core material id
   pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
-  pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount);
+  pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount);
 
   // load the tangent space enable flags.
   int textureCoordinateId;
@@ -1802,10 +1802,9 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     // load the physical property of the vertex if there are springs in the core submesh
     if(springCount > 0)
     {
-      CalCoreSubmesh::PhysicalProperty physicalProperty;
-
+      float f;
       // load data of the physical property
-      dataSrc.readFloat(physicalProperty.weight);
+      dataSrc.readFloat(f);
 
       // check if an error happened
       if(!dataSrc.ok())
@@ -1814,9 +1813,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         delete pCoreSubmesh;
         return 0;
       }
-
-      // set the physical property in the core submesh instance
-      pCoreSubmesh->setPhysicalProperty(vertexId, physicalProperty);
     }
   }
 
@@ -1824,13 +1820,14 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   int springId;
   for(springId = 0; springId < springCount; ++springId)
   {
-    CalCoreSubmesh::Spring spring;
+    int i;
+    float f;
 
     // load data of the spring
-    dataSrc.readInteger(spring.vertexId[0]);
-    dataSrc.readInteger(spring.vertexId[1]);
-    dataSrc.readFloat(spring.springCoefficient);
-    dataSrc.readFloat(spring.idleLength);
+    dataSrc.readInteger(i);
+    dataSrc.readInteger(i);
+    dataSrc.readFloat(f);
+    dataSrc.readFloat(f);
 
     // check if an error happened
     if(!dataSrc.ok())
@@ -1839,9 +1836,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       delete pCoreSubmesh;
       return 0;
     }
-
-    // set spring in the core submesh instance
-    pCoreSubmesh->setSpring(springId, spring);
   }
 
   for( int morphId = 0; morphId < morphCount; morphId++ ) {

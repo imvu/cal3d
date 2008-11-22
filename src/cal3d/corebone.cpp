@@ -415,29 +415,25 @@ void CalCoreBone::calculateBoundingBox(CalCoreModel * pCoreModel)
        {
 		   CalCoreSubmesh *pCoreSubmesh = pCoreMesh->getCoreSubmesh(submeshId);
 		   
-		   if(pCoreSubmesh->getSpringCount()==0)
-		   {
-			   
-			   std::vector<CalCoreSubmesh::Vertex>& vectorVertex =  pCoreSubmesh->getVectorVertex();
-			   for(size_t vertexId=0;vertexId <vectorVertex.size(); ++vertexId)
-			   {
-				   for(size_t influenceId=0;influenceId<vectorVertex[vertexId].vectorInfluence.size();++influenceId)
-				   {
-					   if(vectorVertex[vertexId].vectorInfluence[influenceId].boneId == boneId)
-					   {
-						   int planeId;
-						   for(planeId = 0; planeId < 6; ++planeId)
-						   {
-							   if(m_boundingBox.plane[planeId].eval(vectorVertex[vertexId].position) < 0.0f)
-							   {
-								   m_boundingBox.plane[planeId].setPosition(vectorVertex[vertexId].position);
-								   m_boundingPosition[planeId]=vectorVertex[vertexId].position;		          
-							   }
-						   }
-					   }
-				   }
-			   }	
-		   }
+	           std::vector<CalCoreSubmesh::Vertex>& vectorVertex =  pCoreSubmesh->getVectorVertex();
+	           for(size_t vertexId=0;vertexId <vectorVertex.size(); ++vertexId)
+	           {
+		           for(size_t influenceId=0;influenceId<vectorVertex[vertexId].vectorInfluence.size();++influenceId)
+		           {
+			           if(vectorVertex[vertexId].vectorInfluence[influenceId].boneId == boneId)
+			           {
+				           int planeId;
+				           for(planeId = 0; planeId < 6; ++planeId)
+				           {
+					           if(m_boundingBox.plane[planeId].eval(vectorVertex[vertexId].position) < 0.0f)
+					           {
+						           m_boundingBox.plane[planeId].setPosition(vectorVertex[vertexId].position);
+						           m_boundingPosition[planeId]=vectorVertex[vertexId].position;		          
+					           }
+				           }
+			           }
+		           }
+	           }	
 	   }
    }
    m_boundingBoxPrecomputed = true;

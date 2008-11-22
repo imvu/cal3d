@@ -36,7 +36,6 @@ sources = Split('''
     renderer.cpp
     saver.cpp
     skeleton.cpp
-    springsystem.cpp
     streamsource.cpp
     submesh.cpp
     tinybind.cpp

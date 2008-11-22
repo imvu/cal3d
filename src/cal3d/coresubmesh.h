@@ -48,12 +48,6 @@ public:
     float weight;
   };
 
-  /// The core submesh PhysicalProperty.
-  struct PhysicalProperty
-  {
-    float weight;
-  };
-
   /// The core submesh Vertex.
   struct Vertex
   {
@@ -69,18 +63,8 @@ public:
       CalIndex vertexId[3];
   };
   
-  /// The core submesh Spring.
-  struct Spring
-  {
-    int vertexId[2];
-    float springCoefficient;
-    float idleLength;
-  };
-
   typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
   typedef std::vector<Face> VectorFace;
-  typedef std::vector<PhysicalProperty> VectorPhysicalProperty;
-  typedef std::vector<Spring> VectorSpring;
   typedef std::vector<TangentSpace> VectorTangentSpace;
   typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
   typedef std::vector<VectorTangentSpace > VectorVectorTangentSpace;
@@ -95,23 +79,18 @@ public:
   int getCoreMaterialThreadId();
   int getFaceCount();
   int getLodCount();
-  int getSpringCount();
   bool hasNonWhiteVertexColors() { return m_hasNonWhiteVertexColors; }
   std::vector<Face>& getVectorFace();
-  std::vector<PhysicalProperty>& getVectorPhysicalProperty();
-  std::vector<Spring>& getVectorSpring();
   std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
   std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
   std::vector<Vertex>& getVectorVertex();
   int getVertexCount();
   bool isTangentsEnabled(int mapId);
   bool enableTangents(int mapId, bool enabled);
-  void reserve(int vertexCount, int textureCoordinateCount, int faceCount, int springCount);
+  void reserve(int vertexCount, int textureCoordinateCount, int faceCount);
   void setCoreMaterialThreadId(int coreMaterialThreadId);
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
-  bool setPhysicalProperty(int vertexId, const PhysicalProperty& physicalProperty);
-  bool setSpring(int springId, const Spring& spring);
   bool setTangentSpace(int vertexId, int textureCoordinateId, const CalVector& tangent, float crossFactor);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
   bool setVertex(int vertexId, const Vertex& vertex);
@@ -134,9 +113,7 @@ private:
   std::vector<bool> m_vectorTangentsEnabled;
   std::vector<std::vector<TangentSpace> > m_vectorvectorTangentSpace;
   std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
-  std::vector<PhysicalProperty> m_vectorPhysicalProperty;
   std::vector<Face> m_vectorFace;
-  std::vector<Spring> m_vectorSpring;
   CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
   int m_coreMaterialThreadId;
   int m_lodCount;

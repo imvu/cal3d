@@ -1282,7 +1282,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
     // reserve memory for all the submesh data
-    pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount, springCount);
+    pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount);
 
     TiXmlElement *vertex = submesh->FirstChildElement();
     
@@ -1537,60 +1537,14 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         influence=influence->NextSiblingElement();    
       }
 
-      // set vertex in the core submesh instance
-      // === pCoreSubmesh->setVertex(vertexId, Vertex);
-
-      TiXmlElement *physique = influence;
-
-        
-
-      // load the physical property of the vertex if there are springs in the core submesh
-      if(springCount > 0)
-      {
-        CalCoreSubmesh::PhysicalProperty physicalProperty;
-        
-        if(!physique || _stricmp(physique->Value(),"PHYSIQUE")!=0)
-        {
-          delete pCoreMesh;
-          delete pCoreSubmesh;
-          CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-          return 0;
-        }
-        node = physique->FirstChild();
-        if(!node)
-        {
-          delete pCoreMesh;
-          delete pCoreSubmesh;
-          CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-          return 0;
-        }
-        TiXmlText* physiquedata = node->ToText();
-        if(!physiquedata)
-        {
-          delete pCoreMesh;
-          delete pCoreSubmesh;
-          CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-          return 0;
-        }
-
-        physicalProperty.weight = (float) atof(physiquedata->Value());
-
-        // set the physical property in the core submesh instance
-        pCoreSubmesh->setPhysicalProperty(vertexId, physicalProperty);          
-        
-      }
-
-
       vertex = vertex->NextSiblingElement();
    }
 
    TiXmlElement *spring= vertex;
 
    // load all springs
-   int springId;
-   for(springId = 0; springId < springCount; ++springId)
+   for(int springId = 0; springId < springCount; ++springId)
    {
-      CalCoreSubmesh::Spring Spring;
       if(!spring ||_stricmp(spring->Value(),"SPRING")!=0)
       {
         delete pCoreMesh;
@@ -1598,12 +1552,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return 0;
       }
-                  ReadPair( spring->Attribute("VERTEXID"), &Spring.vertexId[0], &Spring.vertexId[1] );
-      Spring.springCoefficient = (float) atof(spring->Attribute("COEF"));
-      Spring.idleLength = (float) atof(spring->Attribute("LENGTH"));
-
-      // set spring in the core submesh instance
-      pCoreSubmesh->setSpring(springId, Spring);
       spring = spring->NextSiblingElement();
    }
 

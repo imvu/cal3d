@@ -731,11 +731,6 @@ int CalCoreSubmesh_GetLodCount(CalCoreSubmesh *self)
   return self->getLodCount();
 }
 
-int CalCoreSubmesh_GetSpringCount(CalCoreSubmesh *self)
-{
-  return self->getSpringCount();
-}
-
 int CalCoreSubmesh_GetVertexCount(CalCoreSubmesh *self)
 {
   return self->getVertexCount();
@@ -1181,45 +1176,6 @@ int CalSkeleton_GetBoneLines(CalSkeleton *self, float *pLines)
 int CalSkeleton_GetBoneLinesStatic(CalSkeleton *self, float *pLines)
 {
   return self->getBoneLinesStatic(pLines);
-}
-
-//****************************************************************************//
-// CalSpringSystem wrapper functions definition                               //
-//****************************************************************************//
-
-void CalSpringSystem_CalculateForces(CalSpringSystem *self, CalSubmesh *pSubmesh, float deltaTime)
-{
-  self->calculateForces(pSubmesh, deltaTime);
-}
-
-void CalSpringSystem_CalculateVertices(CalSpringSystem *self, CalSubmesh *pSubmesh, float deltaTime)
-{
-  self->calculateVertices(pSubmesh, deltaTime);
-}
-
-void CalSpringSystem_Create(CalSpringSystem *self, CalModel *pModel)
-{
-  return self->create(pModel);
-}
-
-void CalSpringSystem_Delete(CalSpringSystem *self)
-{
-  delete self;
-}
-
-void CalSpringSystem_Destroy(CalSpringSystem *self)
-{
-  self->destroy();
-}
-
-CalSpringSystem *CalSpringSystem_New()
-{
-  return new CalSpringSystem();
-}
-
-void CalSpringSystem_Update(CalSpringSystem *self, float deltaTime)
-{
-  self->update(deltaTime);
 }
 
 //****************************************************************************//
