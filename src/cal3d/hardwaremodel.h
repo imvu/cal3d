@@ -31,7 +31,7 @@ private:
 		int vertexCount;
 		int startIndex;
 		int faceCount;
-		CalCoreMaterial *pCoreMaterial;
+                boost::shared_ptr<CalCoreMaterial> pCoreMaterial;
 
 		int meshId,submeshId;
 	};

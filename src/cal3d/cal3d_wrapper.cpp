@@ -537,11 +537,6 @@ int CalCoreModel_AddCoreAnimation(CalCoreModel *self, CalCoreAnimation *pCoreAni
   return self->addCoreAnimation(pCoreAnimation);
 }
 
-int CalCoreModel_AddCoreMaterial(CalCoreModel *self, CalCoreMaterial *pCoreMaterial)
-{
-  return self->addCoreMaterial(pCoreMaterial);
-}
-
 int CalCoreModel_AddCoreMesh(CalCoreModel *self, CalCoreMesh *pCoreMesh)
 {
   return self->addCoreMesh(pCoreMesh);
@@ -577,11 +572,6 @@ int CalCoreModel_GetCoreAnimationMaxId(CalCoreModel *self)
   return self->getCoreAnimationMaxId();
 }
 
-CalCoreMaterial *CalCoreModel_GetCoreMaterial(CalCoreModel *self, int coreMaterialId)
-{
-  return self->getCoreMaterial(coreMaterialId);
-}
-
 int CalCoreModel_GetCoreMaterialCount(CalCoreModel *self)
 {
   return self->getCoreMaterialCount();
@@ -615,16 +605,6 @@ int CalCoreModel_LoadCoreAnimation(CalCoreModel *self, char *strFilename)
 int CalCoreModel_LoadCoreAnimatedMorph(CalCoreModel *self, char *strFilename)
 {
   return self->loadCoreAnimatedMorph(strFilename);
-}
-
-int CalCoreModel_LoadCoreMaterial(CalCoreModel *self, char *strFilename)
-{
-  return self->loadCoreMaterial(strFilename);
-}
-
-int CalCoreModel_LoadCoreMesh(CalCoreModel *self, char *strFilename)
-{
-  return self->loadCoreMesh(strFilename);
 }
 
 Boolean CalCoreModel_LoadCoreSkeleton(CalCoreModel *self, char *strFilename)

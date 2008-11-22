@@ -294,7 +294,7 @@ int CalCoreModel::addCoreMorphAnimation(CalCoreMorphAnimation *pCoreMorphAnimati
   *         \li \b -1 if an error happend
   *****************************************************************************/
 
-int CalCoreModel::addCoreMaterial(CalCoreMaterial *pCoreMaterial)
+int CalCoreModel::addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial)
 {
   // get the id of the core material
   int materialId;
@@ -390,12 +390,6 @@ void CalCoreModel::destroy()
 {
   assert( m_magic == CalCoreModelMagic );
 
-  // destroy all core materials
-  std::vector<CalCoreMaterial *>::iterator iteratorCoreMaterial;
-  for(iteratorCoreMaterial = m_vectorCoreMaterial.begin(); iteratorCoreMaterial != m_vectorCoreMaterial.end(); ++iteratorCoreMaterial)
-  {
-    delete (*iteratorCoreMaterial);
-  }
   m_vectorCoreMaterial.clear();
 
   // destroy all core meshes
@@ -600,12 +594,12 @@ int CalCoreModel::getCoreMorphAnimationCount()
   *         \li \b 0 if an error happend
   *****************************************************************************/
 
-CalCoreMaterial *CalCoreModel::getCoreMaterial(int coreMaterialId)
+boost::shared_ptr<CalCoreMaterial> CalCoreModel::getCoreMaterial(int coreMaterialId)
 {
   if((coreMaterialId < 0) || (coreMaterialId >= (int)m_vectorCoreMaterial.size()))
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
+    return boost::shared_ptr<CalCoreMaterial>();
   }
 
   return m_vectorCoreMaterial[coreMaterialId];
@@ -778,84 +772,6 @@ int CalCoreModel::loadCoreAnimatedMorph(const std::string& strFilename)
 
 
  /*****************************************************************************/
-/** Loads a core material.
-  *
-  * This function loads a core material from a file.
-  *
-  * @param strFilename The file from which the core material should be loaded
-  *                    from.
-  *
-  * @return One of the following values:
-  *         \li the assigned \b ID of the loaded core material
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreModel::loadCoreMaterial(const std::string& strFilename)
-{
-  // the core skeleton has to be loaded already
-  if(m_pCoreSkeleton == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
-
-  // load a new core material
-  CalCoreMaterial *pCoreMaterial = CalLoader::loadCoreMaterial(strFilename);
-  if(pCoreMaterial == 0) return -1;
-
-  // add core material to this core model
-  int materialId = addCoreMaterial(pCoreMaterial);
-  if(materialId == -1)
-  {
-    delete pCoreMaterial;
-    return -1;
-  }
-
-  return materialId;
-}
-
- /*****************************************************************************/
-/** Loads a core mesh.
-  *
-  * This function loads a core mesh from a file.
-  *
-  * @param strFilename The file from which the core mesh should be loaded from.
-  *
-  * @return One of the following values:
-  *         \li the assigned \b ID of the loaded core mesh
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreModel::loadCoreMesh(const std::string& strFilename)
-{
-
-
-  /*
-  // the core skeleton has to be loaded already
-  if(m_pCoreSkeleton == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
-*/
-
-  // load a new core mesh
-  CalCoreMesh *pCoreMesh = CalLoader::loadCoreMesh(strFilename);
-  if(pCoreMesh == 0) return -1;
-
-  // add core mesh to this core model
-  int meshId;
-  meshId = addCoreMesh(pCoreMesh);
-  if(meshId == -1)
-  {
-    delete pCoreMesh;
-    return -1;
-  }
-
-  return meshId;
-}
-
- /*****************************************************************************/
 /** Loads the core skeleton.
   *
   * This function loads the core skeleton from a file.
@@ -944,7 +860,7 @@ bool CalCoreModel::saveCoreMaterial(const std::string& strFilename, int coreMate
   }
 
   // save the core animation
-  if(!CalSaver::saveCoreMaterial(strFilename, m_vectorCoreMaterial[coreMaterialId]))
+  if(!CalSaver::saveCoreMaterial(strFilename, m_vectorCoreMaterial[coreMaterialId].get()))
   {
     return false;
   }

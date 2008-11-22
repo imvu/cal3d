@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
 class CalCoreSkeleton;
@@ -29,7 +30,7 @@ protected:
   std::vector<CalCoreMorphAnimation *> m_vectorCoreMorphAnimation;
   std::vector<CalCoreAnimatedMorph *> m_vectorCoreAnimatedMorph;
   std::vector<CalCoreMesh *> m_vectorCoreMesh;
-  std::vector<CalCoreMaterial *> m_vectorCoreMaterial;
+  std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
   std::map<int, std::map<int, int> > m_mapmapCoreMaterialThread;
   bool m_coreMeshManagement;
   bool m_coreAnimationManagement;
@@ -38,7 +39,7 @@ protected:
 // constructors/destructor
 public:
   CalCoreModel();
-  virtual ~CalCoreModel();
+  ~CalCoreModel();
 
 // member functions
 public:
@@ -53,7 +54,7 @@ public:
 
   int addCoreMorphAnimation(CalCoreMorphAnimation *pCoreMorphAnimation);
   int addCoreAnimatedMorph(CalCoreAnimatedMorph *pCoreAnimatedMorph);
-  int addCoreMaterial(CalCoreMaterial *pCoreMaterial);
+  int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
   int addCoreMesh(CalCoreMesh *pCoreMesh);
   bool createInternal(const std::string& strName);
   bool createWithName( char const * strName);
@@ -65,7 +66,7 @@ public:
   int getCoreAnimationMaxId();
   int getCoreMorphAnimationCount();
   // int getCoreAnimatedMorphCount();
-  CalCoreMaterial *getCoreMaterial(int coreMaterialId);
+  boost::shared_ptr<CalCoreMaterial> getCoreMaterial(int coreMaterialId);
   int getCoreMaterialCount();
   int getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
   CalCoreMesh *getCoreMesh(int coreMeshId);
@@ -73,8 +74,6 @@ public:
   CalCoreSkeleton *getCoreSkeleton();
   int loadCoreAnimation(const std::string& strFilename);
   int loadCoreAnimatedMorph(const std::string& strFilename);
-  int loadCoreMaterial(const std::string& strFilename);
-  int loadCoreMesh(const std::string& strFilename);
   bool loadCoreSkeleton(const std::string& strFilename);
   bool saveCoreAnimation(const std::string& strFilename, int coreAnimtionId);
   bool saveCoreMaterial(const std::string& strFilename, int coreMaterialId);

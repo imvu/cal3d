@@ -82,9 +82,8 @@ void CalRenderer::destroy()
 int CalRenderer::getMapCount(CalSubmesh* submesh)
 {
   // get the core material
-  CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
-  if(pCoreMaterial == 0) return 0;
+  boost::shared_ptr<CalCoreMaterial> pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
+  if(!pCoreMaterial) return 0;
 
   return pCoreMaterial->getMapCount();
 }
@@ -92,8 +91,8 @@ int CalRenderer::getMapCount(CalSubmesh* submesh)
 Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
 {
   // get the core material
-  CalCoreMaterial *pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
-  if(pCoreMaterial == 0) return 0;
+  boost::shared_ptr<CalCoreMaterial> pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
+  if(!pCoreMaterial) return 0;
   return pCoreMaterial->getUserData();
 }
 
@@ -110,8 +109,7 @@ Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
 void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer)
 {
   // get the core material
-  CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
+  boost::shared_ptr<CalCoreMaterial> pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(submesh->getCoreMaterialId());
   if(pCoreMaterial == 0)
   {
     // write default values to the color buffer
