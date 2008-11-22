@@ -1,4 +1,5 @@
 #include "TestPrologue.h"
+#include <cal3d/renderer.h>
 
 template <class T> void caldestroy(T* ptr) {
     ptr->destroy();

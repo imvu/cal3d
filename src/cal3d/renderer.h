@@ -31,12 +31,8 @@ public:
   void create(CalModel *pModel);
   void destroy();
   void endRendering();
-  void getAmbientColor(unsigned char *pColorBuffer);
-  void getDiffuseColor(unsigned char *pColorBuffer);
   int getMapCount();
   Cal::UserData* getMaterialUserData();
-  int getMeshCount();
-  float getShininess();
   void getSpecularColor(unsigned char *pColorBuffer);
   int getSubmeshCount(int meshId);
   int getTextureCoordinates(int mapId, float *pTextureCoordinateBuffer);
@@ -45,5 +41,4 @@ public:
   CalSubmesh* selectMeshSubmesh(int meshId, int submeshId);
   void setNormalization(bool normalize);
   bool textureCoordinatesForMapValid( int mapId );
-  bool hasNonWhiteVertexColors();
 };

@@ -137,78 +137,6 @@ void CalRenderer::endRendering()
 }
 
  /*****************************************************************************/
-/** Provides access to the ambient color.
-  *
-  * This function returns the ambient color of the material of the selected
-  * mesh/submesh.
-  *
-  * @param pColorBuffer A pointer to the user-provided buffer where the color
-  *                     data is written to.
-  *****************************************************************************/
-
-void CalRenderer::getAmbientColor(unsigned char *pColorBuffer)
-{
-  // get the core material
-  CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
-  if(pCoreMaterial == 0)
-  {
-    // write default values to the color buffer
-    pColorBuffer[0] = 0;
-    pColorBuffer[1] = 0;
-    pColorBuffer[2] = 0;
-    pColorBuffer[3] = 0;
-
-    return;
-  }
-
-  // get the ambient color of the material
-  CalCoreMaterial::Color& color = pCoreMaterial->getAmbientColor();
-
-  // write it to the color buffer
-  pColorBuffer[0] = color.red;
-  pColorBuffer[1] = color.green;
-  pColorBuffer[2] = color.blue;
-  pColorBuffer[3] = color.alpha;
-}
-
- /*****************************************************************************/
-/** Provides access to the diffuse color.
-  *
-  * This function returns the diffuse color of the material of the selected
-  * mesh/submesh.
-  *
-  * @param pColorBuffer A pointer to the user-provided buffer where the color
-  *                     data is written to.
-  *****************************************************************************/
-
-void CalRenderer::getDiffuseColor(unsigned char *pColorBuffer)
-{
-  // get the core material
-  CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
-  if(pCoreMaterial == 0)
-  {
-    // write default values to the color buffer
-    pColorBuffer[0] = 192;
-    pColorBuffer[1] = 192;
-    pColorBuffer[2] = 192;
-    pColorBuffer[3] = 192;
-
-    return;
-  }
-
-  // get the diffuse color of the material
-  CalCoreMaterial::Color& color = pCoreMaterial->getDiffuseColor();
-
-  // write it to the color buffer
-  pColorBuffer[0] = color.red;
-  pColorBuffer[1] = color.green;
-  pColorBuffer[2] = color.blue;
-  pColorBuffer[3] = color.alpha;
-}
-
- /*****************************************************************************/
 /** Returns the number of maps.
   *
   * This function returns the number of maps in the selected mesh/submesh.
@@ -232,43 +160,6 @@ Cal::UserData* CalRenderer::getMaterialUserData()
   CalCoreMaterial *pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
   if(pCoreMaterial == 0) return 0;
   return pCoreMaterial->getUserData();
-}
-
- /*****************************************************************************/
-/** Returns the number of attached meshes.
-  *
-  * This function returns the number of meshes attached to the renderer
-  * instance.
-  *
-  * @return The number of attached meshes.
-  *****************************************************************************/
-
-int CalRenderer::getMeshCount()
-{
-  // get the attached meshes vector
-  std::vector<CalMesh *>& vectorMesh = m_pModel->getVectorMesh();
-
-  return vectorMesh.size();
-}
-
-
- /*****************************************************************************/
-/** Returns the shininess factor.
-  *
-  * This function returns the shininess factor of the material of the selected
-  * mesh/submesh..
-  *
-  * @return The shininess factor.
-  *****************************************************************************/
-
-float CalRenderer::getShininess()
-{
-  // get the core material
-  CalCoreMaterial *pCoreMaterial;
-  pCoreMaterial = m_pModel->getCoreModel()->getCoreMaterial(m_pSelectedSubmesh->getCoreMaterialId());
-  if(pCoreMaterial == 0) return 50.0f;
-
-  return pCoreMaterial->getShininess();
 }
 
  /*****************************************************************************/
@@ -429,13 +320,6 @@ int CalRenderer::getVertColorsAsStandardPixels( unsigned long *pVertexBuffer)
     *pVertexBuffer++ = color;
   }
   return vertexCount;
-}
-
-
-bool
-CalRenderer::hasNonWhiteVertexColors() 
-{ 
-  return m_pSelectedSubmesh->getCoreSubmesh()->hasNonWhiteVertexColors();
 }
 
 
