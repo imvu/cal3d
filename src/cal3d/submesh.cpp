@@ -91,9 +91,6 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
   // set the initial lod level
   setLodLevel(1.0f);
 
-  // set the initial material id
-  m_coreMaterialId = -1;
-  
   //Setting the morph target weights
   m_vectorMorphTargetWeight.reserve(m_pCoreSubmesh->getCoreSubMorphTargetCount());
   m_vectorMorphTargetWeight.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
@@ -156,21 +153,6 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
   }
 
   return true;
-}
-
- /*****************************************************************************/
-/** Returns the core material ID.
-  *
-  * This function returns the core material ID of the submesh instance.
-  *
-  * @return One of the following values:
-  *         \li the \b ID of the core material
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalSubmesh::getCoreMaterialId()
-{
-  return m_coreMaterialId;
 }
 
  /*****************************************************************************/
@@ -346,19 +328,6 @@ bool CalSubmesh::enableTangents(int mapId, bool enabled)
 }
 
 
-
- /*****************************************************************************/
-/** Sets the core material ID.
-  *
-  * This function sets the core material ID of the submesh instance.
-  *
-  * @param coreMaterialId The core material ID that should be set.
-  *****************************************************************************/
-
-void CalSubmesh::setCoreMaterialId(int coreMaterialId)
-{
-  m_coreMaterialId = coreMaterialId;
-}
 
  /*****************************************************************************/
 /** Sets the LOD level.

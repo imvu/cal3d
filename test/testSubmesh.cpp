@@ -1,5 +1,7 @@
 #include "TestPrologue.h"
 #include <cal3d/renderer.h>
+#include <cal3d/model.h>
+#include <cal3d/submesh.h>
 
 
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {

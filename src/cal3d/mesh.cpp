@@ -225,15 +225,14 @@ void CalMesh::setMaterialSet(int setId)
   for(submeshId = 0; submeshId < (int)m_vectorSubmesh.size(); ++submeshId)
   {
     // get the core material thread id of the submesh
-    int coreMaterialThreadId;
-    coreMaterialThreadId = m_vectorSubmesh[submeshId]->getCoreSubmesh()->getCoreMaterialThreadId();
+    int coreMaterialThreadId = m_vectorSubmesh[submeshId]->getCoreSubmesh()->getCoreMaterialThreadId();
 
     // get the core material id for the given set id in the material thread
-    int coreMaterialId;
-    coreMaterialId = m_pModel->getCoreModel()->getCoreMaterialId(coreMaterialThreadId, setId);
+    int coreMaterialId = m_pModel->getCoreModel()->getCoreMaterialId(coreMaterialThreadId, setId);
+    boost::shared_ptr<CalCoreMaterial> material = m_pModel->getCoreModel()->getCoreMaterial(coreMaterialId);
 
     // set the new core material id in the submesh
-    m_vectorSubmesh[submeshId]->setCoreMaterialId(coreMaterialId);
+    m_vectorSubmesh[submeshId]->setMaterial(material);
   }
 }
 

@@ -31,18 +31,15 @@
 #include "cal3d/coremorphtrack.h"
 #include "cal3d/datasource.h"
 #include "cal3d/error.h"
-#include "cal3d/hardwaremodel.h"
 #include "cal3d/loader.h"
 #include "cal3d/matrix.h"
 #include "cal3d/mesh.h"
-#include "cal3d/mixer.h"
-#include "cal3d/model.h"
-#include "cal3d/morphtargetmixer.h"
-#include "cal3d/physique.h"
+#include "cal3d/mixer.h" // next
+#include "cal3d/morphtargetmixer.h" // next
+#include "cal3d/physique.h" // next
 #include "cal3d/quaternion.h"
 #include "cal3d/saver.h"
 #include "cal3d/skeleton.h"
 #include "cal3d/springsystem.h"
 #include "cal3d/streamsource.h"
-#include "cal3d/submesh.h"
 #include "cal3d/vector.h"

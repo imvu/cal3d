@@ -10,10 +10,11 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
-#include "cal3d/coresubmesh.h"
 
+class CalCoreMaterial;
 class CalCoreSubmesh;
 
 // Structure used to return an array of the morphs that have non-zero weights.
@@ -63,7 +64,7 @@ protected:
   std::vector<float> m_vectorSubMorphTargetGroupAttenuation;  
   int m_vertexCount;
   int m_faceCount;
-  int m_coreMaterialId;
+  boost::shared_ptr<CalCoreMaterial> m_material;
   bool m_bInternalData;
 
 // constructors/destructor
@@ -75,10 +76,16 @@ public:
 public:
   bool create(CalCoreSubmesh *pCoreSubmesh);
   CalCoreSubmesh *getCoreSubmesh();
-  int getCoreMaterialId();
   const std::vector<Face>& getVectorFace() const {
       return m_vectorFace;
   }
+  boost::shared_ptr<CalCoreMaterial> getMaterial() {
+      return m_material;
+  }
+  void setMaterial(boost::shared_ptr<CalCoreMaterial> material) {
+      m_material = material;
+  }
+
   std::vector<CalVector>& getVectorNormal();
   std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
   std::vector<PhysicalProperty>& getVectorPhysicalProperty();
@@ -87,7 +94,6 @@ public:
   int getVertexCount();
   bool hasInternalData();
   void disableInternalData();
-  void setCoreMaterialId(int coreMaterialId);
   void setLodLevel(float lodLevel);
   bool isTangentsEnabled(int mapId);
   bool enableTangents(int mapId, bool enabled);
