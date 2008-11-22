@@ -73,7 +73,8 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CalRenderer * r = model->getRenderer();
 
     CHECK(r->beginRendering());
-    int numVertices = r->getVertexCount() * 6;
+    CalSubmesh* sm = r->selectMeshSubmesh(0, 0);
+    int numVertices = sm->getVertexCount() * 6;
     CHECK_EQUAL(numVertices, 6);
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
@@ -104,7 +105,8 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_uni
     CalRenderer * r = model->getRenderer();
 
     CHECK(r->beginRendering());
-    int numVertices = r->getVertexCount() * 6;
+    CalSubmesh* sm = r->selectMeshSubmesh(0, 0);
+    int numVertices = sm->getVertexCount() * 6;
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
     int numResultVertices = r->getVerticesAndNormals(vertexBuffer.get());

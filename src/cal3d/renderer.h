@@ -33,27 +33,16 @@ public:
   void endRendering();
   void getAmbientColor(unsigned char *pColorBuffer);
   void getDiffuseColor(unsigned char *pColorBuffer);
-  CalSubmesh* getSelectedSubmesh() const {
-      return m_pSelectedSubmesh;
-  }
-  CalModel * getModel() { return m_pModel; }
   int getMapCount();
   Cal::UserData* getMaterialUserData();
   int getMeshCount();
-  int getNormals(float *pNormalBuffer);
   float getShininess();
   void getSpecularColor(unsigned char *pColorBuffer);
   int getSubmeshCount(int meshId);
   int getTextureCoordinates(int mapId, float *pTextureCoordinateBuffer);
-  int getVertexCount();
-  int getVertices(float *pVertexBuffer);
-  int getVertColors(float *pVertexBuffer);
   int getVertColorsAsStandardPixels( unsigned long *pVertexBuffer);
-  int getTangentSpaces(int mapId, float *pTangentSpaceBuffer);
   int getVerticesAndNormals(float *pVertexBuffer);
-  int getVerticesNormalsAndTexCoords(float *pVertexBuffer,int NumTexCoords=1);
-  bool isTangentsEnabled(int mapId);
-  bool selectMeshSubmesh(int meshId, int submeshId);
+  CalSubmesh* selectMeshSubmesh(int meshId, int submeshId);
   void setNormalization(bool normalize);
   bool textureCoordinatesForMapValid( int mapId );
   bool hasNonWhiteVertexColors();

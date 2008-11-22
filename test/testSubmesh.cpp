@@ -62,7 +62,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     renderer.create(&model);
 
     CHECK(renderer.beginRendering());
-    renderer.getNormals(0);
+    renderer.getVerticesAndNormals(0);
     renderer.endRendering();
 
     renderer.destroy();

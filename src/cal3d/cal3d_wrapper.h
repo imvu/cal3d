@@ -517,36 +517,6 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
   CAL3D_WRAPPER_API void CalQuaternion_Set(struct CalQuaternion *self, float qx, float qy, float qz, float qw);
 
 //****************************************************************************//
-// CalRenderer wrapper functions declaration                                  //
-//****************************************************************************//
-
-  CAL3D_WRAPPER_API enum Boolean CalRenderer_BeginRendering(struct CalRenderer *self);
-  CAL3D_WRAPPER_API void CalRenderer_Create(struct CalRenderer *self, struct CalModel *pModel);
-  CAL3D_WRAPPER_API void CalRenderer_Delete(struct CalRenderer *self);
-  CAL3D_WRAPPER_API void CalRenderer_Destroy(struct CalRenderer *self);
-  CAL3D_WRAPPER_API void CalRenderer_EndRendering(struct CalRenderer *self);
-  CAL3D_WRAPPER_API void CalRenderer_GetAmbientColor(struct CalRenderer *self, unsigned char *pColorBuffer);
-  CAL3D_WRAPPER_API void CalRenderer_GetDiffuseColor(struct CalRenderer *self, unsigned char *pColorBuffer);
-  CAL3D_WRAPPER_API int CalRenderer_GetFaceCount(struct CalRenderer *self);
-  CAL3D_WRAPPER_API int CalRenderer_GetFaces(struct CalRenderer *self, CalIndex *pFaceBuffer);
-  CAL3D_WRAPPER_API int CalRenderer_GetMapCount(struct CalRenderer *self);
-  CAL3D_WRAPPER_API CalUserData CalRenderer_GetMapUserData(struct CalRenderer *self, int mapId);
-  CAL3D_WRAPPER_API int CalRenderer_GetMeshCount(struct CalRenderer *self);
-  CAL3D_WRAPPER_API int CalRenderer_GetNormals(struct CalRenderer *self, float *pNormalBuffer);
-  CAL3D_WRAPPER_API float CalRenderer_GetShininess(struct CalRenderer *self);
-  CAL3D_WRAPPER_API void CalRenderer_GetSpecularColor(struct CalRenderer *self, unsigned char *pColorBuffer);
-  CAL3D_WRAPPER_API int CalRenderer_GetSubmeshCount(struct CalRenderer *self, int meshId);
-  CAL3D_WRAPPER_API int CalRenderer_GetTextureCoordinates(struct CalRenderer *self, int mapId, float *pTextureCoordinateBuffer);
-  CAL3D_WRAPPER_API int CalRenderer_GetVertexCount(struct CalRenderer *self);
-  CAL3D_WRAPPER_API int CalRenderer_GetVertices(struct CalRenderer *self, float *pVertexBuffer);
-  CAL3D_WRAPPER_API int CalRenderer_GetVerticesAndNormals(struct CalRenderer *self, float *pVertexBuffer);
-  CAL3D_WRAPPER_API int CalRenderer_GetVerticesNormalsAndTexCoords(struct CalRenderer *self, float *pVertexBuffer, int NumTexCoords);
-  CAL3D_WRAPPER_API int CalRenderer_GetTangentSpaces(struct CalRenderer *self, int mapId, float *pTangentSpaceBuffer);
-  CAL3D_WRAPPER_API enum Boolean  CalRenderer_IsTangentsEnabled(struct CalRenderer *self, int mapId);
-  CAL3D_WRAPPER_API struct CalRenderer *CalRenderer_New();
-  CAL3D_WRAPPER_API enum Boolean CalRenderer_SelectMeshSubmesh(struct CalRenderer *self, int meshId, int submeshId);
-
-//****************************************************************************//
 // CalSaver wrapper functions declaration                                     //
 //****************************************************************************//
 
