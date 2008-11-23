@@ -13,7 +13,6 @@
 #include "cal3d/animation.h"
 #include "cal3d/animation_action.h"
 #include "cal3d/animation_cycle.h"
-#include "cal3d/bone.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/coreanimation.h"
 #include "cal3d/coreanimatedmorph.h"

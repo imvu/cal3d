@@ -143,16 +143,14 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
     }
     
     // initialize vertex
-    float x, y, z;
-    x = 0.0f;
-    y = 0.0f;
-    z = 0.0f;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
 
     // initialize normal
-    float nx, ny, nz;
-    nx = 0.0f;
-    ny = 0.0f;
-    nz = 0.0f;
+    float nx = 0.0f;
+    float ny = 0.0f;
+    float nz = 0.0f;
 
     // blend together all vertex influences
     int influenceCount=(int)vertex.vectorInfluence.size();

@@ -31,19 +31,11 @@
   * This function is the default constructor of the bone instance.
   *****************************************************************************/
 
-CalBone::CalBone()
-  : m_pCoreBone(0), m_pSkeleton(0)
+CalBone::CalBone(CalCoreBone *pCoreBone)
+  : m_pCoreBone(pCoreBone), m_pSkeleton(0)
 {
-}
-
- /*****************************************************************************/
-/** Destructs the bone instance.
-  *
-  * This function is the destructor of the bone instance.
-  *****************************************************************************/
-
-CalBone::~CalBone()
-{
+  assert(pCoreBone);
+  m_pCoreBone = pCoreBone;
 }
 
  /*****************************************************************************/
@@ -194,8 +186,7 @@ void CalBone::calculateState()
   }
 
   // get parent bone id
-  int parentId;
-  parentId = m_pCoreBone->getParentId();
+  int parentId = m_pCoreBone->getParentId();
 
   if(parentId == -1)
   {
@@ -206,8 +197,7 @@ void CalBone::calculateState()
   else
   {
     // get the parent bone
-    CalBone *pParent;
-    pParent = m_pSkeleton->getBone(parentId);
+    CalBone *pParent = m_pSkeleton->getBone(parentId);
 
     // transform relative state with the absolute state of the parent
     m_translationAbsolute = m_translation;
@@ -351,38 +341,6 @@ void CalBone::clearState()
   m_accumulatedReplacementAttenuation = 1.0f;
   m_firstBlendScale = 1.0f;
   m_meshScaleAbsolute.set( 1, 1, 1 );
-}
-
- /*****************************************************************************/
-/** Creates the bone instance.
-  *
-  * This function creates the bone instance based on a core bone.
-  *
-  * @param pCoreBone A pointer to the core bone on which this bone instance
-  *                  should be based on.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-void CalBone::create(CalCoreBone *pCoreBone)
-{
-  assert(pCoreBone);
-  m_pCoreBone = pCoreBone;
-}
-
- /*****************************************************************************/
-/** Destroys the bone instance.
-  *
-  * This function destroys all data stored in the bone instance and frees all
-  * allocated memory.
-  *****************************************************************************/
-
-void CalBone::destroy()
-{
-  m_pCoreBone = 0;
-  m_pSkeleton = 0;
 }
 
  /*****************************************************************************/

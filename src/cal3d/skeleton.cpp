@@ -116,10 +116,7 @@ void CalSkeleton::create(CalCoreSkeleton *pCoreSkeleton)
   int boneId;
   for(boneId = 0; boneId < boneCount; ++boneId)
   {
-    CalBone *pBone = new CalBone();
-
-    // create a bone for every core bone
-    pBone->create(vectorCoreBone[boneId]);
+    CalBone* pBone = new CalBone(vectorCoreBone[boneId]);
 
     // set skeleton in the bone instance
     pBone->setSkeleton(this);
@@ -142,7 +139,6 @@ void CalSkeleton::destroy()
   std::vector<CalBone *>::iterator iteratorBone;
   for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
   {
-    (*iteratorBone)->destroy();
     delete (*iteratorBone);
   }
   m_vectorBone.clear();

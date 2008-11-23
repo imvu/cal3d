@@ -8,12 +8,7 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_BONE_H
-#define CAL_BONE_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
@@ -21,23 +16,11 @@
 #include "cal3d/matrix.h"
 #include "cal3d/corebone.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 //class CalCoreBone;
 class CalSkeleton;
 class CalModel;
 class CalCoreModel;
 //class CalBoundingBox;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The bone class.
-  *****************************************************************************/
 
 class CAL3D_API CalBone
 {
@@ -62,18 +45,14 @@ protected:
 
 // constructors/destructor
 public:
-  CalBone();
-  virtual ~CalBone();
+  CalBone(CalCoreBone* pCoreBone);
 
-// member functions
-public:
-  void blendState(float unrampedWeight, const CalVector& translation, 
+  void blendState(
+    float unrampedWeight, const CalVector& translation, 
     const CalQuaternion & rotation, float scale = 1.0f,
     bool replace = false, float rampValue = 1.0f );
   void calculateState();
   void clearState();
-  void create(CalCoreBone *pCoreBone);
-  void destroy();
   CalCoreBone *getCoreBone();
   void setCoreState();
   void setCoreStateRecursive();
@@ -96,10 +75,4 @@ public:
   void setSkeleton(CalSkeleton *pSkeleton);
   void calculateBoundingBox();
   CalBoundingBox & getBoundingBox();
-
-
 };
-
-#endif
-
-//****************************************************************************//
