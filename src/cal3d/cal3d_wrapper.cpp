@@ -646,15 +646,6 @@ void CalCoreSubmesh_SetLodCount(CalCoreSubmesh *self, int lodCount)
   self->setLodCount(lodCount);
 }
 
-Boolean CalCoreSubmesh_IsTangentsEnabled(CalCoreSubmesh *self, int mapId)
-{
-  return self->isTangentsEnabled(mapId) ? True : False;
-}
-
-Boolean CalCoreSubmesh_EnableTangents(struct CalCoreSubmesh *self, int mapId, bool enabled)
-{
-  return self->enableTangents(mapId, enabled) ? True : False;
-}
 
 //****************************************************************************//
 // CalCoreTrack wrapper functions definition                                  //

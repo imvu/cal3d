@@ -27,22 +27,6 @@ class CAL3D_API CalSubmesh
 {
 // misc
 public:
-  /// The submesh PhysicalProperty.
-  typedef struct
-  {
-    CalVector position;
-    CalVector positionOld;
-    CalVector force;
-  } PhysicalProperty;
-
-  /// The submesh TangentSpace.
-  struct TangentSpace
-  {
-    CalVector tangent;
-    float crossFactor;
-  };
-
-
   /// The submesh Face.
   typedef struct
   {
@@ -57,9 +41,7 @@ protected:
   std::vector<float> m_vectorReplacementAttenuation;
   std::vector<CalVector> m_vectorVertex;
   std::vector<CalVector> m_vectorNormal;
-  std::vector<std::vector<TangentSpace> > m_vectorvectorTangentSpace;
   std::vector<Face> m_vectorFace;
-  std::vector<PhysicalProperty> m_vectorPhysicalProperty;
   std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
   std::vector<float> m_vectorSubMorphTargetGroupAttenuation;  
   int m_vertexCount;
@@ -82,14 +64,10 @@ public:
   }
 
   std::vector<CalVector>& getVectorNormal();
-  std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
-  std::vector<PhysicalProperty>& getVectorPhysicalProperty();
   int getFaceCount() { return m_faceCount; }
   std::vector<CalVector>& getVectorVertex();
   int getVertexCount();
   void setLodLevel(float lodLevel);
-  bool isTangentsEnabled(int mapId);
-  bool enableTangents(int mapId, bool enabled);
   std::vector<float>& getVectorWeight();
   void setMorphTargetWeight(int blendId,float weight);
   float getMorphTargetWeight(int blendId);

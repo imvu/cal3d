@@ -34,13 +34,6 @@ public:
     float u, v;
   };
 
-  struct TangentSpace
-  {
-    CalVector tangent;
-    float crossFactor;  // To get the binormal, use ((N x T) * crossFactor)
-  };
-
-
   /// The core submesh Influence.
   struct Influence
   {
@@ -65,9 +58,7 @@ public:
   
   typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
   typedef std::vector<Face> VectorFace;
-  typedef std::vector<TangentSpace> VectorTangentSpace;
   typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
-  typedef std::vector<VectorTangentSpace > VectorVectorTangentSpace;
   typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
   typedef std::vector<Vertex> VectorVertex;
   typedef std::vector<Influence> VectorInfluence;
@@ -81,17 +72,13 @@ public:
   int getLodCount();
   bool hasNonWhiteVertexColors() { return m_hasNonWhiteVertexColors; }
   std::vector<Face>& getVectorFace();
-  std::vector<std::vector<TangentSpace> >& getVectorVectorTangentSpace();
   std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
   std::vector<Vertex>& getVectorVertex();
   int getVertexCount();
-  bool isTangentsEnabled(int mapId);
-  bool enableTangents(int mapId, bool enabled);
   void reserve(int vertexCount, int textureCoordinateCount, int faceCount);
   void setCoreMaterialThreadId(int coreMaterialThreadId);
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
-  bool setTangentSpace(int vertexId, int textureCoordinateId, const CalVector& tangent, float crossFactor);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
   bool setVertex(int vertexId, const Vertex& vertex);
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
@@ -107,11 +94,7 @@ public:
   }
 
 private:
-  void UpdateTangentVector(int v0, int v1, int v2, int channel);
-
   std::vector<Vertex> m_vectorVertex;
-  std::vector<bool> m_vectorTangentsEnabled;
-  std::vector<std::vector<TangentSpace> > m_vectorvectorTangentSpace;
   std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
   std::vector<Face> m_vectorFace;
   CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;

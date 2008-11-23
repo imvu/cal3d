@@ -1694,13 +1694,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
   pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount);
 
-  // load the tangent space enable flags.
-  int textureCoordinateId;
-  for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; textureCoordinateId++)
-  {
-	  pCoreSubmesh->enableTangents(textureCoordinateId, false);
-  }
-
   // load all vertices and their influences
   pCoreSubmesh->setHasNonWhiteVertexColors( false );
   int vertexId;

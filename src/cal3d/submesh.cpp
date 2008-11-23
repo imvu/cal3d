@@ -123,35 +123,6 @@ std::vector<CalVector>& CalSubmesh::getVectorNormal()
   return m_vectorNormal;
 }
 
-   /*****************************************************************************/
-/** Returns the tangent space vector-vector.
-  *
-  * This function returns the vector that contains all tangent space bases of
-  * the submesh instance. This vector contains another vector
-  * because there can be more than one texture map at each vertex.
-  *
-  * @return A reference to the tangent space vector-vector.
-  *****************************************************************************/
-
-std::vector<std::vector<CalSubmesh::TangentSpace> >& CalSubmesh::getVectorVectorTangentSpace()
-{
-  return m_vectorvectorTangentSpace;
-}
-
-
- /*****************************************************************************/
-/** Returns the physical property vector.
-  *
-  * This function returns the vector that contains all physical properties of
-  * the submesh instance.
-  *
-  * @return A reference to the physical property vector.
-  *****************************************************************************/
-
-std::vector<CalSubmesh::PhysicalProperty>& CalSubmesh::getVectorPhysicalProperty()
-{
-  return m_vectorPhysicalProperty;
-}
 
  /*****************************************************************************/
 /** Returns the vertex vector.
@@ -179,35 +150,6 @@ int CalSubmesh::getVertexCount()
 {
   return m_vertexCount;
 }
-
- /*****************************************************************************/
-/** Returns true if tangent vectors are enabled.
-  *
-  * This function returns true if the submesh contains tangent vectors.
-  *
-  * @return True if tangent vectors are enabled.
-  *****************************************************************************/
-
-bool CalSubmesh::isTangentsEnabled(int mapId)
-{
-	return m_pCoreSubmesh->isTangentsEnabled(mapId);
-}
-
- /*****************************************************************************/
-/** Enables (and calculates) or disables the storage of tangent spaces.
-  *
-  * This function enables or disables the storage of tangent space bases.
-  *****************************************************************************/
-
-bool CalSubmesh::enableTangents(int mapId, bool enabled)
-{
-  if(!m_pCoreSubmesh->enableTangents(mapId,enabled))
-    return false;
-
-  return true;
-}
-
-
 
  /*****************************************************************************/
 /** Sets the LOD level.
