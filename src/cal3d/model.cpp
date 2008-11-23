@@ -27,7 +27,6 @@
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/mesh.h"
-#include "cal3d/morphtargetmixer.h"
 #include "cal3d/physique.h"
 
  /*****************************************************************************/
@@ -40,7 +39,6 @@ CalModel::CalModel()
   : m_pCoreModel(0)
   , m_pSkeleton(0)
   , m_pMixer(0)
-  , m_pMorphTargetMixer(0)
 {
 }
 
@@ -158,10 +156,6 @@ void CalModel::create(CalCoreModel *pCoreModel)
   // create the mixer from this model
   pMixer->create(this);
   m_pMixer = pMixer;
-
-  // Create the morph target mixer from this model
-  m_pMorphTargetMixer = new CalMorphTargetMixer();
-  m_pMorphTargetMixer->create(this);
 }
 
  /*****************************************************************************/
@@ -188,14 +182,6 @@ void CalModel::destroy()
     m_pMixer->destroy();
     delete m_pMixer;
     m_pMixer = 0;
-  }
-  
-  // destroy the morph target mixer instance
-  if(m_pMorphTargetMixer != 0)
-  {
-    m_pMorphTargetMixer->destroy();
-    delete m_pMorphTargetMixer;
-    m_pMorphTargetMixer = 0;
   }
   
   // destroy the skeleton instance
@@ -382,21 +368,6 @@ void CalModel::setAbstractMixer(CalAbstractMixer* pMixer)
 
   if(m_pMixer != 0)
     m_pMixer->create(this);
-}
-
-/*****************************************************************************/
-/** Provides access to the morph target mixer.
-  *
-  * This function returns the morph target mixer.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the morph target mixer
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalMorphTargetMixer *CalModel::getMorphTargetMixer()
-{
-  return m_pMorphTargetMixer;
 }
 
 CalSkeleton *CalModel::getSkeleton()

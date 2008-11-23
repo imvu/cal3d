@@ -1,7 +1,3 @@
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-#pragma warning(disable: 4786)
-#endif
-
 //****************************************************************************//
 // coremodel.cpp                                                              //
 // Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
@@ -24,7 +20,6 @@
 #include "cal3d/error.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coreanimation.h"
-#include "cal3d/coremorphanimation.h"
 #include "cal3d/coreanimatedmorph.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/corematerial.h"
@@ -56,7 +51,6 @@ CalCoreModel::~CalCoreModel()
   assert(m_magic == CalCoreModelMagic );
   m_magic = 0;
   assert(m_vectorCoreAnimation.empty());
-  assert(m_vectorCoreMorphAnimation.empty());
   assert(m_vectorCoreAnimatedMorph.empty());
   assert(m_vectorCoreMesh.empty());
   assert(m_vectorCoreMaterial.empty());
@@ -256,32 +250,6 @@ bool CalCoreModel::removeCoreAnimatedMorph( int id )
 }
 
 
-
-
- /*****************************************************************************/
-/** Adds a core morph animation.
-  *
-  * This function adds a core morph animation to the core model instance.
-  *
-  * @param pCoreMorphAnimation A pointer to the core morph animation that 
-  *                            should be added.
-  *
-  * @return One of the following values:
-  *         \li the assigned morph animation \b ID of the added core morph animation
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreModel::addCoreMorphAnimation(CalCoreMorphAnimation *pCoreMorphAnimation)
-{
-  // get the id of the core morph animation
-  int morphAnimationId;
-  morphAnimationId = m_vectorCoreMorphAnimation.size();
-
-  m_vectorCoreMorphAnimation.push_back(pCoreMorphAnimation);
-
-  return morphAnimationId;
-}
-
  /*****************************************************************************/
 /** Adds a core material.
   *
@@ -413,16 +381,6 @@ void CalCoreModel::destroy()
   }
   m_vectorCoreAnimation.clear();
 
-  // destroy all core animations
-  std::vector<CalCoreMorphAnimation *>::iterator iteratorCoreMorphAnimation;
-  for(iteratorCoreMorphAnimation = m_vectorCoreMorphAnimation.begin(); iteratorCoreMorphAnimation != 
-      m_vectorCoreMorphAnimation.end(); ++iteratorCoreMorphAnimation)
-  {
-    (*iteratorCoreMorphAnimation)->destroy();
-    delete (*iteratorCoreMorphAnimation);
-  }
-  m_vectorCoreMorphAnimation.clear();
-
   // destroy all core animated morphs
   std::vector<CalCoreAnimatedMorph *>::iterator iteratorCoreAnimatedMorph;
   for(iteratorCoreAnimatedMorph = m_vectorCoreAnimatedMorph.begin(); iteratorCoreAnimatedMorph != 
@@ -485,29 +443,6 @@ CalCoreAnimation *CalCoreModel::getCoreAnimation(int coreAnimationId)
   *
   * This function returns the core morph animation with the given ID.
   *
-  * @param coreMorphAnimationId The ID of the core morph animation that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core morph animation
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreMorphAnimation *CalCoreModel::getCoreMorphAnimation(int coreMorphAnimationId)
-{
-  if((coreMorphAnimationId < 0) || (coreMorphAnimationId >= (int)m_vectorCoreMorphAnimation.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
-  }
-
-  return m_vectorCoreMorphAnimation[coreMorphAnimationId];
-}
-
- /*****************************************************************************/
-/** Provides access to a core morph animation.
-  *
-  * This function returns the core morph animation with the given ID.
-  *
   * @param coreAnimatedMorphId The ID of the core morph animation that should be returned.
   *
   * @return One of the following values:
@@ -544,41 +479,6 @@ CalCoreAnimatedMorph *CalCoreModel::getCoreAnimatedMorph(int coreAnimatedMorphId
 int CalCoreModel::getCoreAnimationMaxId()
 {
   return m_vectorCoreAnimation.size();
-}
-
-
-
- /*****************************************************************************/
-/** Returns the number of CoreAnimatedMorphs.
-  *
-  * This function returns the number of CoreAnimatedMorphs in the core model
-  * instance.
-  *
-  * @return The number of CoreAnimatedMorphs.
-  *****************************************************************************/
-
-/*
-
-int CalCoreModel::getCoreAnimatedMorphCount()
-{
-  return m_vectorCoreAnimatedMorph.size();
-}
-*/
-
-
-
- /*****************************************************************************/
-/** Returns the number of core morph animations.
-  *
-  * This function returns the number of core morph animations in the core model
-  * instance.
-  *
-  * @return The number of core morph animations.
-  *****************************************************************************/
-
-int CalCoreModel::getCoreMorphAnimationCount()
-{
-  return m_vectorCoreMorphAnimation.size();
 }
 
 

@@ -160,8 +160,7 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
       CalCoreSubmesh::Influence& influence = vertex.vectorInfluence[influenceId];
       
       // get the bone of the influence vertex
-      CalBone *pBone;
-      pBone = vectorBone[influence.boneId];
+      CalBone *pBone = vectorBone[influence.boneId];
       
       // transform vertex with current state of the bone
       CalVector v(position);

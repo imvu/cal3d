@@ -15,7 +15,6 @@ sources = Split('''
     corematerial.cpp
     coremesh.cpp
     coremodel.cpp
-    coremorphanimation.cpp
     coremorphkeyframe.cpp
     coremorphtrack.cpp
     coreskeleton.cpp
@@ -29,7 +28,6 @@ sources = Split('''
     mesh.cpp
     mixer.cpp
     model.cpp
-    morphtargetmixer.cpp
     physique.cpp
     platform.cpp
     quaternion.cpp

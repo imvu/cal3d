@@ -22,7 +22,6 @@
 #include "cal3d/corematerial.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coremodel.h"
-#include "cal3d/coremorphanimation.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
@@ -34,7 +33,6 @@
 #include "cal3d/matrix.h"
 #include "cal3d/mesh.h"
 #include "cal3d/mixer.h" // next
-#include "cal3d/morphtargetmixer.h" // next
 #include "cal3d/quaternion.h"
 #include "cal3d/saver.h"
 #include "cal3d/skeleton.h"

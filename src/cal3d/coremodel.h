@@ -17,7 +17,6 @@
 class CalCoreSkeleton;
 class CalCoreAnimation;
 class CalCoreAnimatedMorph;
-class CalCoreMorphAnimation;
 class CalCoreMesh;
 class CalCoreMaterial;
 
@@ -28,7 +27,6 @@ protected:
   std::string m_strName;
   CalCoreSkeleton *m_pCoreSkeleton;
   std::vector<CalCoreAnimation *> m_vectorCoreAnimation;
-  std::vector<CalCoreMorphAnimation *> m_vectorCoreMorphAnimation;
   std::vector<CalCoreAnimatedMorph *> m_vectorCoreAnimatedMorph;
   std::vector<CalCoreMesh *> m_vectorCoreMesh;
   std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
@@ -53,7 +51,6 @@ public:
 
   bool removeCoreAnimatedMorph( int id );
 
-  int addCoreMorphAnimation(CalCoreMorphAnimation *pCoreMorphAnimation);
   int addCoreAnimatedMorph(CalCoreAnimatedMorph *pCoreAnimatedMorph);
   int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
   int addCoreMesh(CalCoreMesh *pCoreMesh);
@@ -62,11 +59,8 @@ public:
   bool createCoreMaterialThread(int coreMaterialThreadId);
   void destroy();
   CalCoreAnimation *getCoreAnimation(int coreAnimationId);
-  CalCoreMorphAnimation *getCoreMorphAnimation(int coreMorphAnimationId);
   CalCoreAnimatedMorph *getCoreAnimatedMorph(int coreAnimatedMorphId);
   int getCoreAnimationMaxId();
-  int getCoreMorphAnimationCount();
-  // int getCoreAnimatedMorphCount();
   boost::shared_ptr<CalCoreMaterial> getCoreMaterial(int coreMaterialId);
   int getCoreMaterialCount();
   int getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
