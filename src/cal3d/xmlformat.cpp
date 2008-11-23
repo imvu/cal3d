@@ -1365,10 +1365,12 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
         }
-        ReadTripleFloat( vcdata->Value(), &Vertex.vertexColor.x, &Vertex.vertexColor.y, &Vertex.vertexColor.z );
-        if( Vertex.vertexColor.x != 1.0f
-          || Vertex.vertexColor.y != 1.0f
-          || Vertex.vertexColor.z != 1.0f ) {
+        CalVector vertexColor;
+        ReadTripleFloat( vcdata->Value(), &vertexColor.x, &vertexColor.y, &vertexColor.z );
+        Vertex.vertexColor = CalMakeColor(vertexColor);
+        if( vertexColor.x != 1.0f
+          || vertexColor.y != 1.0f
+          || vertexColor.z != 1.0f ) {
           pCoreSubmesh->setHasNonWhiteVertexColors( true );
         }
 

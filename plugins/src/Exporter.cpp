@@ -699,10 +699,12 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 
 				// set the vertex position
 				pVertexCandidate->GetPosition(vertex.position);
-        vertex.position -= positionOffset;
+                                vertex.position -= positionOffset;
 
                                 // set the vertex color
-                                pVertexCandidate->GetVertColor(vertex.vertexColor);
+                                CalVector vertexColor;
+                                pVertexCandidate->GetVertColor(vertexColor);
+                                vertex.vertexColor = CalMakeColor(vertexColor);
 
 				// set the vertex normal
 				CalVector normal;

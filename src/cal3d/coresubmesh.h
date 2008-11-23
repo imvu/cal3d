@@ -11,6 +11,7 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include "cal3d/color.h"
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
@@ -49,7 +50,7 @@ public:
     std::vector<Influence> vectorInfluence;
     int collapseId;
     int faceCollapseCount;
-    CalVector vertexColor; 
+    CalColor32 vertexColor; 
   };
 
   struct Face {

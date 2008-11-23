@@ -1709,18 +1709,18 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     dataSrc.readFloat(vertex.normal.x);
     dataSrc.readFloat(vertex.normal.y);
     dataSrc.readFloat(vertex.normal.z);
-    vertex.vertexColor.x = 1.0f;
-    vertex.vertexColor.y = 1.0f;
-    vertex.vertexColor.z = 1.0f;
+    vertex.vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
     if( hasVertexColors ) {
-      dataSrc.readFloat(vertex.vertexColor.x);
-      dataSrc.readFloat(vertex.vertexColor.y);
-      dataSrc.readFloat(vertex.vertexColor.z);
-      if( vertex.vertexColor.x != 1.0f
-        || vertex.vertexColor.y != 1.0f
-        || vertex.vertexColor.z != 1.0f ) {
+      CalVector vertexColor;
+      dataSrc.readFloat(vertexColor.x);
+      dataSrc.readFloat(vertexColor.y);
+      dataSrc.readFloat(vertexColor.z);
+      if( vertexColor.x != 1.0f
+        || vertexColor.y != 1.0f
+        || vertexColor.z != 1.0f ) {
         pCoreSubmesh->setHasNonWhiteVertexColors( true );
       }
+      vertex.vertexColor = CalMakeColor(vertexColor);
     }
     dataSrc.readInteger(vertex.collapseId);
     dataSrc.readInteger(vertex.faceCollapseCount);

@@ -122,7 +122,7 @@ int CalRenderer::getVertColorsAsStandardPixels(CalSubmesh* submesh, unsigned lon
 
   for(int vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
-    *pVertexBuffer++ = CalMakeColor(vectorVertex[vertexId].vertexColor);
+    *pVertexBuffer++ = vectorVertex[vertexId].vertexColor;
   }
   return vertexCount;
 }

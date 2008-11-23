@@ -10,7 +10,7 @@ inline CalColor32 CalMakeColor(CalVector cv) {
     return
       ( ( unsigned int ) ( cv.z * 0xff ) << 0) +
       ( ( ( unsigned int ) ( cv.y * 0xff ) ) << 8 ) +
-      ( ( ( unsigned int ) ( cv.z * 0xff ) ) << 16 ) +
+      ( ( ( unsigned int ) ( cv.x * 0xff ) ) << 16 ) +
       0xff000000;
 }
 

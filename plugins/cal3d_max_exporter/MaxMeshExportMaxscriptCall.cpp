@@ -218,8 +218,10 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				CalVector normal;
 				pVertexCandidate->GetNormal(vertex.normal);
 
-        // set the vert color
-        pVertexCandidate->GetVertColor(vertex.vertexColor);
+                                // set the vert color
+                                CalVector vertexColor;
+                                pVertexCandidate->GetVertColor(vertexColor);
+                                vertex.vertexColor = CalMakeColor(vertexColor);
 
 				// set the collapse id
 				vertex.collapseId = pVertexCandidate->GetCollapseId();

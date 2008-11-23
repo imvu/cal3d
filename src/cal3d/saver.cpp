@@ -737,15 +737,16 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     CalPlatform::writeFloat(file, vertex.normal.x);
     CalPlatform::writeFloat(file, vertex.normal.y);
     CalPlatform::writeFloat(file, vertex.normal.z);
-	if (pCoreSubmesh->hasNonWhiteVertexColors()) {
-		CalPlatform::writeFloat(file, vertex.vertexColor.x);
-		CalPlatform::writeFloat(file, vertex.vertexColor.y);
-		CalPlatform::writeFloat(file, vertex.vertexColor.z);
-	} else {
-		CalPlatform::writeFloat(file, 1);
-		CalPlatform::writeFloat(file, 1);
-		CalPlatform::writeFloat(file, 1);
-	}
+    if (pCoreSubmesh->hasNonWhiteVertexColors()) {
+        CalVector vc(CalVectorFromColor(vertex.vertexColor));
+        CalPlatform::writeFloat(file, vc.x);
+        CalPlatform::writeFloat(file, vc.y);
+        CalPlatform::writeFloat(file, vc.z);
+    } else {
+        CalPlatform::writeFloat(file, 1);
+        CalPlatform::writeFloat(file, 1);
+        CalPlatform::writeFloat(file, 1);
+    }
     CalPlatform::writeInteger(file, vertex.collapseId);
     CalPlatform::writeInteger(file, vertex.faceCollapseCount);
 
@@ -1445,9 +1446,8 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       TiXmlElement vertColor("COLOR");
       
       str.str("");
-      str << Vertex.vertexColor.x << " "
-        << Vertex.vertexColor.y << " "
-        << Vertex.vertexColor.z;
+      CalVector vc(CalVectorFromColor(Vertex.vertexColor));
+      str << vc.x << " " << vc.y << " " << vc.z;
 
       TiXmlText colordata(str.str());  
 

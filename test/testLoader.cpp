@@ -83,7 +83,7 @@ TEST(CalVectorFromDataSrc) {
 
 TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalCoreSubmesh::Vertex v;
-    v.vertexColor = CalVector(0, 0, 0);
+    v.vertexColor = CalMakeColor(CalVector(0, 0, 0));
 
     CalCoreSubmesh* sm = new CalCoreSubmesh();
     sm->getVectorVertex().push_back(v);
