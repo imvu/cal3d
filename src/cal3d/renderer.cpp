@@ -90,43 +90,6 @@ void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuf
 }
 
  /*****************************************************************************/
-/** Provides access to the texture coordinate data.
-  *
-  * This function returns the texture coordinate data for a given map of the
-  * selected mesh/submesh.
-  *
-  * @param mapId The ID of the map to get the texture coordinate data from.
-  * @param pTextureCoordinateBuffer A pointer to the user-provided buffer where
-  *                    the texture coordinate data is written to.
-  *
-  * @return The number of texture coordinates written to the buffer.
-  *****************************************************************************/
-
-int CalRenderer::getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer)
-{
-  // get the texture coordinate vector vector
-  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
-
-  // check if the map id is valid
-  if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
-
-  // get the number of texture coordinates to return
-  int textureCoordinateCount = submesh->getVertexCount();
-
-  // copy the texture coordinate vector to the face buffer
-  if (textureCoordinateCount) {
-    memcpy(pTextureCoordinateBuffer, &vectorvectorTextureCoordinate[mapId][0], textureCoordinateCount * sizeof(CalCoreSubmesh::TextureCoordinate));
-  }
-
-  return textureCoordinateCount;
-}
-
-
- /*****************************************************************************/
 /** Returns true if texture coordinates exist for the given map.
   *
   *

@@ -20,7 +20,6 @@ namespace CalRenderer
   CAL3D_API int getMapCount(CalSubmesh* submesh);
   CAL3D_API Cal::UserData* getMaterialUserData(CalSubmesh* submesh);
   CAL3D_API void getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer);
-  CAL3D_API int getTextureCoordinates(CalSubmesh* submesh, int mapId, float *pTextureCoordinateBuffer);
   CAL3D_API int getVertColorsAsStandardPixels( CalSubmesh* submesh, unsigned long *pVertexBuffer);
   CAL3D_API bool textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId );
 };

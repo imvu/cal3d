@@ -33,7 +33,8 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CHECK(model.attachMesh(0));
 
     CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
-    CalRenderer::getTextureCoordinates(submesh, 0, 0);
+    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate()[0];
+    CHECK_EQUAL(0, texCoords.size());
 
     model.destroy();
     coreModel.destroy();
