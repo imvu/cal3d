@@ -12,10 +12,7 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
+#include "cal3d/color.h"
 #include "cal3d/error.h"
 #include "cal3d/renderer.h"
 #include "cal3d/coremodel.h"
@@ -123,29 +120,9 @@ int CalRenderer::getVertColorsAsStandardPixels(CalSubmesh* submesh, unsigned lon
   // get vertex vector of the core submesh
   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = submesh->getCoreSubmesh()->getVectorVertex();
 
-  int vertexId;
-  for(vertexId = 0; vertexId < vertexCount; ++vertexId)
+  for(int vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
-    // get the vertex
-    CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
-    unsigned long color;
-
-#ifdef WIN32
-    // Win32 StandardPixels are ARGB8 with low byte first, which means BGRA byte order.
-    color =
-      ( unsigned int ) ( vertex.vertexColor.z * 0xff )
-      + ( ( ( unsigned int ) ( vertex.vertexColor.y * 0xff ) ) << 8 )
-      + ( ( ( unsigned int ) ( vertex.vertexColor.x * 0xff ) ) << 16 )
-      + 0xff000000;
-#else
-    color = 
-        ( ( ( unsigned int ) ( vertex.vertexColor.x * 0xff ) ) << 24)
-      | ( ( ( unsigned int ) ( vertex.vertexColor.y * 0xff ) ) << 16)
-      | ( ( ( unsigned int ) ( vertex.vertexColor.z * 0xff ) ) << 8)
-      | 0x000000ff;
-#endif
-
-    *pVertexBuffer++ = color;
+    *pVertexBuffer++ = CalMakeColor(vectorVertex[vertexId].vertexColor);
   }
   return vertexCount;
 }

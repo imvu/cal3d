@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <vector>
 #include "cal3d/platform.h"
 
 typedef unsigned short CalIndex;

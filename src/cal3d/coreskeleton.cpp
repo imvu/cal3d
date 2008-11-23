@@ -1,8 +1,3 @@
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-#pragma warning(disable : 4786)
-#endif
-
-
 //****************************************************************************//
 // coreskeleton.cpp                                                           //
 // Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //

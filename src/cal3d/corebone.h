@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <list>
 #include "cal3d/global.h"
 #include "cal3d/matrix.h"
 #include "cal3d/vector.h"

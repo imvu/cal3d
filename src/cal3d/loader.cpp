@@ -16,6 +16,7 @@
 // Includes                                                                   //
 //****************************************************************************//
 
+#include <fstream>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
 #include "cal3d/matrix.h"

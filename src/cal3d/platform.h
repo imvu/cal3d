@@ -8,23 +8,9 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_PLATFORM_H
-#define CAL_PLATFORM_H
+#pragma once
 
 #include <string>
-
-//****************************************************************************//
-// Compiler configuration                                                     //
-//****************************************************************************//
-
-#if defined(_MSC_VER) && _MSC_VER <= 1200
-#pragma warning(disable : 4251)
-#pragma warning(disable : 4786)
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER == 1310
-#pragma warning(disable : 4251)
-#endif
 
 #if !defined(_WIN32) || defined(__MINGW32__)
 #define stricmp strcasecmp
@@ -71,10 +57,6 @@
 
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 // standard includes
 #include <stdlib.h>
 #include <math.h>
@@ -82,48 +64,23 @@
 // debug includes
 #include <assert.h>
 
-// STL includes
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <string>
-#include <vector>
-#include <list>
-#include <map>
 
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The platform class.
-  *****************************************************************************/
-
-class CAL3D_API CalPlatform
+namespace CalPlatform
 {
-// constructors/destructor
-protected:
-  CalPlatform();
-  virtual ~CalPlatform();
+  CAL3D_API bool readBytes(std::istream& input, void *pBuffer, int length);
+  CAL3D_API bool readFloat(std::istream& input, float& value);
+  CAL3D_API bool readInteger(std::istream& input, int& value);
+  CAL3D_API bool readString(std::istream& input, std::string& strValue);
 
-// member functions	
-public:
-  static bool readBytes(std::istream& input, void *pBuffer, int length);
-  static bool readFloat(std::istream& input, float& value);
-  static bool readInteger(std::istream& input, int& value);
-  static bool readString(std::istream& input, std::string& strValue);
+  CAL3D_API bool readBytes(char* input, void *pBuffer, int length);
+  CAL3D_API bool readFloat(char* input, float& value);
+  CAL3D_API bool readInteger(char* input, int& value);
+  CAL3D_API bool readString(char* input, std::string& strValue);
 
-  static bool readBytes(char* input, void *pBuffer, int length);
-  static bool readFloat(char* input, float& value);
-  static bool readInteger(char* input, int& value);
-  static bool readString(char* input, std::string& strValue);
-
-  static bool writeBytes(std::ostream& output, const void *pBuffer, int length);
-  static bool writeFloat(std::ostream& output, float value);
-  static bool writeInteger(std::ostream& output, int value);
-  static bool writeString(std::ostream& output, const std::string& strValue);
+  CAL3D_API bool writeBytes(std::ostream& output, const void *pBuffer, int length);
+  CAL3D_API bool writeFloat(std::ostream& output, float value);
+  CAL3D_API bool writeInteger(std::ostream& output, int value);
+  CAL3D_API bool writeString(std::ostream& output, const std::string& strValue);
 };
-
-#endif
-
-//****************************************************************************//

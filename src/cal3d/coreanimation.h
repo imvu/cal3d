@@ -8,9 +8,9 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREANIMATION_H
-#define CAL_COREANIMATION_H
+#pragma once
 
+#include <list>
 #include "cal3d/global.h"
 
 class CalCoreTrack;
@@ -40,7 +40,3 @@ private:
   float m_duration;
   std::list<CalCoreTrack *> m_listCoreTrack;
 };
-
-#endif
-
-//****************************************************************************//

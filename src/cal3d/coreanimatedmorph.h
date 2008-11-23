@@ -8,13 +8,13 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREANIMATEDMORPH_H
-#define CAL_COREANIMATEDMORPH_H
+#pragma once
 
 //****************************************************************************//
 // Includes                                                                   //
 //****************************************************************************//
 
+#include <list>
 #include "cal3d/global.h"
 #include "cal3d/coremorphtrack.h"
 
@@ -44,7 +44,7 @@ protected:
 // constructors/destructor
 public:
   CalCoreAnimatedMorph();
-  virtual ~CalCoreAnimatedMorph();
+  ~CalCoreAnimatedMorph();
 
 // member functions 
 public:
@@ -59,7 +59,3 @@ public:
   void removeZeroScaleTracks();
   static int getNumCoreAnimatedMorphs();
 };
-
-#endif
-
-//****************************************************************************//

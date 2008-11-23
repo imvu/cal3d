@@ -8,30 +8,15 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_CORESKELETON_H
-#define CAL_CORESKELETON_H
+#pragma once
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
+#include <list>
+#include <map>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalCoreBone;
 class CalCoreModel;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core skeleton class.
-  *****************************************************************************/
 
 class CAL3D_API CalCoreSkeleton
 {
@@ -45,7 +30,7 @@ protected:
 // constructors/destructor
 public:
   CalCoreSkeleton();
-  virtual ~CalCoreSkeleton();
+  ~CalCoreSkeleton();
 
 // member functions
 public:
@@ -64,7 +49,3 @@ public:
   void setSceneAmbientColor( CalVector const & color );
   void getSceneAmbientColor( CalVector & color );
 };
-
-#endif
-
-//****************************************************************************//

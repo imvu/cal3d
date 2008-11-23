@@ -9,13 +9,9 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_MIXER_H
-#define CAL_MIXER_H
+#pragma once
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
+#include <list>
 #include "cal3d/global.h"
 #include "cal3d/animation.h"
 #include "cal3d/quaternion.h"
@@ -301,8 +297,3 @@ public: // private:
   bool setManualAnimationOn( CalAnimationAction *, bool p );
   void applyBoneAdjustments();
 };
-
-
-#endif
-
-//****************************************************************************//
