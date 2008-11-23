@@ -66,7 +66,7 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CalCoreMesh * coreMesh = createTestCoreMesh();
     CalCoreSubmesh * coreSubMesh = coreMesh->getCoreSubmesh(0);
     coreSubMesh->reserve(1, 0, 1);
-    coreSubMesh->setVertex(0, createVertex(1, 2, 3, 0, 1, 0, 1));
+    coreSubMesh->setVertex(0, createVertex(1, 2, 3, 0, 1, 0, 1), CalMakeColor(CalVector(1, 1, 1)));
 
     shared_ptr<CalCoreModel> coreModel(new CalCoreModel(), &caldestroy<CalCoreModel>);
     coreModel->createWithName("test");
@@ -94,7 +94,7 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_not
     CalCoreMesh * coreMesh = createTestCoreMesh();
     CalCoreSubmesh * coreSubMesh = coreMesh->getCoreSubmesh(0);
     coreSubMesh->reserve(1, 0, 1);
-    coreSubMesh->setVertex(0, createVertex(1, 2, 3, 1, 1, 0, 2));
+    coreSubMesh->setVertex(0, createVertex(1, 2, 3, 1, 1, 0, 2), CalMakeColor(CalVector(1, 1, 1)));
 
     shared_ptr<CalCoreModel> coreModel(new CalCoreModel(), &caldestroy<CalCoreModel>);
     coreModel->createWithName("test");

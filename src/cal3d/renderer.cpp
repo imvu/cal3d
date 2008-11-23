@@ -118,11 +118,11 @@ int CalRenderer::getVertColorsAsStandardPixels(CalSubmesh* submesh, unsigned lon
   vertexCount = submesh->getVertexCount();
 
   // get vertex vector of the core submesh
-  std::vector<CalCoreSubmesh::Vertex>& vectorVertex = submesh->getCoreSubmesh()->getVectorVertex();
+  std::vector<CalColor32>& colors = submesh->getCoreSubmesh()->getVertexColors();
 
   for(int vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
-    *pVertexBuffer++ = vectorVertex[vertexId].vertexColor;
+    *pVertexBuffer++ = colors[vertexId];
   }
   return vertexCount;
 }

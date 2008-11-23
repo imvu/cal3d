@@ -50,7 +50,6 @@ public:
     std::vector<Influence> vectorInfluence;
     int collapseId;
     int faceCollapseCount;
-    CalColor32 vertexColor; 
   };
 
   struct Face {
@@ -74,14 +73,19 @@ public:
   bool hasNonWhiteVertexColors() { return m_hasNonWhiteVertexColors; }
   std::vector<Face>& getVectorFace();
   std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
+
   std::vector<Vertex>& getVectorVertex();
+  std::vector<CalColor32>& getVertexColors();
+
   int getVertexCount();
   void reserve(int vertexCount, int textureCoordinateCount, int faceCount);
   void setCoreMaterialThreadId(int coreMaterialThreadId);
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
+
+  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
-  bool setVertex(int vertexId, const Vertex& vertex);
+
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
   int addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
   boost::shared_ptr<CalCoreSubMorphTarget> getCoreSubMorphTarget(int id);
@@ -95,7 +99,10 @@ public:
   }
 
 private:
-  std::vector<Vertex> m_vectorVertex;
+  // These two should always be the same size.
+  std::vector<Vertex> m_vertices;
+  std::vector<CalColor32> m_vertexColors;
+
   std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
   std::vector<Face> m_vectorFace;
   CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;

@@ -1222,13 +1222,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
   int submeshCount = atoi(mesh->Attribute("NUMSUBMESH"));
   
   // allocate a new core mesh instance
-  CalCoreMesh *pCoreMesh;
-  pCoreMesh = new CalCoreMesh();
-  if(pCoreMesh == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
+  CalCoreMesh *pCoreMesh = new CalCoreMesh();
 
   TiXmlElement*submesh = mesh->FirstChildElement();
 
@@ -1264,14 +1258,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
           }
           
     // allocate a new core submesh instance
-    CalCoreSubmesh *pCoreSubmesh;
-    pCoreSubmesh = new CalCoreSubmesh();
-    if(pCoreSubmesh == 0)
-    {
-      CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-      delete pCoreMesh;
-      return 0;
-    }
+    CalCoreSubmesh* pCoreSubmesh = new CalCoreSubmesh();
 
     pCoreSubmesh->setHasNonWhiteVertexColors( false );
 
@@ -1287,7 +1274,8 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     TiXmlElement *vertex = submesh->FirstChildElement();
     
     // load all vertices and their influences
-          std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+    std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+    std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
     int vertexId;
     for(vertexId = 0; vertexId < vertexCount; ++vertexId)
@@ -1296,6 +1284,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
               return 0;
             }
             CalCoreSubmesh::Vertex & Vertex = vectorVertex[vertexId];
+            CalColor32& vertexColor = vertexColors[vertexId];
 
             TiXmlElement *pos= vertex->FirstChildElement();
             if( !ValidateTag(pos, "POS", pCoreMesh, pCoreSubmesh) ) {
@@ -1365,14 +1354,14 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
           CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
           return 0;
         }
-        CalVector vertexColor;
-        ReadTripleFloat( vcdata->Value(), &vertexColor.x, &vertexColor.y, &vertexColor.z );
-        Vertex.vertexColor = CalMakeColor(vertexColor);
-        if( vertexColor.x != 1.0f
-          || vertexColor.y != 1.0f
-          || vertexColor.z != 1.0f ) {
+        CalVector vc;
+        ReadTripleFloat( vcdata->Value(), &vc.x, &vc.y, &vc.z );
+        if( vc.x != 1.0f
+          || vc.y != 1.0f
+          || vc.z != 1.0f ) {
           pCoreSubmesh->setHasNonWhiteVertexColors( true );
         }
+        vertexColor = CalMakeColor(vc);
 
         collapse= vertColor->NextSiblingElement();
       }        

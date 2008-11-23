@@ -53,9 +53,10 @@ unsigned int
 CalCoreSubmesh::sizeWithoutSubMorphTargets()
 {
   unsigned int r = sizeof( CalCoreSubmesh );
-  r += sizeof( Vertex ) * m_vectorVertex.size();
-  r += sizeof( Face ) * m_vectorFace.size();
-  r += sizeof( unsigned int ) * m_vectorSubMorphTargetGroupIndex.size();
+  r += sizeof(Vertex) * m_vertices.size();
+  r += sizeof(CalColor32) * m_vertexColors.size();
+  r += sizeof(Face) * m_vectorFace.size();
+  r += sizeof(unsigned int) * m_vectorSubMorphTargetGroupIndex.size();
   std::vector<std::vector<TextureCoordinate> >::iterator iter3;
   for( iter3 = m_vectorvectorTextureCoordinate.begin(); iter3 != m_vectorvectorTextureCoordinate.end(); ++iter3 ) {
     r += sizeof( TextureCoordinate ) * (*iter3).size();
@@ -137,50 +138,27 @@ std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> > & CalCoreSubmesh::g
 
 std::vector<CalCoreSubmesh::Vertex>& CalCoreSubmesh::getVectorVertex()
 {
-  return m_vectorVertex;
+  return m_vertices;
 }
 
- /*****************************************************************************/
-/** Returns the number of vertices.
-  *
-  * This function returns the number of vertices in the core submesh instance.
-  *
-  * @return The number of vertices.
-  *****************************************************************************/
+std::vector<CalColor32>& CalCoreSubmesh::getVertexColors()
+{
+  return m_vertexColors;
+}
 
 int CalCoreSubmesh::getVertexCount()
 {
-  return m_vectorVertex.size();
+  return m_vertices.size();
 }
-
- /*****************************************************************************/
-/** Reserves memory for the vertices, faces and texture coordinates.
-  *
-  * This function reserves memory for the vertices, faces, texture coordinates
-  * and springs of the core submesh instance.
-  *
-  * @param vertexCount The number of vertices that this core submesh instance
-  *                    should be able to hold.
-  * @param textureCoordinateCount The number of texture coordinates that this
-  *                               core submesh instance should be able to hold.
-  * @param faceCount The number of faces that this core submesh instance should
-  *                  be able to hold.
-  * @param springCount The number of springs that this core submesh instance
-  *                  should be able to hold.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
 void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int faceCount)
 {
   // reserve the space needed in all the vectors
-  m_vectorVertex.resize(vertexCount);
+  m_vertices.resize(vertexCount);
+  m_vertexColors.resize(vertexCount);
   m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
 
-  int textureCoordinateId;
-  for(textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
+  for(int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
   {
     m_vectorvectorTextureCoordinate[textureCoordinateId].resize(vertexCount);
   }
@@ -263,26 +241,9 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
   return true;
 }
 
- /*****************************************************************************/
-/** Sets a specified vertex.
-  *
-  * This function sets a specified vertex in the core submesh instance.
-  *
-  * @param vertexId  The ID of the vertex.
-  * @param vertex The vertex that should be set.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex)
-{
-  if((vertexId < 0) || (vertexId >= (int)m_vectorVertex.size())) return false;
-
-  m_vectorVertex[vertexId] = vertex;
-
-  return true;
+void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor) {
+  m_vertices[vertexId] = vertex;
+  m_vertexColors[vertexId] = vertexColor;
 }
 
  /*****************************************************************************/
@@ -371,11 +332,8 @@ CalCoreSubmesh::CoreSubMorphTargetVector& CalCoreSubmesh::getVectorCoreSubMorphT
 
 void CalCoreSubmesh::scale(float factor)
 {
-	// rescale all vertices
-
-	int vertexId;
-	for(vertexId = 0; vertexId < m_vectorVertex.size() ; vertexId++)
-	{
-		m_vectorVertex[vertexId].position*=factor;		
-	}
+    for(int vertexId = 0; vertexId < m_vertices.size() ; vertexId++)
+    {
+        m_vertices[vertexId].position*=factor;		
+    }
 }

@@ -1701,6 +1701,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   for(vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
     CalCoreSubmesh::Vertex vertex;
+    CalColor32 vertexColor;
 
     // load data of the vertex
     dataSrc.readFloat(vertex.position.x);
@@ -1709,18 +1710,18 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     dataSrc.readFloat(vertex.normal.x);
     dataSrc.readFloat(vertex.normal.y);
     dataSrc.readFloat(vertex.normal.z);
-    vertex.vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
+    vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
     if( hasVertexColors ) {
-      CalVector vertexColor;
-      dataSrc.readFloat(vertexColor.x);
-      dataSrc.readFloat(vertexColor.y);
-      dataSrc.readFloat(vertexColor.z);
-      if( vertexColor.x != 1.0f
-        || vertexColor.y != 1.0f
-        || vertexColor.z != 1.0f ) {
+      CalVector vc;
+      dataSrc.readFloat(vc.x);
+      dataSrc.readFloat(vc.y);
+      dataSrc.readFloat(vc.z);
+      if( vc.x != 1.0f
+        || vc.y != 1.0f
+        || vc.z != 1.0f ) {
         pCoreSubmesh->setHasNonWhiteVertexColors( true );
       }
-      vertex.vertexColor = CalMakeColor(vertexColor);
+      vertexColor = CalMakeColor(vc);
     }
     dataSrc.readInteger(vertex.collapseId);
     dataSrc.readInteger(vertex.faceCollapseCount);
@@ -1770,7 +1771,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     }
 
     // reserve memory for the influences in the vertex
-    vertex.vectorInfluence.reserve(influenceCount);
     vertex.vectorInfluence.resize(influenceCount);
 
     // load all influences of the vertex
@@ -1791,7 +1791,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     }
 
     // set vertex in the core submesh instance
-    pCoreSubmesh->setVertex(vertexId, vertex);
+    pCoreSubmesh->setVertex(vertexId, vertex, vertexColor);
 
     // load the physical property of the vertex if there are springs in the core submesh
     if(springCount > 0)

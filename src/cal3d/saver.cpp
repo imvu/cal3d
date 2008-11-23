@@ -699,6 +699,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
 
   // get the vertex, face, physical property and spring vector
   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+  std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
   std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
 
   // write the number of vertices, faces, level-of-details and springs
@@ -725,8 +726,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   }
 
   // write all vertices
-  int vertexId;
-  for(vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
+  for(int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
   {
     CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
 
@@ -738,7 +738,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     CalPlatform::writeFloat(file, vertex.normal.y);
     CalPlatform::writeFloat(file, vertex.normal.z);
     if (pCoreSubmesh->hasNonWhiteVertexColors()) {
-        CalVector vc(CalVectorFromColor(vertex.vertexColor));
+        CalVector vc(CalVectorFromColor(vertexColors[vertexId]));
         CalPlatform::writeFloat(file, vc.x);
         CalPlatform::writeFloat(file, vc.y);
         CalPlatform::writeFloat(file, vc.z);
@@ -1402,6 +1402,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     
     // get the vertex, face, physical property and spring vector
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+    std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
     std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
     // get the texture coordinate vector vector
@@ -1412,6 +1413,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     for(vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
     {
       CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
+      CalColor32& vertexColor = vertexColors[vertexId];
 
       TiXmlElement vertex("VERTEX");
       vertex.SetAttribute("ID",vertexId);
@@ -1446,7 +1448,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       TiXmlElement vertColor("COLOR");
       
       str.str("");
-      CalVector vc(CalVectorFromColor(Vertex.vertexColor));
+      CalVector vc(CalVectorFromColor(vertexColor));
       str << vc.x << " " << vc.y << " " << vc.z;
 
       TiXmlText colordata(str.str());  

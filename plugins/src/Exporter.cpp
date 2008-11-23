@@ -696,15 +696,16 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				pVertexCandidate = vectorVertexCandidate[vertexCandidateId];
 
 				CalCoreSubmesh::Vertex vertex;
+                                CalColor32 vertexColor;
 
 				// set the vertex position
 				pVertexCandidate->GetPosition(vertex.position);
                                 vertex.position -= positionOffset;
 
                                 // set the vertex color
-                                CalVector vertexColor;
-                                pVertexCandidate->GetVertColor(vertexColor);
-                                vertex.vertexColor = CalMakeColor(vertexColor);
+                                CalVector vc;
+                                pVertexCandidate->GetVertColor(vc);
+                                vertexColor = CalMakeColor(vc);
 
 				// set the vertex normal
 				CalVector normal;
@@ -746,7 +747,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				}
 
 				// set vertex in the core submesh instance
-				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex);
+				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor);
 			}
 
 			size_t faceId;
