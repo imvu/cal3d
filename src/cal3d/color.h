@@ -4,7 +4,7 @@
 #include "cal3d/vector.h"
 
 
-typedef unsigned int CalColor32; // 32-bit integer
+typedef unsigned long CalColor32; // 32-bit integer, compatible with NSPR
 
 inline CalColor32 CalMakeColor(CalVector cv) {
     return

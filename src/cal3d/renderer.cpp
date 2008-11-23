@@ -103,26 +103,3 @@ CalRenderer::textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId )
   }
   return true;
 }
-
-
-// Returns the in-memory 32 bit representation of a color ("StandardPixel"),
-// which may be different on different machines depending on endedness and
-// on graphics format convention.  Alpha is 0xff.
-//
-//    Win32 is low byte first, ARGB8 (i.e., the first byte is B, the second is G).
-//
-int CalRenderer::getVertColorsAsStandardPixels(CalSubmesh* submesh, unsigned long *pVertexBuffer)
-{
-  // get the number of vertices
-  int vertexCount;
-  vertexCount = submesh->getVertexCount();
-
-  // get vertex vector of the core submesh
-  std::vector<CalColor32>& colors = submesh->getCoreSubmesh()->getVertexColors();
-
-  for(int vertexId = 0; vertexId < vertexCount; ++vertexId)
-  {
-    *pVertexBuffer++ = colors[vertexId];
-  }
-  return vertexCount;
-}
