@@ -22,7 +22,6 @@ sources = Split('''
     coresubmorphtarget.cpp
     coretrack.cpp
     error.cpp
-    hardwaremodel.cpp
     loader.cpp
     matrix.cpp
     mesh.cpp
