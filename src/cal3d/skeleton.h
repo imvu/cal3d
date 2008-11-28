@@ -19,13 +19,11 @@ class CalBone;
 class CAL3D_API CalSkeleton
 {
 public:
-  CalSkeleton();
+  CalSkeleton(CalCoreSkeleton* pCoreSkeleton);
   ~CalSkeleton();
 
   void calculateState();
   void clearState();
-  void create(CalCoreSkeleton *pCoreSkeleton);
-  void destroy();
   CalBone *getBone(int boneId);
   CalCoreSkeleton *getCoreSkeleton();
   std::vector<CalBone *>& getVectorBone();
@@ -34,5 +32,4 @@ public:
 private:
   CalCoreSkeleton *m_pCoreSkeleton;
   std::vector<CalBone *> m_vectorBone;
-  bool m_isBoundingBoxesComputed;
 };

@@ -35,6 +35,5 @@
 #include "cal3d/mixer.h" // next
 #include "cal3d/quaternion.h"
 #include "cal3d/saver.h"
-#include "cal3d/skeleton.h"
 #include "cal3d/streamsource.h"
 #include "cal3d/vector.h"

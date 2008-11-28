@@ -135,11 +135,7 @@ void CalModel::create(CalCoreModel *pCoreModel)
   m_pCoreModel = pCoreModel;
 
   // allocate a new skeleton instance
-  CalSkeleton *pSkeleton;
-  pSkeleton = new CalSkeleton();
-
-  // create the skeleton from the core skeleton
-  pSkeleton->create(pCoreModel->getCoreSkeleton());
+  CalSkeleton *pSkeleton = new CalSkeleton(pCoreModel->getCoreSkeleton());
 
   m_pSkeleton = pSkeleton;
 
@@ -187,7 +183,6 @@ void CalModel::destroy()
   // destroy the skeleton instance
   if(m_pSkeleton != 0)
   {
-    m_pSkeleton->destroy();
     delete m_pSkeleton;
     m_pSkeleton = 0;
   }

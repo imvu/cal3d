@@ -31,11 +31,11 @@
   * This function is the default constructor of the bone instance.
   *****************************************************************************/
 
-CalBone::CalBone(CalCoreBone *pCoreBone)
-  : m_pCoreBone(pCoreBone), m_pSkeleton(0)
+CalBone::CalBone(CalCoreBone *pCoreBone, CalSkeleton* skeleton)
+  : m_pCoreBone(pCoreBone)
+  , m_pSkeleton(skeleton)
 {
   assert(pCoreBone);
-  m_pCoreBone = pCoreBone;
 }
 
  /*****************************************************************************/
@@ -561,9 +561,4 @@ void CalBone::lockState()
 
     m_accumulatedWeightAbsolute = 0.0f;
   }
-}
-
-void CalBone::setSkeleton(CalSkeleton *pSkeleton)
-{
-  m_pSkeleton = pSkeleton;
 }

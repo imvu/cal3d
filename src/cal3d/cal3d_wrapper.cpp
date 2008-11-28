@@ -985,62 +985,6 @@ Boolean CalSaver_SaveCoreSkeleton(CalSaver *self, char *strFilename, CalCoreSkel
 }
 
 //****************************************************************************//
-// CalSkeleton wrapper functions definition                                   //
-//****************************************************************************//
-
-void CalSkeleton_CalculateState(CalSkeleton *self)
-{
-  self->calculateState();
-}
-
-void CalSkeleton_ClearState(CalSkeleton *self)
-{
-  self->clearState();
-}
-
-void CalSkeleton_Create(CalSkeleton *self, CalCoreSkeleton *pCoreSkeleton)
-{
-  return self->create(pCoreSkeleton);
-}
-
-void CalSkeleton_Delete(CalSkeleton *self)
-{
-  delete self;
-}
-
-void CalSkeleton_Destroy(CalSkeleton *self)
-{
-  self->destroy();
-}
-
-CalBone *CalSkeleton_GetBone(CalSkeleton *self, int boneId)
-{
-  return self->getBone(boneId);
-}
-
-CalCoreSkeleton *CalSkeleton_GetCoreSkeleton(CalSkeleton *self)
-{
-  return self->getCoreSkeleton();
-}
-
-/*
-std::vector<CalBone *>& CalSkeleton_GetVectorBone(CalSkeleton *self)
-{
-  return self->getVectorBone();
-}
-*/
-
-void CalSkeleton_LockState(CalSkeleton *self)
-{
-  self->lockState();
-}
-
-CalSkeleton *CalSkeleton_New()
-{
-  return new CalSkeleton();
-}
-
-//****************************************************************************//
 // CalVector wrapper functions definition                                     //
 //****************************************************************************//
 

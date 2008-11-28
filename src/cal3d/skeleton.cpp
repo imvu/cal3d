@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/skeleton.h"
 #include "cal3d/error.h"
 #include "cal3d/bone.h"
@@ -23,15 +19,23 @@
 #include "cal3d/coremodel.h"
 #include "cal3d/corebone.h" // DEBUG
 
- /*****************************************************************************/
-/** Constructs the skeleton instance.
-  *
-  * This function is the default constructor of the skeleton instance.
-  *****************************************************************************/
+CalSkeleton::CalSkeleton(CalCoreSkeleton* pCoreSkeleton)
+  : m_pCoreSkeleton(pCoreSkeleton)
+{
+  assert(pCoreSkeleton);
 
-CalSkeleton::CalSkeleton()
-  : m_pCoreSkeleton(0),m_isBoundingBoxesComputed(false)
-{ 
+  // clone the skeleton structure of the core skeleton
+  std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
+
+  int boneCount = vectorCoreBone.size();
+  m_vectorBone.reserve(boneCount);
+
+  for(int boneId = 0; boneId < boneCount; ++boneId) {
+    CalBone* pBone = new CalBone(vectorCoreBone[boneId], this);
+
+    // insert bone into bone vector
+    m_vectorBone.push_back(pBone);
+  }
 }
 
  /*****************************************************************************/
@@ -42,7 +46,12 @@ CalSkeleton::CalSkeleton()
 
 CalSkeleton::~CalSkeleton()
 {
-  assert(m_vectorBone.empty());
+  // destroy all bones
+  std::vector<CalBone *>::iterator iteratorBone;
+  for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
+  {
+    delete (*iteratorBone);
+  }
 }
 
  /*****************************************************************************/
@@ -62,7 +71,6 @@ void CalSkeleton::calculateState()
   {
     m_vectorBone[*iteratorRootBoneId]->calculateState();
   }
-  m_isBoundingBoxesComputed=false;
 }
 
  /*****************************************************************************/
@@ -80,70 +88,6 @@ void CalSkeleton::clearState()
   {
     (*iteratorBone)->clearState();
   }
-  m_isBoundingBoxesComputed=false;
-}
-
- /*****************************************************************************/
-/** Creates the skeleton instance.
-  *
-  * This function creates the skeleton instance based on a core skeleton.
-  *
-  * @param pCoreSkeleton A pointer to the core skeleton on which this skeleton
-  *                      instance should be based on.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-void CalSkeleton::create(CalCoreSkeleton *pCoreSkeleton)
-{
-  assert(pCoreSkeleton);
-
-  m_pCoreSkeleton = pCoreSkeleton;
-
-  // clone the skeleton structure of the core skeleton
-  std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
-
-  // get the number of bones
-  int boneCount;
-  boneCount = vectorCoreBone.size();
-
-  // reserve space in the bone vector
-  m_vectorBone.reserve(boneCount);
-
-  // clone every core bone
-  int boneId;
-  for(boneId = 0; boneId < boneCount; ++boneId)
-  {
-    CalBone* pBone = new CalBone(vectorCoreBone[boneId]);
-
-    // set skeleton in the bone instance
-    pBone->setSkeleton(this);
-
-    // insert bone into bone vector
-    m_vectorBone.push_back(pBone);
-  }
-}
-
- /*****************************************************************************/
-/** Destroys the skeleton instance.
-  *
-  * This function destroys all data stored in the skeleton instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalSkeleton::destroy()
-{
-  // destroy all bones
-  std::vector<CalBone *>::iterator iteratorBone;
-  for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
-  {
-    delete (*iteratorBone);
-  }
-  m_vectorBone.clear();
-
-  m_pCoreSkeleton = 0;
 }
 
  /*****************************************************************************/

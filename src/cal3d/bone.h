@@ -23,7 +23,7 @@ class CalCoreModel;
 class CAL3D_API CalBone
 {
 public:
-  CalBone(CalCoreBone* pCoreBone);
+  CalBone(CalCoreBone* pCoreBone, CalSkeleton* skeleton);
 
   void blendState(
     float unrampedWeight, const CalVector& translation, 
@@ -50,7 +50,6 @@ public:
     return m_transformMatrix;
   }
   void lockState();
-  void setSkeleton(CalSkeleton *pSkeleton);
 
 private:
   CalCoreBone *m_pCoreBone;
