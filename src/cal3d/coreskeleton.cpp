@@ -240,34 +240,6 @@ std::vector<CalCoreBone *>& CalCoreSkeleton::getVectorCoreBone()
 }
 
 
- /*****************************************************************************/
-/** Calculates bounding boxes.
-  *
-  * This function Calculates the bounding box of every bone in the core Skeleton.
-  *
-  * @param pCoreModel The coreModel (needed for vertices data).
-  *****************************************************************************/
-
-
-void CalCoreSkeleton::calculateBoundingBoxes(CalCoreModel * pCoreModel)
-{
-   for(size_t boneId=0;boneId<m_vectorCoreBone.size();++boneId)
-   {
-      m_vectorCoreBone[boneId]->calculateBoundingBox(pCoreModel);
-   }
-
-}
-
- /*****************************************************************************/
-/** Scale the core skeleton.
-  *
-  * This function rescale all the data that are in the core skeleton instance.
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
-
 void CalCoreSkeleton::scale(float factor)
 {
   std::list<int>::iterator iteratorRootCoreBoneId;

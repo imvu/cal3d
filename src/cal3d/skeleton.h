@@ -8,46 +8,20 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_SKELETON_H
-#define CAL_SKELETON_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalCoreSkeleton;
 class CalCoreModel;
 class CalBone;
 
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The skeleton class.
-  *****************************************************************************/
-
 class CAL3D_API CalSkeleton
 {
-// member variables
-protected:
-  CalCoreSkeleton *m_pCoreSkeleton;
-  std::vector<CalBone *> m_vectorBone;
-  bool m_isBoundingBoxesComputed;
-
-// constructors/destructor
 public:
   CalSkeleton();
-  virtual ~CalSkeleton();
+  ~CalSkeleton();
 
-// member functions
-public:
   void calculateState();
   void clearState();
   void create(CalCoreSkeleton *pCoreSkeleton);
@@ -56,18 +30,9 @@ public:
   CalCoreSkeleton *getCoreSkeleton();
   std::vector<CalBone *>& getVectorBone();
   void lockState();
-  void getBoneBoundingBox(float *min, float *max);
-  void calculateBoundingBoxes();
 
-
-
-// DEBUG-CODE
-  int getBonePoints(float *pPoints);
-  int getBonePointsStatic(float *pPoints);
-  int getBoneLines(float *pLines);
-  int getBoneLinesStatic(float *pLines);
+private:
+  CalCoreSkeleton *m_pCoreSkeleton;
+  std::vector<CalBone *> m_vectorBone;
+  bool m_isBoundingBoxesComputed;
 };
-
-#endif
-
-//****************************************************************************//

@@ -61,10 +61,6 @@ public:
   void setTranslation(const CalVector& translation);
   void setTranslationBoneSpace(const CalVector& translation);
 
-  void calculateBoundingBox(CalCoreModel * pCoreModel);
-  CalBoundingBox & getBoundingBox();
-  void getBoundingData(int planeId,CalVector & position); 
-  bool isBoundingBoxPrecomputed();
   void scale(float factor);
 
   bool hasLightingData();
@@ -84,10 +80,6 @@ private:
   CalQuaternion m_rotationAbsolute;
   CalVector m_translationBoneSpace;
   CalQuaternion m_rotationBoneSpace;
-
-  CalBoundingBox m_boundingBox;
-  CalVector m_boundingPosition[6];
-  bool m_boundingBoxPrecomputed;
 
   CalVector m_lightColor;
   CalLightType m_lightType;

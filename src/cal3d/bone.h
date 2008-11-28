@@ -16,34 +16,12 @@
 #include "cal3d/matrix.h"
 #include "cal3d/corebone.h"
 
-//class CalCoreBone;
 class CalSkeleton;
 class CalModel;
 class CalCoreModel;
-//class CalBoundingBox;
 
 class CAL3D_API CalBone
 {
-// member variables
-protected:
-  CalCoreBone *m_pCoreBone;
-  CalSkeleton *m_pSkeleton;
-  float m_accumulatedWeight;
-  float m_accumulatedWeightAbsolute;
-  float m_accumulatedReplacementAttenuation;
-  float m_firstBlendScale;
-  CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
-  CalVector m_translation;
-  CalQuaternion m_rotation;
-  CalVector m_translationAbsolute;
-  CalQuaternion m_rotationAbsolute;
-  CalVector m_translationBoneSpace;
-  CalQuaternion m_rotationBoneSpace;
-  CalMatrix m_transformMatrix;  
-  CalBoundingBox m_boundingBox;
-
-
-// constructors/destructor
 public:
   CalBone(CalCoreBone* pCoreBone);
 
@@ -73,6 +51,24 @@ public:
   }
   void lockState();
   void setSkeleton(CalSkeleton *pSkeleton);
-  void calculateBoundingBox();
-  CalBoundingBox & getBoundingBox();
+
+private:
+  CalCoreBone *m_pCoreBone;
+  CalSkeleton *m_pSkeleton;
+  float m_accumulatedWeight;
+  float m_accumulatedWeightAbsolute;
+  float m_accumulatedReplacementAttenuation;
+  float m_firstBlendScale;
+  CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
+
+  CalVector m_translation;
+  CalQuaternion m_rotation;
+
+  CalVector m_translationAbsolute;
+  CalQuaternion m_rotationAbsolute;
+
+  CalVector m_translationBoneSpace;
+  CalQuaternion m_rotationBoneSpace;
+
+  CalMatrix m_transformMatrix;  
 };

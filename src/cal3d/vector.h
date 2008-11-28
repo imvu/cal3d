@@ -8,46 +8,23 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_VECTOR_H
-#define CAL_VECTOR_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/matrix.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalQuaternion;
-//class CalMatrix;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The vector class.
-  *****************************************************************************/
 
 class CAL3D_API CalVector
 {
-// member variables
 public:
   float x ,y ,z;
 
-// constructors/destructor
-public:
   inline CalVector(): x(0.0f), y(0.0f), z(0.0f) {};
   inline CalVector(const CalVector& v) : x(v.x), y(v.y), z(v.z) {};
   inline CalVector(float vx, float vy, float vz): x(vx), y(vy), z(vz) {};
   inline ~CalVector() {};
 
-// member functions
-public:
   inline float& operator[](unsigned int i) 
   {
 	  return (&x)[i];
@@ -187,43 +164,3 @@ static inline CalVector operator%(const CalVector& v, const CalVector& u)
 {
 	return CalVector(v.y * u.z - v.z * u.y, v.z * u.x - v.x * u.z, v.x * u.y - v.y * u.x);
 }
-
-
- /*****************************************************************************/
-/** The plane class.
-  *****************************************************************************/
-
-
-class CAL3D_API CalPlane
-{
-   public:
-      float a,b,c,d;
-      
-      // These methods are made only to calculate the bounding boxes,
-      // don't use them in you program
-      
-      float eval(CalVector &p);
-      float dist(CalVector &p);
-      void setPosition(CalVector &p);
-      void setNormal(CalVector &p);
-};
-
- /*****************************************************************************/
-/** The bounding box class.
-  *****************************************************************************/
-
-
-class CAL3D_API CalBoundingBox
-{
-   public:
-     CalPlane plane[6];
-     
-     void computePoints(CalVector *p);
-   
-};
-
-
-
-#endif
-
-//****************************************************************************//

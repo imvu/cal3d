@@ -20,20 +20,10 @@ class CalCoreModel;
 
 class CAL3D_API CalCoreSkeleton
 {
-// member variables
-protected:
-  std::vector<CalCoreBone *> m_vectorCoreBone;
-  std::map< std::string, int > m_mapCoreBoneNames;
-  std::list<int> m_listRootCoreBoneId;
-  CalVector m_sceneAmbientColor;
-
-// constructors/destructor
 public:
   CalCoreSkeleton();
   ~CalCoreSkeleton();
 
-// member functions
-public:
   int addCoreBone(CalCoreBone *pCoreBone);
   void calculateState();
   void destroy();
@@ -43,9 +33,14 @@ public:
   bool mapCoreBoneName(int coreBoneId, const std::string& strName);
   std::list<int>& getListRootCoreBoneId();
   std::vector<CalCoreBone *>& getVectorCoreBone();
-  void calculateBoundingBoxes(CalCoreModel * pCoreModel);
   void scale(float factor);
   unsigned int getNumCoreBones() { return ( unsigned int ) m_vectorCoreBone.size(); }
   void setSceneAmbientColor( CalVector const & color );
   void getSceneAmbientColor( CalVector & color );
+
+private:
+  std::vector<CalCoreBone *> m_vectorCoreBone;
+  std::map< std::string, int > m_mapCoreBoneNames;
+  std::list<int> m_listRootCoreBoneId;
+  CalVector m_sceneAmbientColor;
 };
