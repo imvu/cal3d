@@ -31,7 +31,6 @@
 #include "cal3d/error.h"
 #include "cal3d/loader.h"
 #include "cal3d/mesh.h"
-#include "cal3d/mixer.h" // next
 #include "cal3d/quaternion.h"
 #include "cal3d/saver.h"
 #include "cal3d/streamsource.h"

@@ -12,7 +12,6 @@
 
 #include "cal3d/global.h"
 
-class CalMatrix;
 class CalQuaternion;
 
 class CAL3D_API CalVector
@@ -66,7 +65,6 @@ public:
   }
 
   void operator*=(const CalQuaternion& q);
-  void operator*=(const CalMatrix& m);
 
   inline void operator/=(float d)
   {

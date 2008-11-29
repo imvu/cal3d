@@ -72,7 +72,7 @@ float FastInvSqrt(float x) {
 int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubmesh, float *pVertexBuffer) {
   // get bone vector of the skeleton
   CalSkeleton* skeleton = model->getSkeleton();
-  const std::vector<CalBone*>& vectorBone = skeleton->getVectorBone();
+  const CalSkeleton::BoneTransform* boneTransforms = Cal::pointerFromVector(skeleton->boneTransforms); 
 
   // get vertex vector of the core submesh
   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pSubmesh->getCoreSubmesh()->getVectorVertex();
@@ -159,16 +159,12 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
     {
       // get the influence
       const CalCoreSubmesh::Influence& influence = vertex.vectorInfluence[influenceId];
-      const size_t boneId = influence.boneId;
-      const CalMatrix& boneTransform = skeleton->boneTransforms[boneId];
-      
-      // get the bone of the influence vertex
-      CalBone *pBone = vectorBone[boneId];
+      const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
       
       // transform vertex with current state of the bone
       CalVector v(position);
-      v *= boneTransform;
-      v += pBone->getTranslationBoneSpace();
+      transform(v, boneTransform.matrix);
+      v += boneTransform.translation;
       
       x += influence.weight * v.x;
       y += influence.weight * v.y;
@@ -176,7 +172,7 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
       
       // transform normal with current state of the bone
       CalVector n(normal);
-      n *= boneTransform;
+      transform(n, boneTransform.matrix);
       
       nx += influence.weight * n.x;
       ny += influence.weight * n.y;

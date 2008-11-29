@@ -3,6 +3,7 @@
 #include <cal3d/model.h>
 #include <cal3d/submesh.h>
 #include <cal3d/physique.h>
+#include <cal3d/mixer.h>
 
 template <class T> void caldestroy(T* ptr) {
     ptr->destroy();

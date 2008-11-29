@@ -209,6 +209,8 @@ void CalBone::calculateState()
     m_rotationAbsolute *= pParent->getRotationAbsolute();
   }
 
+  CalVector& m_translationBoneSpace = m_pSkeleton->boneTransforms[m_myIndex].translation;
+
   // calculate the bone space transformation
   m_translationBoneSpace = m_pCoreBone->getTranslationBoneSpace();
 
@@ -299,7 +301,7 @@ void CalBone::calculateState()
   m_rotationBoneSpace = m_pCoreBone->getRotationBoneSpace();
   m_rotationBoneSpace *= m_rotationAbsolute;
 
-  CalMatrix& transformMatrix = m_pSkeleton->boneTransforms[m_myIndex];
+  CalMatrix& transformMatrix = m_pSkeleton->boneTransforms[m_myIndex].matrix;
   transformMatrix = m_pCoreBone->getRotationBoneSpace();
   if( meshScalingOn ) {
 

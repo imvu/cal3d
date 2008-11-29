@@ -41,9 +41,6 @@ public:
   const CalVector& getTranslationAbsolute();
   inline void setMeshScaleAbsolute( CalVector const & sv ) {
     m_meshScaleAbsolute = sv; }
-  inline const CalVector& getTranslationBoneSpace() {
-    return m_translationBoneSpace;
-  }
   void lockState();
 
 private:
@@ -62,6 +59,6 @@ private:
   CalVector m_translationAbsolute;
   CalQuaternion m_rotationAbsolute;
 
-  CalVector m_translationBoneSpace;
+  //CalVector m_translationBoneSpace;
   CalQuaternion m_rotationBoneSpace;
 };

@@ -12,6 +12,7 @@
 
 #include "cal3d/global.h"
 #include "cal3d/matrix.h"
+#include "cal3d/vector.h"
 
 class CalCoreSkeleton;
 class CalCoreModel;
@@ -20,6 +21,11 @@ class CalBone;
 class CAL3D_API CalSkeleton
 {
 public:
+  struct BoneTransform {
+    CalMatrix matrix; // rotation and scale
+    CalVector translation;
+  };
+
   CalSkeleton(CalCoreSkeleton* pCoreSkeleton);
   ~CalSkeleton();
 
@@ -30,7 +36,7 @@ public:
   std::vector<CalBone *>& getVectorBone();
   void lockState();
 
-  std::vector<CalMatrix> boneTransforms;
+  std::vector<BoneTransform> boneTransforms;
 
 private:
   CalCoreSkeleton *m_pCoreSkeleton;
