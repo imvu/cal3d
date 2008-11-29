@@ -31,7 +31,7 @@ CalSkeleton::CalSkeleton(CalCoreSkeleton* pCoreSkeleton)
   m_vectorBone.reserve(boneCount);
 
   for(size_t boneId = 0; boneId < boneCount; ++boneId) {
-    CalBone* pBone = new CalBone(vectorCoreBone[boneId], this, boneId);
+    CalBone* pBone = new CalBone(vectorCoreBone[boneId]);
 
     // insert bone into bone vector
     m_vectorBone.push_back(pBone);
@@ -71,7 +71,7 @@ void CalSkeleton::calculateState()
   std::list<int>::iterator iteratorRootBoneId;
   for(iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId)
   {
-    m_vectorBone[*iteratorRootBoneId]->calculateState();
+    m_vectorBone[*iteratorRootBoneId]->calculateState(this, *iteratorRootBoneId);
   }
 }
 

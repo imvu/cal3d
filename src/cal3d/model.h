@@ -10,7 +10,6 @@
 
 #pragma once
 
-
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
@@ -22,20 +21,10 @@ class CalMesh;
 
 class CAL3D_API CalModel
 {
-// member variables
-protected:
-  CalCoreModel *m_pCoreModel;
-  CalSkeleton *m_pSkeleton;
-  CalAbstractMixer *m_pMixer;
-  std::vector<CalMesh *> m_vectorMesh;
-
-// constructors/destructor
 public: 
   CalModel();
   ~CalModel();
 
-// member functions
-public:
   bool attachMesh(int coreMeshId);
   void create(CalCoreModel *pCoreModel);
   void destroy();
@@ -49,5 +38,10 @@ public:
   std::vector<CalMesh *>& getVectorMesh();
   void setLodLevel(float lodLevel);
   void setMaterialSet(int setId);
-  //void update(float deltaTime);
+
+private:
+  CalCoreModel *m_pCoreModel;
+  CalSkeleton *m_pSkeleton;
+  CalAbstractMixer *m_pMixer;
+  std::vector<CalMesh *> m_vectorMesh;
 };

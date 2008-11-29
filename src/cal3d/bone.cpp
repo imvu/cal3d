@@ -31,10 +31,8 @@
   * This function is the default constructor of the bone instance.
   *****************************************************************************/
 
-CalBone::CalBone(CalCoreBone *pCoreBone, CalSkeleton* skeleton, unsigned myIndex)
+CalBone::CalBone(CalCoreBone *pCoreBone)
   : m_pCoreBone(pCoreBone)
-  , m_pSkeleton(skeleton)
-  , m_myIndex(myIndex)
 {
   assert(pCoreBone);
 }
@@ -176,7 +174,7 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
   * and all its children.
   *****************************************************************************/
 
-void CalBone::calculateState()
+void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
 {
   // check if the bone was not touched by any active animation
   if(m_accumulatedWeight == 0.0f)
@@ -198,7 +196,7 @@ void CalBone::calculateState()
   else
   {
     // get the parent bone
-    CalBone *pParent = m_pSkeleton->getBone(parentId);
+    CalBone *pParent = skeleton->getBone(parentId);
 
     // transform relative state with the absolute state of the parent
     m_translationAbsolute = m_translation;
@@ -209,7 +207,7 @@ void CalBone::calculateState()
     m_rotationAbsolute *= pParent->getRotationAbsolute();
   }
 
-  CalVector& m_translationBoneSpace = m_pSkeleton->boneTransforms[m_myIndex].translation;
+  CalVector& m_translationBoneSpace = skeleton->boneTransforms[myIndex].translation;
 
   // calculate the bone space transformation
   m_translationBoneSpace = m_pCoreBone->getTranslationBoneSpace();
@@ -301,7 +299,7 @@ void CalBone::calculateState()
   m_rotationBoneSpace = m_pCoreBone->getRotationBoneSpace();
   m_rotationBoneSpace *= m_rotationAbsolute;
 
-  CalMatrix& transformMatrix = m_pSkeleton->boneTransforms[m_myIndex].matrix;
+  CalMatrix& transformMatrix = skeleton->boneTransforms[myIndex].matrix;
   transformMatrix = m_pCoreBone->getRotationBoneSpace();
   if( meshScalingOn ) {
 
@@ -325,8 +323,8 @@ void CalBone::calculateState()
   std::list<int>::iterator iteratorChildId;
   for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId )
   {
-    CalBone * bo = m_pSkeleton->getBone(*iteratorChildId);
-    bo->calculateState();
+    CalBone * bo = skeleton->getBone(*iteratorChildId);
+    bo->calculateState(skeleton, *iteratorChildId);
   }
 }
 

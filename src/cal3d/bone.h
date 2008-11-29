@@ -23,13 +23,13 @@ class CalCoreModel;
 class CAL3D_API CalBone
 {
 public:
-  CalBone(CalCoreBone* pCoreBone, CalSkeleton* skeleton, unsigned myIndex);
+  CalBone(CalCoreBone* pCoreBone);
 
   void blendState(
     float unrampedWeight, const CalVector& translation, 
     const CalQuaternion & rotation, float scale = 1.0f,
     bool replace = false, float rampValue = 1.0f );
-  void calculateState();
+  void calculateState(CalSkeleton* skeleton, unsigned myIndex);
   void clearState();
   CalCoreBone *getCoreBone();
   void setRotation(const CalQuaternion& rotation);
@@ -45,8 +45,6 @@ public:
 
 private:
   CalCoreBone *m_pCoreBone;
-  CalSkeleton *m_pSkeleton;
-  unsigned m_myIndex;
   float m_accumulatedWeight;
   float m_accumulatedWeightAbsolute;
   float m_accumulatedReplacementAttenuation;
