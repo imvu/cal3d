@@ -11,6 +11,7 @@
 #pragma once
 
 #include "cal3d/global.h"
+#include "cal3d/matrix.h"
 
 class CalCoreSkeleton;
 class CalCoreModel;
@@ -28,6 +29,8 @@ public:
   CalCoreSkeleton *getCoreSkeleton();
   std::vector<CalBone *>& getVectorBone();
   void lockState();
+
+  std::vector<CalMatrix> boneTransforms;
 
 private:
   CalCoreSkeleton *m_pCoreSkeleton;

@@ -166,32 +166,6 @@ extern "C"
   CAL3D_WRAPPER_API enum Boolean CalAnimationCycle_Update(struct CalAnimationCycle *self, float deltaTime);
 
 //****************************************************************************//
-// CalBone wrapper functions declaration                                      //
-//****************************************************************************//
-
-  CAL3D_WRAPPER_API void CalBone_BlendState(struct CalBone *self, float weight, struct CalVector *pTranslation, struct CalQuaternion *pRotation);
-  CAL3D_WRAPPER_API void CalBone_CalculateState(struct CalBone *self);
-  CAL3D_WRAPPER_API void CalBone_ClearState(struct CalBone *self);
-  CAL3D_WRAPPER_API void CalBone_Create(struct CalBone *self, struct CalCoreBone *pCoreBone);
-  CAL3D_WRAPPER_API void CalBone_Delete(struct CalBone *self);
-  CAL3D_WRAPPER_API void CalBone_Destroy(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalCoreBone *CalBone_GetCoreBone(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalQuaternion *CalBone_GetRotation(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalQuaternion *CalBone_GetRotationAbsolute(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalQuaternion *CalBone_GetRotationBoneSpace(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalVector *CalBone_GetTranslation(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalVector *CalBone_GetTranslationAbsolute(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalVector *CalBone_GetTranslationBoneSpace(struct CalBone *self);
-  CAL3D_WRAPPER_API void CalBone_LockState(struct CalBone *self);
-  CAL3D_WRAPPER_API struct CalBone *CalBone_New();
-  CAL3D_WRAPPER_API void CalBone_SetSkeleton(struct CalBone *self, struct CalSkeleton *pSkeleton);
-  CAL3D_WRAPPER_API void CalBone_SetTranslation(struct CalBone *self, struct CalVector *pTranslation);
-  CAL3D_WRAPPER_API void CalBone_SetRotation(struct CalBone *self, struct CalQuaternion *pRotation);
-  CAL3D_WRAPPER_API void CalBone_SetCoreState(struct CalBone *self);
-  CAL3D_WRAPPER_API void CalBone_SetCoreStateRecursive(struct CalBone *self);
-
-
-//****************************************************************************//
 // CalCoreAnimation wrapper functions declaration                             //
 //****************************************************************************//
 

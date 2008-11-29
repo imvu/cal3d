@@ -31,9 +31,10 @@
   * This function is the default constructor of the bone instance.
   *****************************************************************************/
 
-CalBone::CalBone(CalCoreBone *pCoreBone, CalSkeleton* skeleton)
+CalBone::CalBone(CalCoreBone *pCoreBone, CalSkeleton* skeleton, unsigned myIndex)
   : m_pCoreBone(pCoreBone)
   , m_pSkeleton(skeleton)
+  , m_myIndex(myIndex)
 {
   assert(pCoreBone);
 }
@@ -298,29 +299,29 @@ void CalBone::calculateState()
   m_rotationBoneSpace = m_pCoreBone->getRotationBoneSpace();
   m_rotationBoneSpace *= m_rotationAbsolute;
 
-  m_transformMatrix = m_pCoreBone->getRotationBoneSpace();
+  CalMatrix& transformMatrix = m_pSkeleton->boneTransforms[m_myIndex];
+  transformMatrix = m_pCoreBone->getRotationBoneSpace();
   if( meshScalingOn ) {
 
     // By applying each scale component to the row, instead of the column, we
     // are effectively making the scale apply prior to the rotationBoneSpace.
-    m_transformMatrix.dxdx *= m_meshScaleAbsolute.x;
-    m_transformMatrix.dydx *= m_meshScaleAbsolute.x;
-    m_transformMatrix.dzdx *= m_meshScaleAbsolute.x;  
+    transformMatrix.dxdx *= m_meshScaleAbsolute.x;
+    transformMatrix.dydx *= m_meshScaleAbsolute.x;
+    transformMatrix.dzdx *= m_meshScaleAbsolute.x;  
 
-    m_transformMatrix.dxdy *= m_meshScaleAbsolute.y;
-    m_transformMatrix.dydy *= m_meshScaleAbsolute.y;
-    m_transformMatrix.dzdy *= m_meshScaleAbsolute.y;  
+    transformMatrix.dxdy *= m_meshScaleAbsolute.y;
+    transformMatrix.dydy *= m_meshScaleAbsolute.y;
+    transformMatrix.dzdy *= m_meshScaleAbsolute.y;  
 
-    m_transformMatrix.dxdz *= m_meshScaleAbsolute.z;
-    m_transformMatrix.dydz *= m_meshScaleAbsolute.z;
-    m_transformMatrix.dzdz *= m_meshScaleAbsolute.z;  
+    transformMatrix.dxdz *= m_meshScaleAbsolute.z;
+    transformMatrix.dydz *= m_meshScaleAbsolute.z;
+    transformMatrix.dzdz *= m_meshScaleAbsolute.z;  
   }
-  m_transformMatrix *= m_rotationAbsolute;
+  transformMatrix *= m_rotationAbsolute;
 
   // calculate all child bones
   std::list<int>::iterator iteratorChildId;
-  int i = 0;
-  for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId, i++ )
+  for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId )
   {
     CalBone * bo = m_pSkeleton->getBone(*iteratorChildId);
     bo->calculateState();
@@ -358,54 +359,6 @@ CalCoreBone *CalBone::getCoreBone()
   return m_pCoreBone;
 }
 
- /*****************************************************************************/
-/** Resets the bone to its core state
-  *
-  * This function changes the state of the bone to its default non-animated
-  * position and orientation. Child bones are unaffected and may be animated
-  * independently. 
-  *****************************************************************************/
-
-void CalBone::setCoreState()
-{
-   // set the bone to the initial skeleton state
-   m_translation = m_pCoreBone->getTranslation();
-   m_rotation = m_pCoreBone->getRotation();
-
-   // set the appropriate weights
-   m_accumulatedWeightAbsolute = 1.0f;
-   m_accumulatedWeight = 1.0f ;
-
-   calculateState() ;
-}
-
-
- /*****************************************************************************/
-/** Resets the bone and children to core states
-  *
-  * This function changes the state of the bone to its default non-animated
-  * position and orientation. All child bones are also set in this manner.
-  *****************************************************************************/
-
-void CalBone::setCoreStateRecursive()
-{
-  // set the bone to the initial skeleton state
-  m_translation = m_pCoreBone->getTranslation();
-  m_rotation = m_pCoreBone->getRotation();
-
-  // set the appropriate weights
-  m_accumulatedWeightAbsolute = 1.0f;
-  m_accumulatedWeight = 1.0f ;
-
-  // set core state for all child bones
-  std::list<int>::iterator iteratorChildId;
-  for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId)
-  {
-    m_pSkeleton->getBone(*iteratorChildId)->setCoreStateRecursive();
-  }
-
-  calculateState() ;
-}
 
  /*****************************************************************************/
 /** Sets the current rotation.

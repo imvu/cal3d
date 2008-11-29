@@ -19,7 +19,6 @@
 #include <fstream>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
-#include "cal3d/matrix.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 #include "cal3d/coremodel.h"

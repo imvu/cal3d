@@ -27,15 +27,17 @@ CalSkeleton::CalSkeleton(CalCoreSkeleton* pCoreSkeleton)
   // clone the skeleton structure of the core skeleton
   std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
 
-  int boneCount = vectorCoreBone.size();
+  size_t boneCount = vectorCoreBone.size();
   m_vectorBone.reserve(boneCount);
 
-  for(int boneId = 0; boneId < boneCount; ++boneId) {
-    CalBone* pBone = new CalBone(vectorCoreBone[boneId], this);
+  for(size_t boneId = 0; boneId < boneCount; ++boneId) {
+    CalBone* pBone = new CalBone(vectorCoreBone[boneId], this, boneId);
 
     // insert bone into bone vector
     m_vectorBone.push_back(pBone);
   }
+
+  boneTransforms.resize(boneCount);
 }
 
  /*****************************************************************************/

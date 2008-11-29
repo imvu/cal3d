@@ -13,8 +13,8 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
-#include "cal3d/matrix.h"
 #include "cal3d/corebone.h"
+#include "cal3d/skeleton.h"
 
 class CalSkeleton;
 class CalModel;
@@ -23,7 +23,7 @@ class CalCoreModel;
 class CAL3D_API CalBone
 {
 public:
-  CalBone(CalCoreBone* pCoreBone, CalSkeleton* skeleton);
+  CalBone(CalCoreBone* pCoreBone, CalSkeleton* skeleton, unsigned myIndex);
 
   void blendState(
     float unrampedWeight, const CalVector& translation, 
@@ -32,8 +32,6 @@ public:
   void calculateState();
   void clearState();
   CalCoreBone *getCoreBone();
-  void setCoreState();
-  void setCoreStateRecursive();
   void setRotation(const CalQuaternion& rotation);
   const CalQuaternion& getRotation();
   const CalQuaternion& getRotationAbsolute();
@@ -46,14 +44,12 @@ public:
   inline const CalVector& getTranslationBoneSpace() {
     return m_translationBoneSpace;
   }
-  inline const CalMatrix& getTransformMatrix() {
-    return m_transformMatrix;
-  }
   void lockState();
 
 private:
   CalCoreBone *m_pCoreBone;
   CalSkeleton *m_pSkeleton;
+  unsigned m_myIndex;
   float m_accumulatedWeight;
   float m_accumulatedWeightAbsolute;
   float m_accumulatedReplacementAttenuation;
@@ -68,6 +64,4 @@ private:
 
   CalVector m_translationBoneSpace;
   CalQuaternion m_rotationBoneSpace;
-
-  CalMatrix m_transformMatrix;  
 };

@@ -8,25 +8,11 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREKEYFRAME_H
-#define CAL_COREKEYFRAME_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
-#include "cal3d/matrix.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core keyframe class.
-  *****************************************************************************/
 
 class CAL3D_API CalCoreKeyframe
 {
@@ -39,7 +25,7 @@ protected:
 // constructors/destructor
 public:
   CalCoreKeyframe();
-  virtual ~CalCoreKeyframe();
+  ~CalCoreKeyframe();
 
 // member functions
 public:
@@ -54,7 +40,3 @@ public:
   void setTime(float time);
   void setTranslation(const CalVector& translation);
 };
-
-#endif
-
-//****************************************************************************//

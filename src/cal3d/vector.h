@@ -11,8 +11,8 @@
 #pragma once
 
 #include "cal3d/global.h"
-#include "cal3d/matrix.h"
 
+class CalMatrix;
 class CalQuaternion;
 
 class CAL3D_API CalVector
@@ -66,16 +66,7 @@ public:
   }
 
   void operator*=(const CalQuaternion& q);
-
-  inline void operator*=(const CalMatrix &m)
-  {
-	  float ox = x;
-	  float oy = y;
-	  float oz = z;
-	  x = m.dxdx*ox + m.dxdy*oy + m.dxdz*oz;
-	  y = m.dydx*ox + m.dydy*oy + m.dydz*oz;
-	  z = m.dzdx*ox + m.dzdy*oy + m.dzdz*oz;
-  }  
+  void operator*=(const CalMatrix& m);
 
   inline void operator/=(float d)
   {

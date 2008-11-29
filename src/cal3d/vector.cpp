@@ -30,3 +30,13 @@ void CalVector::operator*=(const CalQuaternion& q)
   y = temp.y;
   z = temp.z;
 }
+
+void CalVector::operator*=(const CalMatrix &m)
+{
+  float ox = x;
+  float oy = y;
+  float oz = z;
+  x = m.dxdx*ox + m.dxdy*oy + m.dxdz*oz;
+  y = m.dydx*ox + m.dydy*oy + m.dydz*oz;
+  z = m.dzdx*ox + m.dzdy*oy + m.dzdz*oz;
+}  
