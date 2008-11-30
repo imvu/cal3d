@@ -1700,6 +1700,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   for(vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
     CalCoreSubmesh::Vertex vertex;
+    CalCoreSubmesh::LodData lodData;
     CalColor32 vertexColor;
 
     // load data of the vertex
@@ -1722,8 +1723,8 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       }
       vertexColor = CalMakeColor(vc);
     }
-    dataSrc.readInteger(vertex.collapseId);
-    dataSrc.readInteger(vertex.faceCollapseCount);
+    dataSrc.readInteger(lodData.collapseId);
+    dataSrc.readInteger(lodData.faceCollapseCount);
 
     // check if an error happened
     if(!dataSrc.ok())
@@ -1790,7 +1791,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     }
 
     // set vertex in the core submesh instance
-    pCoreSubmesh->setVertex(vertexId, vertex, vertexColor);
+    pCoreSubmesh->setVertex(vertexId, vertex, vertexColor, lodData);
 
     // load the physical property of the vertex if there are springs in the core submesh
     if(springCount > 0)

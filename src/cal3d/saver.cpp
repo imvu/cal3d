@@ -700,6 +700,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   // get the vertex, face, physical property and spring vector
   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
   std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
+  std::vector<CalCoreSubmesh::LodData>& lodData = pCoreSubmesh->getLodData();
   std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
 
   // write the number of vertices, faces, level-of-details and springs
@@ -729,6 +730,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   for(int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
   {
     CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
+    CalCoreSubmesh::LodData& ld = lodData[vertexId];
 
     // write the vertex data
     CalPlatform::writeFloat(file, vertex.position.x);
@@ -747,8 +749,8 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
         CalPlatform::writeFloat(file, 1);
         CalPlatform::writeFloat(file, 1);
     }
-    CalPlatform::writeInteger(file, vertex.collapseId);
-    CalPlatform::writeInteger(file, vertex.faceCollapseCount);
+    CalPlatform::writeInteger(file, ld.collapseId);
+    CalPlatform::writeInteger(file, ld.faceCollapseCount);
 
     // write all texture coordinates of this vertex
     int textureCoordinateId;
@@ -1399,10 +1401,10 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     
     submesh.SetAttribute("NUMTEXCOORDS",pCoreSubmesh->getVectorVectorTextureCoordinate().size());
 
-    
-    // get the vertex, face, physical property and spring vector
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
+    std::vector<CalCoreSubmesh::LodData>& allLodData = pCoreSubmesh->getLodData();
+
     std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
     // get the texture coordinate vector vector
@@ -1414,6 +1416,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     {
       CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
       CalColor32& vertexColor = vertexColors[vertexId];
+      CalCoreSubmesh::LodData& lodData = allLodData[vertexId];
 
       TiXmlElement vertex("VERTEX");
       vertex.SetAttribute("ID",vertexId);
@@ -1456,18 +1459,18 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       vertColor.InsertEndChild(colordata);
       vertex.InsertEndChild(vertColor);
 
-      if(Vertex.collapseId!=-1)
+      if(lodData.collapseId!=-1)
       {
         TiXmlElement collapse("COLLAPSEID");
         str.str("");
-        str << Vertex.collapseId;
+        str << lodData.collapseId;
         TiXmlText collapseid(str.str());
         collapse.InsertEndChild(collapseid);
         vertex.InsertEndChild(collapse);
 
         TiXmlElement collapsecount("COLLAPSECOUNT");
         str.str("");
-        str << Vertex.faceCollapseCount;
+        str << lodData.faceCollapseCount;
         TiXmlText collapsecountdata(str.str());
         collapsecount.InsertEndChild(collapsecountdata);
         vertex.InsertEndChild(collapsecount);

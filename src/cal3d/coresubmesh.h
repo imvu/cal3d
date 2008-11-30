@@ -48,12 +48,17 @@ public:
     CalVector position;
     CalVector normal;
     std::vector<Influence> vectorInfluence;
-    int collapseId;
-    int faceCollapseCount;
   };
 
-  struct Face {
-      CalIndex vertexId[3];
+  struct Face
+  {
+    CalIndex vertexId[3];
+  };
+
+  struct LodData
+  {
+    int collapseId;
+    int faceCollapseCount;
   };
   
   typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
@@ -76,6 +81,7 @@ public:
 
   std::vector<Vertex>& getVectorVertex();
   std::vector<CalColor32>& getVertexColors();
+  std::vector<LodData>& getLodData() { return m_lodData; }
 
   int getVertexCount();
   void reserve(int vertexCount, int textureCoordinateCount, int faceCount);
@@ -83,7 +89,7 @@ public:
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
 
-  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor);
+  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
@@ -102,6 +108,7 @@ private:
   // These two should always be the same size.
   std::vector<Vertex> m_vertices;
   std::vector<CalColor32> m_vertexColors;
+  std::vector<LodData> m_lodData;
 
   std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
   std::vector<Face> m_vectorFace;

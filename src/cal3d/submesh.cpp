@@ -175,34 +175,32 @@ void CalSubmesh::setLodLevel(float lodLevel)
   // calculate the new number of vertices
   m_vertexCount = m_pCoreSubmesh->getVertexCount() - lodCount;
 
-  // get face vector of the core submesh
   std::vector<CalCoreSubmesh::Face>& vectorFace = m_pCoreSubmesh->getVectorFace();
-
-  // get face vector of the core submesh
   std::vector<CalCoreSubmesh::Vertex>& vectorVertex = m_pCoreSubmesh->getVectorVertex();
+  std::vector<CalCoreSubmesh::LodData>& lodData = m_pCoreSubmesh->getLodData();
 
   // calculate the new number of faces
   m_faceCount = vectorFace.size();
 
-  int vertexId;
-  for(vertexId = vectorVertex.size() - 1; vertexId >= m_vertexCount; vertexId--)
+  for(int vertexId = vectorVertex.size() - 1; vertexId >= m_vertexCount; vertexId--)
   {
-    m_faceCount -= vectorVertex[vertexId].faceCollapseCount;
+    m_faceCount -= lodData[vertexId].faceCollapseCount;
   }
 
   // fill the face vector with the collapsed vertex ids
-  int faceId;
-  for(faceId = 0; faceId < m_faceCount; ++faceId)
+  for(int faceId = 0; faceId < m_faceCount; ++faceId)
   {
-    int vertexId;
-    for(vertexId = 0; vertexId < 3; ++vertexId)
+    for(int vertexId = 0; vertexId < 3; ++vertexId)
     {
       // get the vertex id
       CalIndex collapsedVertexId;
       collapsedVertexId = vectorFace[faceId].vertexId[vertexId];
 
       // collapse the vertex id until it fits into the current lod level
-      while(collapsedVertexId >= m_vertexCount) collapsedVertexId = vectorVertex[collapsedVertexId].collapseId;
+      while(collapsedVertexId >= m_vertexCount)
+      {
+          collapsedVertexId = lodData[collapsedVertexId].collapseId;
+      }
 
       // store the collapse vertex id in the submesh face vector
       m_vectorFace[faceId].vertexId[vertexId] = collapsedVertexId;

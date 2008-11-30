@@ -1275,6 +1275,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
     // load all vertices and their influences
     std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
+    std::vector<CalCoreSubmesh::LodData>& allLodData = pCoreSubmesh->getLodData();
 
     int vertexId;
     for(vertexId = 0; vertexId < vertexCount; ++vertexId)
@@ -1284,6 +1285,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             }
             CalCoreSubmesh::Vertex & Vertex = vectorVertex[vertexId];
             CalColor32& vertexColor = vertexColors[vertexId];
+            CalCoreSubmesh::LodData& lodData = allLodData[vertexId];
 
             TiXmlElement *pos= vertex->FirstChildElement();
             if( !ValidateTag(pos, "POS", pCoreMesh, pCoreSubmesh) ) {
@@ -1389,7 +1391,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
         }
-        Vertex.collapseId = atoi(collapseid->Value());
+        lodData.collapseId = atoi(collapseid->Value());
 
         TiXmlElement *collapseCount= collapse->NextSiblingElement();
         if(!collapseCount|| _stricmp(collapseCount->Value(),"COLLAPSECOUNT")!=0)
@@ -1416,13 +1418,13 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
         }
-        Vertex.faceCollapseCount= atoi(collapseCountdata->Value());
+        lodData.faceCollapseCount= atoi(collapseCountdata->Value());
         collapse = collapseCount->NextSiblingElement();       
       }
       else
       {
-        Vertex.collapseId=-1;
-        Vertex.faceCollapseCount=0;
+        lodData.collapseId=-1;
+        lodData.faceCollapseCount=0;
       }
 
 

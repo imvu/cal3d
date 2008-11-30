@@ -37,8 +37,7 @@ CalCoreSubmesh::CalCoreSubmesh()
   * This function is the destructor of the core submesh instance.
   *****************************************************************************/
 
-void
-CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray )
+void CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray )
 {
   m_vectorSubMorphTargetGroupIndex.reserve( len );
   m_vectorSubMorphTargetGroupIndex.resize( len );
@@ -48,15 +47,19 @@ CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int
   }
 }
 
+template<typename T>
+size_t vectorSize(const std::vector<T>& v) {
+    return sizeof(T) * v.size();
+}
 
-unsigned int
-CalCoreSubmesh::sizeWithoutSubMorphTargets()
+size_t CalCoreSubmesh::sizeWithoutSubMorphTargets()
 {
   unsigned int r = sizeof( CalCoreSubmesh );
-  r += sizeof(Vertex) * m_vertices.size();
-  r += sizeof(CalColor32) * m_vertexColors.size();
-  r += sizeof(Face) * m_vectorFace.size();
-  r += sizeof(unsigned int) * m_vectorSubMorphTargetGroupIndex.size();
+  r += vectorSize(m_vertices);
+  r += vectorSize(m_vertexColors);
+  r += vectorSize(m_vectorFace);
+  r += vectorSize(m_vectorSubMorphTargetGroupIndex);
+  r += vectorSize(m_lodData);
   std::vector<std::vector<TextureCoordinate> >::iterator iter3;
   for( iter3 = m_vectorvectorTextureCoordinate.begin(); iter3 != m_vectorvectorTextureCoordinate.end(); ++iter3 ) {
     r += sizeof( TextureCoordinate ) * (*iter3).size();
@@ -65,8 +68,7 @@ CalCoreSubmesh::sizeWithoutSubMorphTargets()
 }
 
 
-unsigned int
-CalCoreSubmesh::size()
+size_t CalCoreSubmesh::size()
 {
   unsigned int r = sizeWithoutSubMorphTargets();
   CoreSubMorphTargetVector::iterator iter1;
@@ -156,6 +158,7 @@ void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int fa
   // reserve the space needed in all the vectors
   m_vertices.resize(vertexCount);
   m_vertexColors.resize(vertexCount);
+  m_lodData.resize(vertexCount);
   m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
 
   for(int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
@@ -241,9 +244,10 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
   return true;
 }
 
-void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor) {
+void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData) {
   m_vertices[vertexId] = vertex;
   m_vertexColors[vertexId] = vertexColor;
+  m_lodData[vertexId] = lodData;
 }
 
  /*****************************************************************************/
