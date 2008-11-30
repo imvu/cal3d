@@ -771,17 +771,16 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     }
 
     // write the number of influences
-    if(!CalPlatform::writeInteger(file, vertex.vectorInfluence.size()))
+    if(!CalPlatform::writeInteger(file, vertex.influenceCount))
     {
       CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
       return false;
     }
 
-     // write all influences of this vertex
-    int influenceId;
-    for(influenceId = 0; influenceId < (int)vertex.vectorInfluence.size(); ++influenceId)
+    // write all influences of this vertex
+    for(unsigned influenceId = 0; influenceId < vertex.influenceCount; ++influenceId)
     {
-      CalCoreSubmesh::Influence& influence = vertex.vectorInfluence[influenceId];
+      CalCoreSubmesh::Influence& influence = pCoreSubmesh->influences[vertex.influenceStart + influenceId];
 
       // write the influence data
       CalPlatform::writeInteger(file, influence.boneId);
@@ -1420,7 +1419,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
 
       TiXmlElement vertex("VERTEX");
       vertex.SetAttribute("ID",vertexId);
-      vertex.SetAttribute("NUMINFLUENCES",Vertex.vectorInfluence.size());
+      vertex.SetAttribute("NUMINFLUENCES",Vertex.influenceCount);
 
       // write the vertex data
 
@@ -1496,10 +1495,9 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       }
 
       // write all influences of this vertex
-      int influenceId;
-      for(influenceId = 0; influenceId < (int)Vertex.vectorInfluence.size(); ++influenceId)
+      for(unsigned influenceId = 0; influenceId < Vertex.influenceCount; ++influenceId)
       {
-        CalCoreSubmesh::Influence& Influence = Vertex.vectorInfluence[influenceId];
+        CalCoreSubmesh::Influence& Influence = pCoreSubmesh->influences[Vertex.influenceStart + influenceId];
 
         TiXmlElement influence("INFLUENCE");
 

@@ -1487,8 +1487,8 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
       }
 
       // reserve memory for the influences in the vertex
-      Vertex.vectorInfluence.reserve(influenceCount);
-      Vertex.vectorInfluence.resize(influenceCount);
+      Vertex.influenceStart = pCoreSubmesh->influences.size();
+      Vertex.influenceCount = influenceCount;
 
       TiXmlElement *influence = texcoord;
       
@@ -1522,9 +1522,10 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
           return 0;
         }
 
-        Vertex.vectorInfluence[influenceId].boneId = atoi(influence->Attribute("ID"));
-
-        Vertex.vectorInfluence[influenceId].weight = (float) atof(influencedata->Value());
+        CalCoreSubmesh::Influence inf;
+        inf.boneId = atoi(influence->Attribute("ID"));
+        inf.weight = (float) atof(influencedata->Value());
+        pCoreSubmesh->influences.push_back(inf);
 
         influence=influence->NextSiblingElement();    
       }

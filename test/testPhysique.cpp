@@ -10,16 +10,19 @@ template <class T> void caldestroy(T* ptr) {
     delete ptr;
 }
 
-CalCoreSubmesh::Vertex createVertex(float x, float y, float z, float nx, float ny, float nz, int numInfluences) {    
+CalCoreSubmesh::Vertex createVertex(CalCoreSubmesh* submesh, float x, float y, float z, float nx, float ny, float nz, int numInfluences) {    
     CalCoreSubmesh::Vertex myVertex;
     myVertex.position = CalVector(x, y, z);
     myVertex.normal = CalVector(nx, ny, nz);
 
-    CalCoreSubmesh::Influence myInfluence;
+    myVertex.influenceStart = submesh->influences.size();
+    myVertex.influenceCount = numInfluences;
+
     for (int i = 0; i < numInfluences; i++) {
+        CalCoreSubmesh::Influence myInfluence;
         myInfluence.boneId = i;
         myInfluence.weight = 1.0f;
-        myVertex.vectorInfluence.push_back(myInfluence);
+        submesh->influences.push_back(myInfluence);
     }
 
     return myVertex;
@@ -68,7 +71,7 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CalCoreSubmesh * coreSubMesh = coreMesh->getCoreSubmesh(0);
     coreSubMesh->reserve(1, 0, 1);
     CalCoreSubmesh::LodData ld = {0, 0};
-    coreSubMesh->setVertex(0, createVertex(1, 2, 3, 0, 1, 0, 1), CalMakeColor(CalVector(1, 1, 1)), ld);
+    coreSubMesh->setVertex(0, createVertex(coreSubMesh, 1, 2, 3, 0, 1, 0, 1), CalMakeColor(CalVector(1, 1, 1)), ld);
 
     shared_ptr<CalCoreModel> coreModel(new CalCoreModel(), &caldestroy<CalCoreModel>);
     coreModel->createWithName("test");
@@ -97,7 +100,7 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_not
     CalCoreSubmesh * coreSubMesh = coreMesh->getCoreSubmesh(0);
     coreSubMesh->reserve(1, 0, 1);
     CalCoreSubmesh::LodData ld = {0, 0};
-    coreSubMesh->setVertex(0, createVertex(1, 2, 3, 1, 1, 0, 2), CalMakeColor(CalVector(1, 1, 1)), ld);
+    coreSubMesh->setVertex(0, createVertex(coreSubMesh, 1, 2, 3, 1, 1, 0, 2), CalMakeColor(CalVector(1, 1, 1)), ld);
 
     shared_ptr<CalCoreModel> coreModel(new CalCoreModel(), &caldestroy<CalCoreModel>);
     coreModel->createWithName("test");

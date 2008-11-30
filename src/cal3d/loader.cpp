@@ -1770,16 +1770,16 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       return 0;
     }
 
-    // reserve memory for the influences in the vertex
-    vertex.vectorInfluence.resize(influenceCount);
+    vertex.influenceCount = influenceCount;
+    vertex.influenceStart = pCoreSubmesh->influences.size();
 
     // load all influences of the vertex
-    int influenceId;
-    for(influenceId = 0; influenceId < influenceCount; ++influenceId)
+    for(int influenceId = 0; influenceId < influenceCount; ++influenceId)
     {
+      CalCoreSubmesh::Influence influence;
       // load data of the influence
-      dataSrc.readInteger(vertex.vectorInfluence[influenceId].boneId),
-      dataSrc.readFloat(vertex.vectorInfluence[influenceId].weight);
+      dataSrc.readInteger(influence.boneId),
+      dataSrc.readFloat(influence.weight);
 
       // check if an error happened
       if(!dataSrc.ok())
@@ -1788,6 +1788,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         delete pCoreSubmesh;
         return 0;
       }
+      pCoreSubmesh->influences.push_back(influence);
     }
 
     // set vertex in the core submesh instance

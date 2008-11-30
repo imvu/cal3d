@@ -249,16 +249,16 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				// get the influence vector
 				std::vector<CVertexCandidate::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
 
-				// reserve memory for the influences in the vertex
-				vertex.vectorInfluence.reserve(vectorInfluence.size());
-				vertex.vectorInfluence.resize(vectorInfluence.size());
+				vertex.influenceCount = vectorInfluence.size();
+                                vertex.influenceStart = pCoreSubmesh->influences.size();
 
 				// set all influences
-				size_t influenceId;
-				for(influenceId = 0; influenceId < vectorInfluence.size(); influenceId++)
+				for(size_t influenceId = 0; influenceId < vectorInfluence.size(); influenceId++)
 				{
-					vertex.vectorInfluence[influenceId].boneId = vectorInfluence[influenceId].boneId;
-					vertex.vectorInfluence[influenceId].weight = vectorInfluence[influenceId].weight;
+                                    CalCoreSubmesh::Influence inf;
+				    inf.boneId = vectorInfluence[influenceId].boneId;
+				    inf.weight = vectorInfluence[influenceId].weight;
+                                    pCoreSubmesh->influences.push_back(inf);
 				}
 
 				// set vertex in the core submesh instance

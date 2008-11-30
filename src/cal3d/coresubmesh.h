@@ -29,25 +29,23 @@ enum CalMorphTargetType {
 class CAL3D_API CalCoreSubmesh
 {
 public:
-  /// The core submesh TextureCoordinate.
   struct TextureCoordinate
   {
     float u, v;
   };
 
-  /// The core submesh Influence.
   struct Influence
   {
     int boneId;
     float weight;
   };
 
-  /// The core submesh Vertex.
   struct Vertex
   {
     CalVector position;
     CalVector normal;
-    std::vector<Influence> vectorInfluence;
+    unsigned influenceCount;
+    unsigned influenceStart; // index into influence vector
   };
 
   struct Face
@@ -103,6 +101,8 @@ public:
     if( size_t(subMorphTargetId) >= m_vectorSubMorphTargetGroupIndex.size() ) return 0xffffffff;
     return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
   }
+
+  std::vector<Influence> influences;
 
 private:
   // These two should always be the same size.
