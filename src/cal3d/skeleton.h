@@ -36,7 +36,7 @@ public:
   std::vector<CalBone *>& getVectorBone();
   void lockState();
 
-  std::vector<BoneTransform> boneTransforms;
+  std::vector< BoneTransform, SSEAllocator<BoneTransform> > boneTransforms;
 
 private:
   CalCoreSkeleton *m_pCoreSkeleton;

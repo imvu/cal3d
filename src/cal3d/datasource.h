@@ -8,15 +8,10 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_DATASOURCE_H
-#define CAL_DATASOURCE_H
+#pragma once
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
+#include <iostream>
 #include <string>
-
 #include "cal3d/global.h"
 
 /**
@@ -47,4 +42,20 @@ public:
   virtual bool readString(std::string& strValue) = 0;
 };
 
-#endif
+namespace CalPlatform
+{
+  CAL3D_API bool readBytes(std::istream& input, void *pBuffer, int length);
+  CAL3D_API bool readFloat(std::istream& input, float& value);
+  CAL3D_API bool readInteger(std::istream& input, int& value);
+  CAL3D_API bool readString(std::istream& input, std::string& strValue);
+
+  CAL3D_API bool readBytes(char* input, void *pBuffer, int length);
+  CAL3D_API bool readFloat(char* input, float& value);
+  CAL3D_API bool readInteger(char* input, int& value);
+  CAL3D_API bool readString(char* input, std::string& strValue);
+
+  CAL3D_API bool writeBytes(std::ostream& output, const void *pBuffer, int length);
+  CAL3D_API bool writeFloat(std::ostream& output, float value);
+  CAL3D_API bool writeInteger(std::ostream& output, int value);
+  CAL3D_API bool writeString(std::ostream& output, const std::string& strValue);
+};

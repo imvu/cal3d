@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <string>
+#include <memory>
 
 #if !defined(_WIN32) || defined(__MINGW32__)
 #define stricmp strcasecmp
@@ -57,30 +57,54 @@
 
 #endif
 
-// standard includes
-#include <stdlib.h>
-#include <math.h>
 
-// debug includes
-#include <assert.h>
+// Allocations objects that are 16-byte aligned
+template<typename T>
+struct SSEAllocator {
+    typedef const T* const_pointer;
+    typedef const T& const_reference;
+    typedef ptrdiff_t difference_type;
+    typedef T* pointer;
+    typedef T& reference;
+    typedef size_t size_type;
+    typedef T value_type;
 
-#include <iostream>
-#include <string>
+    pointer address(reference r) const { return &r; }
+    const_pointer address(const_reference r) const { return &r; }
 
-namespace CalPlatform
-{
-  CAL3D_API bool readBytes(std::istream& input, void *pBuffer, int length);
-  CAL3D_API bool readFloat(std::istream& input, float& value);
-  CAL3D_API bool readInteger(std::istream& input, int& value);
-  CAL3D_API bool readString(std::istream& input, std::string& strValue);
+    pointer allocate(size_type count) {
+        return reinterpret_cast<pointer>(_aligned_malloc(count * sizeof(T), 16));
+    }
 
-  CAL3D_API bool readBytes(char* input, void *pBuffer, int length);
-  CAL3D_API bool readFloat(char* input, float& value);
-  CAL3D_API bool readInteger(char* input, int& value);
-  CAL3D_API bool readString(char* input, std::string& strValue);
+    template<typename U>
+    pointer allocate(size_type count, const U* hint) {
+        return allocate(count);
+    }
 
-  CAL3D_API bool writeBytes(std::ostream& output, const void *pBuffer, int length);
-  CAL3D_API bool writeFloat(std::ostream& output, float value);
-  CAL3D_API bool writeInteger(std::ostream& output, int value);
-  CAL3D_API bool writeString(std::ostream& output, const std::string& strValue);
+    void construct(pointer ptr, const_reference value) {
+        void* p = ptr;
+        ::new(p) T(value);
+    }
+
+    void deallocate(pointer ptr, size_type count) {
+        _aligned_free(ptr);
+    }
+
+    void destroy(pointer ptr) {
+        ptr->T::~T();
+    }
+
+    size_type max_size() const {
+        return std::allocator<T>().max_size();
+    }
+
+    template<class U>
+    struct rebind {
+        typedef SSEAllocator<U> other;
+    };
+
+    template<class Other>
+    SSEAllocator& operator=(const SSEAllocator<Other>& right) {
+        return *this;
+    }
 };

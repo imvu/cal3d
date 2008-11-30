@@ -13,6 +13,7 @@
 #endif
 
 #include "cal3d/platform.h"
+#include "cal3d/datasource.h"
 
  /*****************************************************************************/
 /** Reads a number of bytes.

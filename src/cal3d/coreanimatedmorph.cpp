@@ -12,10 +12,7 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
+#include <string>
 #include "cal3d/coreanimatedmorph.h"
 #include "cal3d/coremorphtrack.h"
 

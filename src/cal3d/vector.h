@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <assert.h>
+#include <math.h>
 #include "cal3d/global.h"
 
 class CalQuaternion;

@@ -12,10 +12,8 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
 
+#include <math.h>
 #include "cal3d/animation_cycle.h"
 #include "cal3d/error.h"
 #include "cal3d/coreanimation.h"

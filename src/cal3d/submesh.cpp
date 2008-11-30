@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include <string>
 #include <boost/static_assert.hpp>
 #include "cal3d/submesh.h"
 #include "cal3d/error.h"

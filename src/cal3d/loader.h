@@ -8,23 +8,14 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_LOADER_H
-#define CAL_LOADER_H
+#pragma once
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
-
+#include <math.h>
 #include <string>
 #include <istream>
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
 #include "cal3d/tinyxml.h"
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalCoreModel;
 class CalCoreSkeleton;
@@ -351,15 +342,6 @@ ReadQuatAndExtra( unsigned char const * data, float * valsResult, unsigned int *
   return br.bytesRead();
 }
 
-void
-SetTranslationInvalid( float * xResult, float * yResult, float * zResult );
-void
-SetTranslationInvalid( CalVector * result );
-bool
-TranslationInvalid( CalVector const & result );
-
-
-
-#endif
-
-//****************************************************************************//
+void SetTranslationInvalid( float * xResult, float * yResult, float * zResult );
+void SetTranslationInvalid( CalVector * result );
+bool TranslationInvalid( CalVector const & result );

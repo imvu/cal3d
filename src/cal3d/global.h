@@ -50,8 +50,8 @@ namespace Cal {
         return version >= 919;
     }
 
-    template<typename T>
-    const T* pointerFromVector(const std::vector<T>& v) {
+    template<typename T, typename A>
+    const T* pointerFromVector(const std::vector<T, A>& v) {
         if (v.empty()) {
             return 0;
         } else {
