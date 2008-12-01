@@ -26,63 +26,27 @@ BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 // not yet have a value by setting this field to this specific invalid value.
 static float const ReplacementAttenuationNull = 100.0; // Any number not between zero and one.
 
- /*****************************************************************************/
-/** Constructs the submesh instance.
-  *
-  * This function is the default constructor of the submesh instance.
-  *****************************************************************************/
-
-CalSubmesh::CalSubmesh()
-  : m_pCoreSubmesh(0)
+CalSubmesh::CalSubmesh(CalCoreSubmesh *pCoreSubmesh)
+  : m_pCoreSubmesh(pCoreSubmesh)
 {
-}
-
- /*****************************************************************************/
-/** Creates the submesh instance.
-  *
-  * This function creates the submesh instance based on a core submesh.
-  *
-  * @param pCoreSubmesh A pointer to the core submesh on which this submesh
-  *                     instance should be based on.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
-{
-  if(pCoreSubmesh == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  m_pCoreSubmesh = pCoreSubmesh;
+  assert(pCoreSubmesh);
 
   // reserve memory for the face vector
-  m_vectorFace.reserve(m_pCoreSubmesh->getFaceCount());
   m_vectorFace.resize(m_pCoreSubmesh->getFaceCount());
 
   // set the initial lod level
   setLodLevel(1.0f);
 
   //Setting the morph target weights
-  m_vectorMorphTargetWeight.reserve(m_pCoreSubmesh->getCoreSubMorphTargetCount());
   m_vectorMorphTargetWeight.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
-  m_vectorAccumulatedWeight.reserve(m_pCoreSubmesh->getCoreSubMorphTargetCount());
   m_vectorAccumulatedWeight.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
-  m_vectorReplacementAttenuation.reserve(m_pCoreSubmesh->getCoreSubMorphTargetCount());
   m_vectorReplacementAttenuation.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());  
 
   // Array is indexed by group, and there can't be more groups than there are morph targets.
-  m_vectorSubMorphTargetGroupAttenuator.reserve(m_pCoreSubmesh->getCoreSubMorphTargetCount());
   m_vectorSubMorphTargetGroupAttenuator.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
-  m_vectorSubMorphTargetGroupAttenuation.reserve(m_pCoreSubmesh->getCoreSubMorphTargetCount());
   m_vectorSubMorphTargetGroupAttenuation.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());  
 
-  int morphTargetId;
-  for(morphTargetId = 0; morphTargetId<m_pCoreSubmesh->getCoreSubMorphTargetCount();++morphTargetId)
+  for(int morphTargetId = 0; morphTargetId<m_pCoreSubmesh->getCoreSubMorphTargetCount();++morphTargetId)
   {
     m_vectorSubMorphTargetGroupAttenuator[ morphTargetId ] = -1; // No attenuator by default.
     m_vectorSubMorphTargetGroupAttenuation[ morphTargetId ] = 0.0f; // No attenuation by default.
@@ -90,8 +54,6 @@ bool CalSubmesh::create(CalCoreSubmesh *pCoreSubmesh)
     m_vectorAccumulatedWeight[morphTargetId] = 0.0f;
     m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
   }
-
-  return true;
 }
 
  /*****************************************************************************/

@@ -786,67 +786,6 @@ CalLoader *CalLoader_New()
   return new CalLoader();
 }
 
-//****************************************************************************//
-// CalMesh wrapper functions definition                                       //
-//****************************************************************************//
-
-Boolean CalMesh_Create(CalMesh *self, CalCoreMesh *pCoreMesh)
-{
-  return self->create(pCoreMesh) ? True : False;
-}
-
-void CalMesh_Delete(CalMesh *self)
-{
-  delete self;
-}
-
-void CalMesh_Destroy(CalMesh *self)
-{
-  self->destroy();
-}
-
-CalCoreMesh *CalMesh_GetCoreMesh(CalMesh *self)
-{
-  return self->getCoreMesh();
-}
-
-CalSubmesh *CalMesh_GetSubmesh(CalMesh *self, int id)
-{
-  return self->getSubmesh(id);
-}
-
-int CalMesh_GetSubmeshCount(CalMesh *self)
-{
-  return self->getSubmeshCount();
-}
-
-/*
-std::vector<CalSubmesh *>& CalMesh_GetVectorSubmesh(CalMesh *self)
-{
-  return self->getVectorSubmesh();
-}
-*/
-
-CalMesh *CalMesh_New()
-{
-  return new CalMesh();
-}
-
-void CalMesh_SetLodLevel(CalMesh *self, float lodLevel)
-{
-  self->setLodLevel(lodLevel);
-}
-
-void CalMesh_SetMaterialSet(CalMesh *self, int setId)
-{
-  self->setMaterialSet(setId);
-}
-
-void CalMesh_SetModel(CalMesh *self, CalModel *pModel)
-{
-  self->setModel(pModel);
-}
-
 void CalSaver_Delete(CalSaver *self)
 {
   delete self;

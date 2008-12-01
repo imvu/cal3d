@@ -11,11 +11,11 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include "cal3d/coresubmesh.h"
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
 class CalCoreMaterial;
-class CalCoreSubmesh;
 
 // Structure used to return an array of the morphs that have non-zero weights.
 struct MorphIdAndWeight {
@@ -25,34 +25,12 @@ struct MorphIdAndWeight {
 
 class CAL3D_API CalSubmesh
 {
-// misc
 public:
-  /// The submesh Face.
-  typedef struct
-  {
-    CalIndex vertexId[3];
-  } Face;
+  typedef CalCoreSubmesh::Face Face;
 
-// member variables
-protected:
-  CalCoreSubmesh *m_pCoreSubmesh;
-  std::vector<float> m_vectorMorphTargetWeight;
-  std::vector<float> m_vectorAccumulatedWeight;
-  std::vector<float> m_vectorReplacementAttenuation;
-  std::vector<CalVector> m_vectorVertex;
-  std::vector<CalVector> m_vectorNormal;
-  std::vector<Face> m_vectorFace;
-  std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
-  std::vector<float> m_vectorSubMorphTargetGroupAttenuation;  
-  int m_vertexCount;
-  int m_faceCount;
-  boost::shared_ptr<CalCoreMaterial> m_material;
-
-public:
-  CalSubmesh();
-
-  bool create(CalCoreSubmesh *pCoreSubmesh);
+  CalSubmesh(CalCoreSubmesh* pCoreSubmesh);
   CalCoreSubmesh *getCoreSubmesh();
+
   const std::vector<Face>& getVectorFace() const {
       return m_vectorFace;
   }
@@ -88,4 +66,18 @@ public:
     bool replace );
   void setSubMorphTargetGroupAttenuatorArray( unsigned int len, int const * morphTargetIdArray );
   void setSubMorphTargetGroupAttenuationArray( unsigned int len, float const * attenuationArray );
+
+private:
+  CalCoreSubmesh *m_pCoreSubmesh;
+  std::vector<float> m_vectorMorphTargetWeight;
+  std::vector<float> m_vectorAccumulatedWeight;
+  std::vector<float> m_vectorReplacementAttenuation;
+  std::vector<CalVector> m_vectorVertex;
+  std::vector<CalVector> m_vectorNormal;
+  std::vector<Face> m_vectorFace;
+  std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
+  std::vector<float> m_vectorSubMorphTargetGroupAttenuation;  
+  int m_vertexCount;
+  int m_faceCount;
+  boost::shared_ptr<CalCoreMaterial> m_material;
 };

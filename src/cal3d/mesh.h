@@ -24,16 +24,13 @@ private:
   std::vector<CalSubmesh *> m_vectorSubmesh;
 
 public:
-  CalMesh();
+  CalMesh(CalModel* pModel, CalCoreMesh* pCoreMesh);
   ~CalMesh();
 
-  bool create(CalCoreMesh *pCoreMesh);
-  void destroy();
   CalCoreMesh *getCoreMesh();
   CalSubmesh *getSubmesh(int id);
   int getSubmeshCount();
   std::vector<CalSubmesh *>& getVectorSubmesh();
   void setLodLevel(float lodLevel);
   void setMaterialSet(int setId);
-  void setModel(CalModel *pModel);
 };

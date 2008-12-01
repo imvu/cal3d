@@ -30,100 +30,31 @@
   * This function is the default constructor of the mesh instance.
   *****************************************************************************/
 
-CalMesh::CalMesh()
-  : m_pModel(0), m_pCoreMesh(0)
-
+CalMesh::CalMesh(CalModel* pModel, CalCoreMesh* pCoreMesh)
+  : m_pModel(pModel)
+  , m_pCoreMesh(pCoreMesh)
 {
-}
-
- /*****************************************************************************/
-/** Destructs the mesh instance.
-  *
-  * This function is the destructor of the mesh instance.
-  *****************************************************************************/
-
-CalMesh::~CalMesh()
-{
-  assert(m_vectorSubmesh.empty());
-}
-
- /*****************************************************************************/
-/** Creates the mesh instance.
-  *
-  * This function creates the mesh instance based on a core mesh.
-  *
-  * @param pCoreMesh A pointer to the core mesh on which this mesh instance
-  *                  should be based on.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalMesh::create(CalCoreMesh *pCoreMesh)
-{
-  if(pCoreMesh == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  m_pCoreMesh = pCoreMesh;
+  assert(pModel);
+  assert(pCoreMesh);
 
   // clone the mesh structure of the core mesh
   std::vector<CalCoreSubmesh *>& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
 
-  // get the number of submeshes
-  int submeshCount;
-  submeshCount = vectorCoreSubmesh.size();
-
-  // reserve space in the bone vector
+  int submeshCount = vectorCoreSubmesh.size();
   m_vectorSubmesh.reserve(submeshCount);
-
-  // clone every core submesh
-  int submeshId;
-  for(submeshId = 0; submeshId < submeshCount; ++submeshId)
+  for(int submeshId = 0; submeshId < submeshCount; ++submeshId)
   {
-    CalSubmesh *pSubmesh;
-    pSubmesh = new CalSubmesh();
-    if(pSubmesh == 0)
-    {
-      CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-      return false;
-    }
-
-    // create a submesh for every core submesh
-    if(!pSubmesh->create(vectorCoreSubmesh[submeshId]))
-    {
-      delete pSubmesh;
-      return false;
-    }
-
-    // insert submesh into submesh vector
-    m_vectorSubmesh.push_back(pSubmesh);
+    m_vectorSubmesh.push_back(new CalSubmesh(vectorCoreSubmesh[submeshId]));
   }
-  return true;
 }
 
- /*****************************************************************************/
-/** Destroys the mesh instance.
-  *
-  * This function destroys all data stored in the mesh instance and frees all
-  * allocated memory.
-  *****************************************************************************/
-
-void CalMesh::destroy()
+CalMesh::~CalMesh()
 {
-  // destroy all submeshes
   std::vector<CalSubmesh *>::iterator iteratorSubmesh;
   for(iteratorSubmesh = m_vectorSubmesh.begin(); iteratorSubmesh != m_vectorSubmesh.end(); ++iteratorSubmesh)
   {
     delete (*iteratorSubmesh);
   }
-  m_vectorSubmesh.clear();
-
-  m_pCoreMesh = 0;
-
 }
 
  /*****************************************************************************/
@@ -234,17 +165,4 @@ void CalMesh::setMaterialSet(int setId)
     // set the new core material id in the submesh
     m_vectorSubmesh[submeshId]->setMaterial(material);
   }
-}
-
- /*****************************************************************************/
-/** Sets the model.
-  *
-  * This function sets the model to which the mesh instance is attached to.
-  *
-  * @param pModel The model to which the mesh instance should be attached to.
-  *****************************************************************************/
-
-void CalMesh::setModel(CalModel *pModel)
-{
-  m_pModel = pModel;
 }

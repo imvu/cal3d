@@ -8,8 +8,7 @@
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
     CalCoreSubmesh csm;
 
-    CalSubmesh sm;
-    sm.create(&csm);
+    CalSubmesh sm(&csm);
 
     sm.getVectorFace();
 }

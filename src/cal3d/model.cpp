@@ -90,28 +90,7 @@ bool CalModel::attachMesh(int coreMeshId)
     }
   }
 
-  // allocate a new mesh instance
-  CalMesh *pMesh;
-  pMesh = new CalMesh();
-  if(pMesh == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return false;
-  }
-
-  // create the new mesh instance
-  if(!pMesh->create(pCoreMesh))
-  {
-    delete pMesh;
-    return false;
-  }
-
-  // set model in the mesh instance
-  pMesh->setModel(this);
-
-  // insert the new mesh into the active list
-  m_vectorMesh.push_back(pMesh);
-
+  m_vectorMesh.push_back(new CalMesh(this, pCoreMesh));
   return true;
 }
 
@@ -164,10 +143,8 @@ void CalModel::create(CalCoreModel *pCoreModel)
 void CalModel::destroy()
 {
   // destroy all active meshes
-  int meshId;
-  for(meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
+  for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
   {
-    m_vectorMesh[meshId]->destroy();
     delete m_vectorMesh[meshId];
   }
   m_vectorMesh.clear();
@@ -223,16 +200,10 @@ bool CalModel::detachMesh(int coreMeshId)
     CalMesh *pMesh;
     pMesh = *iteratorMesh;
 
-    // check if we found the matching mesh
     if(pMesh->getCoreMesh() == pCoreMesh)
     {
-      // destroy the mesh
-      pMesh->destroy();
       delete pMesh;
-
-      // erase the mesh out of the active mesh list
       m_vectorMesh.erase(iteratorMesh);
-
       return true;
     }
   }
