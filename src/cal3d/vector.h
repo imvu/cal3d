@@ -44,7 +44,7 @@ public:
           return *this;
   }
 
-  inline void operator+=(const CalVector& v)
+  __forceinline void operator+=(const CalVector& v)
   {
 	  x += v.x;
 	  y += v.y;
