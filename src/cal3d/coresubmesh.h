@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <set>
+#include <map>
 #include <boost/shared_ptr.hpp>
 #include "cal3d/color.h"
 #include "cal3d/global.h"
@@ -38,14 +40,32 @@ public:
   {
     int boneId;
     float weight;
+
+    bool operator<(const Influence& rhs) const {
+      return std::make_pair(boneId, quantize(weight)) < std::make_pair(rhs.boneId, quantize(rhs.weight));
+    }
+
+    // floating point equivalence is tricky
+    static int quantize(float f) {
+      return static_cast<int>(f * 10000.0);
+    }
+  };
+
+  struct InfluenceSet
+  {
+    std::set<Influence> influences;
+
+    //bool operator<(const InfluenceSet& rhs) const {
+    //}
   };
 
   struct Vertex
   {
     CalVector position;
     CalVector normal;
+    unsigned influenceStart;
     unsigned influenceCount;
-    unsigned influenceStart; // index into influence vector
+    //unsigned influenceSet;
   };
 
   struct Face
@@ -77,7 +97,9 @@ public:
   std::vector<Face>& getVectorFace();
   std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
 
-  std::vector<Vertex>& getVectorVertex();
+  const std::vector<Vertex>& getVectorVertex() const {
+    return m_vertices;
+  }
   std::vector<CalColor32>& getVertexColors();
   std::vector<LodData>& getLodData() { return m_lodData; }
 
@@ -87,7 +109,7 @@ public:
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
 
-  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData);
+  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& influences);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
@@ -112,6 +134,9 @@ private:
 
   std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
   std::vector<Face> m_vectorFace;
+
+  std::map<InfluenceSet, size_t> m_influenceSetIds;
+
   CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
   int m_coreMaterialThreadId;
   int m_lodCount;

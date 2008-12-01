@@ -249,20 +249,8 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				// get the influence vector
 				std::vector<CVertexCandidate::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
 
-				vertex.influenceCount = vectorInfluence.size();
-                                vertex.influenceStart = pCoreSubmesh->influences.size();
-
-				// set all influences
-				for(size_t influenceId = 0; influenceId < vectorInfluence.size(); influenceId++)
-				{
-                                    CalCoreSubmesh::Influence inf;
-				    inf.boneId = vectorInfluence[influenceId].boneId;
-				    inf.weight = vectorInfluence[influenceId].weight;
-                                    pCoreSubmesh->influences.push_back(inf);
-				}
-
 				// set vertex in the core submesh instance
-				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData);
+				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);
 			}
 
 			size_t faceId;

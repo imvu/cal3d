@@ -736,21 +736,8 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				// get the influence vector
 				std::vector<CVertexCandidate::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
 
-				// reserve memory for the influences in the vertex
-                                vertex.influenceStart = pCoreSubmesh->influences.size();
-                                vertex.influenceCount = vectorInfluence.size();
-
-				// set all influences
-				for(size_t influenceId = 0; influenceId < vectorInfluence.size(); influenceId++)
-				{
-                                    CalCoreSubmesh::Influence inf;
-				    inf.boneId = vectorInfluence[influenceId].boneId;
-				    inf.weight = vectorInfluence[influenceId].weight;
-                                    pCoreSubmesh->influences.push_back(inf);
-				}
-
 				// set vertex in the core submesh instance
-				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData);
+				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);
 			}
 
 			size_t faceId;

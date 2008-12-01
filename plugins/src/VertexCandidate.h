@@ -19,16 +19,8 @@ class CVertexCandidate
 {
 // misc
 public:
-	typedef struct
-	{
-		float u, v;
-	} TextureCoordinate;
-
-	typedef struct
-	{
-		int boneId;
-		float weight;
-	} Influence;
+        typedef CalCoreSubmesh::TextureCoordinate TextureCoordinate;
+        typedef CalCoreSubmesh::Influence Influence;
 
 	typedef struct
 	{

@@ -75,7 +75,7 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
   const CalCoreSubmesh::Influence* influences = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences);
 
   // get vertex vector of the core submesh
-  std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pSubmesh->getCoreSubmesh()->getVectorVertex();
+  const std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pSubmesh->getCoreSubmesh()->getVectorVertex();
 
   // get the number of vertices
   int vertexCount = pSubmesh->getVertexCount();
@@ -94,7 +94,7 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
   int vertexId;
   for(vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
-    CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
+    const CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
 
     // blend the morph targets
     CalVector position(0,0,0);

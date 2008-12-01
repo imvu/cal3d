@@ -129,20 +129,6 @@ std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> > & CalCoreSubmesh::g
   return m_vectorvectorTextureCoordinate;
 }
 
- /*****************************************************************************/
-/** Returns the vertex vector.
-  *
-  * This function returns the vector that contains all vertices of the core
-  * submesh instance.
-  *
-  * @return A reference to the vertex vector.
-  *****************************************************************************/
-
-std::vector<CalCoreSubmesh::Vertex>& CalCoreSubmesh::getVectorVertex()
-{
-  return m_vertices;
-}
-
 std::vector<CalColor32>& CalCoreSubmesh::getVertexColors()
 {
   return m_vertexColors;
@@ -244,10 +230,14 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
   return true;
 }
 
-void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData) {
+void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& inf) {
   m_vertices[vertexId] = vertex;
   m_vertexColors[vertexId] = vertexColor;
   m_lodData[vertexId] = lodData;
+
+  m_vertices[vertexId].influenceStart = influences.size();
+  m_vertices[vertexId].influenceCount = inf.size();
+  influences.insert(influences.end(), inf.begin(), inf.end());
 }
 
  /*****************************************************************************/

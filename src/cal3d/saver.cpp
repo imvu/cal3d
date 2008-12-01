@@ -698,7 +698,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   }
 
   // get the vertex, face, physical property and spring vector
-  std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+  const std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
   std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
   std::vector<CalCoreSubmesh::LodData>& lodData = pCoreSubmesh->getLodData();
   std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
@@ -729,7 +729,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   // write all vertices
   for(int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
   {
-    CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
+    const CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
     CalCoreSubmesh::LodData& ld = lodData[vertexId];
 
     // write the vertex data
@@ -809,7 +809,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
       if( !bv ) {
         continue;
       }
-      CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
+      const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
       static double differenceTolerance = 0.01;
       CalVector positionDiff = bv->position - Vertex.position;
       CalVector normalDiff = bv->normal - Vertex.normal;
@@ -1400,7 +1400,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     
     submesh.SetAttribute("NUMTEXCOORDS",pCoreSubmesh->getVectorVectorTextureCoordinate().size());
 
-    std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+    const std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
     std::vector<CalCoreSubmesh::LodData>& allLodData = pCoreSubmesh->getLodData();
 
@@ -1413,7 +1413,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     int vertexId;
     for(vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
     {
-      CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
+      const CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
       CalColor32& vertexColor = vertexColors[vertexId];
       CalCoreSubmesh::LodData& lodData = allLodData[vertexId];
 
@@ -1535,7 +1535,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
                     if( !bv ) {
                       continue;
                     }
-                    CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
+                    const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
                     static double differenceTolerance = 1.0;
                     CalVector positionDiff = bv->position - Vertex.position;
                     CalVector normalDiff = bv->normal - Vertex.normal;
