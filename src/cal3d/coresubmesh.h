@@ -94,7 +94,7 @@ public:
   int getFaceCount();
   int getLodCount();
   bool hasNonWhiteVertexColors() { return m_hasNonWhiteVertexColors; }
-  std::vector<Face>& getVectorFace();
+  const std::vector<Face>& getVectorFace() const;
   std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
 
   const std::vector<Vertex>& getVectorVertex() const {

@@ -84,8 +84,7 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CHECK_EQUAL(numVertices, 6);
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
-    int numResultVertices = CalPhysique::calculateVerticesAndNormals(model.get(), sm, vertexBuffer.get());
-    CHECK_EQUAL(numResultVertices, 1);
+    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer.get());
     CHECK_EQUAL(vertexBuffer[0], 1);
     CHECK_EQUAL(vertexBuffer[1], 2);
     CHECK_EQUAL(vertexBuffer[2], 3);
@@ -112,8 +111,7 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_not
     int numVertices = sm->getVertexCount() * 6;
     scoped_array<float> vertexBuffer(new float[numVertices]);
 
-    int numResultVertices = CalPhysique::calculateVerticesAndNormals(model.get(), sm, vertexBuffer.get());
-    CHECK_EQUAL(numResultVertices, 1);
+    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer.get());
     CHECK_CLOSE(2.82842708, sqrt(pow(vertexBuffer[3], 2) + pow(vertexBuffer[4], 2) + pow(vertexBuffer[5], 2)), 0.0001f);
 }
 

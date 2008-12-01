@@ -58,7 +58,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CHECK(model.attachMesh(0));
 
     CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
-    CalPhysique::calculateVerticesAndNormals(&model, submesh, 0);
+    CalPhysique::calculateVerticesAndNormals(model.getSkeleton(), submesh, 0);
 
     model.destroy();
     coreModel.destroy();

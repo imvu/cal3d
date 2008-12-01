@@ -51,6 +51,15 @@ namespace Cal {
     }
 
     template<typename T, typename A>
+    T* pointerFromVector(std::vector<T, A>& v) {
+        if (v.empty()) {
+            return 0;
+        } else {
+            return &v[0];
+        }
+    }
+
+    template<typename T, typename A>
     const T* pointerFromVector(const std::vector<T, A>& v) {
         if (v.empty()) {
             return 0;

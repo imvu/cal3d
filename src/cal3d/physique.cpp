@@ -69,8 +69,7 @@ float FastInvSqrt(float x) {
   * @return The number of vertices written to the buffer.
   *****************************************************************************/
 
-int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubmesh, float *pVertexBuffer) {
-  CalSkeleton* skeleton = model->getSkeleton();
+void CalPhysique::calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSubmesh *pSubmesh, float *pVertexBuffer) {
   const CalSkeleton::BoneTransform* boneTransforms = Cal::pointerFromVector(skeleton->boneTransforms); 
   const CalCoreSubmesh::Influence* influences = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences);
 
@@ -190,6 +189,4 @@ int CalPhysique::calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubme
 
     pVertexBuffer += 6;
   }
-
-  return vertexCount;
 }

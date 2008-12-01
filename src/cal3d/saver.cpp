@@ -701,7 +701,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   const std::vector<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
   std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
   std::vector<CalCoreSubmesh::LodData>& lodData = pCoreSubmesh->getLodData();
-  std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
+  const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
 
   // write the number of vertices, faces, level-of-details and springs
   CalPlatform::writeInteger(file, vectorVertex.size());
@@ -860,7 +860,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   int faceId;
   for(faceId = 0; faceId < (int)vectorFace.size(); ++faceId)
   {
-    CalCoreSubmesh::Face& face = vectorFace[faceId];
+    const CalCoreSubmesh::Face& face = vectorFace[faceId];
 
     // write the face data
     CalPlatform::writeInteger(file, face.vertexId[0]);
@@ -1404,7 +1404,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
     std::vector<CalCoreSubmesh::LodData>& allLodData = pCoreSubmesh->getLodData();
 
-    std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
+    const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
     // get the texture coordinate vector vector
         std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
@@ -1609,7 +1609,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     int faceId;
     for(faceId = 0; faceId < (int)vectorFace.size(); ++faceId)
     {
-      CalCoreSubmesh::Face& Face = vectorFace[faceId];
+      const CalCoreSubmesh::Face& Face = vectorFace[faceId];
 
       TiXmlElement face("FACE");
 

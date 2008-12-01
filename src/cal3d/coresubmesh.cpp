@@ -119,7 +119,7 @@ int CalCoreSubmesh::getLodCount()
   return m_lodCount;
 }
 
-std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace()
+const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const
 {
   return m_vectorFace;
 }

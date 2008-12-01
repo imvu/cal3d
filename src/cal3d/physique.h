@@ -12,10 +12,10 @@
 
 #include "cal3d/global.h"
 
-class CalModel;
+class CalSkeleton;
 class CalSubmesh;
 
 namespace CalPhysique
 {
-  CAL3D_API int calculateVerticesAndNormals(CalModel* model, CalSubmesh *pSubmesh, float *pVertexBuffer);
+  CAL3D_API void calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSubmesh *pSubmesh, float *pVertexBuffer);
 };
