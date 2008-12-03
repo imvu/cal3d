@@ -8,6 +8,8 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
+#define SECURE_SCL 0
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
