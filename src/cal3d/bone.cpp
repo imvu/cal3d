@@ -207,10 +207,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
     m_rotationAbsolute *= pParent->getRotationAbsolute();
   }
 
-  CalVector& m_translationBoneSpace = skeleton->boneTransforms[myIndex].translation;
-
   // calculate the bone space transformation
-  m_translationBoneSpace = m_pCoreBone->getTranslationBoneSpace();
+  CalVector translationBoneSpace(m_pCoreBone->getTranslationBoneSpace());
 
   // Must go before the *= m_rotationAbsolute.
   bool meshScalingOn;
@@ -284,23 +282,22 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
 
     CalQuaternion coreBoneRotBoneSpaceInverse = m_pCoreBone->getRotationBoneSpace();
     coreBoneRotBoneSpaceInverse.invert();
-    m_translationBoneSpace *= coreBoneRotBoneSpaceInverse;
-    m_translationBoneSpace.x *= m_meshScaleAbsolute.x;
-    m_translationBoneSpace.y *= m_meshScaleAbsolute.y;
-    m_translationBoneSpace.z *= m_meshScaleAbsolute.z;
-    m_translationBoneSpace *= m_pCoreBone->getRotationBoneSpace();
+    translationBoneSpace *= coreBoneRotBoneSpaceInverse;
+    translationBoneSpace.x *= m_meshScaleAbsolute.x;
+    translationBoneSpace.y *= m_meshScaleAbsolute.y;
+    translationBoneSpace.z *= m_meshScaleAbsolute.z;
+    translationBoneSpace *= m_pCoreBone->getRotationBoneSpace();
 
   } else {
     meshScalingOn = false;
   }
-  m_translationBoneSpace *= m_rotationAbsolute;
-  m_translationBoneSpace += m_translationAbsolute;
+  translationBoneSpace *= m_rotationAbsolute;
+  translationBoneSpace += m_translationAbsolute;
 
   m_rotationBoneSpace = m_pCoreBone->getRotationBoneSpace();
   m_rotationBoneSpace *= m_rotationAbsolute;
 
-  CalMatrix& transformMatrix = skeleton->boneTransforms[myIndex].matrix;
-  transformMatrix = m_pCoreBone->getRotationBoneSpace();
+  CalMatrix transformMatrix = m_pCoreBone->getRotationBoneSpace();
   if( meshScalingOn ) {
 
     // By applying each scale component to the row, instead of the column, we
@@ -319,6 +316,10 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   }
   transformMatrix *= m_rotationAbsolute;
 
+  CalSkeleton::BoneTransform& bt = skeleton->boneTransforms[myIndex];
+  extractColumns(transformMatrix, bt.colx, bt.coly, bt.colz);
+  bt.translation.setAsVector(translationBoneSpace);
+  
   // calculate all child bones
   std::list<int>::iterator iteratorChildId;
   for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId )

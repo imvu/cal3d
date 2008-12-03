@@ -70,7 +70,7 @@ float FastInvSqrt(float x) {
   *****************************************************************************/
 
 void CalPhysique::calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSubmesh *pSubmesh, float *pVertexBuffer) {
-  const CalSkeleton::BoneTransform* boneTransforms = Cal::pointerFromVector(skeleton->boneTransforms); 
+  const CalSkeleton::BoneTransform* boneTransforms = skeleton->boneTransforms.data; 
   const CalCoreSubmesh::Influence* influences = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences);
 
   // get vertex vector of the core submesh
@@ -162,8 +162,10 @@ void CalPhysique::calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSu
       
       // transform vertex with current state of the bone
       CalVector v(position);
-      transform(v, boneTransform.matrix);
-      v += boneTransform.translation;
+      transform(v, boneTransform.colx, boneTransform.coly, boneTransform.colz);
+      v.x += boneTransform.translation.x;
+      v.y += boneTransform.translation.y;
+      v.z += boneTransform.translation.z;
       
       x += influence.weight * v.x;
       y += influence.weight * v.y;
@@ -171,7 +173,7 @@ void CalPhysique::calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSu
       
       // transform normal with current state of the bone
       CalVector n(normal);
-      transform(n, boneTransform.matrix);
+      transform(n, boneTransform.colx, boneTransform.coly, boneTransform.colz);
       
       nx += influence.weight * n.x;
       ny += influence.weight * n.y;
@@ -181,11 +183,13 @@ void CalPhysique::calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSu
     pVertexBuffer[0] = x;
     pVertexBuffer[1] = y;
     pVertexBuffer[2] = z;
+    //pVertexBuffer[3] = 0.0f;
     
-    pVertexBuffer[3] = nx;
-    pVertexBuffer[4] = ny;
-    pVertexBuffer[5] = nz;
+    pVertexBuffer[4] = nx;
+    pVertexBuffer[5] = ny;
+    pVertexBuffer[6] = nz;
+    //pVertexBuffer[7] = 0.0f;
 
-    pVertexBuffer += 6;
+    pVertexBuffer += 8;
   }
 }

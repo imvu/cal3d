@@ -80,17 +80,16 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     shared_ptr<CalModel> model(createTestModel(coreModel));
 
     CalSubmesh* sm = model->getMesh(0)->getSubmesh(0);
-    int numVertices = sm->getVertexCount() * 6;
-    CHECK_EQUAL(numVertices, 6);
-    scoped_array<float> vertexBuffer(new float[numVertices]);
+    CHECK_EQUAL(1, sm->getVertexCount());
+    float vertexBuffer[8];
 
-    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer.get());
+    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer);
     CHECK_EQUAL(vertexBuffer[0], 1);
     CHECK_EQUAL(vertexBuffer[1], 2);
     CHECK_EQUAL(vertexBuffer[2], 3);
-    CHECK_EQUAL(vertexBuffer[3], 0);
-    CHECK_EQUAL(vertexBuffer[4], 1);
-    CHECK_EQUAL(vertexBuffer[5], 0);
+    CHECK_EQUAL(vertexBuffer[4], 0);
+    CHECK_EQUAL(vertexBuffer[5], 1);
+    CHECK_EQUAL(vertexBuffer[6], 0);
 }
 
 TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_not_unit_vectors) {
@@ -108,10 +107,10 @@ TEST(getVerticesAndNormals_on_mesh_with_two_bones_generates_normals_that_are_not
     shared_ptr<CalModel> model(createTestModel(coreModel));
 
     CalSubmesh* sm = model->getMesh(0)->getSubmesh(0);
-    int numVertices = sm->getVertexCount() * 6;
-    scoped_array<float> vertexBuffer(new float[numVertices]);
+    CHECK_EQUAL(1, sm->getVertexCount());
+    float vertexBuffer[8];
 
-    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer.get());
+    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer);
     CHECK_CLOSE(2.82842708, sqrt(pow(vertexBuffer[3], 2) + pow(vertexBuffer[4], 2) + pow(vertexBuffer[5], 2)), 0.0001f);
 }
 

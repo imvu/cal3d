@@ -18,12 +18,49 @@ class CalCoreSkeleton;
 class CalCoreModel;
 class CalBone;
 
+// Can't use std::vector w/ __declspec(align(16)) :(
+// http://ompf.org/forum/viewtopic.php?f=11&t=686
+// http://social.msdn.microsoft.com/Forums/en-US/vclanguage/thread/0adabdb5-f732-4db7-a8de-e3e83af0e147/
+template<typename T>
+struct SSEArray {
+  SSEArray()
+    : data(0)
+  {}
+
+  ~SSEArray() {
+    _aligned_free(data);
+  }
+
+  // destructive
+  void resize(size_t new_size) {
+    T* new_data = reinterpret_cast<T*>(_aligned_malloc(sizeof(T) * new_size, 16));
+    if (!new_data) {
+      throw std::bad_alloc();
+    }
+
+    if (data) {
+      _aligned_free(data);
+    }
+    data = new_data;
+  }
+
+  T& operator[](size_t idx) {
+    return data[idx];
+  }
+
+  T* data;
+};
+
 class CAL3D_API CalSkeleton
 {
 public:
+  // Cal3D uses a 3x3 transform matrix and a translation 3-vector. We don't
+  // use w in any of these, but we need to be 16-byte aligned for SSE.
   struct BoneTransform {
-    CalMatrix matrix; // rotation and scale
-    CalVector translation;
+    CalVector4 colx;
+    CalVector4 coly;
+    CalVector4 colz;
+    CalVector4 translation;
   };
 
   CalSkeleton(CalCoreSkeleton* pCoreSkeleton);
@@ -36,7 +73,7 @@ public:
   std::vector<CalBone *>& getVectorBone();
   void lockState();
 
-  std::vector< BoneTransform, SSEAllocator<BoneTransform> > boneTransforms;
+  SSEArray<BoneTransform> boneTransforms;
 
 private:
   CalCoreSkeleton *m_pCoreSkeleton;
