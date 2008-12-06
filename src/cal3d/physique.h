@@ -11,11 +11,11 @@
 #pragma once
 
 #include "cal3d/global.h"
+#include "cal3d/skeleton.h"
 
-class CalSkeleton;
 class CalSubmesh;
 
 namespace CalPhysique
 {
-  CAL3D_API void calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSubmesh *pSubmesh, float *pVertexBuffer);
+  CAL3D_API void calculateVerticesAndNormals(const CalSkeleton::BoneTransform* boneTransforms, CalSubmesh *pSubmesh, float *pVertexBuffer);
 };

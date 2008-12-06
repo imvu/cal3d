@@ -57,22 +57,11 @@ float FastInvSqrt(float x) {
     return x;
 }
 
- /*****************************************************************************/
-/** Calculates the transformed vertex data.
-  *
-  * This function calculates and returns the transformed vertex and the transformed 
-  * normal datadata of a specific submesh.
-  *
-  * @param pSubmesh A pointer to the submesh from which the vertex data should
-  *                 be calculated and returned.
-  * @param pVertexBuffer A pointer to the user-provided buffer where the vertex
-  *                      data is written to.
-  *
-  * @return The number of vertices written to the buffer.
-  *****************************************************************************/
-
-void CalPhysique::calculateVerticesAndNormals(const CalSkeleton* skeleton, CalSubmesh *pSubmesh, float *pVertexBuffer) {
-  const CalSkeleton::BoneTransform* boneTransforms = skeleton->boneTransforms.data; 
+void CalPhysique::calculateVerticesAndNormals(
+  const CalSkeleton::BoneTransform* boneTransforms,
+  CalSubmesh *pSubmesh,
+  float *pVertexBuffer
+) {
   const CalCoreSubmesh::Influence* influences = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences);
 
   // get vertex vector of the core submesh

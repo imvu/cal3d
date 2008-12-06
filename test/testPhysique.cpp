@@ -1,3 +1,4 @@
+#include <intrin.h>
 #include "TestPrologue.h"
 #include <cal3d/renderer.h>
 #include <cal3d/bone.h>
@@ -85,7 +86,7 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
     CHECK_EQUAL(1, sm->getVertexCount());
     float vertexBuffer[8];
 
-    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer);
+    CalPhysique::calculateVerticesAndNormals(model->getSkeleton()->boneTransforms.data, sm, vertexBuffer);
     CHECK_EQUAL(vertexBuffer[0], 1);
     CHECK_EQUAL(vertexBuffer[1], 2);
     CHECK_EQUAL(vertexBuffer[2], 3);
@@ -130,7 +131,10 @@ TEST(getVerticesAndNormals_on_mesh_with_two_translation_bones) {
     CalSubmesh* sm = model->getMesh(0)->getSubmesh(0);
     CHECK_EQUAL(1, sm->getVertexCount());
     float vertexBuffer[8];
-    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer);
+    CalPhysique::calculateVerticesAndNormals(
+      model->getSkeleton()->boneTransforms.data,
+      sm,
+      vertexBuffer);
 
     CHECK_EQUAL(1.0f, vertexBuffer[0]);
     CHECK_EQUAL(2.0f, vertexBuffer[1]);
@@ -182,7 +186,10 @@ TEST(getVerticesAndNormals_on_mesh_with_two_translated_bones) {
     CalSubmesh* sm = model->getMesh(0)->getSubmesh(0);
     CHECK_EQUAL(1, sm->getVertexCount());
     float vertexBuffer[8];
-    CalPhysique::calculateVerticesAndNormals(model->getSkeleton(), sm, vertexBuffer);
+    CalPhysique::calculateVerticesAndNormals(
+      model->getSkeleton()->boneTransforms.data,
+      sm,
+      vertexBuffer);
 
     CHECK_EQUAL(1.5f, vertexBuffer[0]);
     CHECK_EQUAL(2.5f, vertexBuffer[1]);
@@ -191,4 +198,46 @@ TEST(getVerticesAndNormals_on_mesh_with_two_translated_bones) {
     CHECK_EQUAL(1.0f, vertexBuffer[4]);
     CHECK_EQUAL(1.0f, vertexBuffer[5]);
     CHECK_EQUAL(0.0f, vertexBuffer[6]);
+}
+
+
+TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
+  const int N = 10000;
+  const int TrialCount = 10;
+  
+  CalCoreSubmesh::Influence influence;
+  influence.boneId = 0;
+  influence.weight = 1.0f;
+
+  std::vector<CalCoreSubmesh::Influence> influences;
+  influences.push_back(influence);
+
+  CalCoreSubmesh* coreSubMesh = new CalCoreSubmesh;
+  coreSubMesh->reserve(N, 0, 0);
+  for (int i = 0; i < N; ++i) {
+    CalCoreSubmesh::Vertex v;
+    v.position = CalVector(1.0f, 2.0f, 3.0f);
+    v.normal = CalVector(0.0f, 0.0f, 1.0f);
+    coreSubMesh->setVertex(i, v, 0, CalCoreSubmesh::LodData(), influences);
+  }
+
+  CalSubmesh* submesh = new CalSubmesh(coreSubMesh);
+
+  CalSkeleton::BoneTransform bt;
+  ZeroMemory(&bt, sizeof(bt));
+
+  __declspec(align(16)) float output[N * 8];
+
+  __int64 min = 99999999999999;
+  for (int t = 0; t < TrialCount; ++t) {
+    unsigned __int64 start = __rdtsc();
+    CalPhysique::calculateVerticesAndNormals(&bt, submesh, &output[0]);
+    unsigned __int64 end = __rdtsc();
+    unsigned __int64 elapsed = end - start;
+    if (elapsed < min) {
+      min = elapsed;
+    }
+  }
+
+  printf("Cycles per vertex: %d\n", (int)(min / N));
 }
