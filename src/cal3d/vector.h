@@ -36,14 +36,6 @@ public:
 	  return (&x)[i];
   }
 
-  inline CalVector& operator=(const CalVector& v)
-  {
-	  x = v.x;
-	  y = v.y;
-	  z = v.z;
-          return *this;
-  }
-
   __forceinline void operator+=(const CalVector& v)
   {
 	  x += v.x;

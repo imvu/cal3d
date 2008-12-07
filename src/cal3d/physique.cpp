@@ -31,9 +31,7 @@
 
 static MorphIdAndWeight * MiawCache = NULL;
 static unsigned int MiawCacheNumElements = 0;
-void
-EnlargeMiawCacheAsNecessary( unsigned int numElements )
-{
+void EnlargeMiawCacheAsNecessary(unsigned int numElements) {
   if( MiawCacheNumElements < numElements ) {
     if( MiawCache ) {
       delete [] MiawCache;
@@ -44,6 +42,8 @@ EnlargeMiawCacheAsNecessary( unsigned int numElements )
     MiawCache = new( MorphIdAndWeight [ MiawCacheNumElements ] );
   }
 }
+
+SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
 
 //I never thought I'd actually get a chance to use this :) --dusty
 //http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
@@ -57,81 +57,18 @@ float FastInvSqrt(float x) {
     return x;
 }
 
-void CalPhysique::calculateVerticesAndNormals(
+void calculateVerticesAndNormals(
   const CalSkeleton::BoneTransform* boneTransforms,
-  CalSubmesh *pSubmesh,
-  float *pVertexBuffer
+  int vertexCount,
+  const CalCoreSubmesh::Vertex* vertices,
+  const CalCoreSubmesh::Influence* influences,
+  float* output_buffer
 ) {
-  const CalCoreSubmesh::Influence* influences = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences);
-
-  // get vertex vector of the core submesh
-  const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->getVectorVertex());
-
-  // get the number of vertices
-  int vertexCount = pSubmesh->getVertexCount();
-
-  // get the sub morph target vector from the core sub mesh
-  CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
-  int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
-  EnlargeMiawCacheAsNecessary( morphTargetCount );
-  unsigned int numMiaws;
-  pSubmesh->getMorphIdAndWeightArray( MiawCache, & numMiaws, ( unsigned int ) morphTargetCount );
-
-  // calculate the base weight
-  float baseWeight2 = pSubmesh->getBaseWeight();
-
   // calculate all submesh vertices
   for(int vertexId = 0; vertexId < vertexCount; ++vertexId)
   {
     const CalCoreSubmesh::Vertex& vertex = vertices[vertexId];
 
-    // blend the morph targets
-    CalVector position(0,0,0);
-    CalVector normal(0,0,0);
-    if(baseWeight2 == 1.0f)
-    {
-      position.x = vertex.position.x;
-      position.y = vertex.position.y;
-      position.z = vertex.position.z;
-      normal.x = vertex.normal.x;
-      normal.y = vertex.normal.y;
-      normal.z = vertex.normal.z;
-    }
-    else
-    {
-      float baseWeight = baseWeight2;
-      position.x = 0;
-      position.y = 0;
-      position.z = 0;
-      normal.x = 0;
-      normal.y = 0;
-      normal.z = 0;
-      unsigned int i;
-      for( i = 0; i < numMiaws; i++ ) {
-        MorphIdAndWeight * miaw = & MiawCache[ i ];
-        int morphTargetId = miaw->morphId_;
-        CalCoreSubMorphTarget::BlendVertex const * blendVertex =
-          vectorSubMorphTarget[morphTargetId]->getBlendVertex(vertexId);
-        float currentWeight = miaw->weight_;
-        if( blendVertex ) {
-          position.x += currentWeight*blendVertex->position.x;
-          position.y += currentWeight*blendVertex->position.y;
-          position.z += currentWeight*blendVertex->position.z;
-          normal.x += currentWeight*blendVertex->normal.x;
-          normal.y += currentWeight*blendVertex->normal.y;
-          normal.z += currentWeight*blendVertex->normal.z;
-        } else {
-          baseWeight += currentWeight;
-        }
-      }
-      position.x += baseWeight*vertex.position.x;
-      position.y += baseWeight*vertex.position.y;
-      position.z += baseWeight*vertex.position.z;
-      normal.x += baseWeight*vertex.normal.x;
-      normal.y += baseWeight*vertex.normal.y;
-      normal.z += baseWeight*vertex.normal.z;
-    }
-    
     // initialize vertex
     float x = 0.0f;
     float y = 0.0f;
@@ -152,7 +89,7 @@ void CalPhysique::calculateVerticesAndNormals(
       const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
       
       // transform vertex with current state of the bone
-      CalVector v(position);
+      CalVector v(vertex.position);
       transform(v, boneTransform.colx, boneTransform.coly, boneTransform.colz);
       v.x += boneTransform.translation.x;
       v.y += boneTransform.translation.y;
@@ -163,7 +100,7 @@ void CalPhysique::calculateVerticesAndNormals(
       z += influence.weight * v.z;
       
       // transform normal with current state of the bone
-      CalVector n(normal);
+      CalVector n(vertex.normal);
       transform(n, boneTransform.colx, boneTransform.coly, boneTransform.colz);
       
       nx += influence.weight * n.x;
@@ -171,16 +108,87 @@ void CalPhysique::calculateVerticesAndNormals(
       nz += influence.weight * n.z;
     }
 
-    pVertexBuffer[0] = x;
-    pVertexBuffer[1] = y;
-    pVertexBuffer[2] = z;
-    //pVertexBuffer[3] = 0.0f;
+    output_buffer[0] = x;
+    output_buffer[1] = y;
+    output_buffer[2] = z;
+    //output_buffer[3] = 0.0f;
     
-    pVertexBuffer[4] = nx;
-    pVertexBuffer[5] = ny;
-    pVertexBuffer[6] = nz;
-    //pVertexBuffer[7] = 0.0f;
+    output_buffer[4] = nx;
+    output_buffer[5] = ny;
+    output_buffer[6] = nz;
+    //output_buffer[7] = 0.0f;
 
-    pVertexBuffer += 8;
+    output_buffer += 8;
   }
+}
+
+void CalPhysique::calculateVerticesAndNormals(
+  const CalSkeleton::BoneTransform* boneTransforms,
+  CalSubmesh *pSubmesh,
+  float *pVertexBuffer
+) {
+  const int vertexCount = pSubmesh->getVertexCount();
+  const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->getVectorVertex());
+
+  if (pSubmesh->getBaseWeight() != 1.0f) {
+    if (vertexCount > MorphSubmeshCache.size()) {
+      MorphSubmeshCache.resize(vertexCount);
+    }
+
+    // get the sub morph target vector from the core sub mesh
+    CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->getCoreSubmesh()->getVectorCoreSubMorphTarget();
+    int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
+    EnlargeMiawCacheAsNecessary( morphTargetCount );
+    unsigned int numMiaws;
+    pSubmesh->getMorphIdAndWeightArray( MiawCache, & numMiaws, ( unsigned int ) morphTargetCount );
+
+    // Fill MorphSubmeshCache w/ outputs of morph target calculation
+    for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
+      const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
+      CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
+      destVertex = sourceVertex;
+      CalVector& position = destVertex.position;
+      CalVector& normal = destVertex.normal;
+
+      float baseWeight = pSubmesh->getBaseWeight();
+      position.x = 0;
+      position.y = 0;
+      position.z = 0;
+      normal.x = 0;
+      normal.y = 0;
+      normal.z = 0;
+      for( unsigned i = 0; i < numMiaws; i++ ) {
+        MorphIdAndWeight& miaw = MiawCache[ i ];
+        int morphTargetId = miaw.morphId_;
+        CalCoreSubMorphTarget::BlendVertex const * blendVertex =
+          vectorSubMorphTarget[morphTargetId]->getBlendVertex(vertexId);
+        float currentWeight = miaw.weight_;
+        if( blendVertex ) {
+          position.x += currentWeight*blendVertex->position.x;
+          position.y += currentWeight*blendVertex->position.y;
+          position.z += currentWeight*blendVertex->position.z;
+          normal.x += currentWeight*blendVertex->normal.x;
+          normal.y += currentWeight*blendVertex->normal.y;
+          normal.z += currentWeight*blendVertex->normal.z;
+        } else {
+          baseWeight += currentWeight;
+        }
+      }
+      position.x += baseWeight*sourceVertex.position.x;
+      position.y += baseWeight*sourceVertex.position.y;
+      position.z += baseWeight*sourceVertex.position.z;
+      normal.x += baseWeight*sourceVertex.normal.x;
+      normal.y += baseWeight*sourceVertex.normal.y;
+      normal.z += baseWeight*sourceVertex.normal.z;
+    }
+
+    vertices = MorphSubmeshCache.data;
+  }
+
+  return calculateVerticesAndNormals(
+    boneTransforms,
+    vertexCount,
+    vertices,
+    Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences),
+    pVertexBuffer);
 }
