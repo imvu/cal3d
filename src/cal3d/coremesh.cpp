@@ -182,22 +182,20 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & mo
     boost::shared_ptr<CalCoreSubMorphTarget> pCalCoreSubMorphTarget(new CalCoreSubMorphTarget);
     pCalCoreSubMorphTarget->reserve(vertexCount);
     pCalCoreSubMorphTarget->setName( morphTargetName );
-    const std::vector<CalCoreSubmesh::Vertex>& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
-    std::vector<CalCoreSubmesh::Vertex>::const_iterator iteratorVectorVertex = vectorVertex.begin();
+    const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
     std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& textCoordVector = (*otherIteratorCoreSubmesh)->getVectorVectorTextureCoordinate();
     
     for(int i = 0;i<vertexCount;++i)
     {
       CalCoreSubMorphTarget::BlendVertex blendVertex;
-      blendVertex.position = (*iteratorVectorVertex).position;
-      blendVertex.normal = (*iteratorVectorVertex).normal;
+      blendVertex.position = vectorVertex[i].position;
+      blendVertex.normal = vectorVertex[i].normal;
       blendVertex.textureCoords.clear();
       blendVertex.textureCoords.reserve(textCoordVector.size());
       for( size_t tcI = 0; tcI < textCoordVector.size(); tcI++ ) {
         blendVertex.textureCoords.push_back(textCoordVector[tcI][i]);
       }  
       if(!pCalCoreSubMorphTarget->setBlendVertex(i,blendVertex)) return -1;
-      ++iteratorVectorVertex;
     }
     (*iteratorCoreSubmesh)->addCoreSubMorphTarget(pCalCoreSubMorphTarget);
     ++iteratorCoreSubmesh;

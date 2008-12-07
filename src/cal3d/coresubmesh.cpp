@@ -48,8 +48,13 @@ void CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigne
 }
 
 template<typename T>
+size_t vectorSize(const SSEArray<T>& v) {
+  return sizeof(T) * v.size();
+}
+
+template<typename T>
 size_t vectorSize(const std::vector<T>& v) {
-    return sizeof(T) * v.size();
+  return sizeof(T) * v.size();
 }
 
 size_t CalCoreSubmesh::sizeWithoutSubMorphTargets()
@@ -236,7 +241,7 @@ void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 ve
   m_lodData[vertexId] = lodData;
 
   m_vertices[vertexId].influenceStart = influences.size();
-  m_vertices[vertexId].influenceCount = inf.size();
+  m_vertices[vertexId].influenceEnd   = influences.size() + inf.size();
   influences.insert(influences.end(), inf.begin(), inf.end());
 }
 

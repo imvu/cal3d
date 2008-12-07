@@ -81,7 +81,7 @@ void calculateVerticesAndNormals(
 
     for(
       int influenceId = vertex.influenceStart;
-      influenceId < vertex.influenceStart + vertex.influenceCount;
+      influenceId < vertex.influenceEnd;
       ++influenceId
     ) {
       // get the influence

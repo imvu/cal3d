@@ -59,13 +59,12 @@ public:
     //}
   };
 
-  struct Vertex
+  __declspec(align(16)) struct Vertex
   {
     CalVector position;
     CalVector normal;
     unsigned influenceStart;
-    unsigned influenceCount;
-    //unsigned influenceSet;
+    unsigned influenceEnd;
   };
 
   struct Face
@@ -83,7 +82,7 @@ public:
   typedef std::vector<Face> VectorFace;
   typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
   typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
-  typedef std::vector<Vertex> VectorVertex;
+  typedef SSEArray<Vertex> VectorVertex;
   typedef std::vector<Influence> VectorInfluence;
 
   CalCoreSubmesh();
@@ -97,7 +96,7 @@ public:
   const std::vector<Face>& getVectorFace() const;
   std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
 
-  const std::vector<Vertex>& getVectorVertex() const {
+  const SSEArray<Vertex>& getVectorVertex() const {
     return m_vertices;
   }
   std::vector<CalColor32>& getVertexColors();
@@ -127,8 +126,8 @@ public:
   std::vector<Influence> influences;
 
 private:
-  // These two should always be the same size.
-  std::vector<Vertex> m_vertices;
+  // The following arrays should always be the same size.
+  SSEArray<Vertex> m_vertices;
   std::vector<CalColor32> m_vertexColors;
   std::vector<LodData> m_lodData;
 
