@@ -360,19 +360,43 @@ done:
   }
 }
 
-void calculateVerticesAndNormals(
+void automaticallyDetectSkinRoutine(
+  const CalSkeleton::BoneTransform* boneTransforms,
+  int vertexCount,
+  const CalCoreSubmesh::Vertex* vertices,
+  const CalCoreSubmesh::Influence* influences,
+  CalVector4* output_vertices);
+
+static CalPhysique::SkinRoutine optimizedSkinRoutine = automaticallyDetectSkinRoutine;
+
+void automaticallyDetectSkinRoutine(
   const CalSkeleton::BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
   CalVector4* output_vertices
 ) {
-  return CalPhysique::calculateVerticesAndNormals_x87(
-    boneTransforms,
-    vertexCount,
-    vertices,
-    influences,
-    output_vertices);
+  // http://softpixel.com/~cwright/programming/simd/cpuid.php
+
+  // Technically I should be verifying that the OS saves and restores
+  // the XMM0-7 registers as part of the thread state, but I'm going
+  // to assume that all of the OSes we support do so.
+
+  unsigned features;
+  __asm {
+    mov eax, 1
+    cpuid
+    mov features, edx
+  }
+  const int SSE_BIT  = 1 << 25;
+  const int SSE2_BIT = 1 << 26;
+  if ((features & SSE_BIT) && (features & SSE2_BIT)) {
+    optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE;
+  } else {
+    optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_x87;
+  }
+
+  return optimizedSkinRoutine(boneTransforms, vertexCount, vertices, influences, output_vertices);
 }
 
 void CalPhysique::calculateVerticesAndNormals(
@@ -434,7 +458,7 @@ void CalPhysique::calculateVerticesAndNormals(
     vertices = MorphSubmeshCache.data;
   }
 
-  return calculateVerticesAndNormals(
+  return optimizedSkinRoutine(
     boneTransforms,
     vertexCount,
     vertices,
