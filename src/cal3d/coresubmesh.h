@@ -71,6 +71,10 @@ public:
   {
     CalPoint4 position;
     CalVector4 normal;
+  };
+
+  struct InfluenceRange
+  {
     unsigned influenceStart; // technically unnecessary, can be derived from vertex index and influenceCount
     unsigned influenceEnd;   // technically unnecessary, can be derived from vertex index and influenceCount
   };
@@ -131,6 +135,11 @@ public:
     return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
   }
 
+  const InfluenceRange& getInfluenceRange(size_t vertexId) {
+    return m_influenceRanges[vertexId];
+  }
+
+  // todo: make this private
   std::vector<Influence> influences;
 
 private:
@@ -138,6 +147,7 @@ private:
   SSEArray<Vertex> m_vertices;
   std::vector<CalColor32> m_vertexColors;
   std::vector<LodData> m_lodData;
+  std::vector<InfluenceRange> m_influenceRanges;
 
   std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
   std::vector<Face> m_vectorFace;

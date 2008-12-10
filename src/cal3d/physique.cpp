@@ -203,7 +203,7 @@ void calculateVerticesAndNormals_SSE(
   #define OUTPUT_VERTEX_SIZE 0x20
   BOOST_STATIC_ASSERT(OUTPUT_VERTEX_SIZE == 2 * sizeof(CalVector4));
 
-  #define INPUT_VERTEX_SIZE 0x30
+  #define INPUT_VERTEX_SIZE 0x20
   BOOST_STATIC_ASSERT(INPUT_VERTEX_SIZE == sizeof(CalCoreSubmesh::Vertex));
 
   #define INPUT_VERTEX_OFFSET_POSITION 0x00
@@ -222,6 +222,9 @@ void calculateVerticesAndNormals_SSE(
 
   #define BONE_TRANSFORM_SIZE 0x30
   BOOST_STATIC_ASSERT(BONE_TRANSFORM_SIZE == sizeof(CalSkeleton::BoneTransform));
+
+  // This is true on my Xeons anyway.
+  #define CACHE_LINE_SIZE 64
 
   __asm {
     mov eax, vertexCount
@@ -246,8 +249,9 @@ loopVertex:
 
     add edx, INFLUENCE_SIZE
 
-    // prefetch vertex position
+    // prefetch vertex position (important - memory bandwidth/latency is our biggest cost on the P4)
     movaps xmm7, [esi+INPUT_VERTEX_OFFSET_POSITION]
+    prefetcht0 [esi+INPUT_VERTEX_OFFSET_POSITION+CACHE_LINE_SIZE]
 
     // Scale matrix by weight.
     mulps xmm0, [edi+ebx*8+0x00] // xmm0 = m0, m1, m2, t0
@@ -296,6 +300,9 @@ doneWeight:
     unpckhps xmm3, xmm4 // xmm3 = m2, m5, t0, t1
     addps xmm6, xmm3 // xmm6 = m0+m2, m3+m5, m1+t0, m4+t1
 
+    // prefetch vertex normal (important - memory bandwidth/latency is our biggest cost on the P4)
+    movaps xmm3, [esi-INPUT_VERTEX_SIZE+INPUT_VERTEX_OFFSET_NORMAL]
+
     movaps xmm7, xmm5 // xmm7 = m6, m7, m8, t2
     movlhps xmm5, xmm6 // xmm5 = m6, m7, m0+m2, m3+m5
     movhlps xmm6, xmm7 // xmm6 = m8, t2, m1+t0, m4+t1
@@ -307,8 +314,7 @@ doneWeight:
     addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
     movss [ecx+8], xmm7
 
-    // transform normal
-    movaps xmm3, [esi-INPUT_VERTEX_SIZE+INPUT_VERTEX_OFFSET_NORMAL]
+    // transform normal (copy into xmm4 and xmm5)
     movaps xmm4, xmm3
     add ecx, OUTPUT_VERTEX_SIZE
     movaps xmm5, xmm3

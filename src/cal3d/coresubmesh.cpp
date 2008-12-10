@@ -150,6 +150,7 @@ void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int fa
   m_vertices.resize(vertexCount);
   m_vertexColors.resize(vertexCount);
   m_lodData.resize(vertexCount);
+  m_influenceRanges.resize(vertexCount);
   m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
 
   for(int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
@@ -240,6 +241,7 @@ void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 ve
   m_vertexColors[vertexId] = vertexColor;
   m_lodData[vertexId] = lodData;
 
+  // Each vertex needs at least one influence.
   if (inf.empty()) {
     Influence i;
     i.boneId = 0;
@@ -247,13 +249,15 @@ void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 ve
     inf.push_back(i);
   }
 
+  // Mark the last influence as the last one.  :)
   for (size_t i = 0; i + 1 < inf.size(); ++i) {
     inf[i].lastInfluenceForThisVertex = 0;
   }
   inf[inf.size() - 1].lastInfluenceForThisVertex = 1;
 
-  m_vertices[vertexId].influenceStart = influences.size();
-  m_vertices[vertexId].influenceEnd   = influences.size() + inf.size();
+  m_influenceRanges[vertexId].influenceStart = influences.size();
+  m_influenceRanges[vertexId].influenceEnd   = influences.size() + inf.size();
+
   influences.insert(influences.end(), inf.begin(), inf.end());
 }
 

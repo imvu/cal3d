@@ -731,6 +731,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   {
     const CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
     CalCoreSubmesh::LodData& ld = lodData[vertexId];
+    const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
 
     // write the vertex data
     CalPlatform::writeFloat(file, vertex.position.x);
@@ -771,14 +772,14 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     }
 
     // write the number of influences
-    if(!CalPlatform::writeInteger(file, vertex.influenceEnd - vertex.influenceStart))
+    if(!CalPlatform::writeInteger(file, influenceRange.influenceEnd - influenceRange.influenceStart))
     {
       CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
       return false;
     }
 
     // write all influences of this vertex
-    for(unsigned influenceId = vertex.influenceStart; influenceId < vertex.influenceEnd; ++influenceId)
+    for(unsigned influenceId = influenceRange.influenceStart; influenceId < influenceRange.influenceEnd; ++influenceId)
     {
       const CalCoreSubmesh::Influence& influence = pCoreSubmesh->influences[influenceId];
 
@@ -1415,10 +1416,11 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       const CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
       CalColor32& vertexColor = vertexColors[vertexId];
       CalCoreSubmesh::LodData& lodData = allLodData[vertexId];
+      const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
 
       TiXmlElement vertex("VERTEX");
       vertex.SetAttribute("ID",vertexId);
-      vertex.SetAttribute("NUMINFLUENCES",Vertex.influenceEnd - Vertex.influenceStart);
+      vertex.SetAttribute("NUMINFLUENCES",influenceRange.influenceEnd - influenceRange.influenceStart);
 
       // write the vertex data
 
@@ -1494,7 +1496,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       }
 
       // write all influences of this vertex
-      for(unsigned influenceId = Vertex.influenceStart; influenceId < Vertex.influenceEnd; ++influenceId)
+      for(unsigned influenceId = influenceRange.influenceStart; influenceId < influenceRange.influenceEnd; ++influenceId)
       {
         CalCoreSubmesh::Influence& Influence = pCoreSubmesh->influences[influenceId];
 

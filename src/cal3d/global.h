@@ -17,6 +17,8 @@
 typedef unsigned short CalIndex;
 
 
+void* allocate_aligned_data(size_t size);
+
 // Can't use std::vector w/ __declspec(align(16)) :(
 // http://ompf.org/forum/viewtopic.php?f=11&t=686
 // http://social.msdn.microsoft.com/Forums/en-US/vclanguage/thread/0adabdb5-f732-4db7-a8de-e3e83af0e147/
@@ -34,10 +36,7 @@ struct SSEArray : boost::noncopyable {
   // destructive
   void resize(size_t new_size) {
     if (_size != new_size) {
-      T* new_data = reinterpret_cast<T*>(_aligned_malloc(sizeof(T) * new_size, 16));
-      if (!new_data) {
-        throw std::bad_alloc();
-      }
+      T* new_data = reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * new_size));
 
       if (data) {
         _aligned_free(data);
