@@ -155,24 +155,19 @@ ABSTRACT_TEST(two_rotated_bones) {
 }
 APPLY_SKIN_FIXTURES(two_rotated_bones);
 
-TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
+ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
   const int N = 10000;
   const int TrialCount = 10;
   
-  CalCoreSubmesh::Influence influence;
-  influence.boneId = 0;
-  influence.weight = 1.0f;
-
-  std::vector<CalCoreSubmesh::Influence> influences;
-  influences.push_back(influence);
-
   CalCoreSubmesh* coreSubMesh = new CalCoreSubmesh;
-  coreSubMesh->reserve(N, 0, 0);
-  for (int i = 0; i < N; ++i) {
-    CalCoreSubmesh::Vertex v;
-    v.position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
-    v.normal.setAsVector(CalVector(0.0f, 0.0f, 1.0f));
-    coreSubMesh->setVertex(i, v, 0, CalCoreSubmesh::LodData(), influences);
+  CalCoreSubmesh::Vertex v[N];
+  CalCoreSubmesh::Influence i[N];
+  for (int k = 0; k < N; ++k) {
+    v[k].position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
+    v[k].normal.setAsVector(CalVector(0.0f, 0.0f, 1.0f));
+    i[k].boneId = 0;
+    i[k].weight = 1.0f;
+    i[k].lastInfluenceForThisVertex = true;
   }
 
   CalSubmesh* submesh = new CalSubmesh(coreSubMesh);
@@ -180,12 +175,12 @@ TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
   CalSkeleton::BoneTransform bt;
   ZeroMemory(&bt, sizeof(bt));
 
-  __declspec(align(16)) float output[N * 8];
+  __declspec(align(16)) CalVector4 output[N * 2];
 
   __int64 min = 99999999999999;
   for (int t = 0; t < TrialCount; ++t) {
     unsigned __int64 start = __rdtsc();
-    CalPhysique::calculateVerticesAndNormals(&bt, submesh, &output[0]);
+    skin(&bt, N, v, i, output);
     unsigned __int64 end = __rdtsc();
     unsigned __int64 elapsed = end - start;
     if (elapsed < min) {
@@ -195,3 +190,4 @@ TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
 
   printf("Cycles per vertex: %d\n", (int)(min / N));
 }
+APPLY_SKIN_FIXTURES(skin_10000_vertices_1_influence_cycle_count);
