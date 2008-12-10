@@ -700,8 +700,10 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
                                 CalCoreSubmesh::LodData lodData;
 
 				// set the vertex position
-				pVertexCandidate->GetPosition(vertex.position);
-                                vertex.position -= positionOffset;
+                                CalVector position;
+				pVertexCandidate->GetPosition(position);
+                                position -= positionOffset;
+                                vertex.position.setAsPoint(position);
 
                                 // set the vertex color
                                 CalVector vc;
@@ -710,7 +712,8 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 
 				// set the vertex normal
 				CalVector normal;
-				pVertexCandidate->GetNormal(vertex.normal);
+				pVertexCandidate->GetNormal(normal);
+                                vertex.normal.setAsVector(normal);
 
 				// set the collapse id
 				lodData.collapseId = pVertexCandidate->GetCollapseId();

@@ -45,81 +45,209 @@ void EnlargeMiawCacheAsNecessary(unsigned int numElements) {
 
 SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
 
-//I never thought I'd actually get a chance to use this :) --dusty
-//http://www.lomont.org/Math/Papers/2003/InvSqrt.pdf
-//http://www.math.purdue.edu/~clomont/Math/Papers/2003/InvSqrt.pdf
-float FastInvSqrt(float x) {
-    float xhalf = 0.5f*x;
-    int i = *(int*)&x;      // get bits for floating value
-    i = 0x5f375a86- (i>>1); // gives initial guess y0
-    x = *(float*)&i;        // convert bits back to float
-    x = x*(1.5f-xhalf*x*x); // Newton step, repeating increases accuracy
-    return x;
+__forceinline void ScaleMatrix(CalSkeleton::BoneTransform& result, const CalSkeleton::BoneTransform& mat, const float s) {
+  result.rowx.x = s * mat.rowx.x;
+  result.rowx.y = s * mat.rowx.y;
+  result.rowx.z = s * mat.rowx.z;
+  result.rowx.w = s * mat.rowx.w;
+  result.rowy.x = s * mat.rowy.x;
+  result.rowy.y = s * mat.rowy.y;
+  result.rowy.z = s * mat.rowy.z;
+  result.rowy.w = s * mat.rowy.w;
+  result.rowz.x = s * mat.rowz.x;
+  result.rowz.y = s * mat.rowz.y;
+  result.rowz.z = s * mat.rowz.z;
+  result.rowz.w = s * mat.rowz.w;
 }
+__forceinline void AddScaledMatrix(CalSkeleton::BoneTransform& result, const CalSkeleton::BoneTransform& mat, const float s) {
+  result.rowx.x += s * mat.rowx.x;
+  result.rowx.y += s * mat.rowx.y;
+  result.rowx.z += s * mat.rowx.z;
+  result.rowx.w += s * mat.rowx.w;
+  result.rowy.x += s * mat.rowy.x;
+  result.rowy.y += s * mat.rowy.y;
+  result.rowy.z += s * mat.rowy.z;
+  result.rowy.w += s * mat.rowy.w;
+  result.rowz.x += s * mat.rowz.x;
+  result.rowz.y += s * mat.rowz.y;
+  result.rowz.z += s * mat.rowz.z;
+  result.rowz.w += s * mat.rowz.w;
+}
+__forceinline void TransformPoint(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalVector4& v) {
+  result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z + m.rowx.w;
+  result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z + m.rowy.w;
+  result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z + m.rowz.w;
+}
+__forceinline void TransformVector(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalVector4& v) {
+  result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z;
+  result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z;
+  result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z;
+}
+
+void calculateVerticesAndNormals_x87(
+  const CalSkeleton::BoneTransform* boneTransforms,
+  int vertexCount,
+  const CalCoreSubmesh::Vertex* vertices,
+  const CalCoreSubmesh::Influence* influences,
+  CalVector4* output_vertex
+) {
+
+  CalSkeleton::BoneTransform total_transform;
+
+  // calculate all submesh vertices
+  while (vertexCount--)
+  {
+    int influenceId = vertices->influenceStart;
+    if (influenceId < vertices->influenceEnd) {
+      const CalCoreSubmesh::Influence& influence = influences[influenceId];
+      const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
+      ScaleMatrix(total_transform, boneTransform, influence.weight);
+      ++influenceId;
+      while (influenceId < vertices->influenceEnd) {
+        const CalCoreSubmesh::Influence& influence = influences[influenceId];
+        const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
+        AddScaledMatrix(total_transform, boneTransform, influence.weight);
+        ++influenceId;
+      }
+    }
+
+    TransformPoint(output_vertex[0], total_transform, vertices->position);
+    TransformVector(output_vertex[1], total_transform, vertices->normal);
+    ++vertices;
+    output_vertex += 2;
+  }
+}
+
+#if 0
+
+void calculateVerticesAndNormals_SSE(
+  const CalSkeleton::BoneTransform* boneTransforms,
+  int vertexCount,
+  const CalCoreSubmesh::Vertex* vertices,
+  const CalCoreSubmesh::Influence* influences,
+  CalVector4* output_vertex
+) {
+  __asm
+  {
+    mov eax, vertexCount
+    test eax, eax
+    jz done
+    imul eax, VERTEX_SIZE
+
+    mov ecx, verts
+    mov edx, weights
+    mov esi, base
+    mov edi, joints
+
+    add ecx, eax
+    neg eax
+
+loopVert:
+    movss xmm0, [edx+JOINTWEIGHT_WEIGHT_OFFSET]
+    mov ebx, dword ptr [edx+JOINTWEIGHT_JOINTMATOFFSET_OFFSET]
+    shufps xmm0, xmm0, R_SHUFFLE_PS( 0, 0, 0, 0 )
+    add edx, JOINTWEIGHT_SIZE
+    movaps xmm1, xmm0
+    add esi, 3*BASEVECTOR_SIZE
+    movaps xmm2, xmm0
+
+    cmp dword ptr [edx-JOINTWEIGHT_SIZE+JOINTWEIGHT_NEXTVERTEXOFFSET_OFFSET], JOINTWEIGHT_SIZE
+
+    mulps xmm0, [edi+ebx+ 0] // xmm0 = m0, m1, m2, t0
+    mulps xmm1, [edi+ebx+16] // xmm1 = m3, m4, m5, t1
+    mulps xmm2, [edi+ebx+32] // xmm2 = m6, m7, m8, t2
+
+    je doneWeight
+
+loopWeight:
+    movss xmm3, [edx+JOINTWEIGHT_WEIGHT_OFFSET]
+    mov ebx, dword ptr [edx+JOINTWEIGHT_JOINTMATOFFSET_OFFSET]
+    shufps xmm3, xmm3, R_SHUFFLE_PS( 0, 0, 0, 0 )
+    add edx, JOINTWEIGHT_SIZE
+    movaps xmm4, xmm3
+    movaps xmm5, xmm3
+
+    mulps xmm3, [edi+ebx+ 0] // xmm3 = m0, m1, m2, t0
+    mulps xmm4, [edi+ebx+16] // xmm4 = m3, m4, m5, t1
+    mulps xmm5, [edi+ebx+32] // xmm5 = m6, m7, m8, t2
+
+    cmp dword ptr [edx-JOINTWEIGHT_SIZE+JOINTWEIGHT_NEXTVERTEXOFFSET_OFFSET], JOINTWEIGHT_SIZE
+
+    addps xmm0, xmm3
+    addps xmm1, xmm4
+    addps xmm2, xmm5
+
+    jne loopWeight
+
+doneWeight:
+    add eax, VERTEX_SIZE
+
+    // transform vertex
+    movaps xmm3, [esi-3*BASEVECTOR_SIZE]
+    movaps xmm4, xmm3
+    movaps xmm5, xmm3
+
+    mulps xmm3, xmm0
+    mulps xmm4, xmm1
+    mulps xmm5, xmm2
+
+    movaps xmm6, xmm3 // xmm6 = m0, m1, m2, t0
+    unpcklps xmm6, xmm4 // xmm6 = m0, m3, m1, m4
+    unpckhps xmm3, xmm4 // xmm4 = m2, m5, t0, t1
+    addps xmm6, xmm3 // xmm6 = m0+m2, m3+m5, m1+t0, m4+t1
+
+    movaps xmm7, xmm5 // xmm7 = m6, m7, m8, t2
+    movlhps xmm5, xmm6 // xmm5 = m6, m7, m0+m2, m3+m5
+    movhlps xmm6, xmm7 // xmm6 = m8, t2, m1+t0, m4+t1
+    addps xmm6, xmm5 // xmm6 = m6+m8, m7+t2, m0+m1+m2+t0, m3+m4+m5+t1
+
+    movhps [ecx+eax-VERTEX_SIZE+VERTEX_POSITION_OFFSET+0], xmm6
+
+    pshufd xmm7, xmm6, R_SHUFFLE_D( 1, 0, 2, 3 ) // xmm7 = m7+t2, m6+m8
+    addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
+
+    movss [ecx+eax-VERTEX_SIZE+VERTEX_POSITION_OFFSET+8], xmm7
+
+    // transform normal
+    movaps xmm3, [esi-2*BASEVECTOR_SIZE]
+    movaps xmm4, xmm3
+    movaps xmm5, xmm3
+    mulps xmm3, xmm0
+    mulps xmm4, xmm1
+    mulps xmm5, xmm2
+    movaps xmm6, xmm3 // xmm6 = m0, m1, m2, t0
+    unpcklps xmm6, xmm4 // xmm6 = m0, m3, m1, m4
+    unpckhps xmm3, xmm4 // xmm3 = m2, m5, t0, t1
+    addps xmm6, xmm3 // xmm6 = m0+m2, m3+m5, m1+t0, m4+t1
+    movaps xmm7, xmm5 // xmm7 = m6, m7, m8, t2
+    movlhps xmm5, xmm6 // xmm5 = m6, m7, m0+m2, m3+m5
+    movhlps xmm6, xmm7 // xmm6 = m8, t2, m1+t0, m4+t1
+    addps xmm6, xmm5 // xmm6 = m6+m8, m7+t2, m0+m1+m2+t0, m3+m4+m5+t1
+    movhps [ecx+eax-VERTEX_SIZE+VERTEX_NORMAL_OFFSET+0], xmm6
+    pshufd xmm7, xmm6, R_SHUFFLE_D( 1, 0, 2, 3 ) // xmm7 = m7+t2, m6+m8
+    addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
+    movss [ecx+eax-VERTEX_SIZE+VERTEX_NORMAL_OFFSET+8], xmm7
+
+    jl loopVert
+done:
+  }
+}
+
+#endif
 
 void calculateVerticesAndNormals(
   const CalSkeleton::BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
-  float* output_buffer
+  CalVector4* output_vertices
 ) {
-  // calculate all submesh vertices
-  for(int vertexId = 0; vertexId < vertexCount; ++vertexId)
-  {
-    const CalCoreSubmesh::Vertex& vertex = vertices[vertexId];
-
-    // initialize vertex
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-
-    // initialize normal
-    float nx = 0.0f;
-    float ny = 0.0f;
-    float nz = 0.0f;
-
-    for(
-      int influenceId = vertex.influenceStart;
-      influenceId < vertex.influenceEnd;
-      ++influenceId
-    ) {
-      // get the influence
-      const CalCoreSubmesh::Influence& influence = influences[influenceId];
-      const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
-      
-      // transform vertex with current state of the bone
-      CalVector v(vertex.position);
-      transform(v, boneTransform.colx, boneTransform.coly, boneTransform.colz);
-      v.x += boneTransform.translation.x;
-      v.y += boneTransform.translation.y;
-      v.z += boneTransform.translation.z;
-      
-      x += influence.weight * v.x;
-      y += influence.weight * v.y;
-      z += influence.weight * v.z;
-      
-      // transform normal with current state of the bone
-      CalVector n(vertex.normal);
-      transform(n, boneTransform.colx, boneTransform.coly, boneTransform.colz);
-      
-      nx += influence.weight * n.x;
-      ny += influence.weight * n.y;
-      nz += influence.weight * n.z;
-    }
-
-    output_buffer[0] = x;
-    output_buffer[1] = y;
-    output_buffer[2] = z;
-    //output_buffer[3] = 0.0f;
-    
-    output_buffer[4] = nx;
-    output_buffer[5] = ny;
-    output_buffer[6] = nz;
-    //output_buffer[7] = 0.0f;
-
-    output_buffer += 8;
-  }
+  return calculateVerticesAndNormals_x87(
+    boneTransforms,
+    vertexCount,
+    vertices,
+    influences,
+    output_vertices);
 }
 
 void CalPhysique::calculateVerticesAndNormals(
@@ -147,8 +275,8 @@ void CalPhysique::calculateVerticesAndNormals(
       const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
       CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
       destVertex = sourceVertex;
-      CalVector& position = destVertex.position;
-      CalVector& normal = destVertex.normal;
+      CalVector4& position = destVertex.position;
+      CalVector4& normal = destVertex.normal;
 
       float baseWeight = pSubmesh->getBaseWeight();
       position.x = 0;
@@ -190,5 +318,5 @@ void CalPhysique::calculateVerticesAndNormals(
     vertexCount,
     vertices,
     Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences),
-    pVertexBuffer);
+    reinterpret_cast<CalVector4*>(pVertexBuffer));
 }

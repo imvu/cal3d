@@ -214,11 +214,13 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 
 				// set the vertex position
 				CalVector position;
-				pVertexCandidate->GetPosition(vertex.position);
+				pVertexCandidate->GetPosition(position);
+                                vertex.position.setAsPoint(position);
 
 				// set the vertex normal
 				CalVector normal;
-				pVertexCandidate->GetNormal(vertex.normal);
+				pVertexCandidate->GetNormal(normal);
+                                vertex.normal.setAsVector(normal);
 
                                 // set the vert color
                                 CalVector vc;

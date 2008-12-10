@@ -317,8 +317,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   transformMatrix *= m_rotationAbsolute;
 
   CalSkeleton::BoneTransform& bt = skeleton->boneTransforms[myIndex];
-  extractColumns(transformMatrix, bt.colx, bt.coly, bt.colz);
-  bt.translation.setAsVector(translationBoneSpace);
+  extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
   
   // calculate all child bones
   std::list<int>::iterator iteratorChildId;

@@ -21,6 +21,18 @@ class CAL3D_API CalVector
 public:
   float x ,y ,z;
 
+  CalVector asCalVector() const {
+    return *this;
+  }
+
+  void setAsPoint(const CalVector& v) {
+    *this = v;
+  }
+
+  void setAsVector(const CalVector& v) {
+    *this = v;
+  }
+
   inline CalVector(): x(0.0f), y(0.0f), z(0.0f) {};
   inline CalVector(const CalVector& v) : x(v.x), y(v.y), z(v.z) {};
   inline CalVector(float vx, float vy, float vz): x(vx), y(vy), z(vz) {};

@@ -811,8 +811,8 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
       }
       const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
       static double differenceTolerance = 0.01;
-      CalVector positionDiff = bv->position - Vertex.position;
-      CalVector normalDiff = bv->normal - Vertex.normal;
+      CalVector positionDiff = bv->position - Vertex.position.asCalVector();
+      CalVector normalDiff = bv->normal - Vertex.normal.asCalVector();
       double positionDiffLength = fabs(positionDiff.length());
 
       bool skip = false;
@@ -1536,8 +1536,8 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
                     }
                     const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
                     static double differenceTolerance = 1.0;
-                    CalVector positionDiff = bv->position - Vertex.position;
-                    CalVector normalDiff = bv->normal - Vertex.normal;
+                    CalVector positionDiff = bv->position - Vertex.position.asCalVector();
+                    CalVector normalDiff = bv->normal - Vertex.normal.asCalVector();
                     double positionDiffLength = fabs(positionDiff.length());
 
                     bool skip = false;

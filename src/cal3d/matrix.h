@@ -12,6 +12,7 @@
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
+#include "cal3d/vector4.h"
 
 class CalQuaternion;
 
@@ -119,19 +120,6 @@ __forceinline void transform(CalVector& v, const CalMatrix& m) {
   v.z = m.dzdx*ox + m.dzdy*oy + m.dzdz*oz;
 }
 
-// for SSE
-__declspec(align(16)) struct CalVector4
-{
-  float x, y, z, w;
-
-  __forceinline void setAsVector(const CalVector& r) {
-    x = r.x;
-    y = r.y;
-    z = r.z;
-     w = 0.0f; // we don't actually use this yet
-  }
-};
-
 __forceinline void transform(
   CalVector& v,
   const CalVector4& colx,
@@ -155,4 +143,16 @@ inline void extractColumns(
   colx.setAsVector(CalVector(m.dxdx, m.dxdy, m.dxdz));
   coly.setAsVector(CalVector(m.dydx, m.dydy, m.dydz));
   colz.setAsVector(CalVector(m.dzdx, m.dzdy, m.dzdz));
+}
+
+inline void extractRows(
+  const CalMatrix& m,
+  const CalVector& translation,
+  CalVector4& rowx,
+  CalVector4& rowy,
+  CalVector4& rowz
+) {
+  rowx.set(m.dxdx, m.dxdy, m.dxdz, translation.x);
+  rowy.set(m.dydx, m.dydy, m.dydz, translation.y);
+  rowz.set(m.dzdx, m.dzdy, m.dzdz, translation.z);
 }

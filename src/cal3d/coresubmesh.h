@@ -16,6 +16,7 @@
 #include "cal3d/color.h"
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
+#include "cal3d/vector4.h"
 
 class CalCoreSubMorphTarget;
 
@@ -61,8 +62,8 @@ public:
 
   __declspec(align(16)) struct Vertex
   {
-    CalVector position;
-    CalVector normal;
+    CalVector4 position;
+    CalVector4 normal;
     unsigned influenceStart;
     unsigned influenceEnd;
   };

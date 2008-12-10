@@ -21,13 +21,12 @@ class CalBone;
 class CAL3D_API CalSkeleton
 {
 public:
-  // Cal3D uses a 3x3 transform matrix and a translation 3-vector. We don't
-  // use w in any of these, but we need to be 16-byte aligned for SSE.
+  // 3x3 transform matrix plus a translation 3-vector (stored in the w components
+  // of the rows.  This struct needs to be 16-byte aligned for SSE.
   struct BoneTransform {
-    CalVector4 colx;
-    CalVector4 coly;
-    CalVector4 colz;
-    CalVector4 translation;
+    CalVector4 rowx;
+    CalVector4 rowy;
+    CalVector4 rowz;
   };
 
   CalSkeleton(CalCoreSkeleton* pCoreSkeleton);

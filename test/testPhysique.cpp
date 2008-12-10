@@ -15,8 +15,8 @@ template <class T> void caldestroy(T* ptr) {
 
 void setVertex(CalCoreSubmesh* submesh, unsigned vertexId, float x, float y, float z, float nx, float ny, float nz, int numInfluences, CalColor32 color, const CalCoreSubmesh::LodData& ld) {
     CalCoreSubmesh::Vertex myVertex;
-    myVertex.position = CalVector(x, y, z);
-    myVertex.normal = CalVector(nx, ny, nz);
+    myVertex.position.setAsPoint(CalVector(x, y, z));
+    myVertex.normal.setAsVector(CalVector(nx, ny, nz));
 
     std::vector<CalCoreSubmesh::Influence> influences;
 
@@ -216,8 +216,8 @@ TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
   coreSubMesh->reserve(N, 0, 0);
   for (int i = 0; i < N; ++i) {
     CalCoreSubmesh::Vertex v;
-    v.position = CalVector(1.0f, 2.0f, 3.0f);
-    v.normal = CalVector(0.0f, 0.0f, 1.0f);
+    v.position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
+    v.normal.setAsVector(CalVector(0.0f, 0.0f, 1.0f));
     coreSubMesh->setVertex(i, v, 0, CalCoreSubmesh::LodData(), influences);
   }
 
