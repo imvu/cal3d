@@ -200,6 +200,42 @@ TEST(getVerticesAndNormals_on_mesh_with_two_translated_bones) {
     CHECK_EQUAL(0.0f, vertexBuffer[6]);
 }
 
+TEST(getVerticesAndNormals_on_mesh_with_three_translated_bones) {
+    CalCoreSubmesh * coreSubMesh = new CalCoreSubmesh;
+    coreSubMesh->reserve(1, 0, 1);
+    CalCoreSubmesh::LodData ld = {0, 0};
+    setVertex(coreSubMesh, 0, 1, 2, 3, 1, 1, 0, 3, CalMakeColor(CalVector(1, 1, 1)), ld);
+
+    CalSkeleton::BoneTransform transforms[3];
+    transforms[0].rowx.set(1, 0, 0, 1);
+    transforms[0].rowy.set(0, 1, 0, 0);
+    transforms[0].rowz.set(0, 0, 1, 0);
+
+    transforms[1].rowx.set(1, 0, 0, 0);
+    transforms[1].rowy.set(0, 1, 0, 1);
+    transforms[1].rowz.set(0, 0, 1, 0);
+
+    transforms[2].rowx.set(1, 0, 0, 0);
+    transforms[2].rowy.set(0, 1, 0, 0);
+    transforms[2].rowz.set(0, 0, 1, 1);
+
+    CalSubmesh* sm = new CalSubmesh(coreSubMesh);
+    CHECK_EQUAL(1, sm->getVertexCount());
+    float vertexBuffer[8];
+    CalPhysique::calculateVerticesAndNormals(
+      transforms,
+      sm,
+      vertexBuffer);
+
+    CHECK_EQUAL(4.0f / 3.0f,  vertexBuffer[0]);
+    CHECK_EQUAL(7.0f / 3.0f,  vertexBuffer[1]);
+    CHECK_EQUAL(10.0f / 3.0f, vertexBuffer[2]);
+
+    CHECK_EQUAL(1.0f, vertexBuffer[4]);
+    CHECK_EQUAL(1.0f, vertexBuffer[5]);
+    CHECK_EQUAL(0.0f, vertexBuffer[6]);
+}
+
 
 TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
   const int N = 10000;

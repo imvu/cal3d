@@ -8,13 +8,11 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#define SECURE_SCL 0
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-
+#include <xmmintrin.h>
 #include <boost/static_assert.hpp>
 #include "cal3d/error.h"
 #include "cal3d/physique.h"
@@ -71,12 +69,12 @@ __forceinline void AddScaledMatrix(CalSkeleton::BoneTransform& result, const Cal
   result.rowz.z += s * mat.rowz.z;
   result.rowz.w += s * mat.rowz.w;
 }
-__forceinline void TransformPoint(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalVector4& v) {
+__forceinline void TransformPoint(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalBase4& v) {
   result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z + m.rowx.w;
   result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z + m.rowy.w;
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z + m.rowz.w;
 }
-__forceinline void TransformVector(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalVector4& v) {
+__forceinline void TransformVector(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalBase4& v) {
   result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z;
   result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z;
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z;
@@ -107,7 +105,93 @@ void calculateVerticesAndNormals_x87(
   }
 }
 
-#define R_SHUFFLE(z, y, x, w) (z<<6) | (y<<4) | (x<<2) | w
+void calculateVerticesAndNormals_SSE_intrinsics(
+  const CalSkeleton::BoneTransform* boneTransforms,
+  int vertexCount,
+  const CalCoreSubmesh::Vertex* vertices,
+  const CalCoreSubmesh::Influence* influences,
+  CalVector4* output_vertex
+) {
+
+  __m128 rowx;
+  __m128 rowy;
+  __m128 rowz;
+  __m128 weight;
+
+  // calculate all submesh vertices
+  while (vertexCount--) {
+    weight = _mm_load_ss(&influences->weight);
+    weight = _mm_shuffle_ps(weight, weight, _MM_SHUFFLE(0, 0, 0, 0));
+
+    const CalSkeleton::BoneTransform& bt = boneTransforms[influences->boneId];
+
+    rowx = _mm_mul_ps(_mm_load_ps((const float*)&bt.rowx), weight);
+    rowy = _mm_mul_ps(_mm_load_ps((const float*)&bt.rowy), weight);
+    rowz = _mm_mul_ps(_mm_load_ps((const float*)&bt.rowz), weight);
+
+    while (!influences++->lastInfluenceForThisVertex) {
+      weight = _mm_load_ss(&influences->weight);
+      weight = _mm_shuffle_ps(weight, weight, _MM_SHUFFLE(0, 0, 0, 0));
+
+      const CalSkeleton::BoneTransform& bt = boneTransforms[influences->boneId];
+
+      rowx = _mm_add_ps(rowx, _mm_mul_ps(_mm_load_ps((const float*)&bt.rowx), weight));
+      rowy = _mm_add_ps(rowy, _mm_mul_ps(_mm_load_ps((const float*)&bt.rowy), weight));
+      rowz = _mm_add_ps(rowz, _mm_mul_ps(_mm_load_ps((const float*)&bt.rowz), weight));
+    }
+
+    {
+      // transform position
+      const __m128 position = _mm_load_ps((const float*)&vertices->position);
+      
+      const __m128 mulx = _mm_mul_ps(position, rowx);
+      const __m128 muly = _mm_mul_ps(position, rowy);
+      const __m128 mulz = _mm_mul_ps(position, rowz);
+
+      const __m128 copylo = _mm_unpacklo_ps(mulx, muly);
+      const __m128 copyhi = _mm_unpackhi_ps(mulx, muly);
+      const __m128 sum1 = _mm_add_ps(copylo, copyhi);
+
+      const __m128 lhps = _mm_movelh_ps(mulz, sum1);
+      const __m128 hlps = _mm_movehl_ps(sum1, mulz);
+      const __m128 sum2 = _mm_add_ps(lhps, hlps);
+
+      _mm_storeh_pi((__m64*)output_vertex, sum2);
+
+      __m128 sum3 = _mm_shuffle_ps(sum2, sum2, _MM_SHUFFLE(1, 1, 1, 1));
+      sum3 = _mm_add_ss(sum2, sum3);
+      _mm_store_ss(&output_vertex->z, sum3);
+    }
+
+    // transform normal
+    {
+      const __m128 normal = _mm_load_ps((const float*)&vertices->normal);
+      
+      const __m128 mulx = _mm_mul_ps(normal, rowx);
+      const __m128 muly = _mm_mul_ps(normal, rowy);
+      const __m128 mulz = _mm_mul_ps(normal, rowz);
+
+      const __m128 copylo = _mm_unpacklo_ps(mulx, muly);
+      const __m128 copyhi = _mm_unpackhi_ps(mulx, muly);
+      const __m128 sum1 = _mm_add_ps(copylo, copyhi);
+
+      const __m128 lhps = _mm_movelh_ps(mulz, sum1);
+      const __m128 hlps = _mm_movehl_ps(sum1, mulz);
+      const __m128 sum2 = _mm_add_ps(lhps, hlps);
+
+      _mm_storeh_pi((__m64*)&output_vertex[1], sum2);
+
+      __m128 sum3 = _mm_shuffle_ps(sum2, sum2, _MM_SHUFFLE(1, 1, 1, 1));
+      sum3 = _mm_add_ss(sum2, sum3);
+      _mm_store_ss(&output_vertex[1].z, sum3);
+    }
+
+    ++vertices;
+    output_vertex += 2;
+  }
+}
+
+#define R_SHUFFLE_D(o0, o1, o2, o3) ((o3 & 3) << 6 | (o2 & 3) << 4 | (o1 & 3) << 2 | (o0 & 3))
 
 void calculateVerticesAndNormals_SSE(
   const CalSkeleton::BoneTransform* boneTransforms,
@@ -150,35 +234,36 @@ void calculateVerticesAndNormals_SSE(
     mov edi, boneTransforms
 
 loopVertex:
-
-    // ScaleMatrix(total_transform, boneTransforms[influences->boneId], influences->weight);
-    // total_transform in xmm0, xmm1, xmm2
-
     // Load weight into xmm0, xmm1, and xmm2
     // Load bone index into ebx
     movss xmm0, [edx+INFLUENCE_WEIGHT_OFFSET]
     mov ebx, dword ptr [edx+INFLUENCE_BONEID_OFFSET]
-    shufps xmm0, xmm0, R_SHUFFLE(0, 0, 0, 0)
+    shufps xmm0, xmm0, _MM_SHUFFLE(0, 0, 0, 0)
     lea ebx, [ebx*2+ebx]
     movaps xmm1, xmm0
     lea ebx, [ebx+ebx]
     movaps xmm2, xmm0
 
+    add edx, INFLUENCE_SIZE
+
+    // prefetch vertex position
+    movaps xmm7, [esi+INPUT_VERTEX_OFFSET_POSITION]
+
     // Scale matrix by weight.
     mulps xmm0, [edi+ebx*8+0x00] // xmm0 = m0, m1, m2, t0
     add esi, INPUT_VERTEX_SIZE
     mulps xmm1, [edi+ebx*8+0x10] // xmm1 = m3, m4, m5, t1
-    test dword ptr [edx+INFLUENCE_LAST_INFLUENCE_OFFSET], 1
+    test dword ptr [edx-INFLUENCE_SIZE+INFLUENCE_LAST_INFLUENCE_OFFSET], 1
     mulps xmm2, [edi+ebx*8+0x20] // xmm2 = m6, m7, m8, t2
 
-    je doneWeight
+    jnz doneWeight
 
 loopWeight:
     // Load weight into xmm3, xmm4, xmm5
     // Load bone index into ebx
-    movss xmm3, [edx+INFLUENCE_SIZE+INFLUENCE_WEIGHT_OFFSET]
-    mov ebx, dword ptr [edx+INFLUENCE_SIZE+INFLUENCE_BONEID_OFFSET]
-    shufps xmm3, xmm3, R_SHUFFLE(0, 0, 0, 0)
+    movss xmm3, [edx+INFLUENCE_WEIGHT_OFFSET]
+    mov ebx, dword ptr [edx+INFLUENCE_BONEID_OFFSET]
+    shufps xmm3, xmm3, _MM_SHUFFLE(0, 0, 0, 0)
     lea ebx, [ebx*2+ebx]
     movaps xmm4, xmm3
     lea ebx, [ebx+ebx]
@@ -190,17 +275,17 @@ loopWeight:
     mulps xmm5, [edi+ebx*8+32] // xmm5 = m6, m7, m8, t2
 
     addps xmm0, xmm3
-    test dword ptr [edx+INFLUENCE_LAST_INFLUENCE_OFFSET], 1
+    test dword ptr [edx-INFLUENCE_SIZE+INFLUENCE_LAST_INFLUENCE_OFFSET], 1
     addps xmm1, xmm4
     addps xmm2, xmm5
 
-    jne loopWeight
+    jz loopWeight
 
 doneWeight:
     // transform vertex
-    movaps xmm3, [esi-INPUT_VERTEX_SIZE+INPUT_VERTEX_OFFSET_POSITION]
-    movaps xmm4, xmm3
-    movaps xmm5, xmm3
+    movaps xmm3, xmm7
+    movaps xmm4, xmm7
+    movaps xmm5, xmm7
 
     mulps xmm3, xmm0
     mulps xmm4, xmm1
@@ -208,7 +293,7 @@ doneWeight:
 
     movaps xmm6, xmm3 // xmm6 = m0, m1, m2, t0
     unpcklps xmm6, xmm4 // xmm6 = m0, m3, m1, m4
-    unpckhps xmm3, xmm4 // xmm4 = m2, m5, t0, t1
+    unpckhps xmm3, xmm4 // xmm3 = m2, m5, t0, t1
     addps xmm6, xmm3 // xmm6 = m0+m2, m3+m5, m1+t0, m4+t1
 
     movaps xmm7, xmm5 // xmm7 = m6, m7, m8, t2
@@ -218,9 +303,8 @@ doneWeight:
 
     movhps [ecx+0], xmm6
 
-    pshufd xmm7, xmm6, R_SHUFFLE(1, 0, 2, 3) // xmm7 = m7+t2, m6+m8
+    pshufd xmm7, xmm6, R_SHUFFLE_D(1, 1, 1, 1) // xmm7 = m7+t2
     addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
-
     movss [ecx+8], xmm7
 
     // transform normal
@@ -244,12 +328,12 @@ doneWeight:
     movhlps xmm6, xmm7 // xmm6 = m8, t2, m1+t0, m4+t1
     addps xmm6, xmm5 // xmm6 = m6+m8, m7+t2, m0+m1+m2+t0, m3+m4+m5+t1
 
-    movhps [ecx+0x10], xmm6
-    pshufd xmm7, xmm6, R_SHUFFLE(1, 0, 2, 3) // xmm7 = m7+t2, m6+m8
+    movhps [ecx-OUTPUT_VERTEX_SIZE+0x10], xmm6
+    pshufd xmm7, xmm6, R_SHUFFLE_D(1, 1, 1, 1) // xmm7 = m7+t2
     addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
-    movss [ecx+0x18], xmm7
+    movss [ecx-OUTPUT_VERTEX_SIZE+0x18], xmm7
 
-    jnz loopVertex
+    jnz loopVertex // see |sub eax, 1| above
 
 done:
   }
@@ -293,18 +377,10 @@ void CalPhysique::calculateVerticesAndNormals(
     // Fill MorphSubmeshCache w/ outputs of morph target calculation
     for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
       const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
-      CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
-      destVertex = sourceVertex;
-      CalVector4& position = destVertex.position;
-      CalVector4& normal = destVertex.normal;
 
       float baseWeight = pSubmesh->getBaseWeight();
-      position.x = 0;
-      position.y = 0;
-      position.z = 0;
-      normal.x = 0;
-      normal.y = 0;
-      normal.z = 0;
+      CalVector position;
+      CalVector normal;
       for( unsigned i = 0; i < numMiaws; i++ ) {
         MorphIdAndWeight& miaw = MiawCache[ i ];
         int morphTargetId = miaw.morphId_;
@@ -328,6 +404,10 @@ void CalPhysique::calculateVerticesAndNormals(
       normal.x += baseWeight*sourceVertex.normal.x;
       normal.y += baseWeight*sourceVertex.normal.y;
       normal.z += baseWeight*sourceVertex.normal.z;
+
+      CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
+      destVertex.position.setAsPoint(position);
+      destVertex.normal.setAsVector(normal);
     }
 
     vertices = MorphSubmeshCache.data;

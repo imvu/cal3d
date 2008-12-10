@@ -69,7 +69,7 @@ public:
 
   __declspec(align(16)) struct Vertex
   {
-    CalVector4 position;
+    CalPoint4 position;
     CalVector4 normal;
     unsigned influenceStart; // technically unnecessary, can be derived from vertex index and influenceCount
     unsigned influenceEnd;   // technically unnecessary, can be derived from vertex index and influenceCount
