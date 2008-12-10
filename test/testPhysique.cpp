@@ -237,6 +237,36 @@ TEST(getVerticesAndNormals_on_mesh_with_three_translated_bones) {
 }
 
 
+TEST(two_rotated_bones) {
+  CalSkeleton::BoneTransform bt[] = {
+    { CalVector4(0, -1, 0, 0),
+      CalVector4(1,  0, 0, 0),
+      CalVector4(0,  0, 1, 0), },
+    { CalVector4(1,  0, 0, 0),
+      CalVector4(0,  0, 1, 0),
+      CalVector4(0, -1, 0, 0), },
+  };
+
+  CalCoreSubmesh::Vertex v[] = {
+    { CalPoint4(1, 1, 1), CalVector4(1, 1, 1) },
+  };
+
+  CalCoreSubmesh::Influence i[] = {
+    CalCoreSubmesh::Influence(0, 0.5f, false),
+    CalCoreSubmesh::Influence(1, 0.5f, true),
+  };
+
+  CalVector4 output[2];
+  CalPhysique::calculateVerticesAndNormals_x87(bt, 1, v, i, output);
+  CHECK_EQUAL(output[0].x, 0);
+  CHECK_EQUAL(output[0].y, 1);
+  CHECK_EQUAL(output[0].z, 0);
+  CHECK_EQUAL(output[1].x, 0);
+  CHECK_EQUAL(output[1].y, 1);
+  CHECK_EQUAL(output[1].z, 0);
+}
+
+
 TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
   const int N = 10000;
   const int TrialCount = 10;
