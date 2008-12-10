@@ -235,10 +235,22 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
   return true;
 }
 
-void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& inf) {
+void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> inf) {
   m_vertices[vertexId] = vertex;
   m_vertexColors[vertexId] = vertexColor;
   m_lodData[vertexId] = lodData;
+
+  if (inf.empty()) {
+    Influence i;
+    i.boneId = 0;
+    i.weight = 0.0f;
+    inf.push_back(i);
+  }
+
+  for (size_t i = 0; i + 1 < inf.size(); ++i) {
+    inf[i].lastInfluenceForThisVertex = 0;
+  }
+  inf[inf.size() - 1].lastInfluenceForThisVertex = 1;
 
   m_vertices[vertexId].influenceStart = influences.size();
   m_vertices[vertexId].influenceEnd   = influences.size() + inf.size();

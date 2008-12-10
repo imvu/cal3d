@@ -39,8 +39,15 @@ public:
 
   struct Influence
   {
-    int boneId;
+    Influence() {
+      boneId = -1;
+      weight = 0.0f;
+      lastInfluenceForThisVertex = 0;
+    }
+
+    unsigned boneId;
     float weight;
+    unsigned lastInfluenceForThisVertex;
 
     bool operator<(const Influence& rhs) const {
       return std::make_pair(boneId, quantize(weight)) < std::make_pair(rhs.boneId, quantize(rhs.weight));
@@ -64,8 +71,8 @@ public:
   {
     CalVector4 position;
     CalVector4 normal;
-    unsigned influenceStart;
-    unsigned influenceEnd;
+    unsigned influenceStart; // technically unnecessary, can be derived from vertex index and influenceCount
+    unsigned influenceEnd;   // technically unnecessary, can be derived from vertex index and influenceCount
   };
 
   struct Face
@@ -109,7 +116,7 @@ public:
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
 
-  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& influences);
+  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> influences);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }

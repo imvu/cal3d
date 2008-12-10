@@ -40,6 +40,13 @@ public:
   virtual bool readFloat(float& value) = 0;
   virtual bool readInteger(int& value) = 0;
   virtual bool readString(std::string& strValue) = 0;
+
+  bool readInteger(unsigned& value) {
+    int i;
+    bool rv = readInteger(i);
+    value = i;
+    return rv;
+  }
 };
 
 namespace CalPlatform

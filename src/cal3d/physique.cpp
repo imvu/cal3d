@@ -14,10 +14,8 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
 
+#include <boost/static_assert.hpp>
 #include "cal3d/error.h"
 #include "cal3d/physique.h"
 #include "cal3d/coremodel.h"
@@ -95,20 +93,11 @@ void calculateVerticesAndNormals_x87(
   CalSkeleton::BoneTransform total_transform;
 
   // calculate all submesh vertices
-  while (vertexCount--)
-  {
-    int influenceId = vertices->influenceStart;
-    if (influenceId < vertices->influenceEnd) {
-      const CalCoreSubmesh::Influence& influence = influences[influenceId];
-      const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
-      ScaleMatrix(total_transform, boneTransform, influence.weight);
-      ++influenceId;
-      while (influenceId < vertices->influenceEnd) {
-        const CalCoreSubmesh::Influence& influence = influences[influenceId];
-        const CalSkeleton::BoneTransform& boneTransform = boneTransforms[influence.boneId];
-        AddScaledMatrix(total_transform, boneTransform, influence.weight);
-        ++influenceId;
-      }
+  while (vertexCount--) {
+    ScaleMatrix(total_transform, boneTransforms[influences->boneId], influences->weight);
+
+    while (!influences++->lastInfluenceForThisVertex) {
+      AddScaledMatrix(total_transform, boneTransforms[influences->boneId], influences->weight);
     }
 
     TransformPoint(output_vertex[0], total_transform, vertices->position);
@@ -118,72 +107,98 @@ void calculateVerticesAndNormals_x87(
   }
 }
 
-#if 0
+#define R_SHUFFLE(z, y, x, w) (z<<6) | (y<<4) | (x<<2) | w
 
 void calculateVerticesAndNormals_SSE(
   const CalSkeleton::BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
-  CalVector4* output_vertex
+  CalVector4* output_vertices
 ) {
-  __asm
-  {
+  #define OUTPUT_VERTEX_SIZE 0x20
+  BOOST_STATIC_ASSERT(OUTPUT_VERTEX_SIZE == 2 * sizeof(CalVector4));
+
+  #define INPUT_VERTEX_SIZE 0x30
+  BOOST_STATIC_ASSERT(INPUT_VERTEX_SIZE == sizeof(CalCoreSubmesh::Vertex));
+
+  #define INPUT_VERTEX_OFFSET_POSITION 0x00
+  BOOST_STATIC_ASSERT(INPUT_VERTEX_OFFSET_POSITION == offsetof(CalCoreSubmesh::Vertex, position));
+  #define INPUT_VERTEX_OFFSET_NORMAL 0x10
+  BOOST_STATIC_ASSERT(INPUT_VERTEX_OFFSET_NORMAL == offsetof(CalCoreSubmesh::Vertex, normal));
+
+  #define INFLUENCE_SIZE 12
+  BOOST_STATIC_ASSERT(INFLUENCE_SIZE == sizeof(CalCoreSubmesh::Influence));
+  #define INFLUENCE_BONEID_OFFSET 0
+  BOOST_STATIC_ASSERT(INFLUENCE_BONEID_OFFSET == offsetof(CalCoreSubmesh::Influence, boneId));
+  #define INFLUENCE_WEIGHT_OFFSET 4
+  BOOST_STATIC_ASSERT(INFLUENCE_WEIGHT_OFFSET == offsetof(CalCoreSubmesh::Influence, weight));
+  #define INFLUENCE_LAST_INFLUENCE_OFFSET 8
+  BOOST_STATIC_ASSERT(INFLUENCE_LAST_INFLUENCE_OFFSET == offsetof(CalCoreSubmesh::Influence, lastInfluenceForThisVertex));
+
+  #define BONE_TRANSFORM_SIZE 0x30
+  BOOST_STATIC_ASSERT(BONE_TRANSFORM_SIZE == sizeof(CalSkeleton::BoneTransform));
+
+  __asm {
     mov eax, vertexCount
     test eax, eax
     jz done
-    imul eax, VERTEX_SIZE
 
-    mov ecx, verts
-    mov edx, weights
-    mov esi, base
-    mov edi, joints
+    mov ecx, output_vertices
+    mov edx, influences
+    mov esi, vertices
+    mov edi, boneTransforms
 
-    add ecx, eax
-    neg eax
+loopVertex:
 
-loopVert:
-    movss xmm0, [edx+JOINTWEIGHT_WEIGHT_OFFSET]
-    mov ebx, dword ptr [edx+JOINTWEIGHT_JOINTMATOFFSET_OFFSET]
-    shufps xmm0, xmm0, R_SHUFFLE_PS( 0, 0, 0, 0 )
-    add edx, JOINTWEIGHT_SIZE
+    // ScaleMatrix(total_transform, boneTransforms[influences->boneId], influences->weight);
+    // total_transform in xmm0, xmm1, xmm2
+
+    // Load weight into xmm0, xmm1, and xmm2
+    // Load bone index into ebx
+    movss xmm0, [edx+INFLUENCE_WEIGHT_OFFSET]
+    mov ebx, dword ptr [edx+INFLUENCE_BONEID_OFFSET]
+    shufps xmm0, xmm0, R_SHUFFLE(0, 0, 0, 0)
+    lea ebx, [ebx*2+ebx]
     movaps xmm1, xmm0
-    add esi, 3*BASEVECTOR_SIZE
+    lea ebx, [ebx+ebx]
     movaps xmm2, xmm0
 
-    cmp dword ptr [edx-JOINTWEIGHT_SIZE+JOINTWEIGHT_NEXTVERTEXOFFSET_OFFSET], JOINTWEIGHT_SIZE
-
-    mulps xmm0, [edi+ebx+ 0] // xmm0 = m0, m1, m2, t0
-    mulps xmm1, [edi+ebx+16] // xmm1 = m3, m4, m5, t1
-    mulps xmm2, [edi+ebx+32] // xmm2 = m6, m7, m8, t2
+    // Scale matrix by weight.
+    mulps xmm0, [edi+ebx*8+0x00] // xmm0 = m0, m1, m2, t0
+    add esi, INPUT_VERTEX_SIZE
+    mulps xmm1, [edi+ebx*8+0x10] // xmm1 = m3, m4, m5, t1
+    test dword ptr [edx+INFLUENCE_LAST_INFLUENCE_OFFSET], 1
+    mulps xmm2, [edi+ebx*8+0x20] // xmm2 = m6, m7, m8, t2
 
     je doneWeight
 
 loopWeight:
-    movss xmm3, [edx+JOINTWEIGHT_WEIGHT_OFFSET]
-    mov ebx, dword ptr [edx+JOINTWEIGHT_JOINTMATOFFSET_OFFSET]
-    shufps xmm3, xmm3, R_SHUFFLE_PS( 0, 0, 0, 0 )
-    add edx, JOINTWEIGHT_SIZE
+    // Load weight into xmm3, xmm4, xmm5
+    // Load bone index into ebx
+    movss xmm3, [edx+INFLUENCE_SIZE+INFLUENCE_WEIGHT_OFFSET]
+    mov ebx, dword ptr [edx+INFLUENCE_SIZE+INFLUENCE_BONEID_OFFSET]
+    shufps xmm3, xmm3, R_SHUFFLE(0, 0, 0, 0)
+    lea ebx, [ebx*2+ebx]
     movaps xmm4, xmm3
+    lea ebx, [ebx+ebx]
     movaps xmm5, xmm3
 
-    mulps xmm3, [edi+ebx+ 0] // xmm3 = m0, m1, m2, t0
-    mulps xmm4, [edi+ebx+16] // xmm4 = m3, m4, m5, t1
-    mulps xmm5, [edi+ebx+32] // xmm5 = m6, m7, m8, t2
-
-    cmp dword ptr [edx-JOINTWEIGHT_SIZE+JOINTWEIGHT_NEXTVERTEXOFFSET_OFFSET], JOINTWEIGHT_SIZE
+    mulps xmm3, [edi+ebx*8+ 0] // xmm3 = m0, m1, m2, t0
+    add edx, INFLUENCE_SIZE
+    mulps xmm4, [edi+ebx*8+16] // xmm4 = m3, m4, m5, t1
+    mulps xmm5, [edi+ebx*8+32] // xmm5 = m6, m7, m8, t2
 
     addps xmm0, xmm3
+    test dword ptr [edx+INFLUENCE_LAST_INFLUENCE_OFFSET], 1
     addps xmm1, xmm4
     addps xmm2, xmm5
 
     jne loopWeight
 
 doneWeight:
-    add eax, VERTEX_SIZE
-
     // transform vertex
-    movaps xmm3, [esi-3*BASEVECTOR_SIZE]
+    movaps xmm3, [esi-INPUT_VERTEX_SIZE+INPUT_VERTEX_OFFSET_POSITION]
     movaps xmm4, xmm3
     movaps xmm5, xmm3
 
@@ -201,39 +216,44 @@ doneWeight:
     movhlps xmm6, xmm7 // xmm6 = m8, t2, m1+t0, m4+t1
     addps xmm6, xmm5 // xmm6 = m6+m8, m7+t2, m0+m1+m2+t0, m3+m4+m5+t1
 
-    movhps [ecx+eax-VERTEX_SIZE+VERTEX_POSITION_OFFSET+0], xmm6
+    movhps [ecx+0], xmm6
 
-    pshufd xmm7, xmm6, R_SHUFFLE_D( 1, 0, 2, 3 ) // xmm7 = m7+t2, m6+m8
+    pshufd xmm7, xmm6, R_SHUFFLE(1, 0, 2, 3) // xmm7 = m7+t2, m6+m8
     addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
 
-    movss [ecx+eax-VERTEX_SIZE+VERTEX_POSITION_OFFSET+8], xmm7
+    movss [ecx+8], xmm7
 
     // transform normal
-    movaps xmm3, [esi-2*BASEVECTOR_SIZE]
+    movaps xmm3, [esi-INPUT_VERTEX_SIZE+INPUT_VERTEX_OFFSET_NORMAL]
     movaps xmm4, xmm3
+    add ecx, OUTPUT_VERTEX_SIZE
     movaps xmm5, xmm3
+
     mulps xmm3, xmm0
     mulps xmm4, xmm1
+    sub eax, 1
     mulps xmm5, xmm2
+
     movaps xmm6, xmm3 // xmm6 = m0, m1, m2, t0
     unpcklps xmm6, xmm4 // xmm6 = m0, m3, m1, m4
     unpckhps xmm3, xmm4 // xmm3 = m2, m5, t0, t1
     addps xmm6, xmm3 // xmm6 = m0+m2, m3+m5, m1+t0, m4+t1
+
     movaps xmm7, xmm5 // xmm7 = m6, m7, m8, t2
     movlhps xmm5, xmm6 // xmm5 = m6, m7, m0+m2, m3+m5
     movhlps xmm6, xmm7 // xmm6 = m8, t2, m1+t0, m4+t1
     addps xmm6, xmm5 // xmm6 = m6+m8, m7+t2, m0+m1+m2+t0, m3+m4+m5+t1
-    movhps [ecx+eax-VERTEX_SIZE+VERTEX_NORMAL_OFFSET+0], xmm6
-    pshufd xmm7, xmm6, R_SHUFFLE_D( 1, 0, 2, 3 ) // xmm7 = m7+t2, m6+m8
-    addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
-    movss [ecx+eax-VERTEX_SIZE+VERTEX_NORMAL_OFFSET+8], xmm7
 
-    jl loopVert
+    movhps [ecx+0x10], xmm6
+    pshufd xmm7, xmm6, R_SHUFFLE(1, 0, 2, 3) // xmm7 = m7+t2, m6+m8
+    addss xmm7, xmm6 // xmm7 = m6+m8+m7+t2
+    movss [ecx+0x18], xmm7
+
+    jnz loopVertex
+
 done:
   }
 }
-
-#endif
 
 void calculateVerticesAndNormals(
   const CalSkeleton::BoneTransform* boneTransforms,
