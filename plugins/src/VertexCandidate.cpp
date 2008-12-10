@@ -127,7 +127,7 @@ void CVertexCandidate::AddInfluence(int boneId, float weight)
 	// create an influence object if there is none for the given bone
 	if(influenceId == m_vectorInfluence.size())
 	{
-		Influence influence;
+            CalCoreSubmesh::Influence influence;
 		influence.boneId = boneId;
 		influence.weight = weight;
 
@@ -170,7 +170,7 @@ void CVertexCandidate::AddTextureCoordinate(float u, float v)
 void CVertexCandidate::AdjustBoneAssignment(int maxBoneCount, float weightThreshold)
 {
 	// erase all influences below the weight threshold
-	std::vector<Influence>::iterator iteratorInfluence;
+    std::vector<CalCoreSubmesh::Influence>::iterator iteratorInfluence;
 	for(iteratorInfluence = m_vectorInfluence.begin(); iteratorInfluence != m_vectorInfluence.end(); )
 	{
 		// check against the weight threshold
@@ -217,7 +217,7 @@ void CVertexCandidate::AdjustBoneAssignment(int maxBoneCount, float weightThresh
 // Compare the weight of two given influences                                 //
 //----------------------------------------------------------------------------//
 
-bool CVertexCandidate::CompareInfluenceWeight(const Influence& influence1, const Influence& influence2)
+bool CVertexCandidate::CompareInfluenceWeight(const CalCoreSubmesh::Influence& influence1, const CalCoreSubmesh::Influence& influence2)
 {
 	return influence1.weight > influence2.weight;
 }
@@ -307,7 +307,7 @@ std::set<int>& CVertexCandidate::GetSetNeighbour()
 // Get the influence vector                                                   //
 //----------------------------------------------------------------------------//
 
-std::vector<CVertexCandidate::Influence>& CVertexCandidate::GetVectorInfluence()
+std::vector<CalCoreSubmesh::Influence>& CVertexCandidate::GetVectorInfluence()
 {
 	return m_vectorInfluence;
 }

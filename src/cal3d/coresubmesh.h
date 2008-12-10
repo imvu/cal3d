@@ -45,6 +45,12 @@ public:
       lastInfluenceForThisVertex = 0;
     }
 
+    Influence(unsigned b, float w, bool last) {
+      boneId = b;
+      weight = w;
+      lastInfluenceForThisVertex = last ? 1 : 0;
+    }
+
     unsigned boneId;
     float weight;
     unsigned lastInfluenceForThisVertex;

@@ -95,7 +95,7 @@ __forceinline void TransformVector(CalVector4& result, const CalSkeleton::BoneTr
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z;
 }
 
-void calculateVerticesAndNormals_x87(
+void CalPhysique::calculateVerticesAndNormals_x87(
   const CalSkeleton::BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
@@ -120,7 +120,7 @@ void calculateVerticesAndNormals_x87(
   }
 }
 
-void calculateVerticesAndNormals_SSE_intrinsics(
+void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
   const CalSkeleton::BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
@@ -208,7 +208,7 @@ void calculateVerticesAndNormals_SSE_intrinsics(
 
 #define R_SHUFFLE_D(o0, o1, o2, o3) ((o3 & 3) << 6 | (o2 & 3) << 4 | (o1 & 3) << 2 | (o0 & 3))
 
-void calculateVerticesAndNormals_SSE(
+void CalPhysique::calculateVerticesAndNormals_SSE(
   const CalSkeleton::BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
@@ -367,7 +367,7 @@ void calculateVerticesAndNormals(
   const CalCoreSubmesh::Influence* influences,
   CalVector4* output_vertices
 ) {
-  return calculateVerticesAndNormals_x87(
+  return CalPhysique::calculateVerticesAndNormals_x87(
     boneTransforms,
     vertexCount,
     vertices,

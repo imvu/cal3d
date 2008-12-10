@@ -249,7 +249,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				}
 
 				// get the influence vector
-				std::vector<CVertexCandidate::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
+				std::vector<CalCoreSubmesh::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
 
 				// set vertex in the core submesh instance
 				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);

@@ -20,7 +20,6 @@ class CVertexCandidate
 // misc
 public:
         typedef CalCoreSubmesh::TextureCoordinate TextureCoordinate;
-        typedef CalCoreSubmesh::Influence Influence;
 
 	typedef struct
 	{
@@ -38,7 +37,7 @@ protected:
 	CalVector m_position;
 	CalVector m_normal;
 	std::vector<TextureCoordinate> m_vectorTextureCoordinate;
-	std::vector<Influence> m_vectorInfluence;
+  std::vector<CalCoreSubmesh::Influence> m_vectorInfluence;
 	PhysicalProperty m_physicalProperty;
   std::set<int> m_setNeighbour;
   CalVector m_color; // ===
@@ -67,7 +66,7 @@ public:
 	void GetPosition(CalVector& position);
   void GetVertColor(CalVector &color); // ===
 	std::set<int>& GetSetNeighbour();
-	std::vector<Influence>& GetVectorInfluence();
+        std::vector<CalCoreSubmesh::Influence>& GetVectorInfluence();
 	std::vector<TextureCoordinate>& GetVectorTextureCoordinate();
 	void SetCollapseId(int collapseId);
 	void SetFaceCollapseCount(int faceCollapseCount);
@@ -80,7 +79,7 @@ public:
   int GetUniqueId();
   void SetUniqueId(int id);
 protected:
-	static bool CompareInfluenceWeight(const Influence& influence1, const Influence& influence2);
+  static bool CompareInfluenceWeight(const CalCoreSubmesh::Influence& influence1, const CalCoreSubmesh::Influence& influence2);
 };
 
 #endif
