@@ -8,7 +8,31 @@
 #include <cal3d/physique.h>
 #include <cal3d/mixer.h>
 
-TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
+FIXTURE(skin_x87) {
+  CalPhysique::SkinRoutine skin;
+  SETUP(skin_x87) {
+    skin = CalPhysique::calculateVerticesAndNormals_x87;
+  }
+};
+FIXTURE(skin_SSE_intrinsics) {
+  CalPhysique::SkinRoutine skin;
+  SETUP(skin_SSE_intrinsics) {
+    skin = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
+  }
+};
+FIXTURE(skin_SSE) {
+  CalPhysique::SkinRoutine skin;
+  SETUP(skin_SSE) {
+    skin = CalPhysique::calculateVerticesAndNormals_SSE;
+  }
+};
+
+#define APPLY_SKIN_FIXTURES(test)         \
+  APPLY_TEST_F(skin_x87, test)            \
+  APPLY_TEST_F(skin_SSE_intrinsics, test) \
+  APPLY_TEST_F(skin_SSE, test)
+
+ABSTRACT_TEST(single_identity_bone) {
   CalSkeleton::BoneTransform bt[] = {
     { CalVector4(1, 0, 0, 0),
       CalVector4(0, 1, 0, 0),
@@ -24,7 +48,7 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
   };
 
   CalVector4 output[2];
-  CalPhysique::calculateVerticesAndNormals_x87(bt, 1, v, i, output);
+  skin(bt, 1, v, i, output);
   CHECK_EQUAL(output[0].x, 1);
   CHECK_EQUAL(output[0].y, 2);
   CHECK_EQUAL(output[0].z, 3);
@@ -32,8 +56,9 @@ TEST(getVerticesAndNormals_on_mesh_with_one_bone_generates_vertices) {
   CHECK_EQUAL(output[1].y, 1);
   CHECK_EQUAL(output[1].z, 0);
 }
+APPLY_SKIN_FIXTURES(single_identity_bone);
 
-TEST(getVerticesAndNormals_on_mesh_with_two_translated_bones) {
+ABSTRACT_TEST(two_translated_bones) {
   CalSkeleton::BoneTransform bt[] = {
     { CalVector4(1, 0, 0, 1),
       CalVector4(0, 1, 0, 0),
@@ -53,7 +78,7 @@ TEST(getVerticesAndNormals_on_mesh_with_two_translated_bones) {
   };
 
   CalVector4 output[2];
-  CalPhysique::calculateVerticesAndNormals_x87(bt, 1, v, i, output);
+  skin(bt, 1, v, i, output);
   CHECK_EQUAL(output[0].x, 1.5);
   CHECK_EQUAL(output[0].y, 2.5);
   CHECK_EQUAL(output[0].z, 3);
@@ -61,8 +86,9 @@ TEST(getVerticesAndNormals_on_mesh_with_two_translated_bones) {
   CHECK_EQUAL(output[1].y, 1);
   CHECK_EQUAL(output[1].z, 0);
 }
+APPLY_SKIN_FIXTURES(two_translated_bones);
 
-TEST(getVerticesAndNormals_on_mesh_with_three_translated_bones) {
+ABSTRACT_TEST(three_translated_bones) {
   CalSkeleton::BoneTransform bt[] = {
     { CalVector4(1, 0, 0, 1),
       CalVector4(0, 1, 0, 0),
@@ -86,7 +112,7 @@ TEST(getVerticesAndNormals_on_mesh_with_three_translated_bones) {
   };
 
   CalVector4 output[2];
-  CalPhysique::calculateVerticesAndNormals_x87(bt, 1, v, i, output);
+  skin(bt, 1, v, i, output);
 
   CHECK_EQUAL(output[0].x, 4.0f / 3.0f);
   CHECK_EQUAL(output[0].y, 7.0f / 3.0f);
@@ -95,13 +121,15 @@ TEST(getVerticesAndNormals_on_mesh_with_three_translated_bones) {
   CHECK_EQUAL(output[1].y, 1);
   CHECK_EQUAL(output[1].z, 0);
 }
+APPLY_SKIN_FIXTURES(three_translated_bones);
 
-
-TEST(two_rotated_bones) {
+ABSTRACT_TEST(two_rotated_bones) {
   CalSkeleton::BoneTransform bt[] = {
+    // 90 degree rotation about z
     { CalVector4(0, -1, 0, 0),
       CalVector4(1,  0, 0, 0),
       CalVector4(0,  0, 1, 0), },
+    // -90 degree rotation about x
     { CalVector4(1,  0, 0, 0),
       CalVector4(0,  0, 1, 0),
       CalVector4(0, -1, 0, 0), },
@@ -117,7 +145,7 @@ TEST(two_rotated_bones) {
   };
 
   CalVector4 output[2];
-  CalPhysique::calculateVerticesAndNormals_x87(bt, 1, v, i, output);
+  skin(bt, 1, v, i, output);
   CHECK_EQUAL(output[0].x, 0);
   CHECK_EQUAL(output[0].y, 1);
   CHECK_EQUAL(output[0].z, 0);
@@ -125,7 +153,7 @@ TEST(two_rotated_bones) {
   CHECK_EQUAL(output[1].y, 1);
   CHECK_EQUAL(output[1].z, 0);
 }
-
+APPLY_SKIN_FIXTURES(two_rotated_bones);
 
 TEST(calculateVerticesAndNormals_10000_vertices_1_influence_cycle_count) {
   const int N = 10000;

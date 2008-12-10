@@ -16,8 +16,14 @@
 
 class CalSubmesh;
 
-namespace CalPhysique
-{
+namespace CalPhysique {
+  typedef void (*SkinRoutine)(
+    const CalSkeleton::BoneTransform*,
+    int,
+    const CalCoreSubmesh::Vertex*,
+    const CalCoreSubmesh::Influence*,
+    CalVector4*);
+
   CAL3D_API void calculateVerticesAndNormals_x87(
     const CalSkeleton::BoneTransform* boneTransforms,
     int vertexCount,
