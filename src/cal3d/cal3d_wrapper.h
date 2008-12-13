@@ -27,7 +27,6 @@
 #else
 
 #pragma warning(disable : 4251)
-#pragma warning(disable : 4786)
 #pragma warning(disable : 4099)
 
 #ifdef CAL3D_WRAPPER_EXPORTS

@@ -17,7 +17,6 @@
 
 #ifdef _WIN32
 #define VC_EXTRALEAN
-#pragma warning(disable : 4786)
 #endif
 
 //----------------------------------------------------------------------------//

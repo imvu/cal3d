@@ -1,7 +1,3 @@
-#if defined(_MSC_VER) && _MSC_VER == 1200
-#pragma warning(disable: 4786)
-#endif
-
 #include "cal3d/saver.h"
 #include "cal3d/error.h"
 #include "cal3d/vector.h"
