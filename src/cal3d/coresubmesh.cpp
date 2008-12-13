@@ -25,10 +25,25 @@
   * This function is the default constructor of the core submesh instance.
   *****************************************************************************/
 
-CalCoreSubmesh::CalCoreSubmesh()
-  : m_coreMaterialThreadId(0), m_lodCount(0)
+CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)
+  : m_coreMaterialThreadId(0)
+  , m_lodCount(0)
 {
   m_hasNonWhiteVertexColors = false;
+
+  // reserve the space needed in all the vectors
+  m_vertices.resize(vertexCount);
+  m_vertexColors.resize(vertexCount);
+  m_lodData.resize(vertexCount);
+  m_influenceRanges.resize(vertexCount);
+
+  m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
+  for(int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
+  {
+    m_vectorvectorTextureCoordinate[textureCoordinateId].resize(vertexCount);
+  }
+
+  m_vectorFace.resize(faceCount);
 }
 
  /*****************************************************************************/
@@ -142,23 +157,6 @@ std::vector<CalColor32>& CalCoreSubmesh::getVertexColors()
 int CalCoreSubmesh::getVertexCount()
 {
   return m_vertices.size();
-}
-
-void CalCoreSubmesh::reserve(int vertexCount, int textureCoordinateCount, int faceCount)
-{
-  // reserve the space needed in all the vectors
-  m_vertices.resize(vertexCount);
-  m_vertexColors.resize(vertexCount);
-  m_lodData.resize(vertexCount);
-  m_influenceRanges.resize(vertexCount);
-  m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
-
-  for(int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
-  {
-    m_vectorvectorTextureCoordinate[textureCoordinateId].resize(vertexCount);
-  }
-
-  m_vectorFace.resize(faceCount);
 }
 
  /*****************************************************************************/

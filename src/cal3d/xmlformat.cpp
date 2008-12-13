@@ -1257,7 +1257,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         }
 
         // allocate a new core submesh instance
-        CalCoreSubmesh* pCoreSubmesh = new CalCoreSubmesh();
+        CalCoreSubmesh* pCoreSubmesh = new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount);
 
         pCoreSubmesh->setHasNonWhiteVertexColors( false );
 
@@ -1266,9 +1266,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 
         // set the core material id
         pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
-
-        // reserve memory for all the submesh data
-        pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount);
 
         TiXmlElement *vertex = submesh->FirstChildElement();
 

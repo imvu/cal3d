@@ -103,7 +103,7 @@ public:
   typedef SSEArray<Vertex> VectorVertex;
   typedef std::vector<Influence> VectorInfluence;
 
-  CalCoreSubmesh();
+  CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
   unsigned int size();
   unsigned int sizeWithoutSubMorphTargets();
@@ -121,7 +121,6 @@ public:
   std::vector<LodData>& getLodData() { return m_lodData; }
 
   int getVertexCount();
-  void reserve(int vertexCount, int textureCoordinateCount, int faceCount);
   void setCoreMaterialThreadId(int coreMaterialThreadId);
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);

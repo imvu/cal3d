@@ -669,24 +669,17 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 		// check if the submesh actually contains faces
 		if(vectorFace.size() > 0)
 		{
-			// allocate new core submesh instance
-			CalCoreSubmesh *pCoreSubmesh;
-			pCoreSubmesh = new CalCoreSubmesh();
-			if(pCoreSubmesh == 0)
-			{
-				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				m_pInterface->StopProgressInfo();
-				return false;
-			}
-
-			// set the core material id
-			pCoreSubmesh->setCoreMaterialThreadId(pSubmeshCandidate->GetMaterialThreadId());
-
 			// get the vertex candidate vector
 			std::vector<CVertexCandidate *>& vectorVertexCandidate = pSubmeshCandidate->GetVectorVertexCandidate();
 
-			// reserve memory for all the submesh data
-			pCoreSubmesh->reserve(vectorVertexCandidate.size(), pSubmeshCandidate->GetMapCount(), vectorFace.size());
+			// allocate new core submesh instance
+			CalCoreSubmesh *pCoreSubmesh = new CalCoreSubmesh(
+                          vectorVertexCandidate.size(),
+                          pSubmeshCandidate->GetMapCount(),
+                          vectorFace.size());
+
+			// set the core material id
+			pCoreSubmesh->setCoreMaterialThreadId(pSubmeshCandidate->GetMaterialThreadId());
 
 			size_t vertexCandidateId;
 			for(vertexCandidateId = 0; vertexCandidateId < vectorVertexCandidate.size(); vertexCandidateId++)

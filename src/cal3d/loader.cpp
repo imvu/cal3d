@@ -1678,21 +1678,13 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   }
 
   // allocate a new core submesh instance
-  CalCoreSubmesh *pCoreSubmesh;
-  pCoreSubmesh = new CalCoreSubmesh();
-  if(pCoreSubmesh == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
+  CalCoreSubmesh* pCoreSubmesh = new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount);
 
   // set the LOD step count
   pCoreSubmesh->setLodCount(lodCount);
 
   // set the core material id
   pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
-
-  pCoreSubmesh->reserve(vertexCount, textureCoordinateCount, faceCount);
 
   // load all vertices and their influences
   pCoreSubmesh->setHasNonWhiteVertexColors( false );

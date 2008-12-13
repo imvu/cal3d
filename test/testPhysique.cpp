@@ -159,7 +159,6 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
   const int N = 10000;
   const int TrialCount = 10;
   
-  CalCoreSubmesh* coreSubMesh = new CalCoreSubmesh;
   CalCoreSubmesh::Vertex v[N];
   CalCoreSubmesh::Influence i[N];
   for (int k = 0; k < N; ++k) {
@@ -169,8 +168,6 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
     i[k].weight = 1.0f;
     i[k].lastInfluenceForThisVertex = true;
   }
-
-  CalSubmesh* submesh = new CalSubmesh(coreSubMesh);
 
   CalSkeleton::BoneTransform bt;
   ZeroMemory(&bt, sizeof(bt));

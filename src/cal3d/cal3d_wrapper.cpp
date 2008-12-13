@@ -631,11 +631,6 @@ int CalCoreSubmesh_GetVertexCount(CalCoreSubmesh *self)
   return self->getVertexCount();
 }
 
-CalCoreSubmesh *CalCoreSubmesh_New()
-{
-  return new CalCoreSubmesh();
-}
-
 void CalCoreSubmesh_SetCoreMaterialThreadId(CalCoreSubmesh *self, int coreMaterialThreadId)
 {
   self->setCoreMaterialThreadId(coreMaterialThreadId);
