@@ -1778,7 +1778,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     }
 
     // set vertex in the core submesh instance
-    pCoreSubmesh->setVertex(vertexId, vertex, vertexColor, lodData, influences);
+    pCoreSubmesh->addVertex(vertex, vertexColor, lodData, influences);
 
     // load the physical property of the vertex if there are springs in the core submesh
     if(springCount > 0)

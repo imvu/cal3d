@@ -1517,7 +1517,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 influence=influence->NextSiblingElement();    
             }
 
-            pCoreSubmesh->setVertex(vertexId, Vertex, vertexColor, lodData, influences);
+            pCoreSubmesh->addVertex(Vertex, vertexColor, lodData, influences);
             vertex = vertex->NextSiblingElement();
         }
 

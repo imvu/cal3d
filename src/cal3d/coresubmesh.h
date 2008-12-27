@@ -150,7 +150,7 @@ public:
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
 
-  void setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> influences);
+  void addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> influences);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
@@ -178,6 +178,8 @@ public:
   }
 
 private:
+  int m_currentVertexId;
+
   // The following arrays should always be the same size.
   SSEArray<Vertex> m_vertices;
   std::vector<CalColor32> m_vertexColors;

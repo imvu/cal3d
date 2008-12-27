@@ -84,7 +84,7 @@ TEST(CalVectorFromDataSrc) {
 TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalCoreSubmesh* sm = new CalCoreSubmesh(1, 0, 0);
     CalCoreSubmesh::Vertex v;
-    sm->setVertex(0, v, CalMakeColor(CalVector(0, 0, 0)), CalCoreSubmesh::LodData(), std::vector<CalCoreSubmesh::Influence>());
+    sm->addVertex(v, CalMakeColor(CalVector(0, 0, 0)), CalCoreSubmesh::LodData(), std::vector<CalCoreSubmesh::Influence>());
     sm->setHasNonWhiteVertexColors(false);
 
     CalCoreMesh cm;

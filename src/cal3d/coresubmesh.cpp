@@ -29,6 +29,7 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
   : m_coreMaterialThreadId(0)
   , m_lodCount(0)
   , m_isStatic(false)
+  , m_currentVertexId(0)
 {
   m_hasNonWhiteVertexColors = false;
 
@@ -235,7 +236,10 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
   return true;
 }
 
-void CalCoreSubmesh::setVertex(int vertexId, const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> inf) {
+void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> inf) {
+  assert(m_currentVertexId < m_vertices.size());
+
+  const int vertexId = m_currentVertexId++;
   if (vertexId == 0) {
     m_isStatic = true;
     m_staticInfluenceSet = inf;

@@ -18,7 +18,7 @@ TEST(core_submesh_is_marked_as_static_if_all_vertices_are_influenced_by_same_bon
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
 
     CHECK(csm.isStatic());
 }
@@ -30,10 +30,10 @@ TEST(core_submesh_is_not_static_if_two_vertices_are_influenced_by_different_bone
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
     inf[0].boneId = 1;
     inf[0].weight = 1.0f;
-    csm.setVertex(1, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
 
     CHECK(!csm.isStatic());
 }
@@ -45,13 +45,13 @@ TEST(is_not_static_if_first_and_third_vertices_have_same_influence) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
     inf[0].boneId = 1;
     inf[0].weight = 1.0f;
-    csm.setVertex(1, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.setVertex(2, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
 
     CHECK(!csm.isStatic());
 }
@@ -65,12 +65,12 @@ TEST(is_static_if_two_vertices_have_influences_in_different_order) {
     inf[0].weight = 1.0f;
     inf[1].boneId = 1;
     inf[1].weight = 0.0f;
-    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
     inf[0].boneId = 1;
     inf[0].weight = 0.0f;
     inf[1].boneId = 0;
     inf[1].weight = 1.0f;
-    csm.setVertex(1, v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
 
     CHECK(csm.isStatic());
 }

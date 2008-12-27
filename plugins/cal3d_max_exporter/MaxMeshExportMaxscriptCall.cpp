@@ -245,7 +245,9 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				std::vector<CalCoreSubmesh::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
 
 				// set vertex in the core submesh instance
-				pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);
+                                assert(false); // Not sure exactly how this call should work.
+				//pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);
+                                pCoreSubmesh->addVertex(vertex, vertexColor, lodData, vectorInfluence);
 			}
 
 			size_t faceId;
