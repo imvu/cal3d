@@ -462,6 +462,6 @@ void CalPhysique::calculateVerticesAndNormals(
     boneTransforms,
     vertexCount,
     vertices,
-    Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->influences),
+    Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->getInfluences()),
     reinterpret_cast<CalVector4*>(pVertexBuffer));
 }

@@ -781,7 +781,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     // write all influences of this vertex
     for(unsigned influenceId = influenceRange.influenceStart; influenceId < influenceRange.influenceEnd; ++influenceId)
     {
-      const CalCoreSubmesh::Influence& influence = pCoreSubmesh->influences[influenceId];
+      const CalCoreSubmesh::Influence& influence = pCoreSubmesh->getInfluences()[influenceId];
 
       // write the influence data
       CalPlatform::writeInteger(file, influence.boneId);
@@ -1498,7 +1498,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       // write all influences of this vertex
       for(unsigned influenceId = influenceRange.influenceStart; influenceId < influenceRange.influenceEnd; ++influenceId)
       {
-        CalCoreSubmesh::Influence& Influence = pCoreSubmesh->influences[influenceId];
+        const CalCoreSubmesh::Influence& Influence = pCoreSubmesh->getInfluences()[influenceId];
 
         TiXmlElement influence("INFLUENCE");
 

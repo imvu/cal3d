@@ -56,10 +56,24 @@ TEST(is_not_static_if_first_and_third_vertices_have_same_influence) {
     CHECK(!csm.isStatic());
 }
 
-#if 0
 TEST(is_static_if_two_vertices_have_influences_in_different_order) {
+    CalCoreSubmesh csm(2, 0, 0);
+
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> inf(2);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    inf[1].boneId = 1;
+    inf[1].weight = 0.0f;
+    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    inf[0].boneId = 1;
+    inf[0].weight = 0.0f;
+    inf[1].boneId = 0;
+    inf[1].weight = 1.0f;
+    csm.setVertex(1, v, black, CalCoreSubmesh::LodData(), inf);
+
+    CHECK(csm.isStatic());
 }
-#endif
 
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
     CalCoreSubmesh csm(0, 0, 0);

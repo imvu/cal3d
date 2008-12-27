@@ -96,8 +96,6 @@ public:
 
       return true;
     }
-    //bool operator<(const InfluenceSet& rhs) const {
-    //}
   };
 
   __declspec(align(16)) struct Vertex
@@ -108,8 +106,8 @@ public:
 
   struct InfluenceRange
   {
-    unsigned influenceStart; // technically unnecessary, can be derived from vertex index and influenceCount
-    unsigned influenceEnd;   // technically unnecessary, can be derived from vertex index and influenceCount
+    unsigned influenceStart;
+    unsigned influenceEnd;
   };
 
   struct Face
@@ -128,7 +126,7 @@ public:
   typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
   typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
   typedef SSEArray<Vertex> VectorVertex;
-  typedef std::vector<Influence> VectorInfluence;
+  typedef std::vector<Influence> InfluenceVector;
 
   CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
@@ -175,8 +173,9 @@ public:
     return m_isStatic;
   }
 
-  // todo: make this private
-  std::vector<Influence> influences;
+  const InfluenceVector& getInfluences() const {
+    return influences;
+  }
 
 private:
   // The following arrays should always be the same size.
@@ -198,4 +197,6 @@ private:
 
   bool m_isStatic;
   InfluenceSet m_staticInfluenceSet;
+
+  std::vector<Influence> influences;
 };
