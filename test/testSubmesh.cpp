@@ -4,6 +4,62 @@
 #include <cal3d/submesh.h>
 #include <cal3d/physique.h>
 
+CalColor32 black = 0;
+
+TEST(core_submesh_without_vertices_is_not_static) {
+    CalCoreSubmesh csm(0, 0, 0);
+    CHECK(!csm.isStatic());
+}
+
+TEST(core_submesh_is_marked_as_static_if_all_vertices_are_influenced_by_same_bone) {
+    CalCoreSubmesh csm(1, 0, 0);
+
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+
+    CHECK(csm.isStatic());
+}
+
+TEST(core_submesh_is_not_static_if_two_vertices_are_influenced_by_different_bones) {
+    CalCoreSubmesh csm(2, 0, 0);
+
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    inf[0].boneId = 1;
+    inf[0].weight = 1.0f;
+    csm.setVertex(1, v, black, CalCoreSubmesh::LodData(), inf);
+
+    CHECK(!csm.isStatic());
+}
+
+TEST(is_not_static_if_first_and_third_vertices_have_same_influence) {
+    CalCoreSubmesh csm(3, 0, 0);
+
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    csm.setVertex(0, v, black, CalCoreSubmesh::LodData(), inf);
+    inf[0].boneId = 1;
+    inf[0].weight = 1.0f;
+    csm.setVertex(1, v, black, CalCoreSubmesh::LodData(), inf);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    csm.setVertex(2, v, black, CalCoreSubmesh::LodData(), inf);
+
+    CHECK(!csm.isStatic());
+}
+
+#if 0
+TEST(is_static_if_two_vertices_have_influences_in_different_order) {
+}
+#endif
 
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
     CalCoreSubmesh csm(0, 0, 0);

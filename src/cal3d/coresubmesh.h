@@ -55,6 +55,10 @@ public:
     float weight;
     unsigned lastInfluenceForThisVertex;
 
+    bool operator==(const Influence& rhs) const {
+      return std::make_pair(boneId, quantize(weight)) == std::make_pair(rhs.boneId, quantize(rhs.weight));
+    }
+
     bool operator<(const Influence& rhs) const {
       return std::make_pair(boneId, quantize(weight)) < std::make_pair(rhs.boneId, quantize(rhs.weight));
     }
@@ -65,10 +69,33 @@ public:
     }
   };
 
-  struct InfluenceSet
-  {
+  struct InfluenceSet {
+    InfluenceSet() {
+    }
+
+    InfluenceSet(const std::vector<Influence>& vi)
+    : influences(vi.begin(), vi.end()) {
+    }
+
     std::set<Influence> influences;
 
+    bool operator==(const InfluenceSet& rhs) const {
+      if (influences.size() != rhs.influences.size()) {
+        return false;
+      }
+      std::set<Influence>::const_iterator begin1 = influences.begin();
+      std::set<Influence>::const_iterator begin2 = rhs.influences.begin();
+
+      while (begin1 != influences.end()) {
+        if (!(*begin1 == *begin2)) {
+          return false;
+        }
+        ++begin1;
+        ++begin2;
+      }
+
+      return true;
+    }
     //bool operator<(const InfluenceSet& rhs) const {
     //}
   };
@@ -144,6 +171,10 @@ public:
     return m_influenceRanges[vertexId];
   }
 
+  bool isStatic() const {
+    return m_isStatic;
+  }
+
   // todo: make this private
   std::vector<Influence> influences;
 
@@ -164,4 +195,7 @@ private:
   int m_lodCount;
   std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
   bool m_hasNonWhiteVertexColors;
+
+  bool m_isStatic;
+  InfluenceSet m_staticInfluenceSet;
 };
