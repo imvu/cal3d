@@ -75,6 +75,28 @@ TEST(is_static_if_two_vertices_have_influences_in_different_order) {
     CHECK(csm.isStatic());
 }
 
+TEST(is_not_static_if_has_morph_targets) {
+    CalCoreSubmesh csm(2, 0, 0);
+
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> inf(2);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    inf[1].boneId = 1;
+    inf[1].weight = 0.0f;
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    inf[0].boneId = 1;
+    inf[0].weight = 0.0f;
+    inf[1].boneId = 0;
+    inf[1].weight = 1.0f;
+    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+
+    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget);
+    csm.addCoreSubMorphTarget(morphTarget);
+
+    CHECK(!csm.isStatic());
+}
+
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
     CalCoreSubmesh csm(0, 0, 0);
 

@@ -362,3 +362,8 @@ void CalCoreSubmesh::scale(float factor)
         m_vertices[vertexId].position*=factor;		
     }
 }
+
+bool CalCoreSubmesh::isStatic() const {
+    return m_isStatic && m_vectorCoreSubMorphTarget.empty();
+}
+

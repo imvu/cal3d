@@ -169,9 +169,7 @@ public:
     return m_influenceRanges[vertexId];
   }
 
-  bool isStatic() const {
-    return m_isStatic;
-  }
+  bool isStatic() const;
 
   const InfluenceVector& getInfluences() const {
     return influences;
