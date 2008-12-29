@@ -253,6 +253,7 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
 
   // Each vertex needs at least one influence.
   if (inf.empty()) {
+    m_isStatic = false;
     Influence i;
     i.boneId = 0;
     i.weight = 0.0f;
