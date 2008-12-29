@@ -170,6 +170,7 @@ public:
   }
 
   bool isStatic() const;
+  BoneTransform getStaticTransform(const BoneTransform* bones);
 
   const InfluenceVector& getInfluences() const {
     return influences;

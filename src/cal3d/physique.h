@@ -12,39 +12,39 @@
 
 #include "cal3d/coresubmesh.h"
 #include "cal3d/global.h"
-#include "cal3d/skeleton.h"
 
+struct BoneTransform;
 class CalSubmesh;
 
 namespace CalPhysique {
   typedef void (*SkinRoutine)(
-    const CalSkeleton::BoneTransform*,
+    const BoneTransform*,
     int,
     const CalCoreSubmesh::Vertex*,
     const CalCoreSubmesh::Influence*,
     CalVector4*);
 
   CAL3D_API void calculateVerticesAndNormals_x87(
-    const CalSkeleton::BoneTransform* boneTransforms,
+    const BoneTransform* boneTransforms,
     int vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertex);
   CAL3D_API void calculateVerticesAndNormals_SSE_intrinsics(
-    const CalSkeleton::BoneTransform* boneTransforms,
+    const BoneTransform* boneTransforms,
     int vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertex);
   CAL3D_API void calculateVerticesAndNormals_SSE(
-    const CalSkeleton::BoneTransform* boneTransforms,
+    const BoneTransform* boneTransforms,
     int vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertices);
 
   CAL3D_API void calculateVerticesAndNormals(
-    const CalSkeleton::BoneTransform* boneTransforms,
+    const BoneTransform* boneTransforms,
     CalSubmesh* pSubmesh,
     float* pVertexBuffer);
 };

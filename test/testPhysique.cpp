@@ -33,7 +33,7 @@ FIXTURE(skin_SSE) {
   APPLY_TEST_F(skin_SSE, test)
 
 ABSTRACT_TEST(single_identity_bone) {
-  CalSkeleton::BoneTransform bt[] = {
+  BoneTransform bt[] = {
     { CalVector4(1, 0, 0, 0),
       CalVector4(0, 1, 0, 0),
       CalVector4(0, 0, 1, 0), },
@@ -59,7 +59,7 @@ ABSTRACT_TEST(single_identity_bone) {
 APPLY_SKIN_FIXTURES(single_identity_bone);
 
 ABSTRACT_TEST(two_translated_bones) {
-  CalSkeleton::BoneTransform bt[] = {
+  BoneTransform bt[] = {
     { CalVector4(1, 0, 0, 1),
       CalVector4(0, 1, 0, 0),
       CalVector4(0, 0, 1, 0), },
@@ -89,7 +89,7 @@ ABSTRACT_TEST(two_translated_bones) {
 APPLY_SKIN_FIXTURES(two_translated_bones);
 
 ABSTRACT_TEST(three_translated_bones) {
-  CalSkeleton::BoneTransform bt[] = {
+  BoneTransform bt[] = {
     { CalVector4(1, 0, 0, 1),
       CalVector4(0, 1, 0, 0),
       CalVector4(0, 0, 1, 0), },
@@ -124,7 +124,7 @@ ABSTRACT_TEST(three_translated_bones) {
 APPLY_SKIN_FIXTURES(three_translated_bones);
 
 ABSTRACT_TEST(two_rotated_bones) {
-  CalSkeleton::BoneTransform bt[] = {
+  BoneTransform bt[] = {
     // 90 degree rotation about z
     { CalVector4(0, -1, 0, 0),
       CalVector4(1,  0, 0, 0),
@@ -169,7 +169,7 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
     i[k].lastInfluenceForThisVertex = true;
   }
 
-  CalSkeleton::BoneTransform bt;
+  BoneTransform bt;
   ZeroMemory(&bt, sizeof(bt));
 
   __declspec(align(16)) CalVector4 output[N * 2];

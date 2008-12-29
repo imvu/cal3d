@@ -56,7 +56,7 @@ SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
   Lesser General Public License for more details.
 */
 
-__forceinline void ScaleMatrix(CalSkeleton::BoneTransform& result, const CalSkeleton::BoneTransform& mat, const float s) {
+__forceinline void ScaleMatrix(BoneTransform& result, const BoneTransform& mat, const float s) {
   result.rowx.x = s * mat.rowx.x;
   result.rowx.y = s * mat.rowx.y;
   result.rowx.z = s * mat.rowx.z;
@@ -70,7 +70,7 @@ __forceinline void ScaleMatrix(CalSkeleton::BoneTransform& result, const CalSkel
   result.rowz.z = s * mat.rowz.z;
   result.rowz.w = s * mat.rowz.w;
 }
-__forceinline void AddScaledMatrix(CalSkeleton::BoneTransform& result, const CalSkeleton::BoneTransform& mat, const float s) {
+__forceinline void AddScaledMatrix(BoneTransform& result, const BoneTransform& mat, const float s) {
   result.rowx.x += s * mat.rowx.x;
   result.rowx.y += s * mat.rowx.y;
   result.rowx.z += s * mat.rowx.z;
@@ -84,26 +84,26 @@ __forceinline void AddScaledMatrix(CalSkeleton::BoneTransform& result, const Cal
   result.rowz.z += s * mat.rowz.z;
   result.rowz.w += s * mat.rowz.w;
 }
-__forceinline void TransformPoint(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalBase4& v) {
+__forceinline void TransformPoint(CalVector4& result, const BoneTransform& m, const CalBase4& v) {
   result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z + m.rowx.w;
   result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z + m.rowy.w;
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z + m.rowz.w;
 }
-__forceinline void TransformVector(CalVector4& result, const CalSkeleton::BoneTransform& m, const CalBase4& v) {
+__forceinline void TransformVector(CalVector4& result, const BoneTransform& m, const CalBase4& v) {
   result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z;
   result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z;
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z;
 }
 
 void CalPhysique::calculateVerticesAndNormals_x87(
-  const CalSkeleton::BoneTransform* boneTransforms,
+  const BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
   CalVector4* output_vertex
 ) {
 
-  CalSkeleton::BoneTransform total_transform;
+  BoneTransform total_transform;
 
   // calculate all submesh vertices
   while (vertexCount--) {
@@ -121,7 +121,7 @@ void CalPhysique::calculateVerticesAndNormals_x87(
 }
 
 void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
-  const CalSkeleton::BoneTransform* boneTransforms,
+  const BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
@@ -138,7 +138,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
     weight = _mm_load_ss(&influences->weight);
     weight = _mm_shuffle_ps(weight, weight, _MM_SHUFFLE(0, 0, 0, 0));
 
-    const CalSkeleton::BoneTransform& bt = boneTransforms[influences->boneId];
+    const BoneTransform& bt = boneTransforms[influences->boneId];
 
     rowx = _mm_mul_ps(_mm_load_ps((const float*)&bt.rowx), weight);
     rowy = _mm_mul_ps(_mm_load_ps((const float*)&bt.rowy), weight);
@@ -148,7 +148,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
       weight = _mm_load_ss(&influences->weight);
       weight = _mm_shuffle_ps(weight, weight, _MM_SHUFFLE(0, 0, 0, 0));
 
-      const CalSkeleton::BoneTransform& bt = boneTransforms[influences->boneId];
+      const BoneTransform& bt = boneTransforms[influences->boneId];
 
       rowx = _mm_add_ps(rowx, _mm_mul_ps(_mm_load_ps((const float*)&bt.rowx), weight));
       rowy = _mm_add_ps(rowy, _mm_mul_ps(_mm_load_ps((const float*)&bt.rowy), weight));
@@ -209,7 +209,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
 #define R_SHUFFLE_D(o0, o1, o2, o3) ((o3 & 3) << 6 | (o2 & 3) << 4 | (o1 & 3) << 2 | (o0 & 3))
 
 void CalPhysique::calculateVerticesAndNormals_SSE(
-  const CalSkeleton::BoneTransform* boneTransforms,
+  const BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
@@ -236,7 +236,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE(
   BOOST_STATIC_ASSERT(INFLUENCE_LAST_INFLUENCE_OFFSET == offsetof(CalCoreSubmesh::Influence, lastInfluenceForThisVertex));
 
   #define BONE_TRANSFORM_SIZE 0x30
-  BOOST_STATIC_ASSERT(BONE_TRANSFORM_SIZE == sizeof(CalSkeleton::BoneTransform));
+  BOOST_STATIC_ASSERT(BONE_TRANSFORM_SIZE == sizeof(BoneTransform));
 
   // This is true on my Xeons anyway.
   #define CACHE_LINE_SIZE 64
@@ -361,7 +361,7 @@ done:
 }
 
 void automaticallyDetectSkinRoutine(
-  const CalSkeleton::BoneTransform* boneTransforms,
+  const BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
@@ -370,7 +370,7 @@ void automaticallyDetectSkinRoutine(
 static CalPhysique::SkinRoutine optimizedSkinRoutine = automaticallyDetectSkinRoutine;
 
 void automaticallyDetectSkinRoutine(
-  const CalSkeleton::BoneTransform* boneTransforms,
+  const BoneTransform* boneTransforms,
   int vertexCount,
   const CalCoreSubmesh::Vertex* vertices,
   const CalCoreSubmesh::Influence* influences,
@@ -400,7 +400,7 @@ void automaticallyDetectSkinRoutine(
 }
 
 void CalPhysique::calculateVerticesAndNormals(
-  const CalSkeleton::BoneTransform* boneTransforms,
+  const BoneTransform* boneTransforms,
   CalSubmesh *pSubmesh,
   float *pVertexBuffer
 ) {

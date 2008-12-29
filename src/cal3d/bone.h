@@ -14,7 +14,6 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 #include "cal3d/corebone.h"
-#include "cal3d/skeleton.h"
 
 class CalSkeleton;
 class CalModel;

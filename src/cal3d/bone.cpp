@@ -316,7 +316,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   }
   transformMatrix *= m_rotationAbsolute;
 
-  CalSkeleton::BoneTransform& bt = skeleton->boneTransforms[myIndex];
+  BoneTransform& bt = skeleton->boneTransforms[myIndex];
   extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
   
   // calculate all child bones

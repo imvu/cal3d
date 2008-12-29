@@ -26,6 +26,9 @@ __declspec(align(16)) struct CalBase4
 
 struct CalVector4 : CalBase4 {
   CalVector4() {
+    x = 0.0f;
+    y = 0.0f;
+    z = 0.0f;
     w = 0.0f;
   }
 
@@ -46,6 +49,9 @@ struct CalVector4 : CalBase4 {
 
 struct CalPoint4 : CalBase4 {
   CalPoint4() {
+    x = 0.0f;
+    y = 0.0f;
+    z = 0.0f;
     w = 1.0f;
   }
 
@@ -63,3 +69,24 @@ struct CalPoint4 : CalBase4 {
     w = 1.0f;
   }
 };
+
+inline bool operator==(const CalBase4& lhs, const CalBase4& rhs) {
+  return lhs.x == rhs.x
+      && lhs.y == rhs.y
+      && lhs.z == rhs.z
+      && lhs.w == rhs.w;
+}
+
+// 3x3 transform matrix plus a translation 3-vector (stored in the w components
+// of the rows.  This struct needs to be 16-byte aligned for SSE.
+struct BoneTransform {
+  CalVector4 rowx;
+  CalVector4 rowy;
+  CalVector4 rowz;
+};
+
+inline bool operator==(const BoneTransform& lhs, const BoneTransform& rhs) {
+  return lhs.rowx == rhs.rowx
+      && lhs.rowy == rhs.rowy
+      && lhs.rowz == rhs.rowz;
+}

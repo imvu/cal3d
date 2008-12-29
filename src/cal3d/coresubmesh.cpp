@@ -357,13 +357,38 @@ CalCoreSubmesh::CoreSubMorphTargetVector& CalCoreSubmesh::getVectorCoreSubMorphT
 
 void CalCoreSubmesh::scale(float factor)
 {
-    for(int vertexId = 0; vertexId < m_vertices.size() ; vertexId++)
-    {
-        m_vertices[vertexId].position*=factor;		
-    }
+  for(int vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
+    m_vertices[vertexId].position*=factor;		
+  }
 }
 
 bool CalCoreSubmesh::isStatic() const {
-    return m_isStatic && m_vectorCoreSubMorphTarget.empty();
+  return m_isStatic && m_vectorCoreSubMorphTarget.empty();
 }
 
+BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) {
+  BoneTransform rm;
+
+  std::set<Influence>::const_iterator current = m_staticInfluenceSet.influences.begin();
+  while (current != m_staticInfluenceSet.influences.end()) {
+    const BoneTransform& influence = bones[current->boneId];
+    rm.rowx.x += current->weight * influence.rowx.x;
+    rm.rowx.y += current->weight * influence.rowx.y;
+    rm.rowx.z += current->weight * influence.rowx.z;
+    rm.rowx.w += current->weight * influence.rowx.w;
+
+    rm.rowy.x += current->weight * influence.rowy.x;
+    rm.rowy.y += current->weight * influence.rowy.y;
+    rm.rowy.z += current->weight * influence.rowy.z;
+    rm.rowy.w += current->weight * influence.rowy.w;
+
+    rm.rowz.x += current->weight * influence.rowz.x;
+    rm.rowz.y += current->weight * influence.rowz.y;
+    rm.rowz.z += current->weight * influence.rowz.z;
+    rm.rowz.w += current->weight * influence.rowz.w;
+
+    ++current;
+  }
+
+  return rm;
+}
