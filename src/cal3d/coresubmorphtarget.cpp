@@ -170,12 +170,3 @@ CalCoreSubMorphTarget::setName( std::string s )
     }
   }
 }
-
-
-std::string
-CalCoreSubMorphTarget::name() const
-{
-  return m_morphTargetName;
-}
-
-

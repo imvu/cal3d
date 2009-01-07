@@ -44,7 +44,7 @@ public:
   CalMorphTargetType morphTargetType();
 
   void setName( std::string );
-  std::string name() const;
+  const std::string& name() const { return m_morphTargetName; }
 
 private:
   std::vector<BlendVertex *> m_vectorBlendVertex;

@@ -401,7 +401,7 @@ IMemberHolder<T> * MemberAttribute(  MT (T::*getter)() const, void (T::*setter)(
 
 template<class T, class MT>
 IMemberHolder<T> * MemberAttribute( 
-    MT const & (T::*getter)(),
+    MT const & (T::*getter)() const,
     void (T::*setter)(MT const &))
 {
     typedef FromXmlAttribute<T, MT> XmlPolicy;

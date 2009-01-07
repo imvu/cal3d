@@ -111,22 +111,6 @@ void CalCoreMorphTrack::destroy()
 }
 
  /*****************************************************************************/
-/** Returns the ID of the core bone.
-  *
-  * This function returns the ID of the core bone to which the core track
-  * instance is attached to.
-  *
-  * @return One of the following values:
-  *         \li the \b ID of the core bone
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-std::string CalCoreMorphTrack::getMorphName() const
-{
-  return m_morphName;
-}
-
- /*****************************************************************************/
 /** Returns a specified state.
   *
   * This function returns the state 

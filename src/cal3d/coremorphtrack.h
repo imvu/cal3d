@@ -38,7 +38,7 @@ public:
 
   bool getState(float time, float & weightOut);
 
-  std::string getMorphName() const;
+  std::string getMorphName() const { return m_morphName; }
   void setMorphName(std::string name);
   
   int getCoreMorphKeyframeCount();

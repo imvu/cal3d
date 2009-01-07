@@ -48,8 +48,9 @@ GetTiXmlBinding( CalCoreMorphTrack const &,  IdentityBase  )
 {
   static MemberTiXmlBinding<CalCoreMorphTrack> binding;
   if( binding.empty() ) {
-    binding.AddMember( "MORPHNAME", MemberAttribute(&CalCoreMorphTrack::getMorphName,
-        &CalCoreMorphTrack::setMorphName) );
+    binding.AddMember( "MORPHNAME", MemberAttribute(
+      &CalCoreMorphTrack::getMorphName,
+      &CalCoreMorphTrack::setMorphName) );
     binding.AddMember( "NUMKEYFRAMES", MemberAttribute(&CalCoreMorphTrack::getCoreMorphKeyframeCount,
         &CalCoreMorphTrack::reserve) );
     binding.AddMember( "KEYFRAME", MemberPeer(&CalCoreMorphTrack::getVectorCoreMorphKeyframes) );
