@@ -37,7 +37,7 @@
 int CalRenderer::getMapCount(CalSubmesh* submesh)
 {
   // get the core material
-  boost::shared_ptr<CalCoreMaterial> pCoreMaterial = submesh->getMaterial();
+  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
   if(!pCoreMaterial) return 0;
 
   return pCoreMaterial->getMapCount();
@@ -46,7 +46,7 @@ int CalRenderer::getMapCount(CalSubmesh* submesh)
 Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
 {
   // get the core material
-  boost::shared_ptr<CalCoreMaterial> pCoreMaterial = submesh->getMaterial();
+  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
   if(!pCoreMaterial) return 0;
   return pCoreMaterial->getUserData();
 }
@@ -64,7 +64,7 @@ Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
 void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer)
 {
   // get the core material
-  boost::shared_ptr<CalCoreMaterial> pCoreMaterial = submesh->getMaterial();
+  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
   if(pCoreMaterial == 0)
   {
     // write default values to the color buffer

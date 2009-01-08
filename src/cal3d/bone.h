@@ -30,7 +30,9 @@ public:
     bool replace = false, float rampValue = 1.0f );
   void calculateState(CalSkeleton* skeleton, unsigned myIndex);
   void clearState();
-  CalCoreBone *getCoreBone();
+  const CalCoreBone& getCoreBone() {
+    return *m_pCoreBone;
+  }
   void setRotation(const CalQuaternion& rotation);
   const CalQuaternion& getRotation();
   const CalQuaternion& getRotationAbsolute();

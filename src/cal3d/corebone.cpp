@@ -24,17 +24,13 @@
 #include "cal3d/coresubmesh.h"
 
 
-CalCoreBone::CalCoreBone()
+CalCoreBone::CalCoreBone(const std::string& name)
   : m_pCoreSkeleton(0)
   , m_parentId(-1)
+  , m_strName(name)
 {
 }
 
-
-CalCoreBone::~CalCoreBone()
-{
-  assert(m_listChildId.empty());
-}
 
  /*****************************************************************************/
 /** Adds a child ID.
@@ -96,55 +92,6 @@ void CalCoreBone::calculateState()
 }
 
  /*****************************************************************************/
-/** Creates the core bone instance.
-  *
-  * This function creates the core bone instance.
-  *
-  * @param strName A string that should be used as the name of the core bone
-  *                instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreBone::createInternal(const std::string& strName)
-{
-  m_strName = strName;
-  return true;
-}
-
-bool CalCoreBone::createWithName( char const * strName )
-{
-  std::string name = strName;
-  return createInternal( name );
-}
-
-
-char const *
-CalCoreBone::getName()
-{
-  char const * name = m_strName.c_str();
-  return name;
-}
-
- /*****************************************************************************/
-/** Destroys the core bone instance.
-  *
-  * This function destroys all data stored in the core bone instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalCoreBone::destroy()
-{
-  // clear children id list
-  m_listChildId.clear();
-
-  m_parentId = -1;
-  m_strName.erase();
-}
-
- /*****************************************************************************/
 /** Returns the child ID list.
   *
   * This function returns the list that contains all child IDs of the core bone
@@ -156,19 +103,6 @@ void CalCoreBone::destroy()
 std::list<int>& CalCoreBone::getListChildId()
 {
   return m_listChildId;
-}
-
- /*****************************************************************************/
-/** Returns the name.
-  *
-  * This function returns the name of the core bone instance.
-  *
-  * @return The name as string.
-  *****************************************************************************/
-
-const std::string& CalCoreBone::getNameInternal()
-{
-  return m_strName;
 }
 
  /*****************************************************************************/
@@ -234,7 +168,7 @@ const CalQuaternion& CalCoreBone::getRotationBoneSpace()
   * @return The relative translation to the parent as quaternion.
   *****************************************************************************/
 
-const CalVector& CalCoreBone::getTranslation()
+const CalVector& CalCoreBone::getTranslation() const
 {
   return m_translation;
 }
@@ -247,7 +181,7 @@ const CalVector& CalCoreBone::getTranslation()
   * @return The absolute translation to the parent as quaternion.
   *****************************************************************************/
 
-const CalVector& CalCoreBone::getTranslationAbsolute()
+const CalVector& CalCoreBone::getTranslationAbsolute() const
 {
   return m_translationAbsolute;
 }
@@ -261,7 +195,7 @@ const CalVector& CalCoreBone::getTranslationAbsolute()
   * @return The translation to bring a point into bone space.
   *****************************************************************************/
 
-const CalVector& CalCoreBone::getTranslationBoneSpace()
+const CalVector& CalCoreBone::getTranslationBoneSpace() const
 {
   return m_translationBoneSpace;
 }

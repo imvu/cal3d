@@ -827,19 +827,9 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			selectedId++;
 
 			// allocate new core bone instance
-			CalCoreBone *pCoreBone;
-			pCoreBone = new CalCoreBone();
-			if(pCoreBone == 0)
-			{
-				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				coreSkeleton.destroy();
-				m_pInterface->StopProgressInfo();
-				return false;
-			}
+			CalCoreBone *pCoreBone = new CalCoreBone(pBoneCandidate->GetNode()->GetName());
 
-			pCoreBone->setNameInternal(pBoneCandidate->GetNode()->GetName());
-
-			// get the parent id of the bone candidate
+                        // get the parent id of the bone candidate
 			int parentId;
 			parentId = skeletonCandidate.GetParentSelectedId(boneCandidateId);
 

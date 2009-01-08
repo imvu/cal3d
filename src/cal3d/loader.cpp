@@ -1115,20 +1115,7 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
   }
 
   // allocate a new core bone instance
-  CalCoreBone *pCoreBone;
-  pCoreBone = new CalCoreBone();
-  if(pCoreBone == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
-
-  // create the core bone instance
-  if(!pCoreBone->createWithName(strName.c_str()))
-  {
-    delete pCoreBone;
-    return 0;
-  }
+  CalCoreBone *pCoreBone = new CalCoreBone(strName);
 
   // set the parent of the bone
   pCoreBone->setParentId(parentId);
@@ -1147,7 +1134,6 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
   int childCount;
   if(!dataSrc.readInteger(childCount) || (childCount < 0))
   {
-    pCoreBone->destroy();
     delete pCoreBone;
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
     return 0;
@@ -1159,7 +1145,6 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
     int childId;
     if(!dataSrc.readInteger(childId) || (childId < 0))
     {
-      pCoreBone->destroy();
       delete pCoreBone;
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
       return 0;

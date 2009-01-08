@@ -610,12 +610,12 @@ CalMixer::applyBoneAdjustments()
   for( i = 0; i < m_numBoneAdjustments; i++ ) {
     CalMixerBoneAdjustmentAndBoneId * ba = & m_boneAdjustmentAndBoneIdArray[ i ];
     CalBone * bo = vectorBone[ ba->boneId_ ];
-    CalCoreBone * cbo = bo->getCoreBone();
+    const CalCoreBone& cbo = bo->getCoreBone();
     if( ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale ) {
       bo->setMeshScaleAbsolute( ba->boneAdjustment_.meshScaleAbsolute_ );
     }
     if( ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot ) {
-      const CalVector & localPos = cbo->getTranslation();
+      const CalVector & localPos = cbo.getTranslation();
       CalVector adjustedLocalPos = localPos;
       CalQuaternion adjustedLocalOri = ba->boneAdjustment_.localOri_;
       static float const scale = 1.0f;

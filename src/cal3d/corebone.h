@@ -32,27 +32,20 @@ enum CalLightType {
 class CAL3D_API CalCoreBone
 {
 public:
-  CalCoreBone();
-  ~CalCoreBone();
+  CalCoreBone(const std::string& name);
 
   bool addChildId(int childId);
   void calculateState();
-  bool createInternal(const std::string& strName);
-  bool createWithName( char const * name );
-  void destroy();
   std::list<int>& getListChildId();
-  const std::string& getNameInternal();
-  void setNameInternal( std::string& str ) { m_strName = str; }
-  char const * getName(); // Ptr valid until you call another cal3d function.
-  void setName( char const * str ) { m_strName = str; }
+  const std::string& getName() const { return m_strName; }
   int getParentId();
   CalCoreSkeleton *getCoreSkeleton();
   const CalQuaternion& getRotation();
   const CalQuaternion& getRotationAbsolute();
   const CalQuaternion& getRotationBoneSpace();
-  const CalVector& getTranslation();
-  const CalVector& getTranslationAbsolute();
-  const CalVector& getTranslationBoneSpace();
+  const CalVector& getTranslation() const;
+  const CalVector& getTranslationAbsolute() const;
+  const CalVector& getTranslationBoneSpace() const;
   void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
   void setParentId(int parentId);
   void setRotation(const CalQuaternion& rotation);

@@ -583,24 +583,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         parentId = atoi(parentid->Value());
 
         // allocate a new core bone instance
-        CalCoreBone *pCoreBone;
-        pCoreBone = new CalCoreBone();
-        if(pCoreBone == 0)
-        {
-            pCoreSkeleton->destroy();
-            delete pCoreSkeleton;    
-            CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-            return 0;
-        }
-
-        // create the core bone instance
-        if(!pCoreBone->createWithName(strName.c_str()))
-        {
-            pCoreSkeleton->destroy();
-            delete pCoreSkeleton;    
-            delete pCoreBone;
-            return 0;
-        }
+        CalCoreBone *pCoreBone = new CalCoreBone(strName);
 
         // set the parent of the bone
         pCoreBone->setParentId(parentId);
@@ -639,7 +622,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 pCoreSkeleton->destroy();
                 delete pCoreSkeleton;
-                pCoreBone->destroy();
                 delete pCoreBone;
                 return false;
             }
@@ -650,7 +632,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 pCoreSkeleton->destroy();
                 delete pCoreSkeleton;
-                pCoreBone->destroy();
                 delete pCoreBone;
                 return false;
             }
@@ -660,7 +641,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 pCoreSkeleton->destroy();
                 delete pCoreSkeleton;
-                pCoreBone->destroy();
                 delete pCoreBone;
                 return false;
             }

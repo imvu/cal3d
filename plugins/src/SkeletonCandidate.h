@@ -11,6 +11,8 @@
 #ifndef SKELETON_CANDIDATE_H
 #define SKELETON_CANDIDATE_H
 
+#include "cal3d/coremodel.h"
+
 //----------------------------------------------------------------------------//
 // Forward declarations                                                       //
 //----------------------------------------------------------------------------//

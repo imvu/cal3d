@@ -344,23 +344,7 @@ void CalBone::clearState()
   m_meshScaleAbsolute.set( 1, 1, 1 );
 }
 
- /*****************************************************************************/
-/** Provides access to the core bone.
-  *
-  * This function returns the core bone on which this bone instance is based on.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core bone
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreBone *CalBone::getCoreBone()
-{
-  return m_pCoreBone;
-}
-
-
- /*****************************************************************************/
+/*****************************************************************************/
 /** Sets the current rotation.
   *
   * This function sets the current relative rotation of the bone instance.

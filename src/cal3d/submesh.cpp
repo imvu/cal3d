@@ -231,7 +231,7 @@ void CalSubmesh::setMorphTargetWeight(std::string const & morphName,float weight
 {
   // TODO: this is very inefficient. we should probably use a map instead
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
-    boost::shared_ptr<CalCoreSubMorphTarget> target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
       m_vectorMorphTargetWeight[i] = weight;
       return;
@@ -268,7 +268,7 @@ CalSubmesh::clearMorphTargetState( std::string const & morphName )
 {
   // TODO: this is very inefficient. we should probably use a map instead
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
-    boost::shared_ptr<CalCoreSubMorphTarget> target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
       m_vectorMorphTargetWeight[i] = 0.0f;
       m_vectorAccumulatedWeight[ i ] = 0.0f;
@@ -322,7 +322,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
   int size = m_vectorMorphTargetWeight.size();
   int i;
   for( i = 0; i < size; i++ ) {
-    boost::shared_ptr<CalCoreSubMorphTarget> target = m_pCoreSubmesh->getCoreSubMorphTarget( i );
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget( i );
     if( target->name() == morphName ) {
       CalMorphTargetType mtype = target->morphTargetType();
       switch( mtype ) {
@@ -448,7 +448,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
 bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * weightOut)
 {
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
-    boost::shared_ptr<CalCoreSubMorphTarget> target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
       *weightOut = m_vectorMorphTargetWeight[i];
       return true;

@@ -24,6 +24,7 @@
 
 #include "cal3d/cal3d.h"
 #include "cal3d/cal3d_wrapper.h"
+#include "cal3d/coremodel.h"
 
 //****************************************************************************//
 // CalAnimation wrapper functions definition                                  //
@@ -191,117 +192,6 @@ CalCoreAnimation *CalCoreAnimation_New(CalCoreAnimation *self)
 void CalCoreAnimation_SetDuration(CalCoreAnimation *self, float duration)
 {
   self->setDuration(duration);
-}
-
-//****************************************************************************//
-// CalCoreAnimation wrapper functions definition                              //
-//****************************************************************************//
-
-Boolean CalCoreBone_AddChildId(CalCoreBone *self, int childId)
-{
-  return self->addChildId(childId) ? True : False;
-}
-
-void CalCoreBone_CalculateState(CalCoreBone *self)
-{
-  self->calculateState();
-}
-
-Boolean CalCoreBone_Create(CalCoreBone *self, char *strName)
-{
-  return self->createWithName(strName) ? True : False;
-}
-
-void CalCoreBone_Delete(CalCoreBone *self)
-{
-  delete self;
-}
-
-void CalCoreBone_Destroy(CalCoreBone *self)
-{
-  self->destroy();
-}
-
-/*
-std::list<int>& CalCoreBone_GetListChildId(CalCoreBone *self)
-{
-  return self->getListChildId();
-}
-*/
-
-char *CalCoreBone_GetName(CalCoreBone *self)
-{
-  return const_cast<char *>(self->getName());
-}
-
-int CalCoreBone_GetParentId(CalCoreBone *self)
-{
-  return self->getParentId();
-}
-
-CalQuaternion *CalCoreBone_GetRotation(CalCoreBone *self)
-{
-  return &(const_cast<CalQuaternion&>(self->getRotation()));
-}
-
-CalQuaternion *CalCoreBone_GetRotationAbsolute(CalCoreBone *self)
-{
-  return &(const_cast<CalQuaternion&>(self->getRotationAbsolute()));
-}
-
-CalQuaternion *CalCoreBone_GetRotationBoneSpace(CalCoreBone *self)
-{
-  return &(const_cast<CalQuaternion&>(self->getRotationBoneSpace()));
-}
-
-CalVector *CalCoreBone_GetTranslation(CalCoreBone *self)
-{
-  return &(const_cast<CalVector&>(self->getTranslation()));
-}
-
-CalVector *CalCoreBone_GetTranslationAbsolute(CalCoreBone *self)
-{
-  return &(const_cast<CalVector&>(self->getTranslationAbsolute()));
-}
-
-CalVector *CalCoreBone_GetTranslationBoneSpace(CalCoreBone *self)
-{
-  return &(const_cast<CalVector&>(self->getTranslationBoneSpace()));
-}
-
-CalCoreBone *CalCoreBone_New()
-{
-  return new CalCoreBone();
-}
-
-void CalCoreBone_SetCoreSkeleton(CalCoreBone *self, CalCoreSkeleton *pCoreSkeleton)
-{
-  self->setCoreSkeleton(pCoreSkeleton);
-}
-
-void CalCoreBone_SetParentId(CalCoreBone *self, int parentId)
-{
-  self->setParentId(parentId);
-}
-
-void CalCoreBone_SetRotation(CalCoreBone *self, CalQuaternion *pRotation)
-{
-  self->setRotation(*pRotation);
-}
-
-void CalCoreBone_SetRotationBoneSpace(CalCoreBone *self, CalQuaternion *pRotation)
-{
-  self->setRotationBoneSpace(*pRotation);
-}
-
-void CalCoreBone_SetTranslation(CalCoreBone *self, CalVector *pTranslation)
-{
-  self->setTranslation(*pTranslation);
-}
-
-void CalCoreBone_SetTranslationBoneSpace(CalCoreBone *self, CalVector *pTranslation)
-{
-  self->setTranslationBoneSpace(*pTranslation);
 }
 
 //****************************************************************************//
@@ -550,12 +440,6 @@ int CalCoreSkeleton_AddCoreBone(CalCoreSkeleton *self, CalCoreBone *pCoreBone)
 {
   return self->addCoreBone(pCoreBone);
 }
-
-void CalCoreSkeleton_CalculateState(CalCoreSkeleton *self)
-{
-  self->calculateState();
-}
-
 
 Boolean CalCoreSkeleton_Create(CalCoreSkeleton *self)
 {
