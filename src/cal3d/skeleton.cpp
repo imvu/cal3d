@@ -66,9 +66,9 @@ CalSkeleton::~CalSkeleton()
 void CalSkeleton::calculateState()
 {
   // calculate all bone states of the skeleton
-  std::list<int>& listRootCoreBoneId = m_pCoreSkeleton->getListRootCoreBoneId();
+  const std::vector<int>& listRootCoreBoneId = m_pCoreSkeleton->getListRootCoreBoneId();
 
-  std::list<int>::iterator iteratorRootBoneId;
+  std::vector<int>::const_iterator iteratorRootBoneId;
   for(iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId)
   {
     m_vectorBone[*iteratorRootBoneId]->calculateState(this, *iteratorRootBoneId);

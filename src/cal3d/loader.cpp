@@ -1006,9 +1006,6 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
       return 0;
     }
 
-    // set the core skeleton of the core bone instance
-    pCoreBone->setCoreSkeleton(pCoreSkeleton);
-
     // add the core bone to the core skeleton instance
     pCoreSkeleton->addCoreBone(pCoreBone);
 

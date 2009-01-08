@@ -279,7 +279,7 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
   CalPlatform::writeFloat(file, c.z);
   
   // get children list
-  std::list<int>& listChildId = pCoreBone->getListChildId();
+  const std::vector<int>& listChildId = pCoreBone->getListChildId();
 
   // write the number of children
   if(!CalPlatform::writeInteger(file, listChildId.size()))
@@ -289,7 +289,7 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
   }
 
   // write all children ids
-  std::list<int>::iterator iteratorChildId;
+  std::vector<int>::const_iterator iteratorChildId;
   for(iteratorChildId = listChildId.begin(); iteratorChildId != listChildId.end(); ++iteratorChildId)
   {
     // write the child id
@@ -1130,11 +1130,11 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
     // get children list
-      std::list<int>& listChildId = pCoreBone->getListChildId();
+    const std::vector<int>& listChildId = pCoreBone->getListChildId();
 
 
     // write all children ids
-      std::list<int>::iterator iteratorChildId;
+      std::vector<int>::const_iterator iteratorChildId;
       for(iteratorChildId = listChildId.begin(); iteratorChildId != listChildId.end(); ++iteratorChildId)
     {
       TiXmlElement child("CHILDID");

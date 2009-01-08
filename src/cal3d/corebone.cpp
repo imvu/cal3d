@@ -25,8 +25,7 @@
 
 
 CalCoreBone::CalCoreBone(const std::string& name)
-  : m_pCoreSkeleton(0)
-  , m_parentId(-1)
+  : m_parentId(-1)
   , m_strName(name)
 {
 }
@@ -60,7 +59,7 @@ bool CalCoreBone::addChildId(int childId)
   * rotation) of the core bone instance and all its children.
   *****************************************************************************/
 
-void CalCoreBone::calculateState()
+void CalCoreBone::calculateState(CalCoreSkeleton* skeleton)
 {
   if(m_parentId == -1)
   {
@@ -71,8 +70,7 @@ void CalCoreBone::calculateState()
   else
   {
     // get the parent bone
-    CalCoreBone *pParent;
-    pParent = m_pCoreSkeleton->getCoreBone(m_parentId);
+    CalCoreBone *pParent = skeleton->getCoreBone(m_parentId);
 
     // transform relative state with the absolute state of the parent
     m_translationAbsolute = m_translation;
@@ -84,10 +82,10 @@ void CalCoreBone::calculateState()
   }
 
   // calculate all child bones
-  std::list<int>::iterator iteratorChildId;
+  std::vector<int>::iterator iteratorChildId;
   for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId)
   {
-    m_pCoreSkeleton->getCoreBone(*iteratorChildId)->calculateState();
+    skeleton->getCoreBone(*iteratorChildId)->calculateState(skeleton);
   }
 }
 
@@ -100,7 +98,7 @@ void CalCoreBone::calculateState()
   * @return A reference to the child ID list.
   *****************************************************************************/
 
-std::list<int>& CalCoreBone::getListChildId()
+const std::vector<int>& CalCoreBone::getListChildId()
 {
   return m_listChildId;
 }
@@ -201,21 +199,6 @@ const CalVector& CalCoreBone::getTranslationBoneSpace() const
 }
 
  /*****************************************************************************/
-/** Sets the core skeleton.
-  *
-  * This function sets the core skeleton to which the core bone instance is
-  * attached to.
-  *
-  * @param pCoreSkeleton The core skeleton to which the core bone instance
-  *                      should be attached to.
-  *****************************************************************************/
-
-void CalCoreBone::setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton)
-{
-  m_pCoreSkeleton = pCoreSkeleton;
-}
-
- /*****************************************************************************/
 /** Sets the parent ID.
   *
   * This function sets the parent ID of the core bone instance.
@@ -226,21 +209,6 @@ void CalCoreBone::setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton)
 void CalCoreBone::setParentId(int parentId)
 {
   m_parentId = parentId;
-}
-
-/*****************************************************************************/
-/** Provides access to the core skeleton.
-  *
-  * This function returns the core skeleton.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core skeleton
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreSkeleton *CalCoreBone::getCoreSkeleton()
-{
-  return m_pCoreSkeleton;
 }
 
  /*****************************************************************************/
@@ -308,17 +276,17 @@ void CalCoreBone::setTranslationBoneSpace(const CalVector& translation)
   *****************************************************************************/
 
 
-void CalCoreBone::scale(float factor)
+void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton)
 {
 	m_translation*=factor;
 	m_translationAbsolute*=factor;
 	m_translationBoneSpace*=factor;
 	
 	// calculate all child bones
-	std::list<int>::iterator iteratorChildId;
+	std::vector<int>::const_iterator iteratorChildId;
 	for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId)
 	{
-		m_pCoreSkeleton->getCoreBone(*iteratorChildId)->scale(factor);
+		skeleton->getCoreBone(*iteratorChildId)->scale(factor, skeleton);
 	}
 }
 

@@ -854,9 +854,6 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			pCoreBone->setTranslationBoneSpace(translationBoneSpace);
 			pCoreBone->setRotationBoneSpace(rotationBoneSpace);
 
-			// set the core skeleton of the core bone instance
-			pCoreBone->setCoreSkeleton(&coreSkeleton);
-
       CBaseNode * pBoneNode = pBoneCandidate->GetNode();
       pCoreBone->setLightType( pBoneNode->GetLightType() );
       CalVector color;

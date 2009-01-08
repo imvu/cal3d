@@ -32,7 +32,7 @@ public:
   CalCoreBone* getCoreBone(const std::string& strName);
   int getCoreBoneId(const std::string& strName);
   bool mapCoreBoneName(int coreBoneId, const std::string& strName);
-  std::list<int>& getListRootCoreBoneId();
+  const std::vector<int>& getListRootCoreBoneId();
   std::vector<CalCoreBone *>& getVectorCoreBone();
   void scale(float factor);
   unsigned int getNumCoreBones() { return ( unsigned int ) m_vectorCoreBone.size(); }
@@ -40,8 +40,8 @@ public:
   void getSceneAmbientColor( CalVector & color );
 
 private:
-  std::vector<CalCoreBone *> m_vectorCoreBone;
-  std::map< std::string, int > m_mapCoreBoneNames;
-  std::list<int> m_listRootCoreBoneId;
+  std::vector<CalCoreBone*> m_vectorCoreBone;
+  std::map<std::string, int> m_mapCoreBoneNames;
+  std::vector<int> m_listRootCoreBoneId;
   CalVector m_sceneAmbientColor;
 };

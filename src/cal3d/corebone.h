@@ -35,25 +35,23 @@ public:
   CalCoreBone(const std::string& name);
 
   bool addChildId(int childId);
-  void calculateState();
-  std::list<int>& getListChildId();
+  void calculateState(CalCoreSkeleton* skeleton);
+  const std::vector<int>& getListChildId();
   const std::string& getName() const { return m_strName; }
   int getParentId();
-  CalCoreSkeleton *getCoreSkeleton();
   const CalQuaternion& getRotation();
   const CalQuaternion& getRotationAbsolute();
   const CalQuaternion& getRotationBoneSpace();
   const CalVector& getTranslation() const;
   const CalVector& getTranslationAbsolute() const;
   const CalVector& getTranslationBoneSpace() const;
-  void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
   void setParentId(int parentId);
   void setRotation(const CalQuaternion& rotation);
   void setRotationBoneSpace(const CalQuaternion& rotation);
   void setTranslation(const CalVector& translation);
   void setTranslationBoneSpace(const CalVector& translation);
 
-  void scale(float factor);
+  void scale(float factor, CalCoreSkeleton* skeleton);
 
   bool hasLightingData();
   void getLightColor( CalVector & );
@@ -63,9 +61,8 @@ public:
 
 private:
   std::string m_strName;
-  CalCoreSkeleton *m_pCoreSkeleton;
   int m_parentId;
-  std::list<int> m_listChildId;
+  std::vector<int> m_listChildId;
   CalVector m_translation;
   CalQuaternion m_rotation;
   CalVector m_translationAbsolute;

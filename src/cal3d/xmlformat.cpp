@@ -650,9 +650,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             pCoreBone->addChildId(childId);
         }
 
-        // set the core skeleton of the core bone instance
-        pCoreBone->setCoreSkeleton(pCoreSkeleton);
-
         // add the core bone to the core skeleton instance
         pCoreSkeleton->addCoreBone(pCoreBone);
 

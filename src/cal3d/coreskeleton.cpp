@@ -84,10 +84,10 @@ int CalCoreSkeleton::addCoreBone(CalCoreBone *pCoreBone)
 void CalCoreSkeleton::calculateState()
 {
   // calculate all bone states of the skeleton
-  std::list<int>::iterator iteratorRootCoreBoneId;
+  std::vector<int>::iterator iteratorRootCoreBoneId;
   for(iteratorRootCoreBoneId = m_listRootCoreBoneId.begin(); iteratorRootCoreBoneId != m_listRootCoreBoneId.end(); ++iteratorRootCoreBoneId)
   {
-    m_vectorCoreBone[*iteratorRootCoreBoneId]->calculateState();
+    m_vectorCoreBone[*iteratorRootCoreBoneId]->calculateState(this);
   }
 }
 
@@ -219,7 +219,7 @@ bool CalCoreSkeleton::mapCoreBoneName(int coreBoneId, const std::string& strName
   * @return A reference to the root core bone id list.
   *****************************************************************************/
 
-std::list<int>& CalCoreSkeleton::getListRootCoreBoneId()
+const std::vector<int>& CalCoreSkeleton::getListRootCoreBoneId()
 {
   return m_listRootCoreBoneId;
 }
@@ -241,10 +241,10 @@ std::vector<CalCoreBone *>& CalCoreSkeleton::getVectorCoreBone()
 
 void CalCoreSkeleton::scale(float factor)
 {
-  std::list<int>::iterator iteratorRootCoreBoneId;
+  std::vector<int>::iterator iteratorRootCoreBoneId;
   for(iteratorRootCoreBoneId = m_listRootCoreBoneId.begin(); iteratorRootCoreBoneId != m_listRootCoreBoneId.end(); ++iteratorRootCoreBoneId)
   {
-    m_vectorCoreBone[*iteratorRootCoreBoneId]->scale(factor);
+    m_vectorCoreBone[*iteratorRootCoreBoneId]->scale(factor, this);
   }
 
 }

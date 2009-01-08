@@ -167,9 +167,6 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			pCoreBone->setTranslationBoneSpace(translationBoneSpace);
 			pCoreBone->setRotationBoneSpace(rotationBoneSpace);
 
-			// set the core skeleton of the core bone instance
-			pCoreBone->setCoreSkeleton(&coreSkeleton);
-
 			// add the core bone to the core skeleton instance
 			int boneId;
 			boneId = coreSkeleton.addCoreBone(pCoreBone);

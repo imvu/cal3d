@@ -320,7 +320,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
   
   // calculate all child bones
-  std::list<int>::iterator iteratorChildId;
+  std::vector<int>::const_iterator iteratorChildId;
   for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId )
   {
     CalBone * bo = skeleton->getBone(*iteratorChildId);
