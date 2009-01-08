@@ -36,15 +36,15 @@ public:
 
   bool addChildId(int childId);
   void calculateState(CalCoreSkeleton* skeleton);
-  const std::vector<int>& getListChildId();
+  const std::vector<int>& getListChildId() const { return m_listChildId; }
   const std::string& getName() const { return m_strName; }
-  int getParentId();
-  const CalQuaternion& getRotation();
-  const CalQuaternion& getRotationAbsolute();
-  const CalQuaternion& getRotationBoneSpace();
-  const CalVector& getTranslation() const;
-  const CalVector& getTranslationAbsolute() const;
-  const CalVector& getTranslationBoneSpace() const;
+  int getParentId() const { return m_parentId; }
+  const CalQuaternion& getRotation() const { return m_rotation; }
+  const CalQuaternion& getRotationAbsolute() const { return m_rotationAbsolute; }
+  const CalQuaternion& getRotationBoneSpace() const { return m_rotationBoneSpace; }
+  const CalVector& getTranslation() const { return m_translation; }
+  const CalVector& getTranslationAbsolute() const { return m_translationAbsolute; }
+  const CalVector& getTranslationBoneSpace() const { return m_translationBoneSpace; }
   void setParentId(int parentId);
   void setRotation(const CalQuaternion& rotation);
   void setRotationBoneSpace(const CalQuaternion& rotation);

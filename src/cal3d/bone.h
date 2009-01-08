@@ -31,7 +31,7 @@ public:
   void calculateState(CalSkeleton* skeleton, unsigned myIndex);
   void clearState();
   const CalCoreBone& getCoreBone() {
-    return *m_pCoreBone;
+    return m_coreBone;
   }
   void setRotation(const CalQuaternion& rotation);
   const CalQuaternion& getRotation();
@@ -45,7 +45,9 @@ public:
   void lockState();
 
 private:
-  CalCoreBone *m_pCoreBone;
+  // Store a copy of the CoreBone locally for better cache locality.
+  const CalCoreBone m_coreBone;
+
   float m_accumulatedWeight;
   float m_accumulatedWeightAbsolute;
   float m_accumulatedReplacementAttenuation;

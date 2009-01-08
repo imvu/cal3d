@@ -25,16 +25,10 @@
 #include "cal3d/skeleton.h"
 #include "cal3d/coreskeleton.h"
 
- /*****************************************************************************/
-/** Constructs the bone instance.
-  *
-  * This function is the default constructor of the bone instance.
-  *****************************************************************************/
 
 CalBone::CalBone(CalCoreBone *pCoreBone)
-  : m_pCoreBone(pCoreBone)
+  : m_coreBone(*pCoreBone)
 {
-  assert(pCoreBone);
 }
 
  /*****************************************************************************/
@@ -180,12 +174,12 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   if(m_accumulatedWeight == 0.0f)
   {
     // set the bone to the initial skeleton state
-    m_translation = m_pCoreBone->getTranslation();
-    m_rotation = m_pCoreBone->getRotation();
+    m_translation = m_coreBone.getTranslation();
+    m_rotation = m_coreBone.getRotation();
   }
 
   // get parent bone id
-  int parentId = m_pCoreBone->getParentId();
+  int parentId = m_coreBone.getParentId();
 
   if(parentId == -1)
   {
@@ -208,7 +202,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   }
 
   // calculate the bone space transformation
-  CalVector translationBoneSpace(m_pCoreBone->getTranslationBoneSpace());
+  CalVector translationBoneSpace(m_coreBone.getTranslationBoneSpace());
 
   // Must go before the *= m_rotationAbsolute.
   bool meshScalingOn;
@@ -280,13 +274,13 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
     //   * boneAbsRotInAnimPose
     //   + boneAbsPosInAnimPose
 
-    CalQuaternion coreBoneRotBoneSpaceInverse = m_pCoreBone->getRotationBoneSpace();
+    CalQuaternion coreBoneRotBoneSpaceInverse = m_coreBone.getRotationBoneSpace();
     coreBoneRotBoneSpaceInverse.invert();
     translationBoneSpace *= coreBoneRotBoneSpaceInverse;
     translationBoneSpace.x *= m_meshScaleAbsolute.x;
     translationBoneSpace.y *= m_meshScaleAbsolute.y;
     translationBoneSpace.z *= m_meshScaleAbsolute.z;
-    translationBoneSpace *= m_pCoreBone->getRotationBoneSpace();
+    translationBoneSpace *= m_coreBone.getRotationBoneSpace();
 
   } else {
     meshScalingOn = false;
@@ -294,10 +288,10 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   translationBoneSpace *= m_rotationAbsolute;
   translationBoneSpace += m_translationAbsolute;
 
-  m_rotationBoneSpace = m_pCoreBone->getRotationBoneSpace();
+  m_rotationBoneSpace = m_coreBone.getRotationBoneSpace();
   m_rotationBoneSpace *= m_rotationAbsolute;
 
-  CalMatrix transformMatrix = m_pCoreBone->getRotationBoneSpace();
+  CalMatrix transformMatrix = m_coreBone.getRotationBoneSpace();
   if( meshScalingOn ) {
 
     // By applying each scale component to the row, instead of the column, we
@@ -321,7 +315,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   
   // calculate all child bones
   std::vector<int>::const_iterator iteratorChildId;
-  for(iteratorChildId = m_pCoreBone->getListChildId().begin(); iteratorChildId != m_pCoreBone->getListChildId().end(); ++iteratorChildId )
+  for(iteratorChildId = m_coreBone.getListChildId().begin(); iteratorChildId != m_coreBone.getListChildId().end(); ++iteratorChildId )
   {
     CalBone * bo = skeleton->getBone(*iteratorChildId);
     bo->calculateState(skeleton, *iteratorChildId);
