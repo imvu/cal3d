@@ -34,7 +34,7 @@ public:
   const std::vector<Face>& getVectorFace() const {
       return m_vectorFace;
   }
-  boost::shared_ptr<CalCoreMaterial> getMaterial() {
+  const boost::shared_ptr<CalCoreMaterial>& getMaterial() {
       return m_material;
   }
   void setMaterial(boost::shared_ptr<CalCoreMaterial> material) {

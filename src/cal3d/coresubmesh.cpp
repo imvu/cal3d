@@ -295,66 +295,15 @@ int CalCoreSubmesh::addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarge
   return subMorphTargetId;
 }
 
- /*****************************************************************************/
-/** Provides access to a core sub morph target.
-  *
-  * This function returns the core sub morph target with the given ID.
-  *
-  * @param id The ID of the core sub morph target that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core sub morph target
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-boost::shared_ptr<CalCoreSubMorphTarget> CalCoreSubmesh::getCoreSubMorphTarget(int id)
-{
-  if((id < 0) || (id >= (int)m_vectorCoreSubMorphTarget.size()))
-  {
-    // should assert
-    return boost::shared_ptr<CalCoreSubMorphTarget>();
-  }
-
-  return m_vectorCoreSubMorphTarget[id];
-}
-
- /*****************************************************************************/
-/** Returns the number of core sub morph targets.
-  *
-  * This function returns the number of core sub morph targets in the core sub mesh
-  * instance.
-  *
-  * @return The number of core sub morph targets.
-  *****************************************************************************/
-
 int CalCoreSubmesh::getCoreSubMorphTargetCount()
 {
   return m_vectorCoreSubMorphTarget.size();
 }
 
- /*****************************************************************************/
-/** Returns the core sub morph target vector.
-  *
-  * This function returns the vector that contains all core sub morph target
-  *  of the core submesh instance.
-  *
-  * @return A reference to the core sub morph target vector.
-  *****************************************************************************/
-
 CalCoreSubmesh::CoreSubMorphTargetVector& CalCoreSubmesh::getVectorCoreSubMorphTarget()
 {
   return m_vectorCoreSubMorphTarget;
 }
-
- /*****************************************************************************/
-/** Scale the Submesh.
-  *
-  * This function rescale all the data that are in the core submesh instance.
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
 
 void CalCoreSubmesh::scale(float factor)
 {
