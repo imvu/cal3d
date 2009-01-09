@@ -52,7 +52,7 @@ public:
 
 private:
   // Store a copy of the CoreBone locally for better cache locality.
-  const CalCoreBone m_coreBone;
+  CalCoreBone m_coreBone; // really const, but we want operator= to work
 
   float m_accumulatedWeight;
   float m_accumulatedWeightAbsolute;

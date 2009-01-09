@@ -605,11 +605,11 @@ void
 CalMixer::applyBoneAdjustments()
 {
   CalSkeleton * pSkeleton = m_pModel->getSkeleton();
-  std::vector<CalBone *>& vectorBone = pSkeleton->getVectorBone();
+  std::vector<CalBone>& vectorBone = pSkeleton->getVectorBone();
   unsigned int i;
   for( i = 0; i < m_numBoneAdjustments; i++ ) {
     CalMixerBoneAdjustmentAndBoneId * ba = & m_boneAdjustmentAndBoneIdArray[ i ];
-    CalBone * bo = vectorBone[ ba->boneId_ ];
+    CalBone * bo = &vectorBone[ ba->boneId_ ];
     const CalCoreBone& cbo = bo->getCoreBone();
     if( ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale ) {
       bo->setMeshScaleAbsolute( ba->boneAdjustment_.meshScaleAbsolute_ );
@@ -705,7 +705,7 @@ void CalMixer::updateSkeleton()
   pSkeleton->clearState();
 
   // get the bone vector of the skeleton
-  std::vector<CalBone *>& vectorBone = pSkeleton->getVectorBone();
+  std::vector<CalBone>& vectorBone = pSkeleton->getVectorBone();
 
   // The bone adjustments are "replace" so they have to go first, giving them
   // highest priority and full influence.  Subsequent animations affecting the same bones, 
@@ -737,7 +737,7 @@ void CalMixer::updateSkeleton()
         if( ct->getCoreBoneId() >= int(vectorBone.size()) ) {
           continue;
         }
-        CalBone * pBone = vectorBone[ ct->getCoreBoneId() ];
+        CalBone * pBone = &vectorBone[ ct->getCoreBoneId() ];
         
         // get the current translation and rotation
         CalVector translation;

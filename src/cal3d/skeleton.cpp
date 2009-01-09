@@ -31,29 +31,10 @@ CalSkeleton::CalSkeleton(CalCoreSkeleton* pCoreSkeleton)
   m_vectorBone.reserve(boneCount);
 
   for(size_t boneId = 0; boneId < boneCount; ++boneId) {
-    CalBone* pBone = new CalBone(vectorCoreBone[boneId]);
-
-    // insert bone into bone vector
-    m_vectorBone.push_back(pBone);
+    m_vectorBone.push_back(CalBone(vectorCoreBone[boneId]));
   }
 
   boneTransforms.resize(boneCount);
-}
-
- /*****************************************************************************/
-/** Destructs the skeleton instance.
-  *
-  * This function is the destructor of the skeleton instance.
-  *****************************************************************************/
-
-CalSkeleton::~CalSkeleton()
-{
-  // destroy all bones
-  std::vector<CalBone *>::iterator iteratorBone;
-  for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
-  {
-    delete (*iteratorBone);
-  }
 }
 
  /*****************************************************************************/
@@ -71,7 +52,7 @@ void CalSkeleton::calculateState()
   std::vector<int>::const_iterator iteratorRootBoneId;
   for(iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId)
   {
-    m_vectorBone[*iteratorRootBoneId]->calculateState(this, *iteratorRootBoneId);
+    m_vectorBone[*iteratorRootBoneId].calculateState(this, *iteratorRootBoneId);
   }
 }
 
@@ -85,10 +66,10 @@ void CalSkeleton::calculateState()
 void CalSkeleton::clearState()
 {
   // clear all bone states of the skeleton
-  std::vector<CalBone *>::iterator iteratorBone;
+  std::vector<CalBone>::iterator iteratorBone;
   for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
   {
-    (*iteratorBone)->clearState();
+    (*iteratorBone).clearState();
   }
 }
 
@@ -106,7 +87,7 @@ void CalSkeleton::clearState()
 
 CalBone *CalSkeleton::getBone(int boneId)
 {
-  return m_vectorBone[boneId];
+  return &m_vectorBone[boneId];
 }
 
  /*****************************************************************************/
@@ -134,7 +115,7 @@ CalCoreSkeleton *CalSkeleton::getCoreSkeleton()
   * @return A reference to the bone vector.
   *****************************************************************************/
 
-std::vector<CalBone *>& CalSkeleton::getVectorBone()
+std::vector<CalBone>& CalSkeleton::getVectorBone()
 {
   return m_vectorBone;
 }
@@ -149,10 +130,10 @@ std::vector<CalBone *>& CalSkeleton::getVectorBone()
 void CalSkeleton::lockState()
 {
   // lock all bone states of the skeleton
-  std::vector<CalBone *>::iterator iteratorBone;
+  std::vector<CalBone>::iterator iteratorBone;
   for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
   {
-    (*iteratorBone)->lockState();
+    iteratorBone->lockState();
   }
 }
 

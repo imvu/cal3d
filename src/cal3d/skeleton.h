@@ -23,18 +23,17 @@ class CAL3D_API CalSkeleton
 {
 public:
   CalSkeleton(CalCoreSkeleton* pCoreSkeleton);
-  ~CalSkeleton();
 
   void calculateState();
   void clearState();
-  CalBone *getBone(int boneId);
-  CalCoreSkeleton *getCoreSkeleton();
-  std::vector<CalBone *>& getVectorBone();
+  CalBone* getBone(int boneId);
+  CalCoreSkeleton* getCoreSkeleton();
+  std::vector<CalBone>& getVectorBone();
   void lockState();
 
   SSEArray<BoneTransform> boneTransforms;
 
 private:
   CalCoreSkeleton *m_pCoreSkeleton;
-  std::vector<CalBone *> m_vectorBone;
+  std::vector<CalBone> m_vectorBone;
 };
