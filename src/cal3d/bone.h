@@ -25,23 +25,29 @@ public:
   CalBone(CalCoreBone* pCoreBone);
 
   void blendState(
-    float unrampedWeight, const CalVector& translation, 
-    const CalQuaternion & rotation, float scale = 1.0f,
-    bool replace = false, float rampValue = 1.0f );
+    float unrampedWeight,
+    const CalVector& translation, 
+    const CalQuaternion & rotation,
+    float scale = 1.0f,
+    bool replace = false,
+    float rampValue = 1.0f);
   void calculateState(CalSkeleton* skeleton, unsigned myIndex);
   void clearState();
   const CalCoreBone& getCoreBone() {
     return m_coreBone;
   }
+
   void setRotation(const CalQuaternion& rotation);
   const CalQuaternion& getRotation();
   const CalQuaternion& getRotationAbsolute();
-  const CalQuaternion& getRotationBoneSpace();
+
   void setTranslation(const CalVector& translation);
   const CalVector& getTranslation();
   const CalVector& getTranslationAbsolute();
-  inline void setMeshScaleAbsolute( CalVector const & sv ) {
-    m_meshScaleAbsolute = sv; }
+
+  void setMeshScaleAbsolute(const CalVector& sv) {
+    m_meshScaleAbsolute = sv;
+  }
   void lockState();
 
 private:
@@ -59,7 +65,4 @@ private:
 
   CalVector m_translationAbsolute;
   CalQuaternion m_rotationAbsolute;
-
-  //CalVector m_translationBoneSpace;
-  CalQuaternion m_rotationBoneSpace;
 };

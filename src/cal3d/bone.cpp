@@ -288,9 +288,6 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   translationBoneSpace *= m_rotationAbsolute;
   translationBoneSpace += m_translationAbsolute;
 
-  m_rotationBoneSpace = m_coreBone.getRotationBoneSpace();
-  m_rotationBoneSpace *= m_rotationAbsolute;
-
   CalMatrix transformMatrix = m_coreBone.getRotationBoneSpace();
   if( meshScalingOn ) {
 
@@ -377,20 +374,6 @@ const CalQuaternion& CalBone::getRotation()
 const CalQuaternion& CalBone::getRotationAbsolute()
 {
   return m_rotationAbsolute;
-}
-
- /*****************************************************************************/
-/** Returns the current bone space rotation.
-  *
-  * This function returns the current rotation to bring a point into the bone
-  * instance space.
-  *
-  * @return The rotation to bring a point into bone space.
-  *****************************************************************************/
-
-const CalQuaternion& CalBone::getRotationBoneSpace()
-{
-  return m_rotationBoneSpace;
 }
 
  /*****************************************************************************/
