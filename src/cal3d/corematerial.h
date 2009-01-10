@@ -12,7 +12,7 @@
 
 #include "cal3d/global.h"
 
-class CAL3D_API CalCoreMaterial
+class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder
 {
 // misc
 public:
@@ -38,12 +38,8 @@ private:
   Color m_specularColor;
   float m_shininess;
   std::vector<Map> m_vectorMap;
-  Cal::UserData* m_userData;
 
 public:
-  CalCoreMaterial();
-  ~CalCoreMaterial();
-
   Color& getAmbientColor();
   Color& getDiffuseColor();
   int getMapCount() const;
@@ -51,7 +47,6 @@ public:
   const std::string& getMapType(int mapId) const;
   float getShininess();
   Color& getSpecularColor();
-  Cal::UserData* getUserData();
   std::vector<Map>& getVectorMap();
   void reserve(int mapCount);
   void setAmbientColor(const Color& ambientColor);
@@ -59,6 +54,5 @@ public:
   bool setMap(int mapId, const Map& map);
   void setShininess(float shininess);
   void setSpecularColor(const Color& specularColor);
-  void setUserData(Cal::UserData* userData);
   bool getTwoSided() const { return getMapCount() > 1; } // Should come from check box.
 };

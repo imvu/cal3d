@@ -67,9 +67,31 @@ private:
 
 namespace Cal {
 
-  // global typedefs
   struct UserData {
-      virtual ~UserData() {}
+    virtual ~UserData() {}
+  };
+
+  struct CAL3D_API UserDataHolder {
+  public:
+    UserDataHolder() 
+    : m_userData(0)
+    { }
+
+    ~UserDataHolder() {
+        delete m_userData;
+    }
+
+    void setUserData(UserData* userData) {
+        delete m_userData;
+        m_userData = userData;
+    }
+
+    UserData* getUserData() const {
+        return m_userData;
+    }
+
+  private:
+      UserData* m_userData;
   };
 
   // file magic cookies

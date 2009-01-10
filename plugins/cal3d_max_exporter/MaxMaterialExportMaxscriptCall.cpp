@@ -35,6 +35,7 @@
 //----------------------------------------------------------------------------//
 
 #include "StdAfx.h"
+#include "cal3d/corematerial.h"
 #include "Exporter.h"
 #include "BaseInterface.h"
 #include "SkeletonCandidate.h"

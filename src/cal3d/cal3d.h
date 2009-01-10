@@ -18,7 +18,6 @@
 #include "cal3d/coreanimatedmorph.h"
 #include "cal3d/corekeyframe.h"
 #include "cal3d/coremorphkeyframe.h"
-#include "cal3d/corematerial.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coresubmesh.h"

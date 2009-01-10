@@ -12,34 +12,8 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/error.h"
 #include "cal3d/corematerial.h"
-
- /*****************************************************************************/
-/** Constructs the core material instance.
-  *
-  * This function is the default constructor of the core material instance.
-  *****************************************************************************/
-
-CalCoreMaterial::CalCoreMaterial()
-  : m_userData(0)
-{
-} 
-
- /*****************************************************************************/
-/** Destructs the core model instance.
-  *
-  * This function is the destructor of the core model instance.
-  *****************************************************************************/
-
-CalCoreMaterial::~CalCoreMaterial()
-{
-    delete m_userData;
-}
 
  /*****************************************************************************/
 /** Returns the ambient color.
@@ -160,19 +134,6 @@ CalCoreMaterial::Color& CalCoreMaterial::getSpecularColor()
 }
 
  /*****************************************************************************/
-/** Provides access to the user data.
-  *
-  * This function returns the user data stored in the core material instance.
-  *
-  * @return The user data stored in the core material instance.
-  *****************************************************************************/
-
-Cal::UserData* CalCoreMaterial::getUserData()
-{
-  return m_userData;
-}
-
- /*****************************************************************************/
 /** Returns the map vector.
   *
   * This function returns the vector that contains all maps of the core material
@@ -276,9 +237,4 @@ void CalCoreMaterial::setShininess(float shininess)
 void CalCoreMaterial::setSpecularColor(const CalCoreMaterial::Color& specularColor)
 {
   m_specularColor = specularColor;
-}
-
-void CalCoreMaterial::setUserData(Cal::UserData* userData)
-{
-  m_userData = userData;
 }
