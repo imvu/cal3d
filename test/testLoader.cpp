@@ -1,5 +1,6 @@
 #include "TestPrologue.h"
 #include <sstream>
+#include <cal3d/coresubmesh.h>
 
 
 const char* animationText =

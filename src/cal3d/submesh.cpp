@@ -57,64 +57,6 @@ CalSubmesh::CalSubmesh(CalCoreSubmesh *pCoreSubmesh)
 }
 
  /*****************************************************************************/
-/** Provides access to the core submesh.
-  *
-  * This function returns the core submesh on which this submesh instance is
-  * based on.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core submesh
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreSubmesh *CalSubmesh::getCoreSubmesh()
-{
-  return m_pCoreSubmesh;
-}
-
- /*****************************************************************************/
-/** Returns the normal vector.
-  *
-  * This function returns the vector that contains all normals of the submesh
-  * instance.
-  *
-  * @return A reference to the normal vector.
-  *****************************************************************************/
-
-std::vector<CalVector>& CalSubmesh::getVectorNormal()
-{
-  return m_vectorNormal;
-}
-
-
- /*****************************************************************************/
-/** Returns the vertex vector.
-  *
-  * This function returns the vector that contains all vertices of the submesh
-  * instance.
-  *
-  * @return A reference to the vertex vector.
-  *****************************************************************************/
-
-std::vector<CalVector>& CalSubmesh::getVectorVertex()
-{
-  return m_vectorVertex;
-}
-
- /*****************************************************************************/
-/** Returns the number of vertices.
-  *
-  * This function returns the number of vertices in the submesh instance.
-  *
-  * @return The number of vertices.
-  *****************************************************************************/
-
-int CalSubmesh::getVertexCount()
-{
-  return m_vertexCount;
-}
-
- /*****************************************************************************/
 /** Sets the LOD level.
   *
   * This function sets the LOD level of the submesh instance.
@@ -195,11 +137,11 @@ float CalSubmesh::getMorphTargetWeight(int blendId)
   return m_vectorMorphTargetWeight[blendId];
 }
 
-void
-CalSubmesh::getMorphIdAndWeightArray( MorphIdAndWeight * arrayResult, 
-                                     unsigned int * numMiawsResult, 
-                                     unsigned int maxMiaws )
-{
+void CalSubmesh::getMorphIdAndWeightArray(
+    MorphIdAndWeight * arrayResult, 
+    unsigned int * numMiawsResult, 
+    unsigned int maxMiaws
+) const {
   if( maxMiaws == 0 ) {
     * numMiawsResult = 0;
     return;
@@ -463,8 +405,7 @@ bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * wei
   * @return The weight of the base vertices.
   *****************************************************************************/
 
-float CalSubmesh::getBaseWeight()
-{
+float CalSubmesh::getBaseWeight() const {
   float baseWeight = 1.0f;
   int morphTargetCount = getMorphTargetWeightCount();
   int morphTargetId;
@@ -487,18 +428,3 @@ std::vector<float>& CalSubmesh::getVectorMorphTargetWeight()
 {
   return m_vectorMorphTargetWeight;
 }
-
- /*****************************************************************************/
-/** Returns the number of weights.
-  *
-  * This function returns the number of weights.
-  *
-  * @return The number of weights.
-  *****************************************************************************/
-
-int CalSubmesh::getMorphTargetWeightCount()
-{
-  return m_vectorMorphTargetWeight.size();
-}
-
-//****************************************************************************//

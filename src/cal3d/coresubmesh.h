@@ -135,14 +135,25 @@ public:
   int getCoreMaterialThreadId();
   int getFaceCount();
   int getLodCount();
-  bool hasNonWhiteVertexColors() { return m_hasNonWhiteVertexColors; }
+  bool hasNonWhiteVertexColors() const {
+    return m_hasNonWhiteVertexColors;
+  }
   const std::vector<Face>& getVectorFace() const;
-  std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate();
+  const std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate() const {
+    return m_vectorvectorTextureCoordinate;
+  }
 
   const SSEArray<Vertex>& getVectorVertex() const {
     return m_vertices;
   }
-  std::vector<CalColor32>& getVertexColors();
+
+  std::vector<CalColor32>& getVertexColors() {
+    return m_vertexColors;
+  }
+  const std::vector<CalColor32>& getVertexColors() const {
+    return m_vertexColors;
+  }
+
   std::vector<LodData>& getLodData() { return m_lodData; }
 
   int getVertexCount();
@@ -173,7 +184,7 @@ public:
   }
 
   bool isStatic() const;
-  BoneTransform getStaticTransform(const BoneTransform* bones);
+  BoneTransform getStaticTransform(const BoneTransform* bones) const;
 
   const InfluenceVector& getInfluences() const {
     return influences;

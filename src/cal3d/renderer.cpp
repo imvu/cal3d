@@ -26,15 +26,7 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/physique.h"
 
- /*****************************************************************************/
-/** Returns the number of maps.
-  *
-  * This function returns the number of maps in the selected mesh/submesh.
-  *
-  * @return The number of maps.
-  *****************************************************************************/
-
-int CalRenderer::getMapCount(CalSubmesh* submesh)
+int CalRenderer::getMapCount(const CalSubmesh* submesh)
 {
   // get the core material
   const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
@@ -43,7 +35,7 @@ int CalRenderer::getMapCount(CalSubmesh* submesh)
   return pCoreMaterial->getMapCount();
 }
 
-Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
+Cal::UserData* CalRenderer::getMaterialUserData(const CalSubmesh* submesh)
 {
   // get the core material
   const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
@@ -51,17 +43,7 @@ Cal::UserData* CalRenderer::getMaterialUserData(CalSubmesh* submesh)
   return pCoreMaterial->getUserData();
 }
 
- /*****************************************************************************/
-/** Provides access to the specular color.
-  *
-  * This function returns the specular color of the material of the selected
-  * mesh/submesh.
-  *
-  * @param pColorBuffer A pointer to the user-provided buffer where the color
-  *                     data is written to.
-  *****************************************************************************/
-
-void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuffer)
+void CalRenderer::getSpecularColor(const CalSubmesh* submesh, unsigned char *pColorBuffer)
 {
   // get the core material
   const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
@@ -95,9 +77,9 @@ void CalRenderer::getSpecularColor(CalSubmesh* submesh, unsigned char *pColorBuf
   * @return true if texture coordinates for the given map are valid.
   *****************************************************************************/
 bool 
-CalRenderer::textureCoordinatesForMapValid(CalSubmesh* submesh, int mapId )
+CalRenderer::textureCoordinatesForMapValid(const CalSubmesh* submesh, int mapId )
 {
-  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
+  const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
   if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size())) {
     return false;
   }

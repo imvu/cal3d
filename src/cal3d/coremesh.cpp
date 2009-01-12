@@ -183,7 +183,7 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & mo
     pCalCoreSubMorphTarget->reserve(vertexCount);
     pCalCoreSubMorphTarget->setName( morphTargetName );
     const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
-    std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& textCoordVector = (*otherIteratorCoreSubmesh)->getVectorVectorTextureCoordinate();
+    const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& textCoordVector = (*otherIteratorCoreSubmesh)->getVectorVectorTextureCoordinate();
     
     for(int i = 0;i<vertexCount;++i)
     {

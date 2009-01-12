@@ -23,39 +23,52 @@ struct MorphIdAndWeight {
   float weight_;
 };
 
-class CAL3D_API CalSubmesh
+class CAL3D_API CalSubmesh : public Cal::UserDataHolder
 {
 public:
   typedef CalCoreSubmesh::Face Face;
 
   CalSubmesh(CalCoreSubmesh* pCoreSubmesh);
-  CalCoreSubmesh *getCoreSubmesh();
+  CalCoreSubmesh *getCoreSubmesh() const {
+    return m_pCoreSubmesh;
+  }
 
   const std::vector<Face>& getVectorFace() const {
-      return m_vectorFace;
+    return m_vectorFace;
   }
-  const boost::shared_ptr<CalCoreMaterial>& getMaterial() {
-      return m_material;
+  const boost::shared_ptr<CalCoreMaterial>& getMaterial() const {
+    return m_material;
   }
   void setMaterial(boost::shared_ptr<CalCoreMaterial> material) {
-      m_material = material;
+    m_material = material;
   }
 
-  std::vector<CalVector>& getVectorNormal();
-  int getFaceCount() { return m_faceCount; }
-  std::vector<CalVector>& getVectorVertex();
-  int getVertexCount();
+  std::vector<CalVector>& getVectorNormal() {
+    return m_vectorNormal;
+  }
+  int getFaceCount() const {
+    return m_faceCount;
+  }
+  std::vector<CalVector>& getVectorVertex() {
+    return m_vectorVertex;
+  }
+  int getVertexCount() const {
+    return m_vertexCount;
+  }
   void setLodLevel(float lodLevel);
   std::vector<float>& getVectorWeight();
   void setMorphTargetWeight(int blendId,float weight);
   float getMorphTargetWeight(int blendId);
   void setMorphTargetWeight(std::string const & morphName,float weight);
   bool getMorphTargetWeight(std::string const & morphName, float * weightOut);
-  void getMorphIdAndWeightArray( MorphIdAndWeight * arrayResult, 
+  void getMorphIdAndWeightArray(
+    MorphIdAndWeight * arrayResult, 
     unsigned int * numMiawsResult, 
-    unsigned int maxMiaws );
-  float getBaseWeight();
-  int getMorphTargetWeightCount();
+    unsigned int maxMiaws) const;
+  float getBaseWeight() const;
+  int getMorphTargetWeightCount() const {
+    return m_vectorMorphTargetWeight.size();
+  }
   std::vector<float>& getVectorMorphTargetWeight();
   void clearMorphTargetScales();
   void clearMorphTargetState( std::string const & morphName );

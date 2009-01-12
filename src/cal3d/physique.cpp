@@ -401,7 +401,7 @@ void automaticallyDetectSkinRoutine(
 
 void CalPhysique::calculateVerticesAndNormals(
   const BoneTransform* boneTransforms,
-  CalSubmesh *pSubmesh,
+  const CalSubmesh *pSubmesh,
   float *pVertexBuffer
 ) {
   const int vertexCount = pSubmesh->getVertexCount();

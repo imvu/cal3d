@@ -7,6 +7,7 @@
 #include <cal3d/physique.h>
 #include <cal3d/vector4.h>
 #include <cal3d/streamops.h>
+#include <cal3d/coresubmorphtarget.h>
 
 const CalColor32 black = 0;
 

@@ -146,16 +146,6 @@ const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const
   return m_vectorFace;
 }
 
-std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> > & CalCoreSubmesh::getVectorVectorTextureCoordinate()
-{
-  return m_vectorvectorTextureCoordinate;
-}
-
-std::vector<CalColor32>& CalCoreSubmesh::getVertexColors()
-{
-  return m_vertexColors;
-}
-
 int CalCoreSubmesh::getVertexCount()
 {
   return m_vertices.size();
@@ -316,7 +306,7 @@ bool CalCoreSubmesh::isStatic() const {
   return m_isStatic && m_vectorCoreSubMorphTarget.empty();
 }
 
-BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) {
+BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) const {
   BoneTransform rm;
 
   std::set<Influence>::const_iterator current = m_staticInfluenceSet.influences.begin();

@@ -26,6 +26,7 @@
 #include "cal3d/cal3d_wrapper.h"
 #include "cal3d/coremodel.h"
 #include "cal3d/corematerial.h"
+#include "cal3d/coresubmesh.h"
 
 //****************************************************************************//
 // CalAnimation wrapper functions definition                                  //

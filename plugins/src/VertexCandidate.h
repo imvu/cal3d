@@ -11,6 +11,8 @@
 #ifndef VERTEX_CANDIDATE_H
 #define VERTEX_CANDIDATE_H
 
+#include <cal3d/coresubmesh.h>
+
 //----------------------------------------------------------------------------//
 // Class declaration                                                          //
 //----------------------------------------------------------------------------//

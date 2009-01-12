@@ -710,7 +710,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   CalPlatform::writeInteger(file, 0); // spring count
 
   // get the texture coordinate vector vector
-  std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
+  const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
   // write the number of texture coordinates per vertex
   CalPlatform::writeInteger(file, vectorvectorTextureCoordinate.size());
@@ -757,7 +757,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     int textureCoordinateId;
     for(textureCoordinateId = 0; textureCoordinateId < (int)vectorvectorTextureCoordinate.size(); ++textureCoordinateId)
     {
-      CalCoreSubmesh::TextureCoordinate& textureCoordinate = vectorvectorTextureCoordinate[textureCoordinateId][vertexId];
+      const CalCoreSubmesh::TextureCoordinate& textureCoordinate = vectorvectorTextureCoordinate[textureCoordinateId][vertexId];
 
       // write the influence data
       CalPlatform::writeFloat(file, textureCoordinate.u);
@@ -1408,7 +1408,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
     const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
     // get the texture coordinate vector vector
-    std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
+    const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
     // write all vertices
     for(int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId)
@@ -1480,7 +1480,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
       int textureCoordinateId;
       for(textureCoordinateId = 0; textureCoordinateId < (int)vectorvectorTextureCoordinate.size(); ++textureCoordinateId)
       {
-        CalCoreSubmesh::TextureCoordinate& textureCoordinate = vectorvectorTextureCoordinate[textureCoordinateId][vertexId];
+        const CalCoreSubmesh::TextureCoordinate& textureCoordinate = vectorvectorTextureCoordinate[textureCoordinateId][vertexId];
 
         TiXmlElement tex("TEXCOORD");
         

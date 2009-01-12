@@ -45,6 +45,6 @@ namespace CalPhysique {
 
   CAL3D_API void calculateVerticesAndNormals(
     const BoneTransform* boneTransforms,
-    CalSubmesh* pSubmesh,
+    const CalSubmesh* pSubmesh,
     float* pVertexBuffer);
 };

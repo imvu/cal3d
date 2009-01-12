@@ -20,8 +20,6 @@
 #include "cal3d/coremorphkeyframe.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coreskeleton.h"
-#include "cal3d/coresubmesh.h"
-#include "cal3d/coresubmorphtarget.h"
 #include "cal3d/coretrack.h"
 #include "cal3d/coremorphtrack.h"
 #include "cal3d/datasource.h"
