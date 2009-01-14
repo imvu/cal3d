@@ -22,7 +22,6 @@ protected:
 public:
   ~CalCoreMesh();
 
-public:
   typedef std::vector<CalCoreSubmesh *> CalCoreSubmeshVector;
   unsigned int size();
   int addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh);
