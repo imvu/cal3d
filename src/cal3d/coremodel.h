@@ -30,7 +30,7 @@ protected:
   std::vector<CalCoreAnimatedMorph *> m_vectorCoreAnimatedMorph;
   std::vector<CalCoreMesh *> m_vectorCoreMesh;
   std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
-  std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
+  std::map<int, std::map<int, int> > m_mapmapCoreMaterialThread;
   bool m_coreMeshManagement;
   bool m_coreAnimationManagement;
   unsigned int m_magic;
@@ -56,6 +56,7 @@ public:
   int addCoreMesh(CalCoreMesh *pCoreMesh);
   bool createInternal(const std::string& strName);
   bool createWithName( char const * strName);
+  bool createCoreMaterialThread(int coreMaterialThreadId);
   void destroy();
   CalCoreAnimation *getCoreAnimation(int coreAnimationId);
   CalCoreAnimatedMorph *getCoreAnimatedMorph(int coreAnimatedMorphId);

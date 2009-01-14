@@ -324,6 +324,29 @@ bool CalCoreModel::createWithName( char const * strName)
   return createInternal( name );
 }
 
+
+ /*****************************************************************************/
+/** Creates a core material thread.
+  *
+  * This function creates a new core material thread with the given ID.
+  *
+  * @param coreMaterialThreadId The ID of the core material thread that should
+  *                             be created.
+  *
+  * @return One of the following values:
+  *         \li \b true if successful
+  *         \li \b false if an error happend
+  *****************************************************************************/
+
+bool CalCoreModel::createCoreMaterialThread(int coreMaterialThreadId)
+{
+  // insert an empty core material thread with a given id
+  std::map<int, int> mapCoreMaterialThreadId;
+  m_mapmapCoreMaterialThread.insert(std::make_pair(coreMaterialThreadId, mapCoreMaterialThreadId));
+
+  return true;
+}
+
  /*****************************************************************************/
 /** Destroys the core model instance.
   *
@@ -512,13 +535,20 @@ int CalCoreModel::getCoreMaterialCount()
 
 int CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId)
 {
-    std::pair<int, int> key = std::make_pair(coreMaterialThreadId, coreMaterialSetId);
-    if (m_mapCoreMaterialThread.count(key) == 0) {
+    if (m_mapmapCoreMaterialThread.count(coreMaterialThreadId) == 0) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
         return -1;
     }
 
-    return m_mapCoreMaterialThread[key];
+    // get the core material thread
+    std::map<int, int>& coreMaterialThread = m_mapmapCoreMaterialThread[coreMaterialThreadId];
+
+    if (coreMaterialThread.count(coreMaterialSetId) == 0) {
+        CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+        return -1;
+    }
+
+    return coreMaterialThread[coreMaterialSetId];
 }
 
  /*****************************************************************************/
@@ -816,13 +846,23 @@ bool CalCoreModel::saveCoreSkeleton(const std::string& strFilename)
 
 bool CalCoreModel::setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId)
 {
-  std::pair<int, int> key = std::make_pair(coreMaterialThreadId, coreMaterialSetId);
-    
+  // find the core material thread
+  std::map<int, std::map<int, int> >::iterator iteratorCoreMaterialThread;
+  iteratorCoreMaterialThread = m_mapmapCoreMaterialThread.find(coreMaterialThreadId);
+  if(iteratorCoreMaterialThread == m_mapmapCoreMaterialThread.end())
+  {
+    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+    return false;
+  }
+
+  // get the core material thread
+  std::map<int, int>& coreMaterialThread = (*iteratorCoreMaterialThread).second;
+
   // remove a possible entry in the core material thread
-  m_mapCoreMaterialThread.erase(key);
+  coreMaterialThread.erase(coreMaterialSetId);
 
   // set the given set id in the core material thread to the given core material id
-  m_mapCoreMaterialThread.insert(std::make_pair(key, coreMaterialId));
+  coreMaterialThread.insert(std::make_pair(coreMaterialSetId, coreMaterialId));
 
   return true;
 }

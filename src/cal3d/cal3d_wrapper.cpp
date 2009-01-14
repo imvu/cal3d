@@ -336,7 +336,7 @@ Boolean CalCoreModel_Create(CalCoreModel *self, char *strName)
 
 Boolean CalCoreModel_CreateCoreMaterialThread(CalCoreModel *self, int coreMaterialThreadId)
 {
-  return True;
+  return self->createCoreMaterialThread(coreMaterialThreadId) ? True : False;
 }
 
 void CalCoreModel_Delete(CalCoreModel *self)
