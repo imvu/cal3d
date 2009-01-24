@@ -233,8 +233,20 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
   if (vertexId == 0) {
     m_isStatic = true;
     m_staticInfluenceSet = inf;
+    m_boundingVolume.min = vertex.position.asCalVector();
+    m_boundingVolume.max = vertex.position.asCalVector();
   } else if (m_isStatic) {
     m_isStatic = m_staticInfluenceSet == inf;
+  }
+
+  if (vertexId) {
+    m_boundingVolume.min.x = std::min(m_boundingVolume.min.x, vertex.position.x);
+    m_boundingVolume.min.y = std::min(m_boundingVolume.min.y, vertex.position.y);
+    m_boundingVolume.min.z = std::min(m_boundingVolume.min.z, vertex.position.z);
+
+    m_boundingVolume.max.x = std::max(m_boundingVolume.max.x, vertex.position.x);
+    m_boundingVolume.max.y = std::max(m_boundingVolume.max.y, vertex.position.y);
+    m_boundingVolume.max.z = std::max(m_boundingVolume.max.z, vertex.position.z);
   }
 
   m_vertices[vertexId] = vertex;
@@ -256,10 +268,10 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
   }
   inf[inf.size() - 1].lastInfluenceForThisVertex = 1;
 
-  m_influenceRanges[vertexId].influenceStart = influences.size();
-  m_influenceRanges[vertexId].influenceEnd   = influences.size() + inf.size();
+  m_influenceRanges[vertexId].influenceStart = m_influences.size();
+  m_influenceRanges[vertexId].influenceEnd   = m_influences.size() + inf.size();
 
-  influences.insert(influences.end(), inf.begin(), inf.end());
+  m_influences.insert(m_influences.end(), inf.begin(), inf.end());
 }
 
  /*****************************************************************************/

@@ -13,6 +13,7 @@
 #include <set>
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include "cal3d/aabox.h"
 #include "cal3d/color.h"
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
@@ -187,7 +188,11 @@ public:
   BoneTransform getStaticTransform(const BoneTransform* bones) const;
 
   const InfluenceVector& getInfluences() const {
-    return influences;
+    return m_influences;
+  }
+
+  CalAABox getBoundingVolume() const {
+    return m_boundingVolume;
   }
 
 private:
@@ -213,5 +218,6 @@ private:
   bool m_isStatic;
   InfluenceSet m_staticInfluenceSet;
 
-  std::vector<Influence> influences;
+  std::vector<Influence> m_influences;
+  CalAABox m_boundingVolume;
 };
