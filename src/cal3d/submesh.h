@@ -57,10 +57,9 @@ public:
   }
   void setLodLevel(float lodLevel);
   std::vector<float>& getVectorWeight();
-  void setMorphTargetWeight(int blendId,float weight);
-  float getMorphTargetWeight(int blendId);
+  float getMorphTargetWeight(int blendId) const;
   void setMorphTargetWeight(std::string const & morphName,float weight);
-  bool getMorphTargetWeight(std::string const & morphName, float * weightOut);
+  bool getMorphTargetWeight(std::string const & morphName, float * weightOut) const;
   void getMorphIdAndWeightArray(
     MorphIdAndWeight * arrayResult, 
     unsigned int * numMiawsResult, 
@@ -69,7 +68,9 @@ public:
   int getMorphTargetWeightCount() const {
     return m_vectorMorphTargetWeight.size();
   }
-  std::vector<float>& getVectorMorphTargetWeight();
+  const std::vector<float>& getVectorMorphTargetWeight() {
+    return m_vectorMorphTargetWeight;
+  }
   void clearMorphTargetScales();
   void clearMorphTargetState( std::string const & morphName );
   void blendMorphTargetScale( std::string const & morphName, 

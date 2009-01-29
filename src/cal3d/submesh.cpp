@@ -114,25 +114,13 @@ void CalSubmesh::setLodLevel(float lodLevel)
 }
 
  /*****************************************************************************/
-/** Sets weight of a morph target with the given id.
-  *
-  * @param blendId The morph target id.
-  * @param weight The weight to be set.
-  *****************************************************************************/
-
-void CalSubmesh::setMorphTargetWeight(int blendId,float weight)
-{
-  m_vectorMorphTargetWeight[blendId] = weight;
-}
-
- /*****************************************************************************/
 /** Gets weight of a morph target with the given id.
   *
   * @param blendId The morph target id.
   * @return The weight of the morph target.
   *****************************************************************************/
 
-float CalSubmesh::getMorphTargetWeight(int blendId)
+float CalSubmesh::getMorphTargetWeight(int blendId) const
 {
   return m_vectorMorphTargetWeight[blendId];
 }
@@ -171,7 +159,6 @@ void CalSubmesh::getMorphIdAndWeightArray(
 
 void CalSubmesh::setMorphTargetWeight(std::string const & morphName,float weight)
 {
-  // TODO: this is very inefficient. we should probably use a map instead
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
     const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
@@ -387,7 +374,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
   * @return true on success, false otherwise
   *****************************************************************************/
 
-bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * weightOut)
+bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * weightOut) const
 {
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
     const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
@@ -407,24 +394,9 @@ bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * wei
 
 float CalSubmesh::getBaseWeight() const {
   float baseWeight = 1.0f;
-  int morphTargetCount = getMorphTargetWeightCount();
-  int morphTargetId;
-  for(morphTargetId=0; morphTargetId < morphTargetCount;++morphTargetId)
+  for(int morphTargetId=0; morphTargetId < m_vectorMorphTargetWeight.size(); ++morphTargetId)
   {
     baseWeight -= m_vectorMorphTargetWeight[morphTargetId];
   }
   return baseWeight;
-}
-
- /*****************************************************************************/
-/** Returns the morph target weight vector.
-  *
-  * This function returns the vector that contains all weights for
-  * each morph target instance.
-  *
-  * @return A reference to the weight vector.
-  *****************************************************************************/
-std::vector<float>& CalSubmesh::getVectorMorphTargetWeight()
-{
-  return m_vectorMorphTargetWeight;
 }
