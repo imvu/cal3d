@@ -1802,13 +1802,12 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   }
 
   for( int morphId = 0; morphId < morphCount; morphId++ ) {
-    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget);
-    morphTarget->reserve(vertexCount);
-
     std::string morphName;
     dataSrc.readString(morphName);
-    morphTarget->setName(morphName);
-           
+
+    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(morphName));
+    morphTarget->reserve(vertexCount);
+
     int blendVertId;
     dataSrc.readInteger(blendVertId);
     

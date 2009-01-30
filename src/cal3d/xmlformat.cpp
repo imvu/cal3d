@@ -1523,10 +1523,8 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
-            boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget);
+            boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(morph->Attribute("NAME")));
             morphTarget->reserve(vertexCount);
-
-            morphTarget->setName(morph->Attribute("NAME"));
 
             TiXmlElement * blendVert = morph->FirstChildElement();
             for( int blendVertI = 0; blendVertI < vertexCount; blendVertI++ ) {

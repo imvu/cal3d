@@ -148,7 +148,7 @@ TEST(is_not_static_if_has_morph_targets) {
     inf[1].weight = 1.0f;
     csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
 
-    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget);
+    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(""));
     csm.addCoreSubMorphTarget(morphTarget);
 
     CHECK(!csm.isStatic());
@@ -246,4 +246,20 @@ TEST(aabox_is_min_max_of_all_vertices) {
     CHECK_EQUAL(
         CalAABox(CalVector(1.0f, 1.0f, 1.0f), CalVector(3.0f, 3.0f, 3.0f)),
         csm.getBoundingVolume());
+}
+
+
+TEST(base_weight_with_no_morph_targets) {
+    CalCoreSubmesh csm(0, 0, 0);
+    CalSubmesh submesh(&csm);
+    CHECK_EQUAL(1.0f, submesh.getBaseWeight());
+}
+
+TEST(base_weight_with_two_morph_targets) {
+    CalCoreSubmesh csm(0, 0, 0);
+    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("a")));
+    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("b")));
+
+    CalSubmesh submesh(&csm);
+    CHECK_EQUAL(1.0f, submesh.getBaseWeight());
 }

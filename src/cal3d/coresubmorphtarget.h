@@ -26,14 +26,14 @@ public:
   } BlendVertex;
   
 public:
-  CalCoreSubMorphTarget();
+  CalCoreSubMorphTarget(const std::string& name);
   ~CalCoreSubMorphTarget();
 
   typedef std::vector<BlendVertex *> VectorBlendVertex;
-  unsigned int size();
-  int getBlendVertexCount();
-  std::vector<BlendVertex *>& getVectorBlendVertex();
-  inline bool hasBlendVertex( int blendVertexId ) {
+  unsigned int size() const;
+  int getBlendVertexCount() const;
+  const std::vector<BlendVertex *>& getVectorBlendVertex() const;
+  inline bool hasBlendVertex( int blendVertexId ) const {
     return m_vectorBlendVertex[blendVertexId] != NULL;
   }
   inline BlendVertex const * getBlendVertex( int blendVertexId ) {
@@ -43,7 +43,6 @@ public:
   bool setBlendVertex(int vertexId, const BlendVertex& vertex);
   CalMorphTargetType morphTargetType();
 
-  void setName( std::string );
   const std::string& name() const { return m_morphTargetName; }
 
 private:

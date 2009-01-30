@@ -14,25 +14,37 @@
 
 #include "cal3d/coresubmorphtarget.h"
 
-CalCoreSubMorphTarget::CalCoreSubMorphTarget()
+CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& name)
+: m_morphTargetName(name)
+, m_morphTargetType(CalMorphTargetTypeAdditive)
 {
-  m_morphTargetType = CalMorphTargetTypeAdditive;
+  // If the name ends in ".Additive" or ".Exclusive" or ".Clamped"
+  // or ".Average" then set the type of the morph target.  By
+  // default it is Additive.
+  char const * s2 = name.c_str();
+  char const * dot = strrchr( s2, '.' );
+  if( dot ) {
+    dot++;
+    if( _stricmp( dot, "exclusive" ) == 0 ) {
+      m_morphTargetType = CalMorphTargetTypeExclusive;
+    } else if( _stricmp( dot, "additive" ) == 0 ) {
+      m_morphTargetType = CalMorphTargetTypeAdditive;
+    } else if( _stricmp( dot, "clamped" ) == 0 ) {
+      m_morphTargetType = CalMorphTargetTypeClamped;
+    } else if( _stricmp( dot, "average" ) == 0 ) {
+      m_morphTargetType = CalMorphTargetTypeAverage;
+    }
+  }
 }
 
 CalCoreSubMorphTarget::~CalCoreSubMorphTarget()
 {
-  // destroy all data
   for( int i = 0; i < m_vectorBlendVertex.size(); i++ ) {
-    if( m_vectorBlendVertex[i] ) {
-      delete m_vectorBlendVertex[i];
-      m_vectorBlendVertex[i] = NULL;
-    }
+    delete m_vectorBlendVertex[i];
   }
-  m_vectorBlendVertex.clear();
 }
 
-unsigned int
-CalCoreSubMorphTarget::size()
+unsigned int CalCoreSubMorphTarget::size() const
 {
   unsigned int r = sizeof( CalCoreSubMorphTarget );
   r += sizeof( CalMorphTargetType );
@@ -44,49 +56,18 @@ CalCoreSubMorphTarget::size()
 }
 
 
- /*****************************************************************************/
-/** Returns the blend vertex vector.
-  *
-  * This function returns the vector that contains all blend vertices of the core
-  * sub morph target instance.
-  *
-  * @return A reference to the blend vertex vector.
-  *****************************************************************************/
 
-std::vector<CalCoreSubMorphTarget::BlendVertex *>& CalCoreSubMorphTarget::getVectorBlendVertex()
+const std::vector<CalCoreSubMorphTarget::BlendVertex *>& CalCoreSubMorphTarget::getVectorBlendVertex() const
 {
   return m_vectorBlendVertex;
 }
 
 
- /*****************************************************************************/
-/** Returns the number of blend vertices.
-  *
-  * This function returns the number of blend vertices in the 
-  * core sub morph target instance.
-  *
-  * @return The number of blend vertices.
-  *****************************************************************************/
 
-int CalCoreSubMorphTarget::getBlendVertexCount()
+int CalCoreSubMorphTarget::getBlendVertexCount() const
 {
   return m_vectorBlendVertex.size();
 }
-
-
- /*****************************************************************************/
-/** Reserves memory for the blend vertices.
- *
- * This function reserves memory for the blend vertices
- * of the core sub morph target instance.
- *
- * @param blendVertexCount The number of blend vertices that
- *                    this core sub morph target instance should be able to hold.
- *
- * @return One of the following values:
- *         \li \b true if successful
- *         \li \b false if an error happend
- *****************************************************************************/
 
 void CalCoreSubMorphTarget::reserve(int blendVertexCount)
 {
@@ -99,19 +80,6 @@ void CalCoreSubMorphTarget::reserve(int blendVertexCount)
 }
 
 
-
- /*****************************************************************************/
-/** Sets a specified blend vertex.
-  *
-  * This function sets a specified blend vertex in the core sub morph target instance.
-  *
-  * @param vertexId  The ID of the vertex.
-  * @param vertex The vertex that should be set.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
 bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& blendVertex)
 {
@@ -132,41 +100,8 @@ bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex&
 }
 
 
- /*****************************************************************************/
-/** Return type of morph target, which is determined from parsing the name.
-  *
-  * @return One of the enum values.
-  *****************************************************************************/
 CalMorphTargetType
 CalCoreSubMorphTarget::morphTargetType()
 {
   return m_morphTargetType;
-}
-
-
-//****************************************************************************//
-
-void
-CalCoreSubMorphTarget::setName( std::string s )
-{
-  m_morphTargetName = s;
-
-  // If the name ends in ".Additive" or ".Exclusive" or ".Clamped"
-  // or ".Average" then set the type of the morph target.  By
-  // default it is Additive.
-  m_morphTargetType = CalMorphTargetTypeAdditive;
-  char const * s2 = s.c_str();
-  char const * dot = strrchr( s2, '.' );
-  if( dot ) {
-    dot++;
-    if( _stricmp( dot, "exclusive" ) == 0 ) {
-      m_morphTargetType = CalMorphTargetTypeExclusive;
-    } else if( _stricmp( dot, "additive" ) == 0 ) {
-      m_morphTargetType = CalMorphTargetTypeAdditive;
-    } else if( _stricmp( dot, "clamped" ) == 0 ) {
-      m_morphTargetType = CalMorphTargetTypeClamped;
-    } else if( _stricmp( dot, "average" ) == 0 ) {
-      m_morphTargetType = CalMorphTargetTypeAverage;
-    }
-  }
 }
