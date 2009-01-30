@@ -114,12 +114,12 @@ ABSTRACT_TEST(three_translated_bones) {
   CalVector4 output[2];
   skin(bt, 1, v, i, output);
 
-  CHECK_EQUAL(output[0].x, 4.0f / 3.0f);
-  CHECK_EQUAL(output[0].y, 7.0f / 3.0f);
-  CHECK_EQUAL(output[0].z, 10.0f / 3.0f);
-  CHECK_EQUAL(output[1].x, 1);
-  CHECK_EQUAL(output[1].y, 1);
-  CHECK_EQUAL(output[1].z, 0);
+  CHECK_CLOSE(output[0].x, 4.0f / 3.0f, 1.e-5);
+  CHECK_CLOSE(output[0].y, 7.0f / 3.0f, 1.e-5);
+  CHECK_CLOSE(output[0].z, 10.0f / 3.0f, 1.e-5);
+  CHECK_CLOSE(output[1].x, 1, 1.e-5);
+  CHECK_CLOSE(output[1].y, 1, 1.e-5);
+  CHECK_CLOSE(output[1].z, 0, 1.e-5);
 }
 APPLY_SKIN_FIXTURES(three_translated_bones);
 
