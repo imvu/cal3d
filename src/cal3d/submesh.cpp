@@ -249,8 +249,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
                                   bool replace )
 {
   int size = m_vectorMorphTargetWeight.size();
-  int i;
-  for( i = 0; i < size; i++ ) {
+  for(int i = 0; i < size; i++) {
     const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget( i );
     if( target->name() == morphName ) {
       CalMorphTargetType mtype = target->morphTargetType();
@@ -393,10 +392,12 @@ bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * wei
   *****************************************************************************/
 
 float CalSubmesh::getBaseWeight() const {
+  const float* weights = Cal::pointerFromVector(m_vectorMorphTargetWeight);
+  size_t count = m_vectorMorphTargetWeight.size();
+
   float baseWeight = 1.0f;
-  for(int morphTargetId=0; morphTargetId < m_vectorMorphTargetWeight.size(); ++morphTargetId)
-  {
-    baseWeight -= m_vectorMorphTargetWeight[morphTargetId];
+  while (count--) {
+      baseWeight -= *weights++;
   }
   return baseWeight;
 }

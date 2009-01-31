@@ -407,7 +407,7 @@ void CalPhysique::calculateVerticesAndNormals(
   const int vertexCount = pSubmesh->getVertexCount();
   const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(pSubmesh->getCoreSubmesh()->getVectorVertex());
 
-  if (pSubmesh->getBaseWeight() != 1.0f) {
+  if (pSubmesh->getMorphTargetWeightCount() && pSubmesh->getBaseWeight() != 1.0f) {
     if (vertexCount > MorphSubmeshCache.size()) {
       MorphSubmeshCache.resize(vertexCount);
     }

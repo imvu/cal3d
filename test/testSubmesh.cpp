@@ -263,3 +263,34 @@ TEST(base_weight_with_two_morph_targets) {
     CalSubmesh submesh(&csm);
     CHECK_EQUAL(1.0f, submesh.getBaseWeight());
 }
+
+TEST(base_weight_with_two_active_morph_targets) {
+    CalCoreSubmesh csm(0, 0, 0);
+    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt1")));
+    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt2")));
+
+    CalSubmesh submesh(&csm);
+    submesh.setMorphTargetWeight("mt1", 0.5f);
+    submesh.setMorphTargetWeight("mt2", 0.25f);
+    CHECK_EQUAL(0.25f, submesh.getBaseWeight());
+}
+
+TEST(base_weight_with_active_then_cleared_morph_target) {
+    CalCoreSubmesh csm(0, 0, 0);
+    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt")));
+
+    CalSubmesh submesh(&csm);
+    submesh.setMorphTargetWeight("mt", 0.5f);
+    submesh.clearMorphTargetScales();
+    CHECK_EQUAL(1.0f, submesh.getBaseWeight());
+}
+
+TEST(base_weight_with_active_then_cleared_morph_target_state) {
+    CalCoreSubmesh csm(0, 0, 0);
+    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt")));
+
+    CalSubmesh submesh(&csm);
+    submesh.setMorphTargetWeight("mt", 0.5f);
+    submesh.clearMorphTargetState("mt");
+    CHECK_EQUAL(1.0f, submesh.getBaseWeight());
+}
