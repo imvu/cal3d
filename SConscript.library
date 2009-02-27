@@ -135,7 +135,7 @@ exporter_env.Append(
              '#/Source/cal3d/plugins/src',
              '#/Source/cal3d/plugins/src/win32',
              '#/ext/3dsmax7/maxsdk/include',
-             '#/Ext/3dsmax6/maxsdk/cssdk/include',
+             '#/Ext/3dsmax7/maxsdk/cssdk/include',
              ],
     CPPDEFINES=['_AFXDLL'],
     LIBPATH=['#/Ext/3dsmax7/maxsdk/lib'],
