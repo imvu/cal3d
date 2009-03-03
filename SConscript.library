@@ -115,7 +115,7 @@ exporter_sources = ['plugins/cal3d_max_exporter/' + s for s in exporter_sources]
 exporter_src_sources = ['plugins/src/' + s for s in exporter_src_sources]
 exporter_win32_sources = ['plugins/src/win32/' + s for s in exporter_win32_sources]
 
-shared_lib_env = env.Copy(tools=[boost])
+shared_lib_env = env.Copy(tools=[boost, callstack])
 shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
     CPPPATH=['../src'])
@@ -129,7 +129,7 @@ imvu_shared_library(
 if not ARGUMENTS.get('skiptests', ''):
     SConscript(dirs=['test'])
 
-exporter_env = env.Copy(tools=[cal3d, boost])
+exporter_env = env.Copy(tools=[cal3d, callstack, boost])
 exporter_env.Append(
     CPPPATH=['../plugins/cal3d_max_exporter',
              '#/Source/cal3d/plugins/src',
