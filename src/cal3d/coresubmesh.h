@@ -162,7 +162,7 @@ public:
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);
 
-  void addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> influences);
+  void addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& influences);
   bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
   void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }

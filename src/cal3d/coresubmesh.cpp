@@ -226,17 +226,17 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
   return true;
 }
 
-void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, std::vector<Influence> inf) {
+void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& inf_) {
   assert(m_currentVertexId < m_vertices.size());
 
   const int vertexId = m_currentVertexId++;
   if (vertexId == 0) {
     m_isStatic = true;
-    m_staticInfluenceSet = inf;
+    m_staticInfluenceSet = inf_;
     m_boundingVolume.min = vertex.position.asCalVector();
     m_boundingVolume.max = vertex.position.asCalVector();
   } else if (m_isStatic) {
-    m_isStatic = m_staticInfluenceSet == inf;
+    m_isStatic = m_staticInfluenceSet == inf_;
   }
 
   if (vertexId) {
@@ -254,6 +254,7 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
   m_lodData[vertexId] = lodData;
 
   // Each vertex needs at least one influence.
+  std::vector<Influence> inf(inf_);
   if (inf.empty()) {
     m_isStatic = false;
     Influence i;
