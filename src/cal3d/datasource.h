@@ -22,7 +22,7 @@
  * classes must implement the 'read' functions below.
  */
 
-class CAL3D_API CalDataSource
+class CAL3D_API CalDataSource : public Cal::Object
 {
 public:
   // So...  I started making some refactorings to the implementations of DataSource.

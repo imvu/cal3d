@@ -2,7 +2,7 @@
 
 #include "cal3d/vector.h"
 
-__declspec(align(16)) struct CalBase4
+__declspec(align(16)) struct CalBase4 : public Cal::Object
 {
   float x, y, z, w;
 

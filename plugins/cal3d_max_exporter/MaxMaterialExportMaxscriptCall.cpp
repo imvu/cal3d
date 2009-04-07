@@ -52,16 +52,6 @@
 #include "MaterialCandidate.h"
 #include "Maxinterface.h"
 
-//----------------------------------------------------------------------------//
-// Debug                                                                      //
-//----------------------------------------------------------------------------//
-
-#ifdef _DEBUG
-//#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-
 bool CExporter::ExportMaterialFromMaxscriptCall	(const std::string& strFilename)
 {
 	// check if a valid interface is set

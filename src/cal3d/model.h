@@ -19,7 +19,7 @@ class CalAbstractMixer;
 class CalMixer;
 class CalMesh;
 
-class CAL3D_API CalModel
+class CAL3D_API CalModel : public Cal::Object
 {
 public: 
   CalModel();

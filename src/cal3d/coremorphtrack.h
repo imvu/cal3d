@@ -17,7 +17,7 @@
 
 class CalCoreMorphKeyframe;
 
-class CAL3D_API CalCoreMorphTrack
+class CAL3D_API CalCoreMorphTrack : public Cal::Object
 {
 // member variables
 protected:

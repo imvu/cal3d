@@ -25,7 +25,7 @@ class CalAnimation;
 class CalAnimationAction;
 class CalAnimationCycle;
 
-struct CalMixerManualAnimationAttributes {
+struct CalMixerManualAnimationAttributes : public Cal::Object {
   bool on_;
   float time_;
   float weight_;
@@ -40,7 +40,7 @@ enum CalMixerBoneAdjustmentFlag {
 };
 
 
-struct CalMixerBoneAdjustment {
+struct CalMixerBoneAdjustment : public Cal::Object {
 
   // What parts of the adjustment are to be applied?
   unsigned int flags_;
@@ -133,7 +133,7 @@ struct CalMixerBoneAdjustmentAndBoneId {
  *
  *****************************************************************************/
 
-class CAL3D_API CalAbstractMixer
+class CAL3D_API CalAbstractMixer : public Cal::Object
 {
 public:
   CalAbstractMixer() {}

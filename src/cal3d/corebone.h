@@ -29,7 +29,7 @@ enum CalLightType {
 };
 
 
-class CAL3D_API CalCoreBone
+class CAL3D_API CalCoreBone : public Cal::Object
 {
 public:
   CalCoreBone(const std::string& name);

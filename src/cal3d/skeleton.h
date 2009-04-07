@@ -19,7 +19,7 @@ class CalCoreSkeleton;
 class CalCoreModel;
 class CalBone;
 
-class CAL3D_API CalSkeleton
+class CAL3D_API CalSkeleton : public Cal::Object
 {
 public:
   CalSkeleton(CalCoreSkeleton* pCoreSkeleton);

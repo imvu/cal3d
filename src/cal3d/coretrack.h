@@ -19,7 +19,7 @@ class CalCoreKeyframe;
 class CalCoreSkeleton;
 
 
-class CAL3D_API CalCoreTrack
+class CAL3D_API CalCoreTrack : public Cal::Object
 {
 private:
   /// The index of the associated CoreBone in the CoreSkeleton.

@@ -20,7 +20,7 @@ class CalCoreAnimatedMorph;
 class CalCoreMesh;
 class CalCoreMaterial;
 
-class CAL3D_API CalCoreModel
+class CAL3D_API CalCoreModel : public Cal::Object
 {
 // member variables
 protected:

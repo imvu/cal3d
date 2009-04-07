@@ -14,7 +14,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-class CAL3D_API CalCoreKeyframe
+class CAL3D_API CalCoreKeyframe : public Cal::Object
 {
 public:
   CalCoreKeyframe();

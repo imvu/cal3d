@@ -67,11 +67,23 @@ private:
 
 namespace Cal {
 
-  struct UserData {
+  struct CAL3D_API Object {
+    void* __cdecl operator new(size_t count);
+    void* __cdecl operator new(size_t count, const std::nothrow_t&) throw();
+    void __cdecl operator delete(void* object);
+    void __cdecl operator delete(void* object, const std::nothrow_t&) throw();
+
+    void* __cdecl operator new[](size_t count);
+    void* __cdecl operator new[](size_t count, const std::nothrow_t&) throw();
+    void __cdecl operator delete[](void* object);
+    void __cdecl operator delete[](void* object, const std::nothrow_t&) throw();
+  };
+
+  struct UserData : public Cal::Object {
     virtual ~UserData() {}
   };
 
-  struct CAL3D_API UserDataHolder {
+  struct CAL3D_API UserDataHolder : public Cal::Object {
   public:
     UserDataHolder() 
     : m_userData(0)

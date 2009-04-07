@@ -30,7 +30,7 @@ enum CalMorphTargetType {
   CalMorphTargetTypeExclusive
 };
 
-class CAL3D_API CalCoreSubmesh
+class CAL3D_API CalCoreSubmesh : public Cal::Object
 {
 public:
   struct TextureCoordinate

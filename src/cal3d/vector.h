@@ -16,7 +16,7 @@
 
 class CalQuaternion;
 
-class CAL3D_API CalVector
+class CAL3D_API CalVector : public Cal::Object
 {
 public:
   float x ,y ,z;

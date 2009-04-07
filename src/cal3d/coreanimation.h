@@ -16,7 +16,7 @@
 class CalCoreTrack;
 class CalCoreSkeleton;
 
-class CAL3D_API CalCoreAnimation
+class CAL3D_API CalCoreAnimation : public Cal::Object
 {
 public:
   CalCoreAnimation();

@@ -46,7 +46,7 @@ bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec
 /** The loader class.
   *****************************************************************************/
 
-class CAL3D_API CalLoader
+class CAL3D_API CalLoader : public Cal::Object
 {
 // member functions
 public:

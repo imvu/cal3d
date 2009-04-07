@@ -4,7 +4,7 @@
 
 class CalCoreAnimation;
 
-class CAL3D_API CalAnimation
+class CAL3D_API CalAnimation : public Cal::Object
 {
 // misc
 public:

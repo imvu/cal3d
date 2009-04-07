@@ -16,7 +16,7 @@ class CalModel;
 class CalCoreMesh;
 class CalSubmesh;
 
-class CAL3D_API CalMesh
+class CAL3D_API CalMesh : public Cal::Object
 {
 private:
   CalModel *m_pModel;

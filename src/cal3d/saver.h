@@ -27,7 +27,7 @@ class CalCoreMaterial;
 class CalVector;
 class CalQuaternion;
 
-class CAL3D_API CalSaver
+class CAL3D_API CalSaver : public Cal::Object
 {
 public:
   static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation);

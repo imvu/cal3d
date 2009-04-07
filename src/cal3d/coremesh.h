@@ -14,7 +14,7 @@
 
 class CalCoreSubmesh;
 
-class CAL3D_API CalCoreMesh
+class CAL3D_API CalCoreMesh : public Cal::Object
 {
 public:
   ~CalCoreMesh();

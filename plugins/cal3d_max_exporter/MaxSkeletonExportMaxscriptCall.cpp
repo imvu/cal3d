@@ -43,17 +43,6 @@
 #include "MaxInterface.h"
 #include "SkeletonExportsheet.h"
 
-
-//----------------------------------------------------------------------------//
-// Debug                                                                      //
-//----------------------------------------------------------------------------//
-
-#ifdef _DEBUG
-//#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-
 //----------------------------------------------------------------------------//
 // Create a skeleton candidate instance from the exporter interface           //
 //----------------------------------------------------------------------------//

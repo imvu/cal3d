@@ -16,7 +16,7 @@
 
 class CalCoreMorphTrack;
 
-class CAL3D_API CalCoreAnimatedMorph
+class CAL3D_API CalCoreAnimatedMorph : public Cal::Object
 {
 public:
   CalCoreAnimatedMorph();
