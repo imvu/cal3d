@@ -8,12 +8,7 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_BUFFERSOURCE_H
-#define CAL_BUFFERSOURCE_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
@@ -46,5 +41,3 @@ private:
 
   CalBufferSource(); //Can't use this
 };
-
-#endif

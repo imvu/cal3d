@@ -8,39 +8,22 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_COREMORPHKEYFRAME_H
-#define CAL_COREMORPHKEYFRAME_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core keyframe class.
-  *****************************************************************************/
-
 class CAL3D_API CalCoreMorphKeyframe
 {
-// member variables
 protected:
   float m_time;
   float m_weight;
 
-// constructors/destructor
 public:
   CalCoreMorphKeyframe();
   virtual ~CalCoreMorphKeyframe();
 
-// member functions
-public:
   bool create();
   void destroy();
   float getTime() const;
@@ -49,7 +32,3 @@ public:
   float getWeight() const;
   void setWeight(float);
 };
-
-#endif
-
-//****************************************************************************//

@@ -8,14 +8,11 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_CORETRACK_H
-#define CAL_CORETRACK_H
-
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
-
 
 class CalCoreBone;
 class CalCoreKeyframe;
@@ -83,5 +80,3 @@ private:
 private:
   std::vector<CalCoreKeyframe*>::iterator getUpperBound(float time);
 };
-
-#endif

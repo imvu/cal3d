@@ -16,19 +16,10 @@
 
 class CAL3D_API CalCoreKeyframe
 {
-// member variables
-protected:
-  float m_time;
-  CalVector m_translation;
-  CalQuaternion m_rotation;
-
-// constructors/destructor
 public:
   CalCoreKeyframe();
   ~CalCoreKeyframe();
 
-// member functions
-public:
   static unsigned int numCalCoreKeyframes();
   static unsigned int numCalCoreKeyframeBytes();
 
@@ -39,4 +30,9 @@ public:
   void setRotation(const CalQuaternion& rotation);
   void setTime(float time);
   void setTranslation(const CalVector& translation);
+
+private:
+  float m_time;
+  CalVector m_translation;
+  CalQuaternion m_rotation;
 };

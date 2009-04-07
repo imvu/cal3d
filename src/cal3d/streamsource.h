@@ -8,24 +8,11 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_STREAMSOURCE_H
-#define CAL_STREAMSOURCE_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
 #include <istream>
-
-/**
- * CalStreamSource class.
- *
- * This is an object designed to represent a source of Cal3d data as coming from
- * a standard input stream.
- */
-
 
 class CAL3D_API CalStreamSource : public CalDataSource
 {
@@ -44,5 +31,3 @@ private:
 private:
    CalStreamSource(); //Can't use this
 };
-
-#endif

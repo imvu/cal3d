@@ -1,6 +1,4 @@
-#ifndef CAL3D_XML_FORMAT_H
-#define CAL3D_XML_FORMAT_H
-
+#pragma once
 
 namespace Cal {
   // zero-terminated.
@@ -10,6 +8,3 @@ namespace Cal {
   const char* const MESH_XMLFILE_EXTENSION          = "XMF";
   const char* const MATERIAL_XMLFILE_EXTENSION      = "XRF";
 }
-
-
-#endif

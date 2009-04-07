@@ -1,35 +1,8 @@
-//****************************************************************************//
-// animation.h                                                                //
-// Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
-//****************************************************************************//
-// This library is free software; you can redistribute it and/or modify it    //
-// under the terms of the GNU Lesser General Public License as published by   //
-// the Free Software Foundation; either version 2.1 of the License, or (at    //
-// your option) any later version.                                            //
-//****************************************************************************//
-
-#ifndef CAL_ANIMATION_H
-#define CAL_ANIMATION_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalCoreAnimation;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The animation class.
-  *****************************************************************************/
 
 class CAL3D_API CalAnimation
 {
@@ -60,7 +33,6 @@ public:
     CompositionFunctionCrossFade
   };
 
-// member variables
 protected:
   CalCoreAnimation *m_pCoreAnimation;
   Type m_type;
@@ -69,14 +41,11 @@ protected:
   float m_timeFactor;
   float m_weight;
 
-// constructors/destructor
 protected:
   CalAnimation();
 public:
   virtual ~CalAnimation();
 
-// member functions	
-public:
   virtual bool create(CalCoreAnimation *pCoreAnimation) = 0;
   virtual void destroy();
   CalCoreAnimation *getCoreAnimation();
@@ -87,9 +56,4 @@ public:
   void setTime(float time);
   void setTimeFactor(float timeFactor);
   float getTimeFactor();
-
 };
-
-#endif
-
-//****************************************************************************//

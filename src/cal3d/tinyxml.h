@@ -23,8 +23,7 @@ distribution.
 */
 
 
-#ifndef TINYXML_INCLUDED
-#define TINYXML_INCLUDED
+#pragma once
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4530 )
@@ -1306,7 +1305,3 @@ ReturnToFactory( TiXmlNode * n );
 
 void
 ReturnToFactory( TiXmlAttribute * n );
-
-
-#endif
-

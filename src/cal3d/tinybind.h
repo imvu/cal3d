@@ -23,8 +23,7 @@
 */
 
 
-#ifndef TINYBIND_INCLUDED
-#define TINYBIND_INCLUDED
+#pragma once
 
 #include "tinyxml.h"
 
@@ -659,6 +658,3 @@ GetTiXmlBinding( std::list<T> const &, Identity<VecT>  )
     static StlContainerTiXmlBinding<T, VecT> binding(false);
     return &binding;
 }
-
-
-#endif

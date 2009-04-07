@@ -8,18 +8,9 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifndef CAL_SAVER_H
-#define CAL_SAVER_H
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
+#pragma once
 
 #include "cal3d/global.h"
-
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
 
 class CalCoreModel;
 class CalCoreSkeleton;
@@ -35,14 +26,6 @@ class CalCoreSubmesh;
 class CalCoreMaterial;
 class CalVector;
 class CalQuaternion;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The loader class.
-  *****************************************************************************/
 
 class CAL3D_API CalSaver
 {
@@ -69,7 +52,3 @@ protected:
   static bool saveCoreMorphKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreMorphKeyframe *pCoreMorphKeyframe);
   static bool saveCoreMorphTrack(std::ofstream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack);
 };
-
-#endif
-
-//****************************************************************************//

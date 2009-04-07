@@ -10,44 +10,18 @@
 
 #pragma once
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include <list>
 #include "cal3d/global.h"
 #include "cal3d/coremorphtrack.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
 class CalCoreMorphTrack;
-
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The core animatedMorph class.
-  *****************************************************************************/
-
 
 class CAL3D_API CalCoreAnimatedMorph
 {
-// member variables
-protected:
-  float m_duration;
-  std::list<CalCoreMorphTrack> m_listCoreTrack;
-  std::list<CalCoreMorphTrack*> m_tracksToDelete;
-
-// constructors/destructor
 public:
   CalCoreAnimatedMorph();
   ~CalCoreAnimatedMorph();
 
-// member functions 
-public:
   bool addCoreTrack(CalCoreMorphTrack *pCoreTrack);
   bool create();
   void destroy();
@@ -58,4 +32,9 @@ public:
   void scale(float factor);
   void removeZeroScaleTracks();
   static int getNumCoreAnimatedMorphs();
+
+private:
+  float m_duration;
+  std::list<CalCoreMorphTrack> m_listCoreTrack;
+  std::list<CalCoreMorphTrack*> m_tracksToDelete;
 };

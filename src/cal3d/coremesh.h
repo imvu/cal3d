@@ -16,9 +16,6 @@ class CalCoreSubmesh;
 
 class CAL3D_API CalCoreMesh
 {
-protected:
-  std::vector<CalCoreSubmesh *> m_vectorCoreSubmesh;
-
 public:
   ~CalCoreMesh();
 
@@ -31,4 +28,7 @@ public:
   std::vector<CalCoreSubmesh *>& getVectorCoreSubmesh();
   int addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & morphTargetName);
   void scale(float factor);
+
+private:
+  std::vector<CalCoreSubmesh *> m_vectorCoreSubmesh;
 };
