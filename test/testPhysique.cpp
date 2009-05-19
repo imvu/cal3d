@@ -170,7 +170,7 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
   }
 
   BoneTransform bt;
-  ZeroMemory(&bt, sizeof(bt));
+  memset(&bt, 0, sizeof(bt));
 
   __declspec(align(16)) CalVector4 output[N * 2];
 
