@@ -120,10 +120,7 @@ shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
     CPPPATH=['../src'])
 
-PCH, PCH_OBJ = shared_lib_env.PCH('src/cal3d/PCH.cpp')
-shared_lib_env['PCH'] = PCH
-shared_lib_env['PCHSTOP'] = 'PCH.h'
-shared_lib_env.Append(CPPFLAGS=['/FIPCH.h'])
+PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
 
 imvu_shared_library(
     shared_lib_env,
