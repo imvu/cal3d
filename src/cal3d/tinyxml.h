@@ -52,17 +52,11 @@ distribution.
 
 #define TIXML_USE_STL
 
-#ifdef TIXML_USE_STL
-	#include <string>
- 	#include <iostream>
-	typedef std::string  TIXML_STRING;
-	typedef std::istream TIXML_ISTREAM;
-	typedef std::ostream TIXML_OSTREAM;
-#else
-	#include "tinystr.h"
-	typedef TiXmlString    TIXML_STRING;
-	typedef TiXmlOutStream TIXML_OSTREAM;
-#endif
+#include <string>
+#include <iosfwd>
+typedef std::string  TIXML_STRING;
+typedef std::istream TIXML_ISTREAM;
+typedef std::ostream TIXML_OSTREAM;
 
 class TiXmlDocument;
 class TiXmlElement;

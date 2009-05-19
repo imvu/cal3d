@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include "cal3d/global.h"
 

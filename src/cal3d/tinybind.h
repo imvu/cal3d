@@ -29,7 +29,6 @@
 
 #include <vector>
 #include <list>
-#include <sstream>
 
 class IdentityBase
 {

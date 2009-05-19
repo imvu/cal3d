@@ -12,7 +12,7 @@
 
 #include <math.h>
 #include <string>
-#include <istream>
+#include <iosfwd>
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
 #include "cal3d/tinyxml.h"

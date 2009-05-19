@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ostream>
+#include <iosfwd>
 #include <cal3d/aabox.h>
 #include <cal3d/vector4.h>
 

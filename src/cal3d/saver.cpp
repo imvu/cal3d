@@ -13,6 +13,7 @@
 #endif
 
 #include <fstream>
+#include <sstream>
 #include "cal3d/loader.h"
 #include "cal3d/saver.h"
 #include "cal3d/error.h"

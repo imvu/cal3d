@@ -12,7 +12,7 @@
 
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
-#include <istream>
+#include <iosfwd>
 
 /**
  * CalBufferSource class.

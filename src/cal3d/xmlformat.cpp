@@ -1,3 +1,4 @@
+#include <sstream>
 #include <stdexcept>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
