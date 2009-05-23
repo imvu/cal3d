@@ -13,7 +13,7 @@ sources = Split('''
 env = env.Copy(tools=[cal3d, boost_test, python])
 env.Append(CPPPATH=['../../..',
                     '../../../avatarwindow'])
-imvu_test_program(
-    env,
+program = env.Program(
     'test_cal3d${IMVU_LIBRARY_SUFFIX}',
     [env.Object('TestFrameworkMain', '#/Source/TestFramework/TestFrameworkMain.cpp')] + sources)
+env.Install('#/Binaries', program)
