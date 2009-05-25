@@ -181,9 +181,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			// set the core material id
 			pCoreSubmesh->setCoreMaterialThreadId(pSubmeshCandidate->GetMaterialThreadId());
 
-			// get the spring vector
-			std::vector<CSubmeshCandidate::Spring>& vectorSpring = pSubmeshCandidate->GetVectorSpring();
-
 			size_t vertexCandidateId;
 			for(vertexCandidateId = 0; vertexCandidateId < vectorVertexCandidate.size(); vertexCandidateId++)
 			{

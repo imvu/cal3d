@@ -1253,7 +1253,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 return 0;
             }
             CalCoreSubmesh::Vertex Vertex;
-            CalColor32 vertexColor;
+            CalColor32 vertexColor = 0;
             CalCoreSubmesh::LodData lodData;
 
             TiXmlElement *pos= vertex->FirstChildElement();

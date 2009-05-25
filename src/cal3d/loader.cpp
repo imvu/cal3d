@@ -1856,7 +1856,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     
   // load all faces
   int faceId;
-  int justOnce = 0;
   bool flipModel = false;
   for(faceId = 0; faceId < faceCount; ++faceId)
   {
