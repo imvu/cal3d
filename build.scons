@@ -124,7 +124,7 @@ PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
 
 imvu_shared_library(
     shared_lib_env,
-    'cal3d${IMVU_SHORT_LIBRARY_SUFFIX}.dll',
+    'cal3d${IMVU_LIBRARY_SUFFIX}.dll',
     sources + [PCH_OBJ])
 
 # Build tests.
