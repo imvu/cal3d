@@ -129,7 +129,7 @@ imvu_shared_library(
 
 # Build tests.
 if not ARGUMENTS.get('skiptests', ''):
-    SConscript(dirs=['test'])
+    SConscript('test/shared.scons')
 
 exporter_env = env.Copy(tools=[cal3d, boost])
 exporter_env.Append(
