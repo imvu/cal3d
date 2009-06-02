@@ -6,11 +6,11 @@ skipdebug = ARGUMENTS.get('skipdebug', '')
 skiprelease = ARGUMENTS.get('skiprelease', '')
 
 if not skipdebug:
-    env = baseEnv.Copy(tools=[Debug])
+    env = baseEnv.Clone(tools=[Debug])
     Export('env')
     SConscript('build.scons', build_dir='Debug', duplicate=0)
 
 if not skiprelease:
-    env = baseEnv.Copy(tools=[Release])
+    env = baseEnv.Clone(tools=[Release])
     Export('env')
     SConscript('build.scons', build_dir='Release', duplicate=0)

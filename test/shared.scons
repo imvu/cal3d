@@ -10,7 +10,7 @@ sources = Split('''
 
 # Build the unit tests.
 
-env = env.Copy(tools=[cal3d, boost_test, python])
+env = env.Clone(tools=[cal3d, boost_test, python])
 env.Append(CPPPATH=['../../..',
                     '../../../avatarwindow'])
 imvu_test_program(

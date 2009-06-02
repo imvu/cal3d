@@ -1,5 +1,5 @@
 Import('*')
-env = env.Copy()
+env = env.Clone()
 env.Append(CPPPATH = ['..'])
 env.Library('cal3d', Split("""
     animation.cpp
