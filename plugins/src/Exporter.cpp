@@ -724,7 +724,8 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				std::vector<CalCoreSubmesh::Influence>& vectorInfluence = pVertexCandidate->GetVectorInfluence();
 
 				// set vertex in the core submesh instance
-                                assert(false); // Not sure exactly how this call should work.
+                                // Chad says that this might work. -- andy 4 June 2009
+                                //assert(false); // Not sure exactly how this call should work.
 				//pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);
                                 pCoreSubmesh->addVertex(vertex, vertexColor, lodData, vectorInfluence);
 			}
