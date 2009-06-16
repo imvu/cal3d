@@ -69,6 +69,11 @@ struct SSEAllocator {
     typedef size_t size_type;
     typedef T value_type;
 
+    SSEAllocator() {}
+    SSEAllocator(const SSEAllocator&) {}
+    template<typename U> SSEAllocator(const SSEAllocator<U>&) {}
+    ~SSEAllocator() {}
+
     pointer address(reference r) const { return &r; }
     const_pointer address(const_reference r) const { return &r; }
 
