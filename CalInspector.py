@@ -1,5 +1,5 @@
 import imvu
-import md5
+import hashlib
 import logging
 logger = logging.getLogger("imvu." + __name__)
 
@@ -23,7 +23,7 @@ class Cal3dException(Exception): pass
 
 def getMaterialInfo(materialBuffer):
     global gMaterialInfoCache
-    cachekey = md5.md5(materialBuffer).hexdigest()
+    cachekey = hashlib.md5(materialBuffer).hexdigest()
     cached = gMaterialInfoCache.get(cachekey, None)
     if cached: return cached
 
@@ -43,7 +43,7 @@ def getMaterialInfo(materialBuffer):
 
 def getMeshInfo(meshBuffer):
     global gMeshInfoCache
-    cachekey = md5.md5(meshBuffer).hexdigest()
+    cachekey = hashlib.md5(meshBuffer).hexdigest()
     cached = gMeshInfoCache.get(cachekey, None)
     if cached:
         return cached
