@@ -48,19 +48,19 @@ class Cal3d:
         loaderFunc = getattr(cal3d_dll, "CalLoader_Load"+calCoreType+"FromBuffer")
         saverFunc = getattr(cal3d_dll, "CalSaver_Save"+calCoreType)
         if not loaderFunc:
-            raise "could not find Loader for calCoreType %s" % calCoreType
+            raise Exception("could not find Loader for calCoreType %s" % calCoreType)
         if not saverFunc:
-            raise "could not find Saver for calCoreType %s" % calCoreType
+            raise Exception("could not find Saver for calCoreType %s" % calCoreType)
         object = loaderFunc(self.loader_, data, len(data))
         if not object:
             cal3d_dll.CalError_PrintLastError()
-            raise "could not load data (len %s) for calCoreType %s" % (len(data), calCoreType)
+            raise Exception("could not load data (len %s) for calCoreType %s" % (len(data), calCoreType))
         path = "%s.%s" % (tempfile.mktemp(), extension)
         try:
             r = saverFunc(self.saver_, path, object)
             if not r:
                 cal3d_dll.CalError_PrintLastError();
-                raise "could not save object 0x%x (calCoreType=%s) to path %s" % (object, calCoreType, path)
+                raise Exception("could not save object 0x%x (calCoreType=%s) to path %s" % (object, calCoreType, path))
             f = open(path, "rb")
             ret = f.read()
             f.close()
