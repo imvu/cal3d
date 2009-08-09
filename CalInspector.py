@@ -25,8 +25,7 @@ def getMaterialInfo(materialBuffer):
     cached = gMaterialInfoCache.get(cachekey, None)
     if cached: return cached
 
-    global gLoader
-    material = cal3d_dll.CalLoader_LoadCoreMaterialFromBuffer(gLoader, materialBuffer, len(materialBuffer))
+    material = cal3d_dll.CalLoader_LoadCoreMaterialFromBuffer(None, materialBuffer, len(materialBuffer))
     if not material:
         raise Cal3dException, cal3d_dll.CalError_GetLastErrorText()
     mapCount = cal3d_dll.CalCoreMaterial_GetMapCount(material)
@@ -46,8 +45,7 @@ def getMeshInfo(meshBuffer):
     if cached:
         return cached
 
-    global gLoader
-    mesh = cal3d_dll.CalLoader_LoadCoreMeshFromBuffer(gLoader, meshBuffer, len(meshBuffer))
+    mesh = cal3d_dll.CalLoader_LoadCoreMeshFromBuffer(None, meshBuffer, len(meshBuffer))
     if not mesh:
         raise Cal3dException, cal3d_dll.CalError_GetLastErrorText()
     submeshCount = cal3d_dll.CalCoreMesh_GetCoreSubmeshCount(mesh)
