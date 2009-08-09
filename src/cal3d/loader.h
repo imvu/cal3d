@@ -46,7 +46,7 @@ bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec
 /** The loader class.
   *****************************************************************************/
 
-class CAL3D_API CalLoader : public Cal::Object
+class CAL3D_API CalLoader
 {
 // member functions
 public:
@@ -166,6 +166,9 @@ private:
   static int numKeptKeyframes;
   static int numCompressedAnimations;
   static int numRoundedKeyframes;
+
+  CalLoader();
+  ~CalLoader();
 };
 
 

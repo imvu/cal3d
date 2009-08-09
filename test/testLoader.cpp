@@ -1,3 +1,4 @@
+#include <windows.h>
 #include "TestPrologue.h"
 #include <sstream>
 #include <cal3d/coresubmesh.h>
@@ -91,18 +92,23 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalCoreMesh cm;
     cm.addCoreSubmesh(sm);
 
-    const char* path = tmpnam(NULL);
-    CalSaver().saveCoreMesh(path, &cm);
+    char path[MAX_PATH];
+    GetTempPathA(MAX_PATH, path);
 
-    CalCoreMesh* loaded = CalLoader().loadCoreMesh(path);
-	CHECK(loaded);
+    char fn[MAX_PATH];
+    GetTempFileNameA(path, "", 0, fn);
+
+    CalSaver::saveCoreMesh(fn, &cm);
+
+    CalCoreMesh* loaded = CalLoader::loadCoreMesh(fn);
+    CHECK(loaded);
     CHECK_EQUAL(1, cm.getCoreSubmeshCount());
     CHECK_EQUAL(1, loaded->getCoreSubmeshCount());
 
     CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
                 loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());
 
-    _unlink(path);
+    DeleteFileA(fn);
     delete loaded;
 }
 

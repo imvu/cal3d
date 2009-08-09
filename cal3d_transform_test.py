@@ -45,8 +45,6 @@ class Cal3dTransformTest(imvu.test.TestCase):
             self.cal3d = ctypes.cdll.cal3d
         #self.cal3d.CalSubmesh_SetMorphTargetWeight.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_float]
 
-        self.loader = self.cal3d.CalLoader_New()
-
         test_data_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test_data"))
         self.testDataFs = imvu.fs.FileSystem(test_data_dir)
         self.cflManager = pyCFL.CflManager.CflManager()

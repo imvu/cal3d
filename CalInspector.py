@@ -14,8 +14,6 @@ cal3d_dll.CalError_GetLastErrorText.restype = ctypes.c_char_p
 cal3d_dll.CalCoreMaterial_GetMapFilename.restype = ctypes.c_char_p
 cal3d_dll.CalCoreMaterial_GetMapType.restype = ctypes.c_char_p
 
-gLoader = cal3d_dll.CalLoader_New()
-
 gMaterialInfoCache = {}
 gMeshInfoCache = {}
 

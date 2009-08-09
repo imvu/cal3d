@@ -11,10 +11,6 @@ else:
 
 class Cal3d:
     def __init__(self):
-        self.loader_ = cal3d_dll.CalLoader_New()
-        assert self.loader_
-        self.saver_ = cal3d_dll.CalSaver_New()
-        assert self.saver_
         self.typeToBinaryExtensionMap_ = { "CoreAnimation" : "caf",
                                            "CoreMaterial"  : "crf",
                                            "CoreAnimatedMorph"  : "cpf",
@@ -51,13 +47,13 @@ class Cal3d:
             raise Exception("could not find Loader for calCoreType %s" % calCoreType)
         if not saverFunc:
             raise Exception("could not find Saver for calCoreType %s" % calCoreType)
-        object = loaderFunc(self.loader_, data, len(data))
+        object = loaderFunc(None, data, len(data))
         if not object:
             cal3d_dll.CalError_PrintLastError()
             raise Exception("could not load data (len %s) for calCoreType %s" % (len(data), calCoreType))
         path = "%s.%s" % (tempfile.mktemp(), extension)
         try:
-            r = saverFunc(self.saver_, path, object)
+            r = saverFunc(None, path, object)
             if not r:
                 cal3d_dll.CalError_PrintLastError();
                 raise Exception("could not save object 0x%x (calCoreType=%s) to path %s" % (object, calCoreType, path))
@@ -70,8 +66,3 @@ class Cal3d:
 
         return ret
 
-    def __del__(self):
-        cal3d_dll.CalLoader_Delete(self.loader_)
-        cal3d_dll.CalSaver_Delete(self.saver_)
-        
-        

@@ -626,80 +626,60 @@ void CalError_SetLastError(CalErrorCode code, char *strFile, int line, char *str
 // CalLoader wrapper functions definition                                     //
 //****************************************************************************//
 
-void CalLoader_Delete(CalLoader *self)
+CalCoreAnimation *CalLoader_LoadCoreAnimationFromBuffer(CalLoader*, char *buf, unsigned int len)
 {
-  delete self;
+  return CalLoader::loadCoreAnimationFromBuffer(buf, len, NULL);
 }
 
-CalCoreAnimation *CalLoader_LoadCoreAnimationFromBuffer(CalLoader *self, char *buf, unsigned int len)
+CalCoreAnimatedMorph *CalLoader_LoadCoreAnimatedMorphFromBuffer(CalLoader*, char *buf, unsigned int len)
 {
-  return self->loadCoreAnimationFromBuffer(buf, len, NULL);
+  return CalLoader::loadCoreAnimatedMorphFromBuffer(buf, len);
 }
 
-CalCoreAnimatedMorph *CalLoader_LoadCoreAnimatedMorphFromBuffer(CalLoader *self, char *buf, unsigned int len)
+CalCoreMaterial *CalLoader_LoadCoreMaterialFromBuffer(CalLoader*, char *buf, unsigned int len)
 {
-  return self->loadCoreAnimatedMorphFromBuffer(buf, len);
+  return CalLoader::loadCoreMaterialFromBuffer(buf, len);
 }
 
-CalCoreMaterial *CalLoader_LoadCoreMaterialFromBuffer(CalLoader *self, char *buf, unsigned int len)
+CalCoreMesh *CalLoader_LoadCoreMeshFromBuffer(CalLoader*, char *buf, unsigned int len)
 {
-  return self->loadCoreMaterialFromBuffer(buf, len);
+  return CalLoader::loadCoreMeshFromBuffer(buf, len);
 }
 
-CalCoreMesh *CalLoader_LoadCoreMeshFromBuffer(CalLoader *self, char *buf, unsigned int len)
+CalCoreSkeleton *CalLoader_LoadCoreSkeletonFromBuffer(CalLoader*, char *buf, unsigned int len)
 {
-  return self->loadCoreMeshFromBuffer(buf, len);
+  return CalLoader::loadCoreSkeletonFromBuffer(buf, len);
 }
 
-CalCoreSkeleton *CalLoader_LoadCoreSkeletonFromBuffer(CalLoader *self, char *buf, unsigned int len)
+void CalLoader_CompressCoreAnimation(CalLoader*, CalCoreAnimation * anim, CalCoreSkeleton * skelOrNull)
 {
-  return self->loadCoreSkeletonFromBuffer(buf, len);
-}
-
-void CalLoader_CompressCoreAnimation( CalLoader *self, CalCoreAnimation * anim, CalCoreSkeleton * skelOrNull )
-{
-  self->compressCoreAnimation( anim, skelOrNull );
+  CalLoader::compressCoreAnimation( anim, skelOrNull );
 }
 
 
-CalLoader *CalLoader_New()
+Boolean CalSaver_SaveCoreAnimation(CalSaver*, char *strFilename, CalCoreAnimation *pCoreAnimation)
 {
-  return new CalLoader();
+  return CalSaver::saveCoreAnimation(strFilename, pCoreAnimation) ? True : False;
 }
 
-void CalSaver_Delete(CalSaver *self)
+Boolean CalSaver_SaveCoreAnimatedMorph(CalSaver*, char *strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph)
 {
-  delete self;
+  return CalSaver::saveCoreAnimatedMorph(strFilename, pCoreAnimatedMorph) ? True : False;
 }
 
-CalSaver *CalSaver_New()
+Boolean CalSaver_SaveCoreMaterial(CalSaver*, char *strFilename, CalCoreMaterial *pCoreMaterial)
 {
-  return new CalSaver();
+  return CalSaver::saveCoreMaterial(strFilename, pCoreMaterial) ? True : False;
 }
 
-Boolean CalSaver_SaveCoreAnimation(CalSaver *self, char *strFilename, CalCoreAnimation *pCoreAnimation)
+Boolean CalSaver_SaveCoreMesh(CalSaver*, char *strFilename, CalCoreMesh *pCoreMesh)
 {
-  return self->saveCoreAnimation(strFilename, pCoreAnimation) ? True : False;
+  return CalSaver::saveCoreMesh(strFilename, pCoreMesh) ? True : False;
 }
 
-Boolean CalSaver_SaveCoreAnimatedMorph(CalSaver *self, char *strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph)
+Boolean CalSaver_SaveCoreSkeleton(CalSaver*, char *strFilename, CalCoreSkeleton *pCoreSkeleton)
 {
-  return self->saveCoreAnimatedMorph(strFilename, pCoreAnimatedMorph) ? True : False;
-}
-
-Boolean CalSaver_SaveCoreMaterial(CalSaver *self, char *strFilename, CalCoreMaterial *pCoreMaterial)
-{
-  return self->saveCoreMaterial(strFilename, pCoreMaterial) ? True : False;
-}
-
-Boolean CalSaver_SaveCoreMesh(CalSaver *self, char *strFilename, CalCoreMesh *pCoreMesh)
-{
-  return self->saveCoreMesh(strFilename, pCoreMesh) ? True : False;
-}
-
-Boolean CalSaver_SaveCoreSkeleton(CalSaver *self, char *strFilename, CalCoreSkeleton *pCoreSkeleton)
-{
-  return self->saveCoreSkeleton(strFilename, pCoreSkeleton) ? True : False;
+  return CalSaver::saveCoreSkeleton(strFilename, pCoreSkeleton) ? True : False;
 }
 
 //****************************************************************************//

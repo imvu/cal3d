@@ -27,7 +27,7 @@ class CalCoreMaterial;
 class CalVector;
 class CalQuaternion;
 
-class CAL3D_API CalSaver : public Cal::Object
+class CAL3D_API CalSaver
 {
 public:
   static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation);
@@ -43,7 +43,7 @@ public:
   static bool saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMesh);
   static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial *pCoreMaterial);  
 
-protected:
+private:
   static bool saveCoreBones(std::ofstream& file, const std::string& strFilename, CalCoreBone *pCoreBone);
   static bool saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreKeyframe *pCoreKeyframe, int version, 
     bool needTranslation, bool highRangeRequired, bool useAnimationCompression );
@@ -51,4 +51,8 @@ protected:
   static bool saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack, bool useAnimationCompression, int version);
   static bool saveCoreMorphKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreMorphKeyframe *pCoreMorphKeyframe);
   static bool saveCoreMorphTrack(std::ofstream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack);
+
+private:
+  CalSaver();
+  ~CalSaver();
 };
