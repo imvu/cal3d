@@ -16,4 +16,6 @@ env.Append(CPPPATH=['../../..',
 imvu_test_program(
     env,
     'test_cal3d${IMVU_LIBRARY_SUFFIX}',
-    [env.Object('TestFrameworkMain', '#/Source/TestFramework/TestFrameworkMain.cpp')] + sources)
+    [ env.Object('TestFrameworkMain', '#/Source/TestFramework/TestFrameworkMain.cpp'),
+      env.Object('StubFrameworkTeardown', '#/Source/TestFramework/StubFrameworkTeardown.cpp'),
+      sources ])
