@@ -38,7 +38,8 @@ public:
 
   bool getState(float time, float & weightOut);
 
-  std::string getMorphName() const { return m_morphName; }
+  std::string getMorphNameTiXmlOnly() { return m_morphName; } // slow function to satisfy the Xml Bindings interface
+  const std::string& getMorphName() { return m_morphName; }
   void setMorphName(std::string name);
   
   int getCoreMorphKeyframeCount();
