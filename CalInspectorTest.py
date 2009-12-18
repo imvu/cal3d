@@ -4,12 +4,12 @@ logger = logging.getLogger("imvu." + __name__)
 
 import cal3d.CalInspector
 import os
-import pyCFL.CflManager
+import imvu.cfl.CflManager
 import imvu.test
 
 class CalInspectorTest(imvu.test.TestCase):
     def setUp(self):
-        self.cflManager = pyCFL.CflManager.CflManager()
+        self.cflManager = imvu.cfl.CflManager.CflManager()
         self.cflFilename = os.path.dirname(os.path.abspath(__file__)) + "/../test_data/product191.cfl"
 
     def test_getMaterialMaps(self):
