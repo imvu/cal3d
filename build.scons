@@ -131,34 +131,37 @@ imvu_shared_library(
 if not ARGUMENTS.get('skiptests', ''):
     SConscript('test/shared.scons')
 
-exporter_env = env.Clone(tools=[cal3d, boost])
-exporter_env.Append(
-    CPPPATH=['../plugins/cal3d_max_exporter',
-             '#/Source/cal3d/plugins/src',
-             '#/Source/cal3d/plugins/src/win32',
-             '#/ext/3dsmax7/maxsdk/include',
-             '#/Ext/3dsmax7/maxsdk/cssdk/include',
-             ],
-    CPPDEFINES=['_AFXDLL'],
-    LIBPATH=['#/Ext/3dsmax7/maxsdk/lib'],
-    LIBS=['core',
-          'geom',
-          'gfx',
-          'mesh',
-          'maxutil', 
-          'maxscrpt', 
-          'paramblk2'])
+if 'exp' not in env.get('MSVS_VERSION', '').lower():
+    #visual studio express doesn't have MFC so it can't build the max exporters
 
-exporter_env['CPPDEFINES'].remove('NOMINMAX')
-exporter_env['CPPDEFINES'].remove('UNICODE')
-exporter_env['CPPDEFINES'].remove('_UNICODE')
+    exporter_env = env.Clone(tools=[cal3d, boost])
+    exporter_env.Append(
+        CPPPATH=['../plugins/cal3d_max_exporter',
+                 '#/Source/cal3d/plugins/src',
+                 '#/Source/cal3d/plugins/src/win32',
+                 '#/ext/3dsmax7/maxsdk/include',
+                 '#/Ext/3dsmax7/maxsdk/cssdk/include',
+                 ],
+        CPPDEFINES=['_AFXDLL'],
+        LIBPATH=['#/Ext/3dsmax7/maxsdk/lib'],
+        LIBS=['core',
+              'geom',
+              'gfx',
+              'mesh',
+              'maxutil', 
+              'maxscrpt', 
+              'paramblk2'])
 
-PCH_OBJ = imvu_enable_pch(exporter_env, 'plugins/src/PCH.cpp', 'PCH.h')
+    exporter_env['CPPDEFINES'].remove('NOMINMAX')
+    exporter_env['CPPDEFINES'].remove('UNICODE')
+    exporter_env['CPPDEFINES'].remove('_UNICODE')
 
-res = exporter_env.RES('plugins/cal3d_max_exporter/cal3d_max_exporter.rc')
-exporter_env.SharedLibrary(
-    '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter',
-    exporter_sources + exporter_src_sources + exporter_win32_sources + [res, PCH_OBJ, manifest_resource(exporter_env, is_dll=True, include_mfc=True)])
-exporter_env.InstallAs(
-    '#/Binaries/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dle',
-    '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dll')
+    PCH_OBJ = imvu_enable_pch(exporter_env, 'plugins/src/PCH.cpp', 'PCH.h')
+
+    res = exporter_env.RES('plugins/cal3d_max_exporter/cal3d_max_exporter.rc')
+    exporter_env.SharedLibrary(
+        '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter',
+        exporter_sources + exporter_src_sources + exporter_win32_sources + [res, PCH_OBJ, manifest_resource(exporter_env, is_dll=True, include_mfc=True)])
+    exporter_env.InstallAs(
+        '#/Binaries/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dle',
+        '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dll')
