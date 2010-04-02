@@ -111,7 +111,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to skeleton file...");
+  CStackProgress progress(m_pInterface, "Exporting to skeleton file...");
 
 	size_t boneCandidateId;
 	int selectedId;
@@ -171,7 +171,6 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreBone;
 					coreSkeleton.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -180,9 +179,6 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			}
 		}
 	}
-
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
 
 	// save core skeleton to the file
 	if(!CalSaver::saveCoreSkeleton(strFilename, &coreSkeleton))

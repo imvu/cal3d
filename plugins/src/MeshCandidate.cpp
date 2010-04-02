@@ -195,7 +195,7 @@ bool CMeshCandidate::Create(CSkeletonCandidate *pSkeletonCandidate,
 	faceCount = m_pMesh->GetFaceCount();
 
 	// start the progress info
-	theExporter.GetInterface()->StartProgressInfo("Analyzing the mesh...");
+  CStackProgress progress(theExporter.GetInterface(), "Analyzing the mesh...");
 
 	// loop through all faces of the mesh and put it into the corresponding submesh
 	int faceId;
@@ -209,14 +209,12 @@ bool CMeshCandidate::Create(CSkeletonCandidate *pSkeletonCandidate,
 		materialId = m_pMesh->GetFaceMaterialId(faceId);
 		if(materialId == -1)
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			return false;
 		}
 
 		// check if the material id is valid
 		if((materialId < 0) || (materialId >= materialCount))
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			theExporter.SetLastError("Invalid material id found!", __FILE__, __LINE__);
 			return false;
 		}
@@ -246,20 +244,15 @@ bool CMeshCandidate::Create(CSkeletonCandidate *pSkeletonCandidate,
 
 		if((vertexId1 == -1) ||(vertexId2 == -1) ||(vertexId3 == -1))
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			return false;
 		}
 
 		// add the face to the corresponding submesh
 		if(!m_vectorSubmeshCandidate[materialId]->AddFace(vertexId1, vertexId2, vertexId3))
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			return false;
 		}
 	}
-
-	// stop the progress info
-	theExporter.GetInterface()->StopProgressInfo();
 
 	// adjust all bone assignments in the submesh candidates
 	for(submeshId = 0; submeshId < int(m_vectorSubmeshCandidate.size()); submeshId++)
@@ -343,7 +336,7 @@ bool CMeshCandidate::Create(CBaseNode* _basenode, CSkeletonCandidate *pSkeletonC
 	faceCount = m_pMesh->GetFaceCount();
 
 	// start the progress info
-	theExporter.GetInterface()->StartProgressInfo("Analyzing the mesh...");
+  CStackProgress progress(theExporter.GetInterface(), "Analyzing the mesh...");
 
 	// loop through all faces of the mesh and put it into the corresponding submesh
 	int faceId;
@@ -357,14 +350,12 @@ bool CMeshCandidate::Create(CBaseNode* _basenode, CSkeletonCandidate *pSkeletonC
 		materialId = m_pMesh->GetFaceMaterialId(faceId);
 		if(materialId == -1)
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			return false;
 		}
 
 		// check if the material id is valid
 		if((materialId < 0) || (materialId >= materialCount))
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			theExporter.SetLastError("Invalid material id found!", __FILE__, __LINE__);
 			return false;
 		}
@@ -395,20 +386,15 @@ bool CMeshCandidate::Create(CBaseNode* _basenode, CSkeletonCandidate *pSkeletonC
 
 		if((vertexId1 == -1) ||(vertexId2 == -1) ||(vertexId3 == -1))
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			return false;
 		}
 
 		// add the face to the corresponding submesh
 		if(!m_vectorSubmeshCandidate[materialId]->AddFace(vertexId1, vertexId2, vertexId3))
 		{
-			theExporter.GetInterface()->StopProgressInfo();
 			return false;
 		}
 	}
-
-	// stop the progress info
-	theExporter.GetInterface()->StopProgressInfo();
 
 	// adjust all bone assignments in the submesh candidates
 	for(submeshId = 0; submeshId < int(m_vectorSubmeshCandidate.size()); submeshId++)

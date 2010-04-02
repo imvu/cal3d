@@ -151,7 +151,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 	std::vector<CSubmeshCandidate *> const & vectorSubmeshCandidate = meshCandidate.GetVectorSubmeshCandidate();
 
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to mesh file...");
+  CStackProgress progress(m_pInterface, "Exporting to mesh file...");
 
 	size_t submeshCandidateId;
 	for(submeshCandidateId = 0; submeshCandidateId < vectorSubmeshCandidate.size(); submeshCandidateId++)
@@ -258,9 +258,6 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			coreMesh.addCoreSubmesh(pCoreSubmesh);
 		}
 	}
-
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
 
 	// save core mesh to the file
 	if(!CalSaver::saveCoreMesh(strFilename, &coreMesh))

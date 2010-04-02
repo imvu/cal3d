@@ -61,6 +61,7 @@ CExporter::~CExporter()
 
 bool CExporter::Create(CBaseInterface *pInterface)
 {
+  ::OutputDebugString("CExporter::Create()\n");
 	// check if a valid interface is set
 	if(pInterface == 0)
 	{
@@ -138,7 +139,6 @@ bool CExporter::ExportAnimation(const std::string& strFilename)
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
 				coreAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 
@@ -154,14 +154,13 @@ bool CExporter::ExportAnimation(const std::string& strFilename)
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreTrack;
 				coreAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 		}
 	}
 
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to animation file...");
+  CStackProgress progress(m_pInterface, "Exporting to animation file...");
 
 	// calculate the end frame
 	int endFrame;
@@ -210,7 +209,6 @@ OutputDebugString(str);
 				{
 					SetLastError("Memory allocation failed.", __FILE__, __LINE__);
 					coreAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -234,7 +232,6 @@ OutputDebugString(str);
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreKeyframe;
 					coreAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -280,9 +277,6 @@ OutputDebugString(str);
 		  pCoreTrack->compress(translationTolerance, rotationToleranceDegrees, skelOrNull );
 		}
 	}
-
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
 
 	// save core animation to the file
 	if(!CalSaver::saveCoreAnimation(strFilename, &coreAnimation))
@@ -345,11 +339,12 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
         //     set value from modifier
 
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to animation file...");
+  CStackProgress progress(m_pInterface, "Exporting to animation file...");
 
     CBaseMesh * pMesh = morphAnimationCandidate.meshAtTime(-1);
 	if( !pMesh ) {
 		coreAnimation.destroy();
+      ::OutputDebugString("No mesh found.\n");
         return false;
 	}
     int numMC = pMesh->numMorphChannels();
@@ -381,6 +376,11 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
         
         int frame;
         int outputFrame;
+        {
+          std::stringstream ss;
+          ss << "Writing " << (endFrame + wrapFrame) << " frames of animation." << std::endl;
+          ::OutputDebugString(ss.str().c_str());
+        }
         for(frame = 0,  outputFrame = 0; frame <= (endFrame + wrapFrame); frame++)
 	{
           // update the progress info
@@ -438,10 +438,8 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
           }
         }
         
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
-        
 	// save core animation to the file
+        ::OutputDebugString("Writing to output file...\n");
 	if(!CalSaver::saveCoreAnimatedMorph(strFilename, &coreAnimation))
 	{
           SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
@@ -450,6 +448,7 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 	}
         
 	// destroy the core animation
+  ::OutputDebugString("Writing complete.\n");
 	coreAnimation.destroy();
 
 	return true;
@@ -642,7 +641,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 	std::vector<CSubmeshCandidate *> const & vectorSubmeshCandidate = meshCandidate.GetVectorSubmeshCandidate();
 
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to mesh file...");
+  CStackProgress progress(m_pInterface, "Exporting to mesh file...");
 
 	size_t submeshCandidateId;
 	for(submeshCandidateId = 0; submeshCandidateId < vectorSubmeshCandidate.size(); submeshCandidateId++)
@@ -752,9 +751,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 		}
 	}
 
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
-
 	return true;
 }
 
@@ -796,12 +792,12 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 	// get bone candidate vector
 	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
-        CalVector sceneAmbientColor;
-        m_pInterface->GetAmbientLight( sceneAmbientColor );
-        coreSkeleton.setSceneAmbientColor( sceneAmbientColor );
-        
+  CalVector sceneAmbientColor;
+  m_pInterface->GetAmbientLight( sceneAmbientColor );
+  coreSkeleton.setSceneAmbientColor( sceneAmbientColor );
+  
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to skeleton file...");
+  CStackProgress progress(m_pInterface, "Exporting to skeleton file...");
 
 	size_t boneCandidateId;
 	int selectedId;
@@ -867,7 +863,6 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreBone;
 					coreSkeleton.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -876,9 +871,6 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			}
 		}
 	}
-
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
 
 	// save core skeleton to the file
 	if(!CalSaver::saveCoreSkeleton(strFilename, &coreSkeleton))
@@ -932,6 +924,8 @@ void CExporter::SetLastError(const std::string& strText, const std::string& strF
 	strstrError << strText << "\n(" << strFilename << " " << line << ")" << std::ends;
 
 	m_strLastError = strstrError.str();
+  std::string s(m_strLastError);
+  ::OutputDebugString(s.c_str());
 }
 
 //----------------------------------------------------------------------------//
@@ -954,6 +948,8 @@ void CExporter::SetLastErrorFromCal(const std::string& strFilename, int line)
 	strstrError << "\n(" << strFilename << " " << line << ")" << std::ends;
 
 	m_strLastError = strstrError.str();
+  std::string s(m_strLastError);
+  ::OutputDebugString(s.c_str());
 }
 
 //----------------------------------------------------------------------------//

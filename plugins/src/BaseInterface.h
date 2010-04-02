@@ -52,10 +52,33 @@ public:
 	virtual bool IsMesh(CBaseNode *pNode) = 0;
 	virtual bool IsLight(CBaseNode *pNode) = 0;
 	virtual void SetProgressInfo(int percentage) = 0;
-	virtual void StartProgressInfo(const std::string& strText) = 0;
+private:
+  //  make sure that we *always* balance progress calls
+  friend class CStackProgress;
+  virtual void StartProgressInfo(const std::string& strText) = 0;
 	virtual void StopProgressInfo() = 0;
+public:
   virtual void GetAmbientLight( CalVector & ) = 0;
 
+};
+
+class CStackProgress
+{
+  CBaseInterface *itf_;
+  //  don't support heap instances, as they aren't automatically lifetime managed
+  void *operator new(size_t);
+  //  don't support placement new, either
+  void *operator new(size_t, void *);
+public:
+  CStackProgress(CBaseInterface *itf, char const *str)
+  {
+    itf_ = itf;
+    itf_->StartProgressInfo(str);
+  }
+  ~CStackProgress()
+  {
+    itf_->StopProgressInfo();
+  }
 };
 
 #endif

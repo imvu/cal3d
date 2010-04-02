@@ -203,8 +203,17 @@ Modifier *CMaxMesh::FindMorpherModifier(INode *pINode)
 			Modifier *pModifier;
 			pModifier = pDerivedObject->GetModifier(stackId);
 
+      Class_ID id = pModifier->ClassID();
+      char buf[512];
+      sprintf(buf, "node %s modifier %d class %d:%d/0x%x:0x%x\n",
+        pINode->GetName(), stackId, id.PartA(), id.PartB(), id.PartA(), id.PartB());
+      ::OutputDebugString(buf);
 			// check if we found the physique modifier
-			if(pModifier->ClassID() == MR3_CLASS_ID) return pModifier;
+			if(pModifier->ClassID() == MR3_CLASS_ID)
+      {
+        ::OutputDebugString("that was it! the morpher I was looking for!\n");
+        return pModifier;
+      }
 		}
 
 		// continue with next derived object

@@ -163,7 +163,6 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
 				coreAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 
@@ -179,14 +178,12 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreTrack;
 				coreAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 		}
 	}
 
-	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to animation file...");
+  CStackProgress progress(m_pInterface, "Exporting to animation file...");
 
 	// calculate the end frame
 	int endFrame;
@@ -235,7 +232,6 @@ OutputDebugString(str);
 				{
 					SetLastError("Memory allocation failed.", __FILE__, __LINE__);
 					coreAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -259,7 +255,6 @@ OutputDebugString(str);
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreKeyframe;
 					coreAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -289,9 +284,6 @@ OutputDebugString(str);
       displacedFrame++;
    }
 	}
-
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
 
 	// save core animation to the file
 	if(!CalSaver::saveCoreAnimation(strFilename, &coreAnimation))

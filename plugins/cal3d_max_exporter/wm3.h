@@ -354,6 +354,11 @@ class M3Mat;
 class M3MatDlg;
 class Restore_FullChannel;
 
+#if !defined(MAX_RELEASE) || GET_MAX_RELEASE(MAX_RELEASE) < 12
+CoreExport RemapDir &NoRemap();
+inline RemapDir &DefaultRemapDir() { return NoRemap(); }
+#endif
+
 // Dialog handlers
 INT_PTR CALLBACK Legend_DlgProc		(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK Globals_DlgProc		(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -371,12 +376,54 @@ INT_PTR CALLBACK NameDlgProc			(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 static Point3 junkpoint(0,0,0);
 class morphChannel;
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+template<typename T>
+class CompatibleVector
+{
+public:
+  int cnt;
+  T *base;
+  T *logEnd;
+  T *physEnd;
+  T &operator[](size_t ix) {
+    if (ix > size()) {
+      ::OutputDebugString("Guaranteed out-of-range access.\n");
+      ::DebugBreak();
+    }
+    return *(base + ix);
+  }
+  T const &operator[](size_t ix) const {
+    if (ix > size()) {
+      ::OutputDebugString("Guaranteed out-of-range access.\n");
+      ::DebugBreak();
+    }
+    return *(base + ix);
+  }
+  size_t size() const { return logEnd - base; }
+  void erase(T const *begin, T const *end) {
+    ::OutputDebugString("This vector wrapper is read-only.\n");
+    ::DebugBreak();
+  }
+  T const *begin() const { return base; }
+  T const *end() const { return logEnd; }
+  void resize(size_t size) {
+    ::OutputDebugString("This vector wrapper is read-only.\n");
+    ::DebugBreak();
+  }
+};
+#else
+template<typename T>
+class CompatibleVector : public std::vector<T>
+{
+};
+#endif
+
 class TargetCache
 {
 public:
 	long mNumPoints;
 	INode *mTargetINode;
-	std::vector<Point3> mTargetPoints;
+	CompatibleVector<Point3> mTargetPoints;
 	float mTargetPercent;
 
 	TargetCache(){
@@ -440,11 +487,11 @@ public:
 	int iTargetListSelection;
 
 	// Actual morphable points
-	std::vector<Point3>		mPoints;
-	std::vector<Point3>		mDeltas;
-	std::vector<double>		mWeights;
+	CompatibleVector<Point3>		mPoints;
+	CompatibleVector<Point3>		mDeltas;
+	CompatibleVector<double>		mWeights;
 	
-	std::vector<TargetCache>	mTargetCache;
+	CompatibleVector<TargetCache>	mTargetCache;
 
         // BitArray to check against for point selection
 	BitArray	mSel;
@@ -658,6 +705,7 @@ public:
 	int Size(){ return 0; }
 };
 
+//  MSVC 2008 SP1 isn't compatible with the R12 compiled morpher
 
 /*===========================================================================*\
  | Modifer class definition
@@ -671,7 +719,7 @@ class MorphR3 : public Modifier, TimeChangeCallback {
 		static IObjParam *ip;
 		
 		// Pointer to the morph channels
-		std::vector<morphChannel>	chanBank;
+		CompatibleVector<morphChannel>	chanBank;
 
 		// Pointer to the morph material bound to this morpher
 		M3Mat *morphmaterial;
@@ -751,7 +799,7 @@ class MorphR3 : public Modifier, TimeChangeCallback {
 		void DeleteThis() { delete this; }
 		void GetClassName(TSTR& s) { s= TSTR(GetString(IDS_CLASS_NAME)); }  
 		virtual Class_ID ClassID() { return MR3_CLASS_ID;}		
-		RefTargetHandle Clone(RemapDir& remap = NoRemap());
+		RefTargetHandle Clone(RemapDir& remap = DefaultRemapDir());
 		TCHAR *GetObjectName() { return GetString(IDS_CLASS_NAME); }
 
 		IOResult Load(ILoad *iload);
@@ -1017,7 +1065,7 @@ class M3Mat : public Mtl, public IReshading  {
 		RefTargetHandle GetReference(int i);
 		void SetReference(int i, RefTargetHandle rtarg);
 
-		RefTargetHandle Clone(RemapDir &remap = NoRemap());
+		RefTargetHandle Clone(RemapDir &remap = DefaultRemapDir());
 		RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
 		   PartID& partID, RefMessage message);
 

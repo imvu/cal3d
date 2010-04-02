@@ -1,0 +1,67 @@
+
+# building the DLL
+
+Import('*')
+
+sources = Split('''
+    animation.cpp
+    animation_action.cpp
+    animation_cycle.cpp
+    bone.cpp
+    buffersource.cpp
+    cal3d_wrapper.cpp
+    calxmlbindings.cpp
+    coreanimatedmorph.cpp
+    coreanimation.cpp
+    corebone.cpp
+    corekeyframe.cpp
+    corematerial.cpp
+    coremesh.cpp
+    coremodel.cpp
+    coremorphkeyframe.cpp
+    coremorphtrack.cpp
+    coreskeleton.cpp
+    coresubmesh.cpp
+    coresubmorphtarget.cpp
+    coretrack.cpp
+    error.cpp
+    global.cpp
+    loader.cpp
+    matrix.cpp
+    mesh.cpp
+    mixer.cpp
+    model.cpp
+    physique.cpp
+    platform.cpp
+    quaternion.cpp
+    renderer.cpp
+    saver.cpp
+    skeleton.cpp
+    streamsource.cpp
+    submesh.cpp
+    tinybind.cpp
+    tinystr.cpp
+    tinyxml.cpp
+    tinyxmlerror.cpp
+    tinyxmlparser.cpp
+    vector.cpp
+    xmlformat.cpp
+''')
+
+sources = ['src/cal3d/' + s for s in sources]
+
+shared_lib_env = env.Clone(tools=[boost])
+shared_lib_env.Append(
+    CPPDEFINES=['CAL3D_EXPORTS'],
+    CPPPATH=['../src'])
+
+PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
+
+imvu_shared_library(
+    shared_lib_env,
+    'cal3d${IMVU_LIBRARY_SUFFIX}${VERSION_SUFFIX}.dll',
+    sources + [PCH_OBJ])
+
+# Build tests.
+if not ARGUMENTS.get('skiptests', ''):
+    SConscript('test/shared.scons')

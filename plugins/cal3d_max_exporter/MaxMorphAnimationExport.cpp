@@ -49,12 +49,15 @@ const TCHAR *CMaxMorphAnimationExport::CopyrightMessage()
 
 int CMaxMorphAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
+  ::OutputDebugString("CMaxMorphAnimationExport::DoExport()\n");
+
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	// create an export interface for 3d studio max
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(ei, i))
 	{
+    ::OutputDebugString("maxInterface.Create() failed\n");
 		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
@@ -62,17 +65,21 @@ int CMaxMorphAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Inte
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
+    ::OutputDebugString("theExporter.Create() failed\n");
 		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the morphAnimation
+  ::OutputDebugString("Attempting export...\n");
 	if(!theExporter.ExportMorphAnimation(name))
 	{
+    ::OutputDebugString("theExporter.ExportMorphAnimation() failed\n");
 		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
+  ::OutputDebugString("Morph export success!\n");
 	return 1;
 }
 

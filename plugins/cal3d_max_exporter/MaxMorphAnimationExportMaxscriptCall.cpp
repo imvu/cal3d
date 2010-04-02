@@ -163,7 +163,6 @@ bool CExporter::ExportMorphAnimationFromMaxscriptCall(const std::string& strFile
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
 				coreMorphAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 
@@ -173,7 +172,6 @@ bool CExporter::ExportMorphAnimationFromMaxscriptCall(const std::string& strFile
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreTrack;
 				coreMorphAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 
@@ -186,14 +184,13 @@ bool CExporter::ExportMorphAnimationFromMaxscriptCall(const std::string& strFile
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreTrack;
 				coreMorphAnimation.destroy();
-				m_pInterface->StopProgressInfo();
 				return false;
 			}
 		}
 	}
 
 	// start the progress info
-	m_pInterface->StartProgressInfo("Exporting to morphAnimation file...");
+  CStackProgres blah blah;
 
 	// calculate the end frame
 	int endFrame;
@@ -242,7 +239,6 @@ OutputDebugString(str);
 				{
 					SetLastError("Memory allocation failed.", __FILE__, __LINE__);
 					coreMorphAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -252,7 +248,6 @@ OutputDebugString(str);
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreKeyframe;
 					coreMorphAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -276,7 +271,6 @@ OutputDebugString(str);
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreKeyframe;
 					coreMorphAnimation.destroy();
-					m_pInterface->StopProgressInfo();
 					return false;
 				}
 
@@ -306,9 +300,6 @@ OutputDebugString(str);
       displacedFrame++;
    }
 	}
-
-	// stop the progress info
-	m_pInterface->StopProgressInfo();
 
 	// save core morphAnimation to the file
 	if(!CalSaver::saveCoreAnimatedMorph(strFilename, &coreMorphAnimation))

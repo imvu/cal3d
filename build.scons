@@ -1,49 +1,6 @@
 Import('*')
 
-sources = Split('''
-    animation.cpp
-    animation_action.cpp
-    animation_cycle.cpp
-    bone.cpp
-    buffersource.cpp
-    cal3d_wrapper.cpp
-    calxmlbindings.cpp
-    coreanimatedmorph.cpp
-    coreanimation.cpp
-    corebone.cpp
-    corekeyframe.cpp
-    corematerial.cpp
-    coremesh.cpp
-    coremodel.cpp
-    coremorphkeyframe.cpp
-    coremorphtrack.cpp
-    coreskeleton.cpp
-    coresubmesh.cpp
-    coresubmorphtarget.cpp
-    coretrack.cpp
-    error.cpp
-    global.cpp
-    loader.cpp
-    matrix.cpp
-    mesh.cpp
-    mixer.cpp
-    model.cpp
-    physique.cpp
-    platform.cpp
-    quaternion.cpp
-    renderer.cpp
-    saver.cpp
-    skeleton.cpp
-    streamsource.cpp
-    submesh.cpp
-    tinybind.cpp
-    tinystr.cpp
-    tinyxml.cpp
-    tinyxmlerror.cpp
-    tinyxmlparser.cpp
-    vector.cpp
-    xmlformat.cpp
-''')
+import re
 
 exporter_sources = Split('''
     MaxAnimationExport.cpp
@@ -106,41 +63,29 @@ exporter_win32_sources = Split('''
     SpringSystemPage.cpp
 ''')
 
-#   SelectionDialog.cpp
+maxVersion = re.findall("[0-9]+", env['IMVU_BUILDDIR_NAME'])[0]
+if not maxVersion:
+  raise Exception("You must target a specific version of 3ds Max")
 
-# tinytest.cpp
-
-sources = ['src/cal3d/' + s for s in sources]
 exporter_sources = ['plugins/cal3d_max_exporter/' + s for s in exporter_sources]
 exporter_src_sources = ['plugins/src/' + s for s in exporter_src_sources]
 exporter_win32_sources = ['plugins/src/win32/' + s for s in exporter_win32_sources]
 
-shared_lib_env = env.Clone(tools=[boost])
-shared_lib_env.Append(
-    CPPDEFINES=['CAL3D_EXPORTS'],
-    CPPPATH=['../src'])
-
-PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
-
-imvu_shared_library(
-    shared_lib_env,
-    'cal3d${IMVU_LIBRARY_SUFFIX}.dll',
-    sources + [PCH_OBJ])
-
-# Build tests.
-if not ARGUMENTS.get('skiptests', ''):
-    SConscript('test/shared.scons')
+if int(maxVersion) < 2000:
+  csInclude = '#/Ext/3dsmax' + maxVersion + '/maxsdk/cssdk/include'
+else:
+  csInclude = '#/Ext/3dsmax' + maxVersion + '/maxsdk/include/cs'
 
 exporter_env = env.Clone(tools=[cal3d, boost])
 exporter_env.Append(
     CPPPATH=['../plugins/cal3d_max_exporter',
              '#/Source/cal3d/plugins/src',
              '#/Source/cal3d/plugins/src/win32',
-             '#/ext/3dsmax7/maxsdk/include',
-             '#/Ext/3dsmax7/maxsdk/cssdk/include',
+             '#/ext/3dsmax' + maxVersion + '/maxsdk/include',
+             csInclude,
              ],
     CPPDEFINES=['_AFXDLL'],
-    LIBPATH=['#/Ext/3dsmax7/maxsdk/lib'],
+    LIBPATH=['#/Ext/3dsmax' + maxVersion + '/maxsdk/lib'],
     LIBS=['core',
           'geom',
           'gfx',
@@ -158,7 +103,8 @@ PCH_OBJ = imvu_enable_pch(exporter_env, 'plugins/src/PCH.cpp', 'PCH.h')
 res = exporter_env.RES('plugins/cal3d_max_exporter/cal3d_max_exporter.rc')
 exporter_env.SharedLibrary(
     '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter',
-    exporter_sources + exporter_src_sources + exporter_win32_sources + [res, PCH_OBJ, manifest_resource(exporter_env, is_dll=True, include_mfc=True)])
+    exporter_sources + exporter_src_sources + exporter_win32_sources + [res, PCH_OBJ, 
+      manifest_resource(exporter_env, is_dll=True, include_mfc=True)])
 exporter_env.InstallAs(
     '#/Binaries/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dle',
     '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dll')

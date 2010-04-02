@@ -126,7 +126,9 @@ BOOL CMaxExporterApp::InitInstance()
 	if(!bInitialized)
 	{
 		DisableThreadLibraryCalls(m_hInstance);
-		InitCustomControls(m_hInstance);
+#if !defined(MAX_RELEASE) || (MAX_RELEASE < MAX_RELEASE_R12)
+    InitCustomControls(m_hInstance);
+#endif
 		InitCommonControls();
 		bInitialized = true;
 	}
