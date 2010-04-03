@@ -269,7 +269,7 @@ OutputDebugString(str);
 		CalCoreTrack *pCoreTrack;
 		pCoreTrack = coreAnimation.getCoreTrack(pBoneCandidate->GetId());
 		static bool useCompression = true;
-        static double translationTolerance = 0.25;
+        static double translationTolerance = 0.05;
 		static double rotationToleranceDegrees = 0.1;
 		// there is no pCoreTrack for bones that are deselected
 		if( pCoreTrack && useCompression ) {
