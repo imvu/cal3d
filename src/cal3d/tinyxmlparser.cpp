@@ -23,6 +23,7 @@ distribution.
 */
 
 #include "tinyxml.h"
+#include <iostream>
 #include <ctype.h>
 
 //#define DEBUG_PARSER

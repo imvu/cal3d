@@ -26,6 +26,7 @@
 #pragma once
 
 #include "tinyxml.h"
+#include "platform.h"
 
 #include <vector>
 #include <list>

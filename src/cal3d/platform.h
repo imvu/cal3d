@@ -22,16 +22,30 @@
 //****************************************************************************//
 
 #if defined(_WIN32) && !defined(__MINGW32__)
+// MSVC
+#  ifdef CAL3D_EXPORTS
+#    define CAL3D_API __declspec(dllexport)
+#  else
+#    define CAL3D_API __declspec(dllimport)
+#  endif
 
-#ifdef CAL3D_EXPORTS
-#define CAL3D_API __declspec(dllexport)
+#  define CAL3D_CDECL __cdecl
+#  define CAL3D_FORCEINLINE __forceinline
+#  define CAL3D_ALIGN_HEAD(X) __declspec(align(X))
+#  define CAL3D_ALIGN_TAIL(X)
+#  define CAL3D_ALIGNED_MALLOC(c, a) _aligned_malloc(c, a)
+#  define CAL3D_ALIGNED_FREE _aligned_free
+
 #else
-#define CAL3D_API __declspec(dllimport)
-#endif
-
-#else
-
-#define CAL3D_API
+// Assume OSX
+#  define CAL3D_API
+#  define CAL3D_CDECL
+#  define CAL3D_FORCEINLINE inline __attribute__((always_inline))
+#  define CAL3D_ALIGN_HEAD(X)
+#  define CAL3D_ALIGN_TAIL(X) __attribute__((aligned (X)))
+#  define CAL3D_ALIGNED_MALLOC(c, a) malloc(c)
+#  define CAL3D_ALIGNED_FREE free
+#  define _stricmp stricmp
 
 #endif
 
@@ -59,6 +73,7 @@
 
 
 // Allocations objects that are 16-byte aligned
+#if defined(WIN32)
 template<typename T>
 struct SSEAllocator {
     typedef const T* const_pointer;
@@ -113,3 +128,12 @@ struct SSEAllocator {
         return *this;
     }
 };
+#else
+template <typename T>
+class SSEAllocator : public std::allocator<T> {
+    SSEAllocator() { }
+
+    template <typename U>
+    SSEAllocator(const std::allocator<U>& a) { }
+};
+#endif

@@ -16,6 +16,7 @@
 // Includes                                                                   //
 //****************************************************************************//
 
+#include <string>
 #include "cal3d/animation_action.h"
 #include "cal3d/error.h"
 #include "cal3d/coreanimation.h"
@@ -63,7 +64,7 @@ bool CalAnimationAction::create(CalCoreAnimation *pCoreAnimation)
   m_scale = 1.0;
   if(pCoreAnimation == 0)
   {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+    CalError::setLastError(CalError::INVALID_HANDLE, std::string(__FILE__), __LINE__);
     return false;
   }
 

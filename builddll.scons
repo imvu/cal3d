@@ -2,6 +2,7 @@
 # building the DLL
 
 Import('*')
+import sys
 
 sources = Split('''
     animation.cpp
@@ -59,9 +60,9 @@ PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
 
 imvu_shared_library(
     shared_lib_env,
-    'cal3d${IMVU_LIBRARY_SUFFIX}${VERSION_SUFFIX}.dll',
+    'cal3d${IMVU_LIBRARY_SUFFIX}${VERSION_SUFFIX}',
     sources + [PCH_OBJ])
 
 # Build tests.
-if not ARGUMENTS.get('skiptests', ''):
+if sys.platform == 'win32' and not ARGUMENTS.get('skiptests', ''):
     SConscript('test/shared.scons')

@@ -1,5 +1,5 @@
 #include "tinybind.h"
-
+#include <sstream>
 
 // do this to support your STL container types, like list and vector
 #if 0

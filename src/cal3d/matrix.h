@@ -111,7 +111,7 @@ public:
   }
 };
 
-__forceinline void transform(CalVector& v, const CalMatrix& m) {
+CAL3D_FORCEINLINE void transform(CalVector& v, const CalMatrix& m) {
   float ox = v.x;
   float oy = v.y;
   float oz = v.z;
@@ -120,7 +120,7 @@ __forceinline void transform(CalVector& v, const CalMatrix& m) {
   v.z = m.dzdx*ox + m.dzdy*oy + m.dzdz*oz;
 }
 
-__forceinline void transform(
+CAL3D_FORCEINLINE void transform(
   CalVector& v,
   const CalVector4& colx,
   const CalVector4& coly,

@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include <iostream>
 #include "cal3d/platform.h"
 #include "cal3d/datasource.h"
 

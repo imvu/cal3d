@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include <assert.h>
 #include <xmmintrin.h>
 #include <boost/static_assert.hpp>
 #include "cal3d/error.h"
@@ -56,7 +57,7 @@ SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
   Lesser General Public License for more details.
 */
 
-__forceinline void ScaleMatrix(BoneTransform& result, const BoneTransform& mat, const float s) {
+CAL3D_FORCEINLINE void ScaleMatrix(BoneTransform& result, const BoneTransform& mat, const float s) {
   result.rowx.x = s * mat.rowx.x;
   result.rowx.y = s * mat.rowx.y;
   result.rowx.z = s * mat.rowx.z;
@@ -70,7 +71,7 @@ __forceinline void ScaleMatrix(BoneTransform& result, const BoneTransform& mat, 
   result.rowz.z = s * mat.rowz.z;
   result.rowz.w = s * mat.rowz.w;
 }
-__forceinline void AddScaledMatrix(BoneTransform& result, const BoneTransform& mat, const float s) {
+CAL3D_FORCEINLINE void AddScaledMatrix(BoneTransform& result, const BoneTransform& mat, const float s) {
   result.rowx.x += s * mat.rowx.x;
   result.rowx.y += s * mat.rowx.y;
   result.rowx.z += s * mat.rowx.z;
@@ -84,12 +85,12 @@ __forceinline void AddScaledMatrix(BoneTransform& result, const BoneTransform& m
   result.rowz.z += s * mat.rowz.z;
   result.rowz.w += s * mat.rowz.w;
 }
-__forceinline void TransformPoint(CalVector4& result, const BoneTransform& m, const CalBase4& v) {
+CAL3D_FORCEINLINE void TransformPoint(CalVector4& result, const BoneTransform& m, const CalBase4& v) {
   result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z + m.rowx.w;
   result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z + m.rowy.w;
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z + m.rowz.w;
 }
-__forceinline void TransformVector(CalVector4& result, const BoneTransform& m, const CalBase4& v) {
+CAL3D_FORCEINLINE void TransformVector(CalVector4& result, const BoneTransform& m, const CalBase4& v) {
   result.x = m.rowx.x * v.x + m.rowx.y * v.y + m.rowx.z * v.z;
   result.y = m.rowy.x * v.x + m.rowy.y * v.y + m.rowy.z * v.z;
   result.z = m.rowz.x * v.x + m.rowz.y * v.y + m.rowz.z * v.z;
@@ -215,6 +216,10 @@ void CalPhysique::calculateVerticesAndNormals_SSE(
   const CalCoreSubmesh::Influence* influences,
   CalVector4* output_vertices
 ) {
+#if !defined(_MSC_VER)
+    assert(0 && "This function only works on MSVC right now");
+#else
+
   #define OUTPUT_VERTEX_SIZE 0x20
   BOOST_STATIC_ASSERT(OUTPUT_VERTEX_SIZE == 2 * sizeof(CalVector4));
 
@@ -358,6 +363,7 @@ doneWeight:
 
 done:
   }
+#endif
 }
 
 void automaticallyDetectSkinRoutine(

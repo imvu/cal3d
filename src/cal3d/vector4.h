@@ -2,7 +2,8 @@
 
 #include "cal3d/vector.h"
 
-__declspec(align(16)) struct CalBase4 : public Cal::Object
+CAL3D_ALIGN_HEAD(16)
+struct CalBase4 : public Cal::Object
 {
   float x, y, z, w;
 
@@ -22,7 +23,8 @@ __declspec(align(16)) struct CalBase4 : public Cal::Object
   CalVector asCalVector() const {
     return CalVector(x, y, z);
   }
-};
+}
+CAL3D_ALIGN_TAIL(16);
 
 struct CalVector4 : CalBase4 {
   CalVector4() {
@@ -39,7 +41,7 @@ struct CalVector4 : CalBase4 {
     this->w = w;
   }
 
-  __forceinline void setAsVector(const CalVector& r) {
+  CAL3D_FORCEINLINE void setAsVector(const CalVector& r) {
     x = r.x;
     y = r.y;
     z = r.z;
@@ -62,7 +64,7 @@ struct CalPoint4 : CalBase4 {
     this->w = w;
   }
 
-  __forceinline void setAsPoint(const CalVector& r) {
+  CAL3D_FORCEINLINE void setAsPoint(const CalVector& r) {
     x = r.x;
     y = r.y;
     z = r.z;

@@ -2,6 +2,8 @@ Import('*')
 
 # Build Cal3D
 
+import sys
+
 skipdebug = ARGUMENTS.get('skipdebug', '')
 skiprelease = ARGUMENTS.get('skiprelease', '')
 
@@ -9,16 +11,20 @@ if not skipdebug:
     env = baseEnv.Clone(tools=[Debug])
     Export('env')
     SConscript('builddll.scons', build_dir='Debug', duplicate=0)
-    env['IMVU_BUILDDIR_NAME'] = 'Debug7'
-    SConscript('build.scons', build_dir='Debug7', duplicate=0)
-    env['IMVU_BUILDDIR_NAME'] = 'Debug2010'
-    SConscript('build.scons', build_dir='Debug2010', duplicate=0)
+
+    if sys.platform == 'win32':
+        env['IMVU_BUILDDIR_NAME'] = 'Debug7'
+        SConscript('build.scons', build_dir='Debug7', duplicate=0)
+        env['IMVU_BUILDDIR_NAME'] = 'Debug2010'
+        SConscript('build.scons', build_dir='Debug2010', duplicate=0)
 
 if not skiprelease:
     env = baseEnv.Clone(tools=[Release])
     Export('env')
     SConscript('builddll.scons', build_dir='Release', duplicate=0)
-    env['IMVU_BUILDDIR_NAME'] = 'Release7'
-    SConscript('build.scons', build_dir='Release7', duplicate=0)
-    env['IMVU_BUILDDIR_NAME'] = 'Release2010'
-    SConscript('build.scons', build_dir='Release2010', duplicate=0)
+
+    if sys.platform == 'win32':
+        env['IMVU_BUILDDIR_NAME'] = 'Release7'
+        SConscript('build.scons', build_dir='Release7', duplicate=0)
+        env['IMVU_BUILDDIR_NAME'] = 'Release2010'
+        SConscript('build.scons', build_dir='Release2010', duplicate=0)

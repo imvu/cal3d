@@ -1,5 +1,6 @@
 Import('*')
 
+import sys
 import re
 
 exporter_sources = Split('''

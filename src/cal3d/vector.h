@@ -48,7 +48,7 @@ public:
 	  return (&x)[i];
   }
 
-  __forceinline void operator+=(const CalVector& v)
+  CAL3D_FORCEINLINE void operator+=(const CalVector& v)
   {
 	  x += v.x;
 	  y += v.y;

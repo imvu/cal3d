@@ -11,6 +11,7 @@
 #pragma once
 
 #include <boost/noncopyable.hpp>
+#include <string>
 #include <vector>
 #include "cal3d/platform.h"
 
@@ -30,7 +31,7 @@ struct SSEArray : boost::noncopyable {
   {}
 
   ~SSEArray() {
-    _aligned_free(data);
+    CAL3D_ALIGNED_FREE(data);
   }
 
   // destructive
@@ -39,7 +40,7 @@ struct SSEArray : boost::noncopyable {
       T* new_data = reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * new_size));
 
       if (data) {
-        _aligned_free(data);
+        CAL3D_ALIGNED_FREE(data);
       }
       _size = new_size;
       data = new_data;
@@ -68,15 +69,15 @@ private:
 namespace Cal {
 
   struct CAL3D_API Object {
-    void* __cdecl operator new(size_t count);
-    void* __cdecl operator new(size_t count, const std::nothrow_t&) throw();
-    void __cdecl operator delete(void* object);
-    void __cdecl operator delete(void* object, const std::nothrow_t&) throw();
+    void* CAL3D_CDECL operator new(size_t count);
+    void* CAL3D_CDECL operator new(size_t count, const std::nothrow_t&) throw();
+    void CAL3D_CDECL operator delete(void* object);
+    void CAL3D_CDECL operator delete(void* object, const std::nothrow_t&) throw();
 
-    void* __cdecl operator new[](size_t count);
-    void* __cdecl operator new[](size_t count, const std::nothrow_t&) throw();
-    void __cdecl operator delete[](void* object);
-    void __cdecl operator delete[](void* object, const std::nothrow_t&) throw();
+    void* CAL3D_CDECL operator new[](size_t count);
+    void* CAL3D_CDECL operator new[](size_t count, const std::nothrow_t&) throw();
+    void CAL3D_CDECL operator delete[](void* object);
+    void CAL3D_CDECL operator delete[](void* object, const std::nothrow_t&) throw();
   };
 
   struct UserData : public Cal::Object {

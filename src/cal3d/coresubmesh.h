@@ -99,11 +99,13 @@ public:
     }
   };
 
-  __declspec(align(16)) struct Vertex
+  CAL3D_ALIGN_HEAD(16)
+  struct Vertex
   {
     CalPoint4 position;
     CalVector4 normal;
-  };
+  }
+  CAL3D_ALIGN_TAIL(16);
 
   struct InfluenceRange
   {
@@ -131,8 +133,8 @@ public:
 
   CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
-  unsigned int size();
-  unsigned int sizeWithoutSubMorphTargets();
+  size_t size();
+  size_t sizeWithoutSubMorphTargets();
   int getCoreMaterialThreadId();
   int getFaceCount();
   int getLodCount();
