@@ -3,12 +3,9 @@ import hashlib
 import logging
 logger = logging.getLogger("imvu." + __name__)
 
-import ctypes
+from imvu import ctypes
 
-if __debug__:
-    cal3d_dll  = ctypes.cdll.cal3d_debug
-else:
-    cal3d_dll = ctypes.cdll.cal3d
+cal3d_dll = ctypes.CDLL('cal3d')
 
 cal3d_dll.CalError_GetLastErrorText.restype = ctypes.c_char_p
 cal3d_dll.CalCoreMaterial_GetMapFilename.restype = ctypes.c_char_p
