@@ -55,6 +55,7 @@ shared_lib_env = env.Clone(tools=[boost])
 shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
     CPPPATH=['../src'])
+
 PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
 
 imvu_shared_library(

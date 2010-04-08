@@ -522,7 +522,13 @@ public:
 };
 
 template<class T>
-void ConvertFromString( char const * strIn, T * dataOut );
+char const *
+ConvertToString( T const & t );
+
+template<class T>
+void
+ConvertFromString( char const * strIn, T * dataOut );
+
 
 template<class T>
 class GenericTiXmlBinding : public TiXmlBinding<T>
