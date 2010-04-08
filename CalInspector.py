@@ -3,7 +3,7 @@ import hashlib
 import logging
 logger = logging.getLogger("imvu." + __name__)
 
-from imvu import ctypes
+from imvu import imvuctypes as ctypes
 
 cal3d_dll = ctypes.CDLL('cal3d')
 
