@@ -36,6 +36,9 @@
 #  define CAL3D_ALIGNED_MALLOC(c, a) _aligned_malloc(c, a)
 #  define CAL3D_ALIGNED_FREE _aligned_free
 
+typedef __int64 cal3d_int64;
+typedef unsigned __int64 cal3d_uint64;
+
 #else
 // Assume OSX
 #  define CAL3D_API
@@ -46,6 +49,9 @@
 #  define CAL3D_ALIGNED_MALLOC(c, a) malloc(c)
 #  define CAL3D_ALIGNED_FREE free
 #  define _stricmp stricmp
+
+typedef long long cal3d_int64;
+typedef unsigned long long cal3d_uint64;
 
 #endif
 

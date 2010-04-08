@@ -1,4 +1,4 @@
-#include <intrin.h>
+//#include <intrin.h>
 #include "TestPrologue.h"
 #include <cal3d/renderer.h>
 #include <cal3d/bone.h>
@@ -7,6 +7,18 @@
 #include <cal3d/skeleton.h>
 #include <cal3d/physique.h>
 #include <cal3d/mixer.h>
+
+#if defined(_MSC_VER)
+#   include <intrin.h>
+#else
+
+inline cal3d_uint64 __rdtsc(void) {
+    cal3d_uint64 myvar;
+    __asm__ volatile ("rdtsc \n\t" : "=A" (myvar));
+    return myvar;
+}
+
+#endif
 
 FIXTURE(skin_x87) {
   CalPhysique::SkinRoutine skin;
@@ -48,7 +60,7 @@ ABSTRACT_TEST(single_identity_bone) {
   };
 
   CalVector4 output[2];
-  skin(bt, 1, v, i, output);
+  this->skin(bt, 1, v, i, output);
   CHECK_EQUAL(output[0].x, 1);
   CHECK_EQUAL(output[0].y, 2);
   CHECK_EQUAL(output[0].z, 3);
@@ -78,7 +90,7 @@ ABSTRACT_TEST(two_translated_bones) {
   };
 
   CalVector4 output[2];
-  skin(bt, 1, v, i, output);
+  this->skin(bt, 1, v, i, output);
   CHECK_EQUAL(output[0].x, 1.5);
   CHECK_EQUAL(output[0].y, 2.5);
   CHECK_EQUAL(output[0].z, 3);
@@ -112,7 +124,7 @@ ABSTRACT_TEST(three_translated_bones) {
   };
 
   CalVector4 output[2];
-  skin(bt, 1, v, i, output);
+  this->skin(bt, 1, v, i, output);
 
   CHECK_CLOSE(output[0].x, 4.0f / 3.0f, 1.e-5);
   CHECK_CLOSE(output[0].y, 7.0f / 3.0f, 1.e-5);
@@ -145,7 +157,7 @@ ABSTRACT_TEST(two_rotated_bones) {
   };
 
   CalVector4 output[2];
-  skin(bt, 1, v, i, output);
+  this->skin(bt, 1, v, i, output);
   CHECK_EQUAL(output[0].x, 0);
   CHECK_EQUAL(output[0].y, 1);
   CHECK_EQUAL(output[0].z, 0);
@@ -158,7 +170,7 @@ APPLY_SKIN_FIXTURES(two_rotated_bones);
 ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
   const int N = 10000;
   const int TrialCount = 10;
-  
+
   CalCoreSubmesh::Vertex v[N];
   CalCoreSubmesh::Influence i[N];
   for (int k = 0; k < N; ++k) {
@@ -172,14 +184,14 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
   BoneTransform bt;
   memset(&bt, 0, sizeof(bt));
 
-  __declspec(align(16)) CalVector4 output[N * 2];
+  CAL3D_ALIGN_HEAD(16) CalVector4 output[N * 2] CAL3D_ALIGN_TAIL(16);
 
-  __int64 min = 99999999999999;
+  cal3d_int64 min = 99999999999999LL;
   for (int t = 0; t < TrialCount; ++t) {
-    unsigned __int64 start = __rdtsc();
-    skin(&bt, N, v, i, output);
-    unsigned __int64 end = __rdtsc();
-    unsigned __int64 elapsed = end - start;
+    cal3d_int64 start = __rdtsc();
+    this->skin(&bt, N, v, i, output);
+    cal3d_int64 end = __rdtsc();
+    cal3d_int64 elapsed = end - start;
     if (elapsed < min) {
       min = elapsed;
     }
