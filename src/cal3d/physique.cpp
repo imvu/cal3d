@@ -216,6 +216,10 @@ void CalPhysique::calculateVerticesAndNormals_SSE(
   const CalCoreSubmesh::Influence* influences,
   CalVector4* output_vertices
 ) {
+#if !defined(_MSC_VER)
+    assert(0 && "This function only works on MSVC right now");
+#else
+
   #define OUTPUT_VERTEX_SIZE 0x20
   BOOST_STATIC_ASSERT(OUTPUT_VERTEX_SIZE == 2 * sizeof(CalVector4));
 
@@ -359,6 +363,7 @@ doneWeight:
 
 done:
   }
+#endif
 }
 
 void automaticallyDetectSkinRoutine(
@@ -369,41 +374,35 @@ void automaticallyDetectSkinRoutine(
   CalVector4* output_vertices);
 
 static CalPhysique::SkinRoutine optimizedSkinRoutine = automaticallyDetectSkinRoutine;
-int hello_i_am_int = 1337;
 
 void automaticallyDetectSkinRoutine(
-    const BoneTransform* boneTransforms,
-    int vertexCount,
-    const CalCoreSubmesh::Vertex* vertices,
-    const CalCoreSubmesh::Influence* influences,
-    CalVector4* output_vertices
+  const BoneTransform* boneTransforms,
+  int vertexCount,
+  const CalCoreSubmesh::Vertex* vertices,
+  const CalCoreSubmesh::Influence* influences,
+  CalVector4* output_vertices
 ) {
-    unsigned features = 0;
-    /* For some reason, on OSX, we need to pop and push EBX to prevent
-     * byproducts from striking ventilation machinery.
-     * -- andy 7 April 2010
-     */
-    __asm {
-        push ebx
-        mov eax, 1
-        cpuid
-        mov features, edx
-        pop ebx
-    }
+  // http://softpixel.com/~cwright/programming/simd/cpuid.php
 
-    // Technically I should be verifying that the OS saves and restores
-    // the XMM0-7 registers as part of the thread state, but I'm going
-    // to assume that all of the OSes we support do so.
-    const int SSE_BIT  = 1 << 25;
-    const int SSE2_BIT = 1 << 26;
+  // Technically I should be verifying that the OS saves and restores
+  // the XMM0-7 registers as part of the thread state, but I'm going
+  // to assume that all of the OSes we support do so.
 
-    if ((features & SSE_BIT) && (features & SSE2_BIT)) {
-        optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE;
-    } else {
-        optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_x87;
-    }
+  unsigned features;
+  __asm {
+    mov eax, 1
+    cpuid
+    mov features, edx
+  }
+  const int SSE_BIT  = 1 << 25;
+  const int SSE2_BIT = 1 << 26;
+  if ((features & SSE_BIT) && (features & SSE2_BIT)) {
+    optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE;
+  } else {
+    optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_x87;
+  }
 
-    return optimizedSkinRoutine(boneTransforms, vertexCount, vertices, influences, output_vertices);
+  return optimizedSkinRoutine(boneTransforms, vertexCount, vertices, influences, output_vertices);
 }
 
 void CalPhysique::calculateVerticesAndNormals(
