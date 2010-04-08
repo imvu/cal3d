@@ -1,8 +1,33 @@
-#include <windows.h>
+//#include <windows.h>
 #include "TestPrologue.h"
 #include <sstream>
 #include <cal3d/coresubmesh.h>
 
+#if defined(_MSC_VER)
+
+#include <windows.h>
+std::string getTempFileName() {
+    char path[MAX_PATH];
+    GetTempPathA(MAX_PATH, path);
+
+    char fn[MAX_PATH];
+    GetTempFileNameA(path, "", 0, fn);
+
+    return fn;
+}
+
+#define unlink _unlink
+
+#else
+
+std::string getTempFileName() {
+    char path[512];
+    sprintf(path, "/tmp/imvu_cal3d_temp_cfl_XXXXXX");
+    char* result = mktemp(path);
+    assert(result);
+    return result;
+}
+#endif
 
 const char* animationText =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
@@ -17,7 +42,6 @@ const char* animationText =
 "    </TRACK>\n"
 "</ANIMATION>\n"
 ;
-
 
 TEST(LoadSimpleXmlAnimation) {
 
@@ -92,13 +116,8 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalCoreMesh cm;
     cm.addCoreSubmesh(sm);
 
-    char path[MAX_PATH];
-    GetTempPathA(MAX_PATH, path);
-
-    char fn[MAX_PATH];
-    GetTempFileNameA(path, "", 0, fn);
-
-    CalSaver::saveCoreMesh(fn, &cm);
+    std::string fn = getTempFileName();
+    CalSaver::saveCoreMesh(fn.c_str(), &cm);
 
     CalCoreMesh* loaded = CalLoader::loadCoreMesh(fn);
     CHECK(loaded);
@@ -108,7 +127,7 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
                 loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());
 
-    DeleteFileA(fn);
+    unlink(fn.c_str());
     delete loaded;
 }
 
@@ -126,7 +145,7 @@ TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CalCoreAnimation* anim2 = CalLoader::loadCoreAnimation(path, 0);
     CHECK(anim2);
 
-    _unlink(path);
+    unlink(path);
 
     std::stringstream buf2;
     CalSaver::saveXmlCoreAnimation(buf2, anim2);

@@ -64,5 +64,5 @@ imvu_shared_library(
     sources + [PCH_OBJ])
 
 # Build tests.
-if sys.platform == 'win32' and not ARGUMENTS.get('skiptests', ''):
+if not ARGUMENTS.get('skiptests', ''):
     SConscript('test/shared.scons')
