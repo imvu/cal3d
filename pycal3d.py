@@ -1,13 +1,9 @@
 import os
 
-import ctypes
+from imvu import imvuctypes
 import tempfile
 
-if __debug__:
-    cal3d_dll  = ctypes.cdll.cal3d_debug
-else:
-    cal3d_dll = ctypes.cdll.cal3d
-
+cal3d_dll = imvuctypes.imvudll('cal3d')
 
 class Cal3d:
     def __init__(self):
