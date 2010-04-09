@@ -3,6 +3,7 @@ import logging
 logger = logging.getLogger('imvu.' + __name__)
 
 import imvu.test
+import imvu.imvuctypes
 import ctypes
 import os.path
 import imvu.fs
@@ -38,10 +39,7 @@ def allVertsEqual(av1, av2):
 
 class Cal3dTransformTest(imvu.test.TestCase):
     def setUp(self):
-        if __debug__:
-            self.cal3d  = ctypes.cdll.cal3d_debug
-        else:
-            self.cal3d = ctypes.cdll.cal3d
+        self.cal3d = imvu.imvuctypes.imvudll('cal3d')
         #self.cal3d.CalSubmesh_SetMorphTargetWeight.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_float]
 
         test_data_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test_data"))
