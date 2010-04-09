@@ -12,7 +12,6 @@ GetTiXmlBinding( StlIntVector const &,  StlIntVector const &  )
 }
 #endif
 
-
 #ifdef WIN32
 #undef TIXML_USE_STL
 #else
@@ -95,13 +94,11 @@ ConvertToString( std::string const & s )
 }
 
 
-#ifdef WIN32
 void
 ConvertFromString( char const * strIn, const char * * dataOut )
 {
   *dataOut = strIn;
 }
-#endif
 
 void
 ConvertFromString( char const * strIn, std::string * dataOut )
@@ -178,3 +175,7 @@ GetTiXmlBinding( std::string const &, IdentityBase  )
   static GenericTiXmlBinding<std::string> binding;
   return &binding;
 }
+
+template void ConvertFromString<std::string>(char const* strIn, std::string* dataOut );
+template void ConvertFromString<float>(char const* strIn, float* dataOut );
+template void ConvertFromString<int>(char const* strIn, int* dataOut );
