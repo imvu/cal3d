@@ -5,7 +5,7 @@ logger = logging.getLogger("imvu." + __name__)
 
 from imvu import imvuctypes as ctypes
 
-cal3d_dll = ctypes.CDLL('cal3d')
+cal3d_dll = ctypes.imvudll('cal3d')
 
 cal3d_dll.CalError_GetLastErrorText.restype = ctypes.c_char_p
 cal3d_dll.CalCoreMaterial_GetMapFilename.restype = ctypes.c_char_p
