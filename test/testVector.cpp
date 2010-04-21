@@ -3,7 +3,7 @@
 
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector& v) {
-  return os << '(' << v.x << ', ' << v.y << ', ' << v.z << ')';
+  return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
 }
 
 
