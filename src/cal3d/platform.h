@@ -137,6 +137,7 @@ struct SSEAllocator {
 #else
 template <typename T>
 class SSEAllocator : public std::allocator<T> {
+public:
     SSEAllocator() { }
 
     template <typename U>
