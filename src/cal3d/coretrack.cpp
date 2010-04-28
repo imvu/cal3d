@@ -300,6 +300,8 @@ CalCoreTrack::compress( double translationTolerance, double rotationToleranceDeg
     if( !kl->eliminated_ ) {
       m_keyframes[ numKept ] = kl->keyframe_;
       numKept++;
+    } else {
+        delete kl->keyframe_;
     }
   }
   assert( numKept == numFrames - numFramesEliminated );
@@ -397,6 +399,8 @@ CalCoreTrack::collapseSequences( double translationTolerance, double rotationTol
     if( !kl->eliminated_ ) {
       m_keyframes[ numKept ] = kl->keyframe_;
       numKept++;
+    } else {
+        delete kl->keyframe_;
     }
   }
   assert( numKept == numFrames - numFramesEliminated );
