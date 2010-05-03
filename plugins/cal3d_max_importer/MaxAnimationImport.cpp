@@ -5,13 +5,13 @@
 
 const TCHAR*
 CMaxAnimationImport::AuthorName() {
-  return _T("Chad Austin");
+  return _T("IMVU Inc; Chad Austin");
 }
 
 
 const TCHAR*
 CMaxAnimationImport::CopyrightMessage() {
-  return _T("(c) Chad Austin 2003");
+  return _T("Copyright (c) 2010 IMVU Inc; (c) Chad Austin 2003");
 }
 
 
@@ -147,8 +147,7 @@ CMaxAnimationImport::DoImport(
 const TCHAR*
 CMaxAnimationImport::Ext(int n) {
   switch (n) {
-    case 0:  return _T("caf");
-    case 1:  return _T("xaf");
+    case 0:  return _T("xaf");
     default: return _T("");
   }
 }
@@ -156,7 +155,7 @@ CMaxAnimationImport::Ext(int n) {
 
 int
 CMaxAnimationImport::ExtCount() {
-  return 2;
+  return 1;
 }
 
 

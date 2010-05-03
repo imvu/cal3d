@@ -39,12 +39,12 @@ CMaxAnimationExport::~CMaxAnimationExport()
 
 const TCHAR *CMaxAnimationExport::AuthorName()
 {
-	return _T("Bruno 'Beosil' Heidelberger");
+	return _T("IMVU Inc; Bruno 'Beosil' Heidelberger");
 }
 
 const TCHAR *CMaxAnimationExport::CopyrightMessage()
 {
-	return _T("Copyright (C) 2001 Bruno 'Beosil' Heidelberger");
+	return _T("Copyright (c) 2010 IMVU Inc; Copyright (C) 2001 Bruno 'Beosil' Heidelberger");
 }
 
 int CMaxAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
@@ -81,8 +81,6 @@ const TCHAR *CMaxAnimationExport::Ext(int i)
 	switch(i)
 	{
 	case 0:
-		return _T("caf");
-	case 1:
 		return _T("xaf");
 	default:
 		return _T("");
@@ -91,7 +89,7 @@ const TCHAR *CMaxAnimationExport::Ext(int i)
 
 int CMaxAnimationExport::ExtCount()
 {
-	return 2;
+	return 1;
 }
 
 const TCHAR *CMaxAnimationExport::LongDesc()

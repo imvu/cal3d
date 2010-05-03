@@ -6,13 +6,13 @@
 
 const TCHAR*
 CMaxSkeletonImport::AuthorName() {
-  return _T("Chad Austin");
+  return _T("IMVU Inc; Chad Austin");
 }
 
 
 const TCHAR*
 CMaxSkeletonImport::CopyrightMessage() {
-  return _T("(c) Chad Austin 2003");
+  return _T("Copyright (c) 2010 IMVU Inc; (c) Chad Austin 2003");
 }
 
 
@@ -275,8 +275,7 @@ CMaxSkeletonImport::DoImport(
 const TCHAR*
 CMaxSkeletonImport::Ext(int n) {
   switch (n) {
-    case 0:  return _T("csf");
-    case 1:  return _T("xsf");
+    case 0:  return _T("xsf");
     default: return _T("");
   }
 }
@@ -284,7 +283,7 @@ CMaxSkeletonImport::Ext(int n) {
 
 int
 CMaxSkeletonImport::ExtCount() {
-  return 2;
+  return 1;
 }
 
 

@@ -39,12 +39,12 @@ CMaxMeshExport::~CMaxMeshExport()
 
 const TCHAR *CMaxMeshExport::AuthorName()
 {
-	return _T("Bruno 'Beosil' Heidelberger");
+	return _T("IMVU Inc; Bruno 'Beosil' Heidelberger");
 }
 
 const TCHAR *CMaxMeshExport::CopyrightMessage()
 {
-	return _T("Copyright (C) 2001 Bruno 'Beosil' Heidelberger");
+	return _T("Copyright (c) 2010 IMVU, Inc; Copyright (C) 2001 Bruno 'Beosil' Heidelberger");
 }
 
 int CMaxMeshExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
@@ -81,8 +81,6 @@ const TCHAR *CMaxMeshExport::Ext(int i)
 	switch(i)
 	{
 	case 0:
-		return _T("cmf");
-	case 1:
 		return _T("xmf");
 	default:
 		return _T("");
@@ -91,7 +89,7 @@ const TCHAR *CMaxMeshExport::Ext(int i)
 
 int CMaxMeshExport::ExtCount()
 {
-	return 2;
+	return 1;
 }
 
 const TCHAR *CMaxMeshExport::LongDesc()
