@@ -364,11 +364,6 @@ int CalCoreModel_GetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId,
   return self->getCoreMaterialId(coreMaterialThreadId, coreMaterialSetId);
 }
 
-int CalCoreModel_GetCoreMeshCount(CalCoreModel *self)
-{
-  return self->getCoreMeshCount();
-}
-
 CalCoreSkeleton *CalCoreModel_GetCoreSkeleton(CalCoreModel *self)
 {
   return self->getCoreSkeleton();
@@ -402,11 +397,6 @@ Boolean CalCoreModel_SaveCoreAnimation(CalCoreModel *self, char *strFilename, in
 Boolean CalCoreModel_SaveCoreMaterial(CalCoreModel *self, char *strFilename, int coreMaterialId)
 {
   return self->saveCoreMaterial(strFilename, coreMaterialId) ? True : False;
-}
-
-Boolean CalCoreModel_SaveCoreMesh(CalCoreModel *self, char *strFilename, int coreMeshId)
-{
-  return self->saveCoreMesh(strFilename, coreMeshId) ? True : False;
 }
 
 Boolean CalCoreModel_SaveCoreSkeleton(CalCoreModel *self, char *strFilename)

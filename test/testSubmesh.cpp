@@ -170,16 +170,15 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
 
     CalCoreModel coreModel;
     CHECK(coreModel.createInternal("model"));
-    coreModel.addCoreMesh(coreMesh);
 
     CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
     coreModel.setCoreSkeleton(coreSkeleton);
 
     CalModel model;
     model.create(&coreModel);
-    CHECK(model.attachMesh(0));
+    CHECK(model.attachMesh(coreMesh));
 
-    CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
+    CalSubmesh* submesh = model.getMesh(coreMesh)->getSubmesh(0);
     const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate()[0];
     CHECK_EQUAL(0, texCoords.size());
 
@@ -195,16 +194,15 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
 
     CalCoreModel coreModel;
     CHECK(coreModel.createInternal("model"));
-    coreModel.addCoreMesh(coreMesh);
 
     CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
     coreModel.setCoreSkeleton(coreSkeleton);
 
     CalModel model;
     model.create(&coreModel);
-    CHECK(model.attachMesh(0));
+    CHECK(model.attachMesh(coreMesh));
 
-    CalSubmesh* submesh = model.getMesh(0)->getSubmesh(0);
+    CalSubmesh* submesh = model.getMesh(coreMesh)->getSubmesh(0);
     CHECK(submesh);
 
     CalPhysique::calculateVerticesAndNormals(

@@ -13,6 +13,7 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
+class CalCoreMesh;
 class CalCoreModel;
 class CalSkeleton;
 class CalAbstractMixer;
@@ -25,12 +26,11 @@ public:
   CalModel();
   ~CalModel();
 
-  bool attachMesh(int coreMeshId);
+  bool attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   void create(CalCoreModel *pCoreModel);
   void destroy();
-  bool detachMesh(int coreMeshId);
   CalCoreModel *getCoreModel();
-  CalMesh *getMesh(int coreMeshId);
+  CalMesh *getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   CalMixer *getMixer();
   CalAbstractMixer *getAbstractMixer();
   void setAbstractMixer(CalAbstractMixer* pMixer);

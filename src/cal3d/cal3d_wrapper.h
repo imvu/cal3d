@@ -413,11 +413,9 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 // CalModel wrapper functions declaration                                     //
 //****************************************************************************//
 
-  CAL3D_WRAPPER_API enum Boolean CalModel_AttachMesh(struct CalModel *self, int coreMeshId);
   CAL3D_WRAPPER_API void CalModel_Create(struct CalModel *self, struct CalCoreModel *pCoreModel);
   CAL3D_WRAPPER_API void CalModel_Delete(struct CalModel *self);
   CAL3D_WRAPPER_API void CalModel_Destroy(struct CalModel *self);
-  CAL3D_WRAPPER_API enum Boolean CalModel_DetachMesh(struct CalModel *self, int coreMeshId);
   CAL3D_WRAPPER_API struct CalCoreModel *CalModel_GetCoreModel(struct CalModel *self);
   CAL3D_WRAPPER_API struct CalMesh *CalModel_GetMesh(struct CalModel *self, int coreMeshId);
   CAL3D_WRAPPER_API struct CalMixer *CalModel_GetMixer(struct CalModel *self);

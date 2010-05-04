@@ -52,7 +52,6 @@ CalCoreModel::~CalCoreModel()
   m_magic = 0;
   assert(m_vectorCoreAnimation.empty());
   assert(m_vectorCoreAnimatedMorph.empty());
-  assert(m_vectorCoreMesh.empty());
   assert(m_vectorCoreMaterial.empty());
 }
 
@@ -273,12 +272,6 @@ int CalCoreModel::addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMateri
   return materialId;
 }
 
-int CalCoreModel::addCoreMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
-  int meshId = m_vectorCoreMesh.size();
-  m_vectorCoreMesh.push_back(pCoreMesh);
-  return meshId;
-}
-
  /*****************************************************************************/
 /** Creates the core model instance.
   *
@@ -319,7 +312,6 @@ void CalCoreModel::destroy()
   assert( m_magic == CalCoreModelMagic );
 
   m_vectorCoreMaterial.clear();
-  m_vectorCoreMesh.clear();
 
   // destroy all core animations
   std::vector<CalCoreAnimation *>::iterator iteratorCoreAnimation;
@@ -493,42 +485,6 @@ int CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSe
     }
 
     return m_mapCoreMaterialThread[key];
-}
-
- /*****************************************************************************/
-/** Provides access to a core mesh.
-  *
-  * This function returns the core mesh with the given ID.
-  *
-  * @param coreMeshId The ID of the core mesh that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core mesh
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-boost::shared_ptr<CalCoreMesh> CalCoreModel::getCoreMesh(int coreMeshId)
-{
-  if((coreMeshId < 0) || (coreMeshId >= (int)m_vectorCoreMesh.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return boost::shared_ptr<CalCoreMesh>();
-  }
-
-  return m_vectorCoreMesh[coreMeshId];
-}
-
- /*****************************************************************************/
-/** Returns the number of core meshes.
-  *
-  * This function returns the number of core meshes in the core model instance.
-  *
-  * @return The number of core meshes.
-  *****************************************************************************/
-
-int CalCoreModel::getCoreMeshCount()
-{
-  return m_vectorCoreMesh.size();
 }
 
  /*****************************************************************************/
@@ -713,37 +669,6 @@ bool CalCoreModel::saveCoreMaterial(const std::string& strFilename, int coreMate
 }
 
  /*****************************************************************************/
-/** Saves a core mesh.
-  *
-  * This function saves a core mesh to a file.
-  *
-  * @param strFilename The file to which the core mesh should be saved to.
-  * @param coreMeshId The ID of the core mesh that should be saved.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreModel::saveCoreMesh(const std::string& strFilename, int coreMeshId)
-{
-  // check if the core mesh id is valid
-  if((coreMeshId < 0) || (coreMeshId >= (int)m_vectorCoreMesh.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  // save the core animation
-  if(!CalSaver::saveCoreMesh(strFilename, m_vectorCoreMesh[coreMeshId].get()))
-  {
-    return false;
-  }
-
-  return true;
-}
-
- /*****************************************************************************/
 /** Saves the core skeleton.
   *
   * This function saves the core skeleton to a file.
@@ -830,7 +755,7 @@ void CalCoreModel::setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton)
   *
   *****************************************************************************/
 
-
+#if 0
 void CalCoreModel::scale(float factor)
 {
 	m_pCoreSkeleton->scale(factor);
@@ -852,5 +777,4 @@ void CalCoreModel::scale(float factor)
 	}
 
 }
-
-//****************************************************************************//
+#endif

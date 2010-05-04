@@ -53,32 +53,10 @@ CalModel::~CalModel()
   assert(m_vectorMesh.empty());
 }
 
- /*****************************************************************************/
-/** Attachs a mesh.
-  *
-  * This function attachs a mesh to the model instance.
-  *
-  * @param coreMeshId The ID of the mesh that should be attached.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
-bool CalModel::attachMesh(int coreMeshId)
-{
-  // check if the id is valid
-  if((coreMeshId < 0) ||(coreMeshId >= m_pCoreModel->getCoreMeshCount()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  boost::shared_ptr<CalCoreMesh> pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
-
+bool CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
   // check if the mesh is already attached
-  int meshId;
-  for(meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
+  for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
   {
     // check if we found the matching mesh
     if(m_vectorMesh[meshId]->getCoreMesh() == pCoreMesh)
@@ -166,50 +144,6 @@ void CalModel::destroy()
 }
 
  /*****************************************************************************/
-/** Detaches a mesh.
-  *
-  * This function detaches a mesh from the model instance.
-  *
-  * @param coreMeshId The ID of the mesh that should be detached.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalModel::detachMesh(int coreMeshId)
-{
-  // check if the id is valid
-  if((coreMeshId < 0) ||(coreMeshId >= m_pCoreModel->getCoreMeshCount()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  // get the core mesh
-  boost::shared_ptr<CalCoreMesh> pCoreMesh;
-  pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
-
-  // find the mesh for the given id
-  std::vector<CalMesh *>::iterator iteratorMesh;
-  for(iteratorMesh = m_vectorMesh.begin(); iteratorMesh != m_vectorMesh.end(); ++iteratorMesh)
-  {
-    // get the mesh
-    CalMesh *pMesh;
-    pMesh = *iteratorMesh;
-
-    if(pMesh->getCoreMesh() == pCoreMesh)
-    {
-      delete pMesh;
-      m_vectorMesh.erase(iteratorMesh);
-      return true;
-    }
-  }
-
-  return false;
-}
-
- /*****************************************************************************/
 /** Provides access to the core model.
   *
   * This function returns the core model on which this model instance is based
@@ -237,18 +171,7 @@ CalCoreModel *CalModel::getCoreModel()
   *         \li \b 0 if an error happend
   *****************************************************************************/
 
-CalMesh *CalModel::getMesh(int coreMeshId)
-{
-  // check if the id is valid
-  if((coreMeshId < 0) ||(coreMeshId >= m_pCoreModel->getCoreMeshCount()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
-  }
-
-  // get the core mesh
-  boost::shared_ptr<CalCoreMesh> pCoreMesh;
-  pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
+CalMesh *CalModel::getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
 
   // search the mesh
   int meshId;
