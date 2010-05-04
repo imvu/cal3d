@@ -258,7 +258,6 @@ extern "C"
 
   CAL3D_WRAPPER_API int CalCoreModel_AddCoreAnimation(struct CalCoreModel *self, struct  CalCoreAnimation *pCoreAnimation);
   CAL3D_WRAPPER_API int CalCoreModel_AddCoreMaterial(struct CalCoreModel *self, struct CalCoreMaterial *pCoreMaterial);
-  CAL3D_WRAPPER_API int CalCoreModel_AddCoreMesh(struct CalCoreModel *self, struct CalCoreMesh *pCoreMesh);
   CAL3D_WRAPPER_API enum Boolean CalCoreModel_Create(struct CalCoreModel *self, char *strName);
   CAL3D_WRAPPER_API enum Boolean CalCoreModel_CreateCoreMaterialThread(struct CalCoreModel *self, int coreMaterialThreadId);
   CAL3D_WRAPPER_API void CalCoreModel_Delete(struct CalCoreModel *self);

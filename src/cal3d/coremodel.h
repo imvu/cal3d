@@ -22,13 +22,12 @@ class CalCoreMaterial;
 
 class CAL3D_API CalCoreModel : public Cal::Object
 {
-// member variables
 public:
   std::string m_strName;
   CalCoreSkeleton *m_pCoreSkeleton;
   std::vector<CalCoreAnimation *> m_vectorCoreAnimation;
   std::vector<CalCoreAnimatedMorph *> m_vectorCoreAnimatedMorph;
-  std::vector<CalCoreMesh *> m_vectorCoreMesh;
+  std::vector< boost::shared_ptr<CalCoreMesh> > m_vectorCoreMesh;
   std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
   std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
   bool m_coreMeshManagement;
@@ -53,7 +52,7 @@ public:
 
   int addCoreAnimatedMorph(CalCoreAnimatedMorph *pCoreAnimatedMorph);
   int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
-  int addCoreMesh(CalCoreMesh *pCoreMesh);
+  int addCoreMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   bool createInternal(const std::string& strName);
   bool createWithName( char const * strName);
   void destroy();
@@ -63,7 +62,7 @@ public:
   boost::shared_ptr<CalCoreMaterial> getCoreMaterial(int coreMaterialId);
   int getCoreMaterialCount();
   int getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
-  CalCoreMesh *getCoreMesh(int coreMeshId);
+  boost::shared_ptr<CalCoreMesh> getCoreMesh(int coreMeshId);
   int getCoreMeshCount();
   CalCoreSkeleton *getCoreSkeleton();
   int loadCoreAnimation(const std::string& strFilename);

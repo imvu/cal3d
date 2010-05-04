@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
 class CalModel;
@@ -20,14 +21,16 @@ class CAL3D_API CalMesh : public Cal::Object
 {
 private:
   CalModel *m_pModel;
-  CalCoreMesh *m_pCoreMesh;
+  boost::shared_ptr<CalCoreMesh> m_pCoreMesh;
   std::vector<CalSubmesh *> m_vectorSubmesh;
 
 public:
-  CalMesh(CalModel* pModel, CalCoreMesh* pCoreMesh);
+  CalMesh(CalModel* pModel, const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   ~CalMesh();
 
-  CalCoreMesh *getCoreMesh();
+  const boost::shared_ptr<CalCoreMesh>& getCoreMesh() const {
+      return m_pCoreMesh;
+  }
   CalSubmesh *getSubmesh(int id);
   int getSubmeshCount();
   std::vector<CalSubmesh *>& getVectorSubmesh();

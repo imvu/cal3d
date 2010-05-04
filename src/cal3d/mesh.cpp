@@ -30,7 +30,7 @@
   * This function is the default constructor of the mesh instance.
   *****************************************************************************/
 
-CalMesh::CalMesh(CalModel* pModel, CalCoreMesh* pCoreMesh)
+CalMesh::CalMesh(CalModel* pModel, const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
   : m_pModel(pModel)
   , m_pCoreMesh(pCoreMesh)
 {
@@ -55,21 +55,6 @@ CalMesh::~CalMesh()
   {
     delete (*iteratorSubmesh);
   }
-}
-
- /*****************************************************************************/
-/** Provides access to the core mesh.
-  *
-  * This function returns the core mesh on which this mesh instance is based on.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core mesh
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreMesh *CalMesh::getCoreMesh()
-{
-  return m_pCoreMesh;
 }
 
  /*****************************************************************************/

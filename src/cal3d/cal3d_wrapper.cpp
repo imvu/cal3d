@@ -324,11 +324,6 @@ int CalCoreModel_AddCoreAnimation(CalCoreModel *self, CalCoreAnimation *pCoreAni
   return self->addCoreAnimation(pCoreAnimation);
 }
 
-int CalCoreModel_AddCoreMesh(CalCoreModel *self, CalCoreMesh *pCoreMesh)
-{
-  return self->addCoreMesh(pCoreMesh);
-}
-
 Boolean CalCoreModel_Create(CalCoreModel *self, char *strName)
 {
   return self->createWithName(strName) ? True : False;
@@ -367,11 +362,6 @@ int CalCoreModel_GetCoreMaterialCount(CalCoreModel *self)
 int CalCoreModel_GetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId, int coreMaterialSetId)
 {
   return self->getCoreMaterialId(coreMaterialThreadId, coreMaterialSetId);
-}
-
-CalCoreMesh *CalCoreModel_GetCoreMesh(CalCoreModel *self, int coreMeshId)
-{
-  return self->getCoreMesh(coreMeshId);
 }
 
 int CalCoreModel_GetCoreMeshCount(CalCoreModel *self)

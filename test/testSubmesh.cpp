@@ -165,7 +165,7 @@ TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CalCoreSubmesh* coreSubmesh = new CalCoreSubmesh(0, 1, 0);
 
-    CalCoreMesh* coreMesh = new CalCoreMesh;
+    boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
 
     CalCoreModel coreModel;
@@ -190,7 +190,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
 TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CalCoreSubmesh* coreSubmesh = new CalCoreSubmesh(0, 0, 0);
 
-    CalCoreMesh* coreMesh = new CalCoreMesh;
+    boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
 
     CalCoreModel coreModel;

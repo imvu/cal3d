@@ -74,9 +74,7 @@ bool CalModel::attachMesh(int coreMeshId)
     return false;
   }
 
-  // get the core mesh
-  CalCoreMesh *pCoreMesh;
-  pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
+  boost::shared_ptr<CalCoreMesh> pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
 
   // check if the mesh is already attached
   int meshId;
@@ -189,7 +187,7 @@ bool CalModel::detachMesh(int coreMeshId)
   }
 
   // get the core mesh
-  CalCoreMesh *pCoreMesh;
+  boost::shared_ptr<CalCoreMesh> pCoreMesh;
   pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
 
   // find the mesh for the given id
@@ -249,7 +247,7 @@ CalMesh *CalModel::getMesh(int coreMeshId)
   }
 
   // get the core mesh
-  CalCoreMesh *pCoreMesh;
+  boost::shared_ptr<CalCoreMesh> pCoreMesh;
   pCoreMesh = m_pCoreModel->getCoreMesh(coreMeshId);
 
   // search the mesh

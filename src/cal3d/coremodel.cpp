@@ -273,26 +273,9 @@ int CalCoreModel::addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMateri
   return materialId;
 }
 
- /*****************************************************************************/
-/** Adds a core mesh.
-  *
-  * This function adds a core mesh to the core model instance.
-  *
-  * @param pCoreMesh A pointer to the core mesh that should be added.
-  *
-  * @return One of the following values:
-  *         \li the assigned mesh \b ID of the added core material
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreModel::addCoreMesh(CalCoreMesh *pCoreMesh)
-{
-  // get the id of the core mesh
-  int meshId;
-  meshId = m_vectorCoreMesh.size();
-
+int CalCoreModel::addCoreMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
+  int meshId = m_vectorCoreMesh.size();
   m_vectorCoreMesh.push_back(pCoreMesh);
-
   return meshId;
 }
 
@@ -336,15 +319,6 @@ void CalCoreModel::destroy()
   assert( m_magic == CalCoreModelMagic );
 
   m_vectorCoreMaterial.clear();
-
-  // destroy all core meshes
-  std::vector<CalCoreMesh *>::iterator iteratorCoreMesh;
-  for(iteratorCoreMesh = m_vectorCoreMesh.begin(); iteratorCoreMesh != m_vectorCoreMesh.end(); ++iteratorCoreMesh)
-  {
-    if( m_coreMeshManagement ) {
-      delete (*iteratorCoreMesh);
-    }
-  }
   m_vectorCoreMesh.clear();
 
   // destroy all core animations
@@ -533,12 +507,12 @@ int CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSe
   *         \li \b 0 if an error happend
   *****************************************************************************/
 
-CalCoreMesh *CalCoreModel::getCoreMesh(int coreMeshId)
+boost::shared_ptr<CalCoreMesh> CalCoreModel::getCoreMesh(int coreMeshId)
 {
   if((coreMeshId < 0) || (coreMeshId >= (int)m_vectorCoreMesh.size()))
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
+    return boost::shared_ptr<CalCoreMesh>();
   }
 
   return m_vectorCoreMesh[coreMeshId];
@@ -761,7 +735,7 @@ bool CalCoreModel::saveCoreMesh(const std::string& strFilename, int coreMeshId)
   }
 
   // save the core animation
-  if(!CalSaver::saveCoreMesh(strFilename, m_vectorCoreMesh[coreMeshId]))
+  if(!CalSaver::saveCoreMesh(strFilename, m_vectorCoreMesh[coreMeshId].get()))
   {
     return false;
   }
