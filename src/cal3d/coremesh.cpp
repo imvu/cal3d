@@ -17,7 +17,7 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
-unsigned int CalCoreMesh::size() const {
+size_t CalCoreMesh::size() const {
     unsigned int r = sizeof(CalCoreMesh);
     std::vector<CalCoreSubmesh *>::const_iterator iter1;
     for (iter1 = m_vectorCoreSubmesh.begin(); iter1 != m_vectorCoreSubmesh.end(); ++iter1) {
