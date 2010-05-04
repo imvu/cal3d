@@ -133,8 +133,7 @@ public:
 
   CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
-  size_t size();
-  size_t sizeWithoutSubMorphTargets();
+  size_t size() const;
   int getCoreMaterialThreadId();
   int getFaceCount();
   int getLodCount();

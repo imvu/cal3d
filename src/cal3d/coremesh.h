@@ -19,8 +19,9 @@ class CAL3D_API CalCoreMesh : public Cal::Object
 public:
   ~CalCoreMesh();
 
-  typedef std::vector<CalCoreSubmesh *> CalCoreSubmeshVector;
-  unsigned int size();
+  typedef std::vector<CalCoreSubmesh*> CalCoreSubmeshVector;
+
+  size_t size() const;
   int addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh);
   CalCoreSubmesh *getCoreSubmesh(int id);
   int getCoreSubmeshCount();
@@ -30,5 +31,5 @@ public:
   void scale(float factor);
 
 private:
-  std::vector<CalCoreSubmesh *> m_vectorCoreSubmesh;
+  std::vector<CalCoreSubmesh*> m_vectorCoreSubmesh;
 };

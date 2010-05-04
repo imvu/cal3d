@@ -48,12 +48,6 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
   m_vectorFace.resize(faceCount);
 }
 
- /*****************************************************************************/
-/** Destructs the core submesh instance.
-  *
-  * This function is the destructor of the core submesh instance.
-  *****************************************************************************/
-
 void CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray )
 {
   m_vectorSubMorphTargetGroupIndex.reserve( len );
@@ -64,127 +58,94 @@ void CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigne
   }
 }
 
+#define DEFINE_SIZE(T) size_t sizeInBytes(const T&) { return sizeof(T); }
+
+DEFINE_SIZE(CalCoreSubmesh::Face);
+DEFINE_SIZE(CalCoreSubmesh::Influence);
+DEFINE_SIZE(CalCoreSubmesh::InfluenceRange);
+DEFINE_SIZE(CalCoreSubmesh::LodData);
+DEFINE_SIZE(unsigned);
+
 template<typename T>
-size_t vectorSize(const SSEArray<T>& v) {
+size_t sizeInBytes(const SSEArray<T>& v) {
   return sizeof(T) * v.size();
 }
 
 template<typename T>
-size_t vectorSize(const std::vector<T>& v) {
-  return sizeof(T) * v.size();
-}
-
-size_t CalCoreSubmesh::sizeWithoutSubMorphTargets()
-{
-  unsigned int r = sizeof( CalCoreSubmesh );
-  r += vectorSize(m_vertices);
-  r += vectorSize(m_vertexColors);
-  r += vectorSize(m_vectorFace);
-  r += vectorSize(m_vectorSubMorphTargetGroupIndex);
-  r += vectorSize(m_lodData);
-  std::vector<std::vector<TextureCoordinate> >::iterator iter3;
-  for( iter3 = m_vectorvectorTextureCoordinate.begin(); iter3 != m_vectorvectorTextureCoordinate.end(); ++iter3 ) {
-    r += sizeof( TextureCoordinate ) * (*iter3).size();
+size_t sizeInBytes(const std::vector<T>& v) {
+  size_t r = sizeof(T) * (v.capacity() - v.size());
+  for (std::vector<T>::const_iterator i = v.begin(); i != v.end(); ++i) {
+    r += sizeInBytes(*i);
   }
   return r;
 }
 
-
-size_t CalCoreSubmesh::size()
-{
-  unsigned int r = sizeWithoutSubMorphTargets();
-  CoreSubMorphTargetVector::iterator iter1;
-  for( iter1 = m_vectorCoreSubMorphTarget.begin(); iter1 != m_vectorCoreSubMorphTarget.end(); ++iter1 ) {
-    r += (*iter1)->size();
+template<typename T>
+size_t sizeInBytes(const std::set<T>& s) {
+  size_t r = 20 * s.size();
+  for (std::set<T>::const_iterator i = s.begin(); i != s.end(); ++i) {
+    r += sizeInBytes(*i);
   }
   return r;
 }
 
+template<typename K, typename V>
+size_t sizeInBytes(const std::map<K, V>& m) {
+  size_t r = 20 * m.size();
+  for (std::map<K, V>::const_iterator i = m.begin(); i != m.end(); ++i) {
+    r += sizeInBytes(i->first) + sizeInBytes(i->second);
+  }
+  return r;
+}
 
- /*****************************************************************************/
-/** Returns the ID of the core material thread.
-  *
-  * This function returns the ID of the core material thread of this core
-  * submesh instance.
-  *
-  * @return The ID of the core material thread.
-  *****************************************************************************/
+size_t sizeInBytes(const CalCoreSubmesh::InfluenceSet& is) {
+  return sizeof(is) + sizeInBytes(is.influences);
+}
 
-int CalCoreSubmesh::getCoreMaterialThreadId()
-{
+size_t CalCoreSubmesh::size() const {
+  unsigned int r = sizeof(CalCoreSubmesh);
+  r += sizeInBytes(m_vertices);
+  r += sizeInBytes(m_vertexColors);
+  r += sizeInBytes(m_lodData);
+  r += sizeInBytes(m_influenceRanges);
+  r += sizeInBytes(m_vectorFace);
+  r += sizeInBytes(m_vectorSubMorphTargetGroupIndex);
+  r += sizeInBytes(m_influenceSetIds);
+  r += sizeInBytes(m_staticInfluenceSet);
+  r += sizeInBytes(m_influences);
+  return r;
+}
+
+int CalCoreSubmesh::getCoreMaterialThreadId() {
   return m_coreMaterialThreadId;
 }
 
- /*****************************************************************************/
-/** Returns the number of faces.
-  *
-  * This function returns the number of faces in the core submesh instance.
-  *
-  * @return The number of faces.
-  *****************************************************************************/
-
-int CalCoreSubmesh::getFaceCount()
-{
+int CalCoreSubmesh::getFaceCount() {
   return m_vectorFace.size();
 }
 
- /*****************************************************************************/
-/** Returns the number of LOD steps.
-  *
-  * This function returns the number of LOD steps in the core submesh instance.
-  *
-  * @return The number of LOD steps.
-  *****************************************************************************/
-
-int CalCoreSubmesh::getLodCount()
-{
+int CalCoreSubmesh::getLodCount() {
   return m_lodCount;
 }
 
-const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const
-{
+const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const {
   return m_vectorFace;
 }
 
-int CalCoreSubmesh::getVertexCount()
-{
+int CalCoreSubmesh::getVertexCount() {
   return m_vertices.size();
 }
 
- /*****************************************************************************/
-/** Sets the ID of the core material thread.
-  *
-  * This function sets the ID of the core material thread of the core submesh
-  * instance.
-  *
-  * @param coreMaterialThreadId The ID of the core material thread that should
-  *                             be set.
-  *****************************************************************************/
-
-void CalCoreSubmesh::setCoreMaterialThreadId(int coreMaterialThreadId)
-{
+void CalCoreSubmesh::setCoreMaterialThreadId(int coreMaterialThreadId) {
   m_coreMaterialThreadId = coreMaterialThreadId;
 }
 
- /*****************************************************************************/
-/** Sets a specified face.
-  *
-  * This function sets a specified face in the core submesh instance.
-  *
-  * @param faceId  The ID of the face.
-  * @param face The face that should be set.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreSubmesh::setFace(int faceId, const Face& face)
-{
-  if((faceId < 0) || (faceId >= (int)m_vectorFace.size())) return false;
+bool CalCoreSubmesh::setFace(int faceId, const Face& face) {
+  if((faceId < 0) || (faceId >= (int)m_vectorFace.size())) {
+    return false;
+  }
 
   m_vectorFace[faceId] = face;
-
   return true;
 }
 

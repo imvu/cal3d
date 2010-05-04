@@ -12,35 +12,21 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/coremesh.h"
 #include "cal3d/error.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
-unsigned int
-CalCoreMesh::size()
-{
-  unsigned int r = sizeof( CalCoreMesh );
-  std::vector<CalCoreSubmesh *>::iterator iter1;
-  for( iter1 = m_vectorCoreSubmesh.begin(); iter1 != m_vectorCoreSubmesh.end(); ++iter1 ) {
-    r += (*iter1)->size();
-  }
-  return r;
+unsigned int CalCoreMesh::size() const {
+    unsigned int r = sizeof(CalCoreMesh);
+    std::vector<CalCoreSubmesh *>::const_iterator iter1;
+    for (iter1 = m_vectorCoreSubmesh.begin(); iter1 != m_vectorCoreSubmesh.end(); ++iter1) {
+        r += (*iter1)->size();
+    }
+    return r;
 }
 
- /*****************************************************************************/
-/** Destructs the core mesh instance.
-  *
-  * This function is the destructor of the core mesh instance.
-  *****************************************************************************/
-
-CalCoreMesh::~CalCoreMesh()
-{
-  // destroy all core submeshes
+CalCoreMesh::~CalCoreMesh() {
   std::vector<CalCoreSubmesh *>::iterator iteratorCoreSubmesh;
   for(iteratorCoreSubmesh = m_vectorCoreSubmesh.begin(); iteratorCoreSubmesh != m_vectorCoreSubmesh.end(); ++iteratorCoreSubmesh)
   {
@@ -48,43 +34,13 @@ CalCoreMesh::~CalCoreMesh()
   }
 }
 
- /*****************************************************************************/
-/** Adds a core submesh.
-  *
-  * This function adds a core submesh to the core mesh instance.
-  *
-  * @param pCoreSubmesh A pointer to the core submesh that should be added.
-  *
-  * @return One of the following values:
-  *         \li the assigned submesh \b ID of the added core submesh
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreMesh::addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh)
-{
-  // get next bone id
-  int submeshId;
-  submeshId = m_vectorCoreSubmesh.size();
-
+int CalCoreMesh::addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh) {
+  int submeshId = m_vectorCoreSubmesh.size();
   m_vectorCoreSubmesh.push_back(pCoreSubmesh);
-
   return submeshId;
 }
 
- /*****************************************************************************/
-/** Provides access to a core submesh.
-  *
-  * This function returns the core submesh with the given ID.
-  *
-  * @param id The ID of the core submesh that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core submesh
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreSubmesh *CalCoreMesh::getCoreSubmesh(int id)
-{
+CalCoreSubmesh *CalCoreMesh::getCoreSubmesh(int id) {
   if((id < 0) || (id >= (int)m_vectorCoreSubmesh.size()))
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
@@ -94,50 +50,15 @@ CalCoreSubmesh *CalCoreMesh::getCoreSubmesh(int id)
   return m_vectorCoreSubmesh[id];
 }
 
- /*****************************************************************************/
-/** Returns the number of core submeshes.
-  *
-  * This function returns the number of core submeshes in the core mesh
-  * instance.
-  *
-  * @return The number of core submeshes.
-  *****************************************************************************/
-
-int CalCoreMesh::getCoreSubmeshCount()
-{
+int CalCoreMesh::getCoreSubmeshCount() {
   return m_vectorCoreSubmesh.size();
 }
 
- /*****************************************************************************/
-/** Returns the core submesh vector.
-  *
-  * This function returns the vector that contains all core submeshes of the
-  * core mesh instance.
-  *
-  * @return A reference to the core submesh vector.
-  *****************************************************************************/
-
-std::vector<CalCoreSubmesh *>& CalCoreMesh::getVectorCoreSubmesh()
-{
+std::vector<CalCoreSubmesh *>& CalCoreMesh::getVectorCoreSubmesh() {
   return m_vectorCoreSubmesh;
 }
 
- /*****************************************************************************/
-/** Adds a core submesh.
-  *
-  * This function adds a core mesh as a blend target.
-  * It adds appropriate CalCoreSubMorphTargets to each of the core sub meshes.
-  *
-  * @param pCoreMesh A pointer to the core mesh that shoulb become a blend target.
-  * @param morphTarget A string to be assigned as the morph target's name
-  *
-  * @return One of the following values:
-  *         \li the assigned morph target \b ID of the added blend target
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & morphTargetName)
-{
+int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & morphTargetName) {
   //Check if the numbers of vertices allow a blending
   std::vector<CalCoreSubmesh *>& otherVectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
   if (m_vectorCoreSubmesh.size() != otherVectorCoreSubmesh.size())
@@ -203,23 +124,10 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & mo
   return subMorphTargetID;
 }
 
- /*****************************************************************************/
-/** Scale the Mesh.
-  *
-  * This function rescale all the data that are in the core mesh instance.
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
-
-void CalCoreMesh::scale(float factor)
-{
-	std::vector<CalCoreSubmesh *>::iterator iteratorCoreSubmesh;
-	for(iteratorCoreSubmesh = m_vectorCoreSubmesh.begin(); iteratorCoreSubmesh != m_vectorCoreSubmesh.end(); ++iteratorCoreSubmesh)
-	{
-		(*iteratorCoreSubmesh)->scale(factor);    
-	}
+void CalCoreMesh::scale(float factor) {
+    std::vector<CalCoreSubmesh *>::iterator iteratorCoreSubmesh;
+    for(iteratorCoreSubmesh = m_vectorCoreSubmesh.begin(); iteratorCoreSubmesh != m_vectorCoreSubmesh.end(); ++iteratorCoreSubmesh)
+    {
+        (*iteratorCoreSubmesh)->scale(factor);    
+    }
 }
-
-//****************************************************************************//
