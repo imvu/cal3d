@@ -234,7 +234,6 @@ int CSkeletonCandidate::BuildSelectedId()
 void CSkeletonCandidate::Clear()
 {
   if( m_coreModel ) {
-    m_coreModel->destroy();
     delete m_coreModel;
     m_coreModel = NULL;
   }
@@ -296,7 +295,6 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	if(!coreModel->loadCoreSkeleton(m_strFilename))
 	{
 		theExporter.SetLastErrorFromCal(__FILE__, __LINE__);
-		coreModel->destroy();
 		return false;
 	}
 
@@ -314,7 +312,6 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 		// recursively add the core bone to the skeleton candidate
 		if(!AddNode(pCoreSkeleton, vectorCoreBone[*iteratorRootCoreBoneId], -1))
 		{
-			coreModel->destroy();
 			return false;
 		}
 	}

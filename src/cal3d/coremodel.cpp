@@ -46,13 +46,40 @@ CalCoreModel::CalCoreModel()
   * This function is the destructor of the core model instance.
   *****************************************************************************/
 
-CalCoreModel::~CalCoreModel()
-{
-  assert(m_magic == CalCoreModelMagic );
-  m_magic = 0;
-  assert(m_vectorCoreAnimation.empty());
-  assert(m_vectorCoreAnimatedMorph.empty());
-  assert(m_vectorCoreMaterial.empty());
+CalCoreModel::~CalCoreModel() {
+  assert( m_magic == CalCoreModelMagic );
+
+  // destroy all core animations
+  std::vector<CalCoreAnimation *>::iterator iteratorCoreAnimation;
+  for(iteratorCoreAnimation = m_vectorCoreAnimation.begin(); iteratorCoreAnimation != m_vectorCoreAnimation.end(); ++iteratorCoreAnimation)
+  {
+    if( m_coreAnimationManagement && ( * iteratorCoreAnimation ) ) {
+      (*iteratorCoreAnimation)->destroy();
+      delete (*iteratorCoreAnimation);
+    }
+  }
+
+  // destroy all core animated morphs
+  std::vector<CalCoreAnimatedMorph *>::iterator iteratorCoreAnimatedMorph;
+  for(iteratorCoreAnimatedMorph = m_vectorCoreAnimatedMorph.begin(); iteratorCoreAnimatedMorph != 
+      m_vectorCoreAnimatedMorph.end(); ++iteratorCoreAnimatedMorph)
+  {
+    // I am always managing coreAnimatedMorphs.  However, since I allow the user to remove them,
+    // I may still have gaps in my array.
+    if( * iteratorCoreAnimatedMorph ) {
+
+      (*iteratorCoreAnimatedMorph)->destroy();
+      delete (*iteratorCoreAnimatedMorph);
+
+    }
+  }
+
+  if(m_pCoreSkeleton != 0)
+  {
+    m_pCoreSkeleton->destroy();
+    delete m_pCoreSkeleton;
+    m_pCoreSkeleton = 0;
+  }
 }
 
 
@@ -289,7 +316,6 @@ bool CalCoreModel::createInternal(const std::string& strName)
 {
   assert(m_magic == CalCoreModelMagic );
   m_strName = strName;
-  m_coreMeshManagement = true;
   m_coreAnimationManagement = true;
   return true;
 }
@@ -298,60 +324,6 @@ bool CalCoreModel::createWithName( char const * strName)
 {
   std::string name = strName;
   return createInternal( name );
-}
-
- /*****************************************************************************/
-/** Destroys the core model instance.
-  *
-  * This function destroys all data stored in the core model instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalCoreModel::destroy()
-{
-  assert( m_magic == CalCoreModelMagic );
-
-  m_vectorCoreMaterial.clear();
-
-  // destroy all core animations
-  std::vector<CalCoreAnimation *>::iterator iteratorCoreAnimation;
-  for(iteratorCoreAnimation = m_vectorCoreAnimation.begin(); iteratorCoreAnimation != m_vectorCoreAnimation.end(); ++iteratorCoreAnimation)
-  {
-    if( m_coreAnimationManagement && ( * iteratorCoreAnimation ) ) {
-      (*iteratorCoreAnimation)->destroy();
-      delete (*iteratorCoreAnimation);
-    }
-  }
-  m_vectorCoreAnimation.clear();
-
-  // destroy all core animated morphs
-  std::vector<CalCoreAnimatedMorph *>::iterator iteratorCoreAnimatedMorph;
-  for(iteratorCoreAnimatedMorph = m_vectorCoreAnimatedMorph.begin(); iteratorCoreAnimatedMorph != 
-      m_vectorCoreAnimatedMorph.end(); ++iteratorCoreAnimatedMorph)
-  {
-
-
-
-    // I am always managing coreAnimatedMorphs.  However, since I allow the user to remove them,
-
-    // I may still have gaps in my array.
-    if( * iteratorCoreAnimatedMorph ) {
-
-      (*iteratorCoreAnimatedMorph)->destroy();
-      delete (*iteratorCoreAnimatedMorph);
-
-    }
-  }
-  m_vectorCoreAnimatedMorph.clear();
-
-  if(m_pCoreSkeleton != 0)
-  {
-    m_pCoreSkeleton->destroy();
-    delete m_pCoreSkeleton;
-    m_pCoreSkeleton = 0;
-  }
-
-  m_strName.erase();
 }
 
  /*****************************************************************************/

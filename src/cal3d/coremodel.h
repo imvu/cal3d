@@ -29,7 +29,6 @@ public: // TODO: make private
   std::vector<CalCoreAnimatedMorph *> m_vectorCoreAnimatedMorph;
   std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
   std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
-  bool m_coreMeshManagement;
   bool m_coreAnimationManagement;
   unsigned int m_magic;
 
@@ -49,7 +48,6 @@ public:
   int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
   bool createInternal(const std::string& strName);
   bool createWithName( char const * strName);
-  void destroy();
   CalCoreAnimation *getCoreAnimation(int coreAnimationId);
   CalCoreAnimatedMorph *getCoreAnimatedMorph(int coreAnimatedMorphId);
   int getCoreAnimationMaxId();
@@ -66,8 +64,6 @@ public:
   bool saveCoreSkeleton(const std::string& strFilename);
   bool setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId);
   void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
-  void setCoreMeshManagementOn( bool p ) { m_coreMeshManagement = p; }
-  bool getCoreMeshManagementOn() { return m_coreMeshManagement; }
   void setCoreAnimationManagementOn( bool p ) { m_coreAnimationManagement = p; }
   bool getCoreAnimationManagementOn() { return m_coreAnimationManagement; }
 };

@@ -183,7 +183,6 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CHECK_EQUAL(0, texCoords.size());
 
     model.destroy();
-    coreModel.destroy();
 }
 
 TEST(CalRenderer_getNormals_when_there_are_no_normals) {
@@ -211,7 +210,6 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
         0);
 
     model.destroy();
-    coreModel.destroy();
 }
 
 TEST(aabox_empty_without_vertices) {

@@ -339,11 +339,6 @@ void CalCoreModel_Delete(CalCoreModel *self)
   delete self;
 }
 
-void CalCoreModel_Destroy(CalCoreModel *self)
-{
-  self->destroy();
-}
-
 CalCoreAnimation *CalCoreModel_GetCoreAnimation(CalCoreModel *self, int coreAnimationId)
 {
   return self->getCoreAnimation(coreAnimationId);
