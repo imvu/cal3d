@@ -19,9 +19,9 @@ class CAL3D_API CalAnimationAction : public CalAnimation
 {
 public:
   CalAnimationAction();
-  virtual ~CalAnimationAction();
+  ~CalAnimationAction();
 
-  bool create(CalCoreAnimation *pCoreAnimation);
+  bool create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
   void destroy();
   bool execute(float delayIn, float delayOut, float weightTarget = 1.0f,bool autoLock=false);
   bool update(float deltaTime);

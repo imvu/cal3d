@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
 class CalCoreAnimation;
@@ -34,7 +35,7 @@ public:
   };
 
 protected:
-  CalCoreAnimation *m_pCoreAnimation;
+  boost::shared_ptr<CalCoreAnimation> m_pCoreAnimation;
   Type m_type;
   State m_state;
   float m_time;
@@ -46,9 +47,11 @@ protected:
 public:
   virtual ~CalAnimation();
 
-  virtual bool create(CalCoreAnimation *pCoreAnimation) = 0;
+  virtual bool create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation) = 0;
   virtual void destroy();
-  CalCoreAnimation *getCoreAnimation();
+  const boost::shared_ptr<CalCoreAnimation>& getCoreAnimation() const {
+      return m_pCoreAnimation;
+  }
   State getState();
   float getTime();
   Type getType();

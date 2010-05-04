@@ -29,123 +29,6 @@
 #include "cal3d/coresubmesh.h"
 
 //****************************************************************************//
-// CalAnimation wrapper functions definition                                  //
-//****************************************************************************//
-
-Boolean CalAnimation_Create(CalAnimation *self, CalCoreAnimation *pCoreAnimation)
-{
-  return self->create(pCoreAnimation) ? True : False;
-}
-
-void CalAnimation_Delete(CalAnimation *self)
-{
-  delete self;
-}
-
-void CalAnimation_Destroy(CalAnimation *self)
-{
-  self->destroy();
-}
-
-CalCoreAnimation *CalAnimation_GetCoreAnimation(CalAnimation *self)
-{
-  return self->getCoreAnimation();
-}
-
-CalAnimationState CalAnimation_GetState(CalAnimation *self)
-{
-  return (CalAnimationState)(self->getState());
-}
-
-float CalAnimation_GetTime(CalAnimation *self)
-{
-  return self->getTime();
-}
-
-CalAnimationType CalAnimation_GetType(CalAnimation *self)
-{
-  return (CalAnimationType)(self->getType());
-}
-
-float CalAnimation_GetWeight(CalAnimation *self)
-{
-  return self->getWeight();
-}
-
-//****************************************************************************//
-// CalAnimationAction wrapper functions definition                            //
-//****************************************************************************//
-
-Boolean CalAnimationAction_Create(CalAnimationAction *self, CalCoreAnimation *pCoreAnimation)
-{
-  return self->create(pCoreAnimation) ? True : False;
-}
-
-void CalAnimationAction_Delete(CalAnimationAction *self)
-{
-  delete self;
-}
-
-void CalAnimationAction_Destroy(CalAnimationAction *self)
-{
-  self->destroy();
-}
-
-Boolean CalAnimationAction_Execute(CalAnimationAction *self, float delayIn, float delayOut)
-{
-  return self->execute(delayIn, delayOut) ? True : False;
-}
-
-CalAnimationAction *CalAnimationAction_New()
-{
-  return new CalAnimationAction();
-}
-
-Boolean CalAnimationAction_Update(CalAnimationAction *self, float deltaTime)
-{
-  return self->update(deltaTime) ? True : False;
-}
-
-//****************************************************************************//
-// CalAnimationCycle wrapper functions definition                             //
-//****************************************************************************//
-
-Boolean CalAnimationCycle_Blend(CalAnimationCycle *self, float weight, float delay)
-{
-  return self->blend(weight, delay) ? True : False;
-}
-
-Boolean CalAnimationCycle_Create(CalAnimationCycle *self, CalCoreAnimation *pCoreAnimation)
-{
-  return self->create(pCoreAnimation) ? True : False;
-}
-
-void CalAnimationCycle_Delete(CalAnimationCycle *self)
-{
-  delete self;
-}
-
-void CalAnimationCycle_Destroy(CalAnimationCycle *self)
-{
-  self->destroy();
-}
-
-CalAnimationCycle *CalAnimationCycle_New()
-{
-  return new CalAnimationCycle();
-}
-
-void CalAnimationCycle_SetAsync(CalAnimationCycle *self, float time, float duration)
-{
-  self->setAsync(time, duration);
-}
-
-Boolean CalAnimationCycle_Update(CalAnimationCycle *self, float deltaTime)
-{
-  return self->update(deltaTime) ? True : False;
-}
-
-//****************************************************************************//
 // CalCoreAnimation wrapper functions definition                              //
 //****************************************************************************//
 
@@ -305,15 +188,6 @@ CalCoreMesh *CalCoreMesh_New()
   return new CalCoreMesh();
 }
 
-//****************************************************************************//
-// CalCoreModel wrapper functions definition                                  //
-//****************************************************************************//
-
-int CalCoreModel_AddCoreAnimation(CalCoreModel *self, CalCoreAnimation *pCoreAnimation)
-{
-  return self->addCoreAnimation(pCoreAnimation);
-}
-
 Boolean CalCoreModel_Create(CalCoreModel *self, char *strName)
 {
   return self->createWithName(strName) ? True : False;
@@ -327,11 +201,6 @@ Boolean CalCoreModel_CreateCoreMaterialThread(CalCoreModel *self, int coreMateri
 void CalCoreModel_Delete(CalCoreModel *self)
 {
   delete self;
-}
-
-CalCoreAnimation *CalCoreModel_GetCoreAnimation(CalCoreModel *self, int coreAnimationId)
-{
-  return self->getCoreAnimation(coreAnimationId);
 }
 
 int CalCoreModel_GetCoreAnimationMaxId(CalCoreModel *self)
@@ -354,11 +223,6 @@ CalCoreSkeleton *CalCoreModel_GetCoreSkeleton(CalCoreModel *self)
   return self->getCoreSkeleton();
 }
 
-int CalCoreModel_LoadCoreAnimation(CalCoreModel *self, char *strFilename)
-{
-  return self->loadCoreAnimation(strFilename);
-}
-
 int CalCoreModel_LoadCoreAnimatedMorph(CalCoreModel *self, char *strFilename)
 {
   return self->loadCoreAnimatedMorph(strFilename);
@@ -372,11 +236,6 @@ Boolean CalCoreModel_LoadCoreSkeleton(CalCoreModel *self, char *strFilename)
 CalCoreModel *CalCoreModel_New()
 {
   return new CalCoreModel();
-}
-
-Boolean CalCoreModel_SaveCoreAnimation(CalCoreModel *self, char *strFilename, int coreAnimationId)
-{
-  return self->saveCoreAnimation(strFilename, coreAnimationId) ? True : False;
 }
 
 Boolean CalCoreModel_SaveCoreMaterial(CalCoreModel *self, char *strFilename, int coreMaterialId)

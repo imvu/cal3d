@@ -22,7 +22,7 @@ public:
   virtual ~CalAnimationCycle();
 
   bool blend(float weight, float delay);
-  bool create(CalCoreAnimation *pCoreAnimation);
+  bool create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
   void destroy();
   void setAsync(float time, float duration);
   bool update(float deltaTime);

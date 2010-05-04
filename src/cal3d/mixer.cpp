@@ -62,9 +62,9 @@ CalMixer::animationActionFromCoreAnimationId( int coreAnimationId )
   {
     // update and check if animation action is still active
     CalAnimationAction * aa = *iteratorAnimationAction;
-    CalCoreAnimation * ca = aa->getCoreAnimation();
+    boost::shared_ptr<CalCoreAnimation> ca = aa->getCoreAnimation();
     if( ca ) {
-      CalCoreAnimation * ca2 = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
+      boost::shared_ptr<CalCoreAnimation> ca2 = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
       if( ca == ca2 ) return aa;
     }
     ++iteratorAnimationAction;
@@ -215,10 +215,10 @@ CalMixer::setManualAnimationAttributes( int coreAnimationId, CalMixerManualAnima
 bool
 CalMixer::animationDuration( int coreAnimationId, float * result )
 {
-  CalCoreAnimation * ca2 = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
-  if( !ca2 ) return false;
-  * result = ca2->getDuration();
-  return true;
+    boost::shared_ptr<CalCoreAnimation> ca2 = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
+    if( !ca2 ) return false;
+    *result = ca2->getDuration();
+    return true;
 }
 
 
@@ -517,21 +517,14 @@ CalAnimationAction * CalMixer::newAnimationAction( int coreAnimationId )
 {
 
   // get the core animation
-  CalCoreAnimation *pCoreAnimation;
-  pCoreAnimation = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
+  boost::shared_ptr<CalCoreAnimation> pCoreAnimation = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
   if(pCoreAnimation == 0)
   {
     return NULL;
   }
 
   // allocate a new animation action instance
-  CalAnimationAction *pAnimationAction;
-  pAnimationAction = new CalAnimationAction();
-  if(pAnimationAction == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return NULL;
-  }
+  CalAnimationAction *pAnimationAction = new CalAnimationAction();
 
   // create the new animation instance
   if(!pAnimationAction->create(pCoreAnimation))
@@ -723,7 +716,7 @@ void CalMixer::updateSkeleton()
     // to the bone.
     if( aa->on() ) {
 
-      CalCoreAnimation * pCoreAnimation = aa->getCoreAnimation();
+      const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
       
       // get the list of core tracks of above core animation
       std::list<CalCoreTrack *>& listCoreTrack = pCoreAnimation->getListCoreTrack();

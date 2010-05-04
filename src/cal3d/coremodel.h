@@ -25,11 +25,10 @@ class CAL3D_API CalCoreModel : public Cal::Object
 public: // TODO: make private
   std::string m_strName;
   CalCoreSkeleton *m_pCoreSkeleton;
-  std::vector<CalCoreAnimation *> m_vectorCoreAnimation;
+  std::vector< boost::shared_ptr<CalCoreAnimation> > m_vectorCoreAnimation;
   std::vector<CalCoreAnimatedMorph *> m_vectorCoreAnimatedMorph;
   std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
   std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
-  bool m_coreAnimationManagement;
   unsigned int m_magic;
 
 public:
@@ -39,7 +38,7 @@ public:
   int getNumCoreAnimations();
 
   int getNumCoreAnimatedMorphs();
-  int addCoreAnimation(CalCoreAnimation *pCoreAnimation);
+  int addCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
   bool removeCoreAnimation( int id );
 
   bool removeCoreAnimatedMorph( int id );
@@ -48,22 +47,18 @@ public:
   int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
   bool createInternal(const std::string& strName);
   bool createWithName( char const * strName);
-  CalCoreAnimation *getCoreAnimation(int coreAnimationId);
+  boost::shared_ptr<CalCoreAnimation> getCoreAnimation(int coreAnimationId);
   CalCoreAnimatedMorph *getCoreAnimatedMorph(int coreAnimatedMorphId);
   int getCoreAnimationMaxId();
   boost::shared_ptr<CalCoreMaterial> getCoreMaterial(int coreMaterialId);
   int getCoreMaterialCount();
   int getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
   CalCoreSkeleton *getCoreSkeleton();
-  int loadCoreAnimation(const std::string& strFilename);
   int loadCoreAnimatedMorph(const std::string& strFilename);
   bool loadCoreSkeleton(const std::string& strFilename);
-  bool saveCoreAnimation(const std::string& strFilename, int coreAnimtionId);
   bool saveCoreMaterial(const std::string& strFilename, int coreMaterialId);
   //bool saveCoreMesh(const std::string& strFilename, int coreMeshId);
   bool saveCoreSkeleton(const std::string& strFilename);
   bool setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId);
   void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
-  void setCoreAnimationManagementOn( bool p ) { m_coreAnimationManagement = p; }
-  bool getCoreAnimationManagementOn() { return m_coreAnimationManagement; }
 };

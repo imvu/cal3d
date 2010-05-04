@@ -49,15 +49,6 @@ CalCoreModel::CalCoreModel()
 CalCoreModel::~CalCoreModel() {
   assert( m_magic == CalCoreModelMagic );
 
-  // destroy all core animations
-  std::vector<CalCoreAnimation *>::iterator iteratorCoreAnimation;
-  for(iteratorCoreAnimation = m_vectorCoreAnimation.begin(); iteratorCoreAnimation != m_vectorCoreAnimation.end(); ++iteratorCoreAnimation)
-  {
-    if( m_coreAnimationManagement && ( * iteratorCoreAnimation ) ) {
-      delete (*iteratorCoreAnimation);
-    }
-  }
-
   // destroy all core animated morphs
   std::vector<CalCoreAnimatedMorph *>::iterator iteratorCoreAnimatedMorph;
   for(iteratorCoreAnimatedMorph = m_vectorCoreAnimatedMorph.begin(); iteratorCoreAnimatedMorph != 
@@ -130,75 +121,19 @@ CalCoreModel::getNumCoreAnimatedMorphs()
 }
 
 
-
- /*****************************************************************************/
-/** Adds a core animation.
-  *
-  * This function adds a core animation to the core model instance.
-  *
-  * @param pCoreAnimation A pointer to the core animation that should be added.
-  *
-  * @return One of the following values:
-  *         \li the assigned animation \b ID of the added core animation
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreModel::addCoreAnimation(CalCoreAnimation *pCoreAnimation)
+int CalCoreModel::addCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
 {
-
   int num = m_vectorCoreAnimation.size();
-
-  int i;
-
-  for( i = 0; i < num; i++ ) {
-
+  for (int i = 0; i < num; i++) {
     if( !m_vectorCoreAnimation[ i ] ) {
-
       m_vectorCoreAnimation[ i ] = pCoreAnimation;
-
       return i;
-
     }
-
   }
 
   m_vectorCoreAnimation.push_back(pCoreAnimation);
-
   return num;
 }
-
-
-
-/*
-
-// Return true if removed.
-
-bool CalCoreModel::removeCoreAnimation(CalCoreAnimation *pCoreAnimation)
-
-{
-
-  int num = m_vectorCoreAnimation.size();
-
-  int i;
-
-  for( i = 0; i < num; i++ ) {
-
-    if( m_vectorCoreAnimation[ i ] == pCoreAnimation ) {
-
-      m_vectorCoreAnimation[ i ] = NULL;
-
-      return true;
-
-    }
-
-  }
-
-  return false;
-
-}
-
-*/
-
 
 
 bool CalCoreModel::removeCoreAnimation( int id )
@@ -211,7 +146,7 @@ bool CalCoreModel::removeCoreAnimation( int id )
 
   if( !m_vectorCoreAnimation[ id ] ) return false;
 
-  m_vectorCoreAnimation[ id ] = NULL;
+  m_vectorCoreAnimation[ id ].reset();
 
   return true;
 
@@ -315,7 +250,6 @@ bool CalCoreModel::createInternal(const std::string& strName)
 {
   assert(m_magic == CalCoreModelMagic );
   m_strName = strName;
-  m_coreAnimationManagement = true;
   return true;
 }
 
@@ -325,28 +259,13 @@ bool CalCoreModel::createWithName( char const * strName)
   return createInternal( name );
 }
 
- /*****************************************************************************/
-/** Provides access to a core animation.
-  *
-  * This function returns the core animation with the given ID.
-  *
-  * @param coreAnimationId The ID of the core animation that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animation
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreAnimation *CalCoreModel::getCoreAnimation(int coreAnimationId)
-{
+boost::shared_ptr<CalCoreAnimation> CalCoreModel::getCoreAnimation(int coreAnimationId) {
   if((coreAnimationId < 0) 
-
     || (coreAnimationId >= (int)m_vectorCoreAnimation.size())
-
     || !m_vectorCoreAnimation[ coreAnimationId ] )
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
+    return boost::shared_ptr<CalCoreAnimation>();
   }
 
   return m_vectorCoreAnimation[coreAnimationId];
@@ -486,43 +405,6 @@ CalCoreSkeleton *CalCoreModel::getCoreSkeleton()
   *         \li \b -1 if an error happend
   *****************************************************************************/
 
-int CalCoreModel::loadCoreAnimation(const std::string& strFilename)
-{
-  // the core skeleton has to be loaded already
-  if(m_pCoreSkeleton == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
-
-  // load a new core animation
-  CalCoreAnimation *pCoreAnimation = CalLoader::loadCoreAnimation(strFilename, m_pCoreSkeleton);
-  if(pCoreAnimation == 0) return -1;
-
-  // add core animation to this core model
-  int animationId = addCoreAnimation(pCoreAnimation);
-  if(animationId == -1)
-  {
-    delete pCoreAnimation;
-    return -1;
-  }
-
-  return animationId;
-}
-
- /*****************************************************************************/
-/** Loads a core animatedMorph.
-  *
-  * This function loads a core animatedMorph from a file.
-  *
-  * @param strFilename The file from which the core animatedMorph should be loaded
-  *                    from.
-  *
-  * @return One of the following values:
-  *         \li the assigned \b ID of the loaded core animation
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
 int CalCoreModel::loadCoreAnimatedMorph(const std::string& strFilename)
 {
 
@@ -570,43 +452,6 @@ bool CalCoreModel::loadCoreSkeleton(const std::string& strFilename)
 
   return true;
 }
-
- /*****************************************************************************/
-/** Saves a core animation.
-  *
-  * This function saves a core animation to a file.
-  *
-  * @param strFilename The file to which the core animation should be saved to.
-  * @param coreAnimationId The ID of the core animation that should be saved.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreModel::saveCoreAnimation(const std::string& strFilename, int coreAnimationId)
-{
-  // check if the core animation id is valid
-  if((coreAnimationId < 0) 
-
-    || (coreAnimationId >= (int)m_vectorCoreAnimation.size())
-
-    || !m_vectorCoreAnimation[ coreAnimationId ] )
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  // save the core animation
-  if(!CalSaver::saveCoreAnimation(strFilename, m_vectorCoreAnimation[coreAnimationId]))
-  {
-    return false;
-  }
-
-  return true;
-}
-
-
 
  /*****************************************************************************/
 /** Saves a core material.
@@ -716,36 +561,3 @@ void CalCoreModel::setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton)
 
   m_pCoreSkeleton = pCoreSkeleton;
 }
-
- /*****************************************************************************/
-/** Scale the core model.
-  *
-  * This function rescale all data that are in the core model instance
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
-#if 0
-void CalCoreModel::scale(float factor)
-{
-	m_pCoreSkeleton->scale(factor);
-
-	int animationId;
-	for(animationId = 0; animationId < m_vectorCoreAnimation.size(); animationId++)
-	{
-
-    if( m_vectorCoreAnimation[animationId] ) {
-  		m_vectorCoreAnimation[animationId]->scale(factor);
-
-    }
-	}
-
-	int meshId;
-	for(meshId = 0; meshId < m_vectorCoreMesh.size(); meshId++)
-	{
-		m_vectorCoreMesh[meshId]->scale(factor);
-	}
-
-}
-#endif

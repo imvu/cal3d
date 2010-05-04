@@ -76,9 +76,9 @@ bool CalAnimationCycle::blend(float weight, float delay)
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalAnimationCycle::create(CalCoreAnimation *pCoreAnimation)
+bool CalAnimationCycle::create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
 {
-  if(pCoreAnimation == 0)
+  if(!pCoreAnimation)
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
     return false;
@@ -103,7 +103,7 @@ bool CalAnimationCycle::create(CalCoreAnimation *pCoreAnimation)
 
 void CalAnimationCycle::destroy()
 {
-  m_pCoreAnimation = 0;
+  m_pCoreAnimation.reset();
 }
 
  /*****************************************************************************/

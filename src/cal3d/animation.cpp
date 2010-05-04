@@ -19,8 +19,7 @@
   *****************************************************************************/
 
 CalAnimation::CalAnimation()
-   : m_pCoreAnimation(0)
-   , m_type(TYPE_NONE)
+   : m_type(TYPE_NONE)
    , m_state(STATE_NONE)
    , m_time(0.0f)
    , m_timeFactor(1.0f)
@@ -48,106 +47,33 @@ CalAnimation::~CalAnimation()
 
 void CalAnimation::destroy()
 {
-  m_pCoreAnimation = 0;
+  m_pCoreAnimation.reset();
 }
-
- /*****************************************************************************/
-/** Provides access to the core animation.
-  *
-  * This function returns the core animation on which this animation instance
-  * is based on.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animation
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreAnimation *CalAnimation::getCoreAnimation()
-{
-  return m_pCoreAnimation;
-}
-
- /*****************************************************************************/
-/** Returns the state.
-  *
-  * This function returns the state of the animation instance.
-  *
-  * @return One of the following states:
-  *         \li \b STATE_NONE
-  *         \li \b STATE_SYNC
-  *         \li \b STATE_ASYNC
-  *         \li \b STATE_IN
-  *         \li \b STATE_STEADY
-  *         \li \b STATE_OUT
-  *****************************************************************************/
 
 CalAnimation::State CalAnimation::getState()
 {
   return m_state;
 }
 
- /*****************************************************************************/
-/** Returns the time.
-  *
-  * This function returns the time of the animation instance.
-  *
-  * @return The time in seconds.
-  *****************************************************************************/
-
 float CalAnimation::getTime()
 {
   return m_time;
 }
-
- /*****************************************************************************/
-/** Returns the type.
-  *
-  * This function returns the type of the animation instance.
-  *
-  * @return One of the following types:
-  *         \li \b TYPE_NONE
-  *         \li \b TYPE_CYCLE
-  *         \li \b TYPE_POSE
-  *         \li \b TYPE_ACTION
-  *****************************************************************************/
 
 CalAnimation::Type CalAnimation::getType()
 {
   return m_type;
 }
 
- /*****************************************************************************/
-/** Returns the weight.
-  *
-  * This function returns the weight of the animation instance.
-  *
-  * @return The weight.
-  *****************************************************************************/
-
 float CalAnimation::getWeight()
 {
   return m_weight;
 }
 
- /*****************************************************************************/
-/** Set the time.
-  *
-  * This function set the time of the animation instance.
-  *
-  *****************************************************************************/
-
 void CalAnimation::setTime(float time)
 {
     m_time = time;
 }
-
-/*****************************************************************************/
-/** Set the time factor.
-  * 
-  * This function sets the time factor of the animation instance.
-  * this time factor affect only sync animation
-  *
-  *****************************************************************************/
 
 void CalAnimation::setTimeFactor(float timeFactor)
 {

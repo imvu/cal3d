@@ -42,23 +42,7 @@ CalAnimationAction::~CalAnimationAction()
 {
 }
 
- /*****************************************************************************/
-/** Creates the animation action instance.
-  *
-  * This function creates the animation action instance based on a core
-  * animation.
-  *
-  * @param pCoreAnimation A pointer to the core animation on which this
-  *                       animation action instance should be based on.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalAnimationAction::create(CalCoreAnimation *pCoreAnimation)
-{
-
+bool CalAnimationAction::create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation) {
   // For error checking, I initialize this here so you can't call execute on a manual action.
   m_manualOn = false;
   m_scale = 1.0;
@@ -82,7 +66,7 @@ bool CalAnimationAction::create(CalCoreAnimation *pCoreAnimation)
 
 void CalAnimationAction::destroy()
 {
-  m_pCoreAnimation = 0;
+  m_pCoreAnimation.reset();
 }
 
  /*****************************************************************************/
