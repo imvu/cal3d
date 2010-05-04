@@ -25,8 +25,6 @@ public:
   size_t size();
   void fillInvalidTranslations( CalCoreSkeleton * skel );
   bool addCoreTrack(CalCoreTrack *pCoreTrack);
-  bool create();
-  void destroy();
   CalCoreTrack *getCoreTrack(int coreBoneId);
   unsigned int numCoreTracks();
   CalCoreTrack * nthCoreTrack( unsigned int );
@@ -34,7 +32,6 @@ public:
   std::list<CalCoreTrack *>& getListCoreTrack();
   void setDuration(float duration);
   void scale(float factor);
-  static int getNumCoreAnimations();
 
 private:
   float m_duration;

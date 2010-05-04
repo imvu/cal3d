@@ -54,7 +54,6 @@ CalCoreModel::~CalCoreModel() {
   for(iteratorCoreAnimation = m_vectorCoreAnimation.begin(); iteratorCoreAnimation != m_vectorCoreAnimation.end(); ++iteratorCoreAnimation)
   {
     if( m_coreAnimationManagement && ( * iteratorCoreAnimation ) ) {
-      (*iteratorCoreAnimation)->destroy();
       delete (*iteratorCoreAnimation);
     }
   }

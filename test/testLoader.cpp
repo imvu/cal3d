@@ -74,7 +74,6 @@ TEST(LoadSimpleXmlAnimation) {
 
   CHECK_EQUAL(ss.str(), animationText);
 
-  anim->destroy();
   delete anim;
 }
 

@@ -132,13 +132,8 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 
 	// create the core animation instance
 	CalCoreAnimation coreAnimation;
-	if(!coreAnimation.create())
-	{
-		SetLastError("Creation of core animation instance failed.", __FILE__, __LINE__);
-		return false;
-	}
 
-	// set the duration of the animation
+        // set the duration of the animation
 	float duration;
 	duration = (float)(param->m_endframe - param->m_startframe) / (float)m_pInterface->GetFps();
 	coreAnimation.setDuration(duration);
@@ -162,7 +157,6 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 			if(pCoreTrack == 0)
 			{
 				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				coreAnimation.destroy();
 				return false;
 			}
 
@@ -177,7 +171,6 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 			{
 				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 				delete pCoreTrack;
-				coreAnimation.destroy();
 				return false;
 			}
 		}
@@ -231,7 +224,6 @@ OutputDebugString(str);
 				if(pCoreKeyframe == 0)
 				{
 					SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-					coreAnimation.destroy();
 					return false;
 				}
 
@@ -254,7 +246,6 @@ OutputDebugString(str);
 				{
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreKeyframe;
-					coreAnimation.destroy();
 					return false;
 				}
 
@@ -289,12 +280,8 @@ OutputDebugString(str);
 	if(!CalSaver::saveCoreAnimation(strFilename, &coreAnimation))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreAnimation.destroy();
 		return false;
 	}
-
-	// destroy the core animation
-	coreAnimation.destroy();
 
 	return true;
 }

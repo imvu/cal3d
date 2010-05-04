@@ -575,19 +575,11 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
   // allocate a new core animation instance
   CalCoreAnimation *pCoreAnimation = new CalCoreAnimation();
 
-  // create the core animation instance
-  if(!pCoreAnimation->create())
-  {
-    delete pCoreAnimation;
-    return 0;
-  }
-
   // get the duration of the core animation
   float duration;
   if(!dataSrc.readFloat(duration))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    pCoreAnimation->destroy();
     delete pCoreAnimation;
     return 0;
   }
@@ -596,7 +588,6 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
   if(duration <= 0.0f)
   {
     CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__);
-    pCoreAnimation->destroy();
     delete pCoreAnimation;
     return 0;
   }
@@ -620,7 +611,6 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
     pCoreTrack = loadCoreTrack(dataSrc,skel, version, useAnimationCompression);
     if(pCoreTrack == 0)
     {
-      pCoreAnimation->destroy();
       delete pCoreAnimation;
       return 0;
     }

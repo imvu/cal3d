@@ -154,19 +154,9 @@ Boolean CalCoreAnimation_AddCoreTrack(CalCoreAnimation *self, CalCoreTrack *pCor
   return self->addCoreTrack(pCoreTrack) ? True : False;
 }
 
-Boolean CalCoreAnimation_Create(CalCoreAnimation *self)
-{
-  return self->create() ? True : False;
-}
-
 void CalCoreAnimation_Delete(CalCoreAnimation *self)
 {
   delete self;
-}
-
-void CalCoreAnimation_Destroy(CalCoreAnimation *self)
-{
-  self->destroy();
 }
 
 CalCoreTrack *CalCoreAnimation_GetCoreTrack(CalCoreAnimation *self, int coreBoneId)

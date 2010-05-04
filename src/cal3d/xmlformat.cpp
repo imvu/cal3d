@@ -768,19 +768,10 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
     // allocate a new core animation instance
     CalCoreAnimation *pCoreAnimation = new CalCoreAnimation();
 
-    // create the core animation instance
-    if(!pCoreAnimation->create())
-    {
-        delete pCoreAnimation;
-        return 0;
-    }
-
-
     // check for a valid duration
     if(duration <= 0.0f)
     {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
-        pCoreAnimation->destroy();
         delete pCoreAnimation;
         return 0;
     }
@@ -795,7 +786,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         if(!track || _stricmp(track->Value(),"TRACK")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreAnimation->destroy();
             delete pCoreAnimation;
             return 0;
         }
@@ -840,7 +830,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
 
         if(keyframeCount <= 0)
         {
-            pCoreAnimation->destroy();
             delete pCoreAnimation;
             pCoreTrack->destroy();
             delete pCoreTrack;
@@ -859,7 +848,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!keyframe|| _stricmp(keyframe->Value(),"KEYFRAME")!=0)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreAnimation->destroy();
                 delete pCoreAnimation;
                 pCoreTrack->destroy();
                 delete pCoreTrack;
@@ -902,7 +890,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!translation )
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreAnimation->destroy();
                 delete pCoreAnimation;
                 pCoreTrack->destroy();
                 delete pCoreTrack;
@@ -913,7 +900,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
                 if(!node)
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    pCoreAnimation->destroy();
                     delete pCoreAnimation;
                     pCoreTrack->destroy();
                     delete pCoreTrack;
@@ -924,7 +910,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
                 if(!translationdata)
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    pCoreAnimation->destroy();
                     delete pCoreAnimation;
                     pCoreTrack->destroy();
                     delete pCoreTrack;
@@ -937,7 +922,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!rotation || _stricmp(rotation->Value(),"ROTATION")!=0)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreAnimation->destroy();
                 delete pCoreAnimation;
                 pCoreTrack->destroy();
                 delete pCoreTrack;
@@ -950,7 +934,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!node)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreAnimation->destroy();
                 delete pCoreAnimation;
                 pCoreTrack->destroy();
                 delete pCoreTrack;
@@ -960,7 +943,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!rotationdata)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreAnimation->destroy();
                 delete pCoreAnimation;
                 pCoreTrack->destroy();
                 delete pCoreTrack;
@@ -974,7 +956,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             pCoreKeyframe = new CalCoreKeyframe();
             if(pCoreKeyframe == 0)
             {
-                pCoreAnimation->destroy();
                 delete pCoreAnimation;
                 pCoreTrack->destroy();
                 delete pCoreTrack;        
