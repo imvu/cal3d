@@ -42,20 +42,7 @@ CalMixer::~CalMixer()
   assert(m_listAnimationAction.empty());
 }
 
- /*****************************************************************************/
-/** This function returns CalAnimationAction for given coreAnimationId.
-  *
-  * This function returns CalAnimationAction for given coreAnimationId.
-  *
-  * @param id The ID of the core animation.
-  *
-  * @return One of the following values:
-  *         \li \b NULL if no action exists for given coreAnimationId.
-  *         \li \b pointer to CalAnimationAction for the given coreAnimationId.
-  *****************************************************************************/
-CalAnimationAction *
-CalMixer::animationActionFromCoreAnimationId( int coreAnimationId )
-{
+CalAnimationAction* CalMixer::animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
   std::list<CalAnimationAction *>::iterator iteratorAnimationAction;
   iteratorAnimationAction = m_listAnimationAction.begin();
   while(iteratorAnimationAction != m_listAnimationAction.end())
@@ -64,8 +51,9 @@ CalMixer::animationActionFromCoreAnimationId( int coreAnimationId )
     CalAnimationAction * aa = *iteratorAnimationAction;
     boost::shared_ptr<CalCoreAnimation> ca = aa->getCoreAnimation();
     if( ca ) {
-      boost::shared_ptr<CalCoreAnimation> ca2 = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
-      if( ca == ca2 ) return aa;
+      if( ca == coreAnimation ) {
+        return aa;
+      }
     }
     ++iteratorAnimationAction;
   }
@@ -84,10 +72,8 @@ CalMixer::animationActionFromCoreAnimationId( int coreAnimationId )
   *         \li \b true if playing
   *         \li \b false if not
   *****************************************************************************/
-bool
-CalMixer::actionOn( int coreAnimationId )
-{
-  return animationActionFromCoreAnimationId( coreAnimationId ) ? true : false;
+bool CalMixer::actionOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
+  return animationActionFromCoreAnimationId( coreAnimation ) ? true : false;
 }
 
 
@@ -107,14 +93,14 @@ CalMixer::actionOn( int coreAnimationId )
   *         \li \b false if already existed or allocation failed
   *****************************************************************************/
 bool 
-CalMixer::addManualAnimation( int coreAnimationId )
+CalMixer::addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
 { 
-  if( animationActionFromCoreAnimationId( coreAnimationId ) ) {
+  if( animationActionFromCoreAnimationId( coreAnimation ) ) {
     return false; // Already existed.
   }
 
   // Create a new action.  Test for error conditions.
-  CalAnimationAction * aa = newAnimationAction( coreAnimationId );
+  CalAnimationAction * aa = newAnimationAction( coreAnimation );
   if( !aa ) return false;
 
   // If we got the action, then configure it as manual.
@@ -134,9 +120,9 @@ CalMixer::addManualAnimation( int coreAnimationId )
   *         \li \b false if didn't exist
   *****************************************************************************/
 bool 
-CalMixer::removeManualAnimation( int coreAnimationId )
+CalMixer::removeManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation)
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   m_listAnimationAction.remove( aa );  
   aa->destroy();
@@ -155,10 +141,8 @@ CalMixer::removeManualAnimation( int coreAnimationId )
   *         \li \b true if exists and manual
   *         \li \b false otherwise
   *****************************************************************************/
-bool 
-CalMixer::setManualAnimationOn( int coreAnimationId, bool p )
-{
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+bool CalMixer::setManualAnimationOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, bool p) {
+  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   return setManualAnimationOn( aa, p );
 }
@@ -182,9 +166,9 @@ CalMixer::setManualAnimationOn( CalAnimationAction * aa, bool p )
   *         \li \b false otherwise
   *****************************************************************************/
 bool
-CalMixer::setManualAnimationAttributes( int coreAnimationId, CalMixerManualAnimationAttributes const & p )
+CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalMixerManualAnimationAttributes const & p)
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   if( !aa->manual() ) return false;
   setManualAnimationOn( aa, p.on_ );
@@ -196,50 +180,16 @@ CalMixer::setManualAnimationAttributes( int coreAnimationId, CalMixerManualAnima
   return true;
 }
 
-
-
- /*****************************************************************************/
-/** Return duration of the core animation in seconds.
-  *
-  * Return duration of the core animation in seconds.  The duration goes from the
-  * time of the first to the last frame.  Thus if frames were 1/30 of a second
-  * long and there were 31 frames, the duration would be one second.  An instance
-  * does not have to exist.
-  *
-  * Result = duration in seconds.
-  *
-  * @return One of the following values:
-  *         \li \b true if exists
-  *         \li \b false otherwise
-  *****************************************************************************/
-bool
-CalMixer::animationDuration( int coreAnimationId, float * result )
-{
-    boost::shared_ptr<CalCoreAnimation> ca2 = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
-    if( !ca2 ) return false;
-    *result = ca2->getDuration();
+bool CalMixer::animationDuration(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float * result) {
+    if (!coreAnimation) {
+        return false;
+    }
+    *result = coreAnimation->getDuration();
     return true;
 }
 
-
-
-
- /*****************************************************************************/
-/** Sets the time of the manual animation.
-  *
-  * Sets the time of the manual animation.  The effect of setting the time beyond
-  * either end of the animation's duration is to clamp the animation at its
-  * first or last frame.  Manual animations do not turn off automatically, and
-  * you can set the time arbitrarily.
-  *
-  * @return One of the following values:
-  *         \li \b true if exists and manual
-  *         \li \b false otherwise
-  *****************************************************************************/
-bool 
-CalMixer::setManualAnimationTime( int coreAnimationId, float p )
-{
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+bool CalMixer::setManualAnimationTime(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
+  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationTime( aa, p );
 }
@@ -264,17 +214,13 @@ CalMixer::setManualAnimationTime( CalAnimationAction * aa, float p )
   *         \li \b true if manual
   *         \li \b false if not manual
   *****************************************************************************/
-bool 
-CalMixer::setManualAnimationWeight( int coreAnimationId, float p )
-{
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+bool CalMixer::setManualAnimationWeight(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
+  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   return setManualAnimationWeight( aa, p );
 }
 
-bool 
-CalMixer::setManualAnimationWeight( CalAnimationAction * aa, float p )
-{
+bool CalMixer::setManualAnimationWeight( CalAnimationAction * aa, float p ) {
   aa->setManualAnimationActionWeight( p );
   return true;
 }
@@ -294,10 +240,8 @@ CalMixer::setManualAnimationWeight( CalAnimationAction * aa, float p )
   *         \li \b true if manual
   *         \li \b false if not manual
   *****************************************************************************/
-bool 
-CalMixer::setManualAnimationScale( int coreAnimationId, float p )
-{
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+bool CalMixer::setManualAnimationScale(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
+  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationScale( aa, p );
 }
@@ -321,9 +265,9 @@ CalMixer::setManualAnimationScale( CalAnimationAction * aa, float p )
   *         \li \b false if not manual
   *****************************************************************************/
 bool 
-CalMixer::setManualAnimationRampValue( int coreAnimationId, float p )
+CalMixer::setManualAnimationRampValue(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p)
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationRampValue( aa, p );
 }
@@ -350,10 +294,10 @@ CalMixer::setManualAnimationRampValue( CalAnimationAction * aa, float p )
   *         \li \b false if setting to CompositionFunctionNull, or if action with id doesn't exist.
   *****************************************************************************/
 bool 
-CalMixer::setManualAnimationCompositionFunction( int coreAnimationId, 
+CalMixer::setManualAnimationCompositionFunction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, 
                                                 CalAnimation::CompositionFunction p )
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationCompositionFunction( aa, p );
 }
@@ -438,9 +382,9 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimationAction * aa,
   *         \li \b false if already not playing
   *****************************************************************************/
 bool
-CalMixer::stopAction( int coreAnimationId )
+CalMixer::stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimationId );
+  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   m_listAnimationAction.remove( aa );  
   aa->destroy();
@@ -500,11 +444,11 @@ void CalMixer::destroy()
   *         \li \b true if successful
   *         \li \b false if an error happend
   *****************************************************************************/
-bool CalMixer::executeAction(int id, float delayIn, float delayOut, float weightTarget, bool autoLock)
+bool CalMixer::executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float delayIn, float delayOut, float weightTarget, bool autoLock)
 {
 
   // Create a new action.  Test for error conditions.
-  CalAnimationAction * aa = newAnimationAction(id);
+  CalAnimationAction * aa = newAnimationAction(coreAnimation);
   if( !aa ) return false;
 
   // If we got the action, then configure it for being update().
@@ -513,16 +457,8 @@ bool CalMixer::executeAction(int id, float delayIn, float delayOut, float weight
 
 
 
-CalAnimationAction * CalMixer::newAnimationAction( int coreAnimationId )
+CalAnimationAction * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
 {
-
-  // get the core animation
-  boost::shared_ptr<CalCoreAnimation> pCoreAnimation = m_pModel->getCoreModel()->getCoreAnimation( coreAnimationId );
-  if(pCoreAnimation == 0)
-  {
-    return NULL;
-  }
-
   // allocate a new animation action instance
   CalAnimationAction *pAnimationAction = new CalAnimationAction();
 

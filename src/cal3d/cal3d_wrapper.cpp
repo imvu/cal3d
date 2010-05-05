@@ -203,11 +203,6 @@ void CalCoreModel_Delete(CalCoreModel *self)
   delete self;
 }
 
-int CalCoreModel_GetCoreAnimationMaxId(CalCoreModel *self)
-{
-  return self->getCoreAnimationMaxId();
-}
-
 int CalCoreModel_GetCoreMaterialCount(CalCoreModel *self)
 {
   return self->getCoreMaterialCount();

@@ -61,30 +61,6 @@ CalCoreModel::~CalCoreModel() {
 
 int 
 
-CalCoreModel::getNumCoreAnimations()
-
-{
-
-  int num = m_vectorCoreAnimation.size();
-
-  int r = 0;
-
-  int i;
-
-  for( i = 0; i < num; i++ ) {
-
-    if( m_vectorCoreAnimation[ i ] ) r++;
-
-  }
-
-  return r;
-
-}
-
-
-
-int 
-
 CalCoreModel::getNumCoreAnimatedMorphs()
 
 {
@@ -104,39 +80,6 @@ CalCoreModel::getNumCoreAnimatedMorphs()
   return r;
 
 }
-
-
-int CalCoreModel::addCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
-{
-  int num = m_vectorCoreAnimation.size();
-  for (int i = 0; i < num; i++) {
-    if( !m_vectorCoreAnimation[ i ] ) {
-      m_vectorCoreAnimation[ i ] = pCoreAnimation;
-      return i;
-    }
-  }
-
-  m_vectorCoreAnimation.push_back(pCoreAnimation);
-  return num;
-}
-
-
-bool CalCoreModel::removeCoreAnimation( int id )
-
-{
-
-  int num = m_vectorCoreAnimation.size();
-
-  if( id >= num || id < 0) return false;
-
-  if( !m_vectorCoreAnimation[ id ] ) return false;
-
-  m_vectorCoreAnimation[ id ].reset();
-
-  return true;
-
-}
-
 
 
  /*****************************************************************************/
@@ -174,23 +117,6 @@ int CalCoreModel::addCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMo
   m_vectorCoreAnimatedMorph.push_back(pCoreAnimatedMorph);
 
   return num;
-
-}
-
-
-bool CalCoreModel::removeCoreAnimatedMorph( int id )
-
-{
-
-  int num = m_vectorCoreAnimatedMorph.size();
-
-  if( id >= num || id < 0) return false;
-
-  if( !m_vectorCoreAnimatedMorph[ id ] ) return false;
-
-  m_vectorCoreAnimatedMorph[ id ].reset();
-
-  return true;
 
 }
 
@@ -244,18 +170,6 @@ bool CalCoreModel::createWithName( char const * strName)
   return createInternal( name );
 }
 
-boost::shared_ptr<CalCoreAnimation> CalCoreModel::getCoreAnimation(int coreAnimationId) {
-  if((coreAnimationId < 0) 
-    || (coreAnimationId >= (int)m_vectorCoreAnimation.size())
-    || !m_vectorCoreAnimation[ coreAnimationId ] )
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return boost::shared_ptr<CalCoreAnimation>();
-  }
-
-  return m_vectorCoreAnimation[coreAnimationId];
-}
-
  /*****************************************************************************/
 /** Provides access to a core morph animation.
   *
@@ -283,34 +197,6 @@ boost::shared_ptr<CalCoreAnimatedMorph> CalCoreModel::getCoreAnimatedMorph(int c
 
   return m_vectorCoreAnimatedMorph[coreAnimatedMorphId];
 }
-
-
- /*****************************************************************************/
-/** Returns the number of core animations.
-  *
-  * This function returns the number of core animations in the core model
-  * instance.
-  *
-  * @return The number of core animations.
-  *****************************************************************************/
-
-int CalCoreModel::getCoreAnimationMaxId()
-{
-  return m_vectorCoreAnimation.size();
-}
-
-
- /*****************************************************************************/
-/** Provides access to a core material.
-  *
-  * This function returns the core material with the given ID.
-  *
-  * @param coreMaterialId The ID of the core material that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core material
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
 
 boost::shared_ptr<CalCoreMaterial> CalCoreModel::getCoreMaterial(int coreMaterialId)
 {

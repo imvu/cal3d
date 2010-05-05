@@ -231,17 +231,8 @@ public:
   virtual void updateSkeleton() = 0;
 };
 
-//****************************************************************************//
-// Class declaration                                                          //
-//****************************************************************************//
-
- /*****************************************************************************/
-/** The mixer class.
-  *****************************************************************************/
-
 class CAL3D_API CalMixer : public CalAbstractMixer
 {
-// member variables
 public:
   CalModel *m_pModel;
   std::list<CalAnimationAction *> m_listAnimationAction;
@@ -251,16 +242,13 @@ public:
   unsigned int m_numBoneAdjustments;
   CalMixerBoneAdjustmentAndBoneId m_boneAdjustmentAndBoneIdArray[ CalMixerBoneAdjustmentsMax ];
 
-  // constructors/destructor
 public:
   virtual ~CalMixer();
 
-// member functions	
-public:
   virtual bool isDefaultMixer() { return true; }
   virtual void create(CalModel *pModel);
   virtual void destroy();
-  bool executeAction(int id, float delayIn, float delayOut, float weightTarget = 1.0f, bool autoLock=false);
+  bool executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float delayIn, float delayOut, float weightTarget = 1.0f, bool autoLock=false);
   virtual void updateAnimation(float deltaTime);
   virtual void updateSkeleton();
   float getAnimationTime();
@@ -268,18 +256,18 @@ public:
   void setAnimationTime(float animationTime);
   void setTimeFactor(float timeFactor);
   float getTimeFactor();
-  bool actionOn( int coreAnimationId );
-  bool stopAction( int coreAnimationId );
-  bool addManualAnimation( int coreAnimationId );
-  bool removeManualAnimation( int coreAnimationId );
-  bool setManualAnimationOn( int coreAnimationId, bool );
-  bool setManualAnimationTime( int coreAnimationId, float seconds );
-  bool setManualAnimationWeight( int coreAnimationId, float );
-  bool setManualAnimationScale( int coreAnimationId, float p );
-  bool setManualAnimationRampValue( int coreAnimationId, float p );
-  bool setManualAnimationCompositionFunction( int coreAnimationId, CalAnimation::CompositionFunction p );
-  bool setManualAnimationAttributes( int coreAnimationId, CalMixerManualAnimationAttributes const & p );
-  bool animationDuration( int coreAnimationId, float * result );
+  bool actionOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+  bool stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
+  bool addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
+  bool removeManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
+  bool setManualAnimationOn( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, bool );
+  bool setManualAnimationTime( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float seconds );
+  bool setManualAnimationWeight( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float );
+  bool setManualAnimationScale( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p );
+  bool setManualAnimationRampValue( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p );
+  bool setManualAnimationCompositionFunction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalAnimation::CompositionFunction p );
+  bool setManualAnimationAttributes( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalMixerManualAnimationAttributes const & p );
+  bool animationDuration( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float * result );
   bool addBoneAdjustment( int boneId, CalMixerBoneAdjustment const & );
   bool removeBoneAdjustment( int boneId );
   void removeAllBoneAdjustments();
@@ -287,8 +275,8 @@ public:
 
 public: // private:
 
-  CalAnimationAction * animationActionFromCoreAnimationId( int coreAnimationId );
-  CalAnimationAction * newAnimationAction( int coreAnimationId );
+  CalAnimationAction* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+  CalAnimationAction* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   bool setManualAnimationCompositionFunction( CalAnimationAction *, CalAnimation::CompositionFunction p );
   bool setManualAnimationRampValue( CalAnimationAction *, float p );
   bool setManualAnimationScale( CalAnimationAction *, float p );
