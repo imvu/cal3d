@@ -303,11 +303,6 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 
 	// create the core animation instance
 	CalCoreAnimatedMorph coreAnimation;
-	if(!coreAnimation.create())
-	{
-          SetLastError("Creation of core animation instance failed.", __FILE__, __LINE__);
-          return false;
-	}
 
 	// set the duration of the animation
 	float duration;
@@ -330,16 +325,14 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 
     CBaseMesh * pMesh = morphAnimationCandidate.meshAtTime(-1);
 	if( !pMesh ) {
-		coreAnimation.destroy();
-      ::OutputDebugString("No mesh found.\n");
-        return false;
+            ::OutputDebugString("No mesh found.\n");
+            return false;
 	}
     int numMC = pMesh->numMorphChannels();
     for( int i = 0; i < numMC; i++ ) {
       CalCoreMorphTrack * pTrack = new CalCoreMorphTrack();
       if( !pTrack->create() ) {
         SetLastError("Creation of CalCoreMorphTrack instance failed.", __FILE__, __LINE__);
-		coreAnimation.destroy();
         return false;
       }
       CBaseMesh::MorphKeyFrame keyFrame = pMesh->frameForChannel(i, 0);
@@ -390,14 +383,12 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
             CalCoreMorphKeyframe * pFrame = new CalCoreMorphKeyframe();
             if(!pFrame->create()) {
               SetLastError("Creation of CalCoreMorphKeyframe instance failed.", __FILE__, __LINE__);
-              coreAnimation.destroy();
               return false;
             }
             pFrame->setTime(keyFrame.time);
             pFrame->setWeight(keyFrame.weight / keyFrame.totalWeight);
             if(!pTrack->addCoreMorphKeyframe(pFrame)) {
               SetLastError(" addCoreMorphKeyframe failed.", __FILE__, __LINE__);
-              coreAnimation.destroy();
 			  pFrame->destroy();
               return false;
             }
@@ -430,13 +421,11 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 	if(!CalSaver::saveCoreAnimatedMorph(strFilename, &coreAnimation))
 	{
           SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-          coreAnimation.destroy();
           return false;
 	}
         
 	// destroy the core animation
   ::OutputDebugString("Writing complete.\n");
-	coreAnimation.destroy();
 
 	return true;
 }

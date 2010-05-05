@@ -292,14 +292,16 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	}
 
 	// load the core skeleton instance
-	if(!coreModel->loadCoreSkeleton(m_strFilename))
+	// get core skeleton
+	CalCoreSkeleton *pCoreSkeleton = CalLoader::loadCoreSkeleton(m_strFilename);
+
+        if(!pCoreSkeleton)
 	{
 		theExporter.SetLastErrorFromCal(__FILE__, __LINE__);
 		return false;
 	}
 
-	// get core skeleton
-	CalCoreSkeleton *pCoreSkeleton;
+        coreModel->setCoreSkeleton(pCoreSkeleton);
 	pCoreSkeleton = coreModel->getCoreSkeleton();
 	
 	// get core bone vector
