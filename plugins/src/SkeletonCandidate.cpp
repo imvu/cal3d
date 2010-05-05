@@ -285,12 +285,6 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	// create a core model instance
 	CalCoreModel * coreModel = new CalCoreModel;
 
-	if(!coreModel->createInternal("dummy"))
-	{
-		theExporter.SetLastErrorFromCal(__FILE__, __LINE__);
-		return false;
-	}
-
 	// load the core skeleton instance
 	// get core skeleton
 	CalCoreSkeleton *pCoreSkeleton = CalLoader::loadCoreSkeleton(m_strFilename);

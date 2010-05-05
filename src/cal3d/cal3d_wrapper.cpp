@@ -188,11 +188,6 @@ CalCoreMesh *CalCoreMesh_New()
   return new CalCoreMesh();
 }
 
-Boolean CalCoreModel_Create(CalCoreModel *self, char *strName)
-{
-  return self->createWithName(strName) ? True : False;
-}
-
 Boolean CalCoreModel_CreateCoreMaterialThread(CalCoreModel *self, int coreMaterialThreadId)
 {
   return True;

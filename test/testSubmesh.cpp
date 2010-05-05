@@ -169,7 +169,6 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     coreMesh->addCoreSubmesh(coreSubmesh);
 
     CalCoreModel coreModel;
-    CHECK(coreModel.createInternal("model"));
 
     CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
     coreModel.setCoreSkeleton(coreSkeleton);
@@ -192,7 +191,6 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     coreMesh->addCoreSubmesh(coreSubmesh);
 
     CalCoreModel coreModel;
-    CHECK(coreModel.createInternal("model"));
 
     CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
     coreModel.setCoreSkeleton(coreSkeleton);
