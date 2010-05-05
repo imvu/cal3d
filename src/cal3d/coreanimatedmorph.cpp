@@ -16,19 +16,25 @@
 #include "cal3d/coreanimatedmorph.h"
 #include "cal3d/coremorphtrack.h"
 
+CAL3D_DEFINE_SIZE(CalCoreMorphTrack*);
+
+size_t sizeInBytes(const CalCoreMorphTrack& t) {
+    return t.size();
+}
+
+size_t CalCoreAnimatedMorph::size() const {
+    size_t r = sizeof(*this);
+    r += sizeInBytes(m_listCoreTrack);
+    r += sizeInBytes(m_tracksToDelete);
+    return r;
+}
+
 bool CalCoreAnimatedMorph::addCoreTrack(CalCoreMorphTrack *pCoreTrack)
 {
   m_listCoreTrack.push_back(*pCoreTrack);
   m_tracksToDelete.push_back(pCoreTrack);
   return true;
 }
-
- /*****************************************************************************/
-/** Destroys the core animatedMorph instance.
-  *
-  * This function destroys all data stored in the core animatedMorph instance and
-  * frees all allocated memory.
-  *****************************************************************************/
 
 CalCoreAnimatedMorph::~CalCoreAnimatedMorph()
 {
@@ -44,8 +50,7 @@ CalCoreAnimatedMorph::~CalCoreAnimatedMorph()
   }
 
   while(!m_tracksToDelete.empty()) {
-    CalCoreMorphTrack *pCoreTrack;
-    pCoreTrack = m_tracksToDelete.front();
+    CalCoreMorphTrack* pCoreTrack = m_tracksToDelete.front();
     m_tracksToDelete.pop_front();
     delete pCoreTrack;
   }

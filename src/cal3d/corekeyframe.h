@@ -18,12 +18,8 @@ class CAL3D_API CalCoreKeyframe : public Cal::Object
 {
 public:
   CalCoreKeyframe();
-  ~CalCoreKeyframe();
 
-  static unsigned int numCalCoreKeyframes();
-  static unsigned int numCalCoreKeyframeBytes();
-
-  unsigned int size();
+  size_t size() const { return sizeof(*this); }
   const CalQuaternion& getRotation();
   float getTime();
   const CalVector& getTranslation();

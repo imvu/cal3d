@@ -36,14 +36,13 @@ private:
   /// List of keyframes, always sorted by time.
   std::vector<CalCoreKeyframe*> m_keyframes;
 
-// constructors/destructor
 public:
   CalCoreTrack();
   ~CalCoreTrack();
 
   void create();
   void destroy();
-  unsigned int size();
+  size_t size() const;
 
   bool getState(float time, CalVector& translation, CalQuaternion& rotation);
 

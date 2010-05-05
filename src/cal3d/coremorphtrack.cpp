@@ -12,30 +12,14 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/coremorphtrack.h"
 #include "cal3d/error.h"
 #include "cal3d/coremorphkeyframe.h"
-
- /*****************************************************************************/
-/** Constructs the core track instance.
-  *
-  * This function is the default constructor of the core track instance.
-  *****************************************************************************/
 
 CalCoreMorphTrack::CalCoreMorphTrack()
   : m_morphName("")
 {
 }
-
- /*****************************************************************************/
-/** Destructs the core track instance.
-  *
-  * This function is the destructor of the core track instance.
-  *****************************************************************************/
 
 CalCoreMorphTrack::~CalCoreMorphTrack()
 {
@@ -43,17 +27,15 @@ CalCoreMorphTrack::~CalCoreMorphTrack()
   //assert(m_keyframes.empty());
 }
 
- /*****************************************************************************/
-/** Adds a core keyframe.
-  *
-  * This function adds a core keyframe to the core track instance.
-  *
-  * @param pCoreKeyframe A pointer to the core keyframe that should be added.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
+CAL3D_DEFINE_SIZE(CalCoreMorphKeyframe*);
+
+size_t sizeInBytes(CalCoreMorphKeyframe const& keyFrame) {
+    return sizeof(CalCoreMorphKeyframe);
+}
+
+size_t CalCoreMorphTrack::size() const {
+    return sizeof(*this) + m_morphName.capacity() + sizeInBytes(m_keyframesToDelete) + sizeInBytes(m_keyframes);
+}
 
 bool CalCoreMorphTrack::addCoreMorphKeyframe(CalCoreMorphKeyframe *pCoreMorphKeyframe)
 {

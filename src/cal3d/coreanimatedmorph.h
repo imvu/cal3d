@@ -29,6 +29,8 @@ public:
   void scale(float factor);
   void removeZeroScaleTracks();
 
+  size_t size() const;
+
 private:
   float m_duration;
   std::list<CalCoreMorphTrack> m_listCoreTrack;

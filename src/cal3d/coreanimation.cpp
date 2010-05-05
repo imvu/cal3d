@@ -41,13 +41,12 @@ bool CalCoreAnimation::addCoreTrack(CalCoreTrack *pCoreTrack) {
   return true;
 }
 
+size_t sizeInBytes(CalCoreTrack* const& t) {
+    return sizeof(CalCoreTrack*) + t->size();
+}
+
 size_t CalCoreAnimation::size() {
-  size_t r = sizeof( *this );
-  std::list<CalCoreTrack *>::iterator iter1;
-  for( iter1 = m_listCoreTrack.begin(); iter1 != m_listCoreTrack.end(); ++iter1 ) {
-    r += (*iter1)->size() + sizeof(iter1); // Bi-directional list has two pointers.
-  }
-  return r;
+  return sizeof(*this) + sizeInBytes(m_listCoreTrack);
 }
 
 

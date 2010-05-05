@@ -58,48 +58,10 @@ void CalCoreSubmesh::setSubMorphTargetGroupIndexArray( unsigned int len, unsigne
   }
 }
 
-#define DEFINE_SIZE(T)                          \
-    size_t sizeInBytes(const T&) {              \
-        return sizeof(T);                       \
-    }
-
-DEFINE_SIZE(CalCoreSubmesh::Face);
-DEFINE_SIZE(CalCoreSubmesh::Influence);
-DEFINE_SIZE(CalCoreSubmesh::InfluenceRange);
-DEFINE_SIZE(CalCoreSubmesh::LodData);
-DEFINE_SIZE(unsigned);
-
-template<typename T>
-size_t sizeInBytes(const SSEArray<T>& v) {
-    return sizeof(T) * v.size();
-}
-
-template<typename T>
-size_t sizeInBytes(const std::vector<T>& v) {
-    size_t r = sizeof(T) * (v.capacity() - v.size());
-    for (typename std::vector<T>::const_iterator i = v.begin(); i != v.end(); ++i) {
-        r += sizeInBytes(*i);
-    }
-    return r;
-}
-
-template<typename T>
-size_t sizeInBytes(const std::set<T>& s) {
-    size_t r = 20 * s.size();
-    for (typename std::set<T>::const_iterator i = s.begin(); i != s.end(); ++i) {
-        r += sizeInBytes(*i);
-    }
-    return r;
-}
-
-template<typename K, typename V>
-size_t sizeInBytes(const std::map<K, V>& m) {
-    size_t r = 20 * m.size();
-    for (typename std::map<K, V>::const_iterator i = m.begin(); i != m.end(); ++i) {
-        r += sizeInBytes(i->first) + sizeInBytes(i->second);
-    }
-    return r;
-}
+CAL3D_DEFINE_SIZE(CalCoreSubmesh::Face);
+CAL3D_DEFINE_SIZE(CalCoreSubmesh::Influence);
+CAL3D_DEFINE_SIZE(CalCoreSubmesh::InfluenceRange);
+CAL3D_DEFINE_SIZE(CalCoreSubmesh::LodData);
 
 size_t sizeInBytes(const CalCoreSubmesh::InfluenceSet& is) {
     return sizeof(is) + sizeInBytes(is.influences);

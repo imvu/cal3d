@@ -19,22 +19,21 @@ class CalCoreMorphKeyframe;
 
 class CAL3D_API CalCoreMorphTrack : public Cal::Object
 {
-// member variables
 protected:
-
   std::string m_morphName;
 
   /// List of keyframes, always sorted by time.
   std::vector<CalCoreMorphKeyframe> m_keyframes;
   std::vector<CalCoreMorphKeyframe*> m_keyframesToDelete;
 
-// constructors/destructor
 public:
   CalCoreMorphTrack();
   virtual ~CalCoreMorphTrack();
 
   bool create();
   void destroy();
+
+  size_t size() const;
 
   bool getState(float time, float & weightOut);
 

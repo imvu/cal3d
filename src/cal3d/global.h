@@ -13,6 +13,9 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 #include <vector>
+#include <list>
+#include <set>
+#include <map>
 #include "cal3d/platform.h"
 
 typedef unsigned short CalIndex;
@@ -164,3 +167,51 @@ struct CalHeader {
   int version;
   char const* magic;
 };
+
+#define CAL3D_DEFINE_SIZE(T)                    \
+    inline size_t sizeInBytes(T const&) {       \
+        return sizeof(T);                       \
+    }
+
+CAL3D_DEFINE_SIZE(unsigned);
+
+template<typename T>
+size_t sizeInBytes(const SSEArray<T>& v) {
+    return sizeof(T) * v.size();
+}
+
+template<typename T>
+size_t sizeInBytes(const std::vector<T>& v) {
+    size_t r = sizeof(T) * (v.capacity() - v.size());
+    for (typename std::vector<T>::const_iterator i = v.begin(); i != v.end(); ++i) {
+        r += sizeInBytes(*i);
+    }
+    return r;
+}
+
+template<typename T>
+size_t sizeInBytes(const std::list<T>& v) {
+    size_t r = 8 * v.size(); // pointers each way
+    for (typename std::list<T>::const_iterator i = v.begin(); i != v.end(); ++i) {
+        r += sizeInBytes(*i);
+    }
+    return r;
+}
+
+template<typename T>
+size_t sizeInBytes(const std::set<T>& s) {
+    size_t r = 20 * s.size();
+    for (typename std::set<T>::const_iterator i = s.begin(); i != s.end(); ++i) {
+        r += sizeInBytes(*i);
+    }
+    return r;
+}
+
+template<typename K, typename V>
+size_t sizeInBytes(const std::map<K, V>& m) {
+    size_t r = 20 * m.size();
+    for (typename std::map<K, V>::const_iterator i = m.begin(); i != m.end(); ++i) {
+        r += sizeInBytes(i->first) + sizeInBytes(i->second);
+    }
+    return r;
+}

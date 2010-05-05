@@ -37,16 +37,12 @@ CalCoreTrack::CalCoreTrack()
 {
 }
 
+size_t sizeInBytes(CalCoreKeyframe* const& t) {
+    return sizeof(CalCoreKeyframe*) + t->size();
+}
 
-unsigned int
-CalCoreTrack::size()
-{
-  unsigned int r = sizeof( CalCoreTrack );
-  std::vector<CalCoreKeyframe *>::iterator iter1;
-  for( iter1 = m_keyframes.begin(); iter1 != m_keyframes.end(); ++iter1 ) {
-    r += (*iter1)->size();
-  }
-  return r;
+size_t CalCoreTrack::size() const {
+  return sizeof(CalCoreTrack) + sizeInBytes(m_keyframes);
 }
 
 
