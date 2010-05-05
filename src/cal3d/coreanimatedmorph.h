@@ -19,19 +19,15 @@ class CalCoreMorphTrack;
 class CAL3D_API CalCoreAnimatedMorph : public Cal::Object
 {
 public:
-  CalCoreAnimatedMorph();
   ~CalCoreAnimatedMorph();
 
   bool addCoreTrack(CalCoreMorphTrack *pCoreTrack);
-  bool create();
-  void destroy();
   CalCoreMorphTrack *getCoreTrack(std::string const & trackId);
   float getDuration() const;
   std::list<CalCoreMorphTrack>& getListCoreTrack();
   void setDuration(float duration);
   void scale(float factor);
   void removeZeroScaleTracks();
-  static int getNumCoreAnimatedMorphs();
 
 private:
   float m_duration;

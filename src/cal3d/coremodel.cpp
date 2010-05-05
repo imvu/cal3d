@@ -49,21 +49,6 @@ CalCoreModel::CalCoreModel()
 CalCoreModel::~CalCoreModel() {
   assert( m_magic == CalCoreModelMagic );
 
-  // destroy all core animated morphs
-  std::vector<CalCoreAnimatedMorph *>::iterator iteratorCoreAnimatedMorph;
-  for(iteratorCoreAnimatedMorph = m_vectorCoreAnimatedMorph.begin(); iteratorCoreAnimatedMorph != 
-      m_vectorCoreAnimatedMorph.end(); ++iteratorCoreAnimatedMorph)
-  {
-    // I am always managing coreAnimatedMorphs.  However, since I allow the user to remove them,
-    // I may still have gaps in my array.
-    if( * iteratorCoreAnimatedMorph ) {
-
-      (*iteratorCoreAnimatedMorph)->destroy();
-      delete (*iteratorCoreAnimatedMorph);
-
-    }
-  }
-
   if(m_pCoreSkeleton != 0)
   {
     m_pCoreSkeleton->destroy();
@@ -168,7 +153,7 @@ bool CalCoreModel::removeCoreAnimation( int id )
   *         \li \b -1 if an error happend
   *****************************************************************************/
 
-int CalCoreModel::addCoreAnimatedMorph(CalCoreAnimatedMorph *pCoreAnimatedMorph)
+int CalCoreModel::addCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& pCoreAnimatedMorph)
 {
   int num = m_vectorCoreAnimatedMorph.size();
 
@@ -203,7 +188,7 @@ bool CalCoreModel::removeCoreAnimatedMorph( int id )
 
   if( !m_vectorCoreAnimatedMorph[ id ] ) return false;
 
-  m_vectorCoreAnimatedMorph[ id ] = NULL;
+  m_vectorCoreAnimatedMorph[ id ].reset();
 
   return true;
 
@@ -283,7 +268,7 @@ boost::shared_ptr<CalCoreAnimation> CalCoreModel::getCoreAnimation(int coreAnima
   *         \li \b 0 if an error happend
   *****************************************************************************/
 
-CalCoreAnimatedMorph *CalCoreModel::getCoreAnimatedMorph(int coreAnimatedMorphId)
+boost::shared_ptr<CalCoreAnimatedMorph> CalCoreModel::getCoreAnimatedMorph(int coreAnimatedMorphId)
 {
   if((coreAnimatedMorphId < 0) 
 
@@ -293,7 +278,7 @@ CalCoreAnimatedMorph *CalCoreModel::getCoreAnimatedMorph(int coreAnimatedMorphId
 
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
+    return boost::shared_ptr<CalCoreAnimatedMorph>();
   }
 
   return m_vectorCoreAnimatedMorph[coreAnimatedMorphId];
@@ -390,128 +375,6 @@ int CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSe
 CalCoreSkeleton *CalCoreModel::getCoreSkeleton()
 {
   return m_pCoreSkeleton;
-}
-
- /*****************************************************************************/
-/** Loads a core animation.
-  *
-  * This function loads a core animation from a file.
-  *
-  * @param strFilename The file from which the core animation should be loaded
-  *                    from.
-  *
-  * @return One of the following values:
-  *         \li the assigned \b ID of the loaded core animation
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreModel::loadCoreAnimatedMorph(const std::string& strFilename)
-{
-
-  // load a new core AnimatedMorph
-  CalCoreAnimatedMorph *pCoreAnimatedMorph = CalLoader::loadCoreAnimatedMorph(strFilename);
-  if(pCoreAnimatedMorph == 0) return -1;
-
-  // add core AnimatedMorph to this core model
-  int animatedMorphId = addCoreAnimatedMorph(pCoreAnimatedMorph);
-  if(animatedMorphId == -1)
-  {
-    delete pCoreAnimatedMorph;
-    return -1;
-  }
-
-  return animatedMorphId;
-}
-
-
- /*****************************************************************************/
-/** Loads the core skeleton.
-  *
-  * This function loads the core skeleton from a file.
-  *
-  * @param strFilename The file from which the core skeleton should be loaded
-  *                    from.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreModel::loadCoreSkeleton(const std::string& strFilename)
-{
-  // destroy the current core skeleton
-  if(m_pCoreSkeleton != 0)
-  {
-    m_pCoreSkeleton->destroy();
-    delete m_pCoreSkeleton;
-  }
-
-  // load a new core skeleton
-  m_pCoreSkeleton = CalLoader::loadCoreSkeleton(strFilename);
-  if(m_pCoreSkeleton == 0) return false;
-
-  return true;
-}
-
- /*****************************************************************************/
-/** Saves a core material.
-  *
-  * This function saves a core material to a file.
-  *
-  * @param strFilename The file to which the core material should be saved to.
-  * @param coreMaterialId The ID of the core material that should be saved.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreModel::saveCoreMaterial(const std::string& strFilename, int coreMaterialId)
-{
-  // check if the core material id is valid
-  if((coreMaterialId < 0) || (coreMaterialId >= (int)m_vectorCoreMaterial.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  // save the core animation
-  if(!CalSaver::saveCoreMaterial(strFilename, m_vectorCoreMaterial[coreMaterialId].get()))
-  {
-    return false;
-  }
-
-  return true;
-}
-
- /*****************************************************************************/
-/** Saves the core skeleton.
-  *
-  * This function saves the core skeleton to a file.
-  *
-  * @param strFilename The file to which the core skeleton should be saved to.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreModel::saveCoreSkeleton(const std::string& strFilename)
-{
-  // check if we have a core skeleton in this code model
-  if(m_pCoreSkeleton == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  // save the core skeleton
-  if(!CalSaver::saveCoreSkeleton(strFilename, m_pCoreSkeleton))
-  {
-    return false;
-  }
-
-  return true;
 }
 
  /*****************************************************************************/

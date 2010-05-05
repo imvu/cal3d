@@ -16,63 +16,10 @@
 #include "cal3d/coreanimatedmorph.h"
 #include "cal3d/coremorphtrack.h"
 
- /*****************************************************************************/
-/** Constructs the core animatedMorph instance.
-  *
-  * This function is the default constructor of the core animatedMorph instance.
-  *****************************************************************************/
-
-static int MyNumCalCoreAnimatedMorphs = 0;
-int CalCoreAnimatedMorph::getNumCoreAnimatedMorphs() { return MyNumCalCoreAnimatedMorphs; }
-
-CalCoreAnimatedMorph::CalCoreAnimatedMorph()
-{
-  MyNumCalCoreAnimatedMorphs++;
-}
-
- /*****************************************************************************/
-/** Destructs the core animatedMorph instance.
-  *
-  * This function is the destructor of the core animatedMorph instance.
-  *****************************************************************************/
-
-CalCoreAnimatedMorph::~CalCoreAnimatedMorph()
-{
-  MyNumCalCoreAnimatedMorphs--;
-  assert(m_listCoreTrack.empty());
-}
-
- /*****************************************************************************/
-/** Adds a core track.
-  *
-  * This function adds a core track to the core animatedMorph instance.
-  *
-  * @param pCoreTrack A pointer to the core track that should be added.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
 bool CalCoreAnimatedMorph::addCoreTrack(CalCoreMorphTrack *pCoreTrack)
 {
   m_listCoreTrack.push_back(*pCoreTrack);
   m_tracksToDelete.push_back(pCoreTrack);
-  return true;
-}
-
- /*****************************************************************************/
-/** Creates the core animatedMorph instance.
-  *
-  * This function creates the core animatedMorph instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreAnimatedMorph::create()
-{
   return true;
 }
 
@@ -83,7 +30,7 @@ bool CalCoreAnimatedMorph::create()
   * frees all allocated memory.
   *****************************************************************************/
 
-void CalCoreAnimatedMorph::destroy()
+CalCoreAnimatedMorph::~CalCoreAnimatedMorph()
 {
   // destroy all core tracks
   while(!m_listCoreTrack.empty())

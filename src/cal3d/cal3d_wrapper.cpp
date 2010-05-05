@@ -223,29 +223,9 @@ CalCoreSkeleton *CalCoreModel_GetCoreSkeleton(CalCoreModel *self)
   return self->getCoreSkeleton();
 }
 
-int CalCoreModel_LoadCoreAnimatedMorph(CalCoreModel *self, char *strFilename)
-{
-  return self->loadCoreAnimatedMorph(strFilename);
-}
-
-Boolean CalCoreModel_LoadCoreSkeleton(CalCoreModel *self, char *strFilename)
-{
-  return self->loadCoreSkeleton(strFilename) ? True : False;
-}
-
 CalCoreModel *CalCoreModel_New()
 {
   return new CalCoreModel();
-}
-
-Boolean CalCoreModel_SaveCoreMaterial(CalCoreModel *self, char *strFilename, int coreMaterialId)
-{
-  return self->saveCoreMaterial(strFilename, coreMaterialId) ? True : False;
-}
-
-Boolean CalCoreModel_SaveCoreSkeleton(CalCoreModel *self, char *strFilename)
-{
-  return self->saveCoreSkeleton(strFilename) ? True : False;
 }
 
 Boolean CalCoreModel_SetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId)

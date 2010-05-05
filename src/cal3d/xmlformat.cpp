@@ -1065,26 +1065,16 @@ CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
         return 0;
     }
 
-    // create the core animatedMorph instance
-    if(!pCoreAnimatedMorph->create())
-    {
-        delete pCoreAnimatedMorph;
-        return 0;
-    }
-
-
     TiXmlElement*animatedMorph = header->NextSiblingElement();
     if(!animatedMorph || _stricmp(animatedMorph->Value(),"ANIMATION")!=0)
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        pCoreAnimatedMorph->destroy();
         delete pCoreAnimatedMorph;
         return 0;
     }  
 
     if( !BindFromXml( *animatedMorph, pCoreAnimatedMorph ) ) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        pCoreAnimatedMorph->destroy();
         delete pCoreAnimatedMorph;
         return 0;
     }
@@ -1093,7 +1083,6 @@ CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
     if(pCoreAnimatedMorph->getDuration() <= 0.0f)
     {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
-        pCoreAnimatedMorph->destroy();
         delete pCoreAnimatedMorph;
         return 0;
     }
