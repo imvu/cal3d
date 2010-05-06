@@ -369,7 +369,6 @@ void automaticallyDetectSkinRoutine(
   CalVector4* output_vertices);
 
 static CalPhysique::SkinRoutine optimizedSkinRoutine = automaticallyDetectSkinRoutine;
-int hello_i_am_int = 1337;
 
 void automaticallyDetectSkinRoutine(
     const BoneTransform* boneTransforms,
