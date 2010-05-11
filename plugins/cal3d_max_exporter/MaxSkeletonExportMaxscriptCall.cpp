@@ -170,7 +170,6 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 				{
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreBone;
-					coreSkeleton.destroy();
 					return false;
 				}
 
@@ -184,12 +183,8 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 	if(!CalSaver::saveCoreSkeleton(strFilename, &coreSkeleton))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreSkeleton.destroy();
 		return false;
 	}
-
-	// destroy core skeleton instance
-	coreSkeleton.destroy();
 
 	return true;
 }

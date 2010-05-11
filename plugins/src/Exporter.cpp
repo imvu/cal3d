@@ -838,7 +838,6 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 				{
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 					delete pCoreBone;
-					coreSkeleton.destroy();
 					return false;
 				}
 
@@ -852,14 +851,9 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 	if(!CalSaver::saveCoreSkeleton(strFilename, &coreSkeleton))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-		coreSkeleton.destroy();
 		return false;
 	}
 
-	// destroy core skeleton instance
-	coreSkeleton.destroy();
-
-	
 	HKEY hk;
 	LONG lret=RegCreateKey(HKEY_CURRENT_USER, "Software\\Cal3D\\Exporter", &hk);
 	if(lret==ERROR_SUCCESS && NULL!=hk)

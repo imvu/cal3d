@@ -981,7 +981,6 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
     CalCoreBone *pCoreBone = loadCoreBones(dataSrc, version);
     if(pCoreBone == 0)
     {
-      pCoreSkeleton->destroy();
       delete pCoreSkeleton;
       return 0;
     }

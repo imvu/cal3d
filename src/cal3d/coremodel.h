@@ -19,21 +19,22 @@ class CalCoreMaterial;
 
 class CAL3D_API CalCoreModel : public Cal::Object
 {
-public: // TODO: make private
-  CalCoreSkeleton *m_pCoreSkeleton;
-  std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
-  std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
-  unsigned int m_magic;
-
 public:
-  CalCoreModel();
-  ~CalCoreModel();
-
   int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
   boost::shared_ptr<CalCoreMaterial> getCoreMaterial(int coreMaterialId);
   int getCoreMaterialCount();
   int getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
-  CalCoreSkeleton *getCoreSkeleton();
   bool setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId);
-  void setCoreSkeleton(CalCoreSkeleton *pCoreSkeleton);
+
+  const boost::shared_ptr<CalCoreSkeleton>& getCoreSkeleton() const {
+    return m_pCoreSkeleton;
+  }
+
+  void setCoreSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton) {
+    m_pCoreSkeleton = pCoreSkeleton;
+  }
+
+  boost::shared_ptr<CalCoreSkeleton> m_pCoreSkeleton;
+  std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
+  std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
 };

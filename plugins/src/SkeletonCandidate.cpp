@@ -295,8 +295,7 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 		return false;
 	}
 
-        coreModel->setCoreSkeleton(pCoreSkeleton);
-	pCoreSkeleton = coreModel->getCoreSkeleton();
+        coreModel->setCoreSkeleton(boost::shared_ptr<CalCoreSkeleton>(pCoreSkeleton));
 	
 	// get core bone vector
 	std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();

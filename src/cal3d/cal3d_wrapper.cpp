@@ -208,11 +208,6 @@ int CalCoreModel_GetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId,
   return self->getCoreMaterialId(coreMaterialThreadId, coreMaterialSetId);
 }
 
-CalCoreSkeleton *CalCoreModel_GetCoreSkeleton(CalCoreModel *self)
-{
-  return self->getCoreSkeleton();
-}
-
 CalCoreModel *CalCoreModel_New()
 {
   return new CalCoreModel();
@@ -221,11 +216,6 @@ CalCoreModel *CalCoreModel_New()
 Boolean CalCoreModel_SetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId)
 {
   return self->setCoreMaterialId(coreMaterialThreadId, coreMaterialSetId, coreMaterialId) ? True : False;
-}
-
-void CalCoreModel_SetCoreSkeleton(CalCoreModel *self, CalCoreSkeleton *pCoreSkeleton)
-{
-  self->setCoreSkeleton(pCoreSkeleton);
 }
 
 //****************************************************************************//
@@ -245,11 +235,6 @@ Boolean CalCoreSkeleton_Create(CalCoreSkeleton *self)
 void CalCoreSkeleton_Delete(CalCoreSkeleton *self)
 {
   delete self;
-}
-
-void CalCoreSkeleton_Destroy(CalCoreSkeleton *self)
-{
-  self->destroy();
 }
 
 CalCoreBone *CalCoreSkeleton_GetCoreBone(CalCoreSkeleton *self, int coreBoneId)

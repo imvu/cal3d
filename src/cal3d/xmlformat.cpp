@@ -397,7 +397,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(_stricmp(bone->Value(),"BONE")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }   
@@ -424,7 +423,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!translation || _stricmp( translation->Value(),"TRANSLATION")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -435,7 +433,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!node)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }   
@@ -443,7 +440,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!translationdata)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }   
@@ -457,7 +453,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!rotation || _stricmp(rotation->Value(),"ROTATION")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -468,7 +463,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!node)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -476,7 +470,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!rotationdata)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -491,7 +484,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!rotation || _stricmp(translationBoneSpace->Value(),"LOCALTRANSLATION")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;     
             return false;
         }
@@ -502,7 +494,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!node)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -510,7 +501,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!translationBoneSpacedata)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -524,7 +514,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!rotationBoneSpace || _stricmp(rotationBoneSpace->Value(),"LOCALROTATION")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;      
             return false;
         }
@@ -535,7 +524,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!node)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -543,7 +531,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!rotationBoneSpacedata)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -557,7 +544,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!parent ||_stricmp(parent->Value(),"PARENTID")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;       
             return false;
         }
@@ -569,7 +555,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!node)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -577,7 +562,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         if(!parentid)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            pCoreSkeleton->destroy();
             delete pCoreSkeleton;    
             return false;
         }
@@ -621,7 +605,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             if(_stricmp(child->Value(),"CHILDID")!=0)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreSkeleton->destroy();
                 delete pCoreSkeleton;
                 delete pCoreBone;
                 return false;
@@ -631,7 +614,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             if(!node)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreSkeleton->destroy();
                 delete pCoreSkeleton;
                 delete pCoreBone;
                 return false;
@@ -640,7 +622,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             if(!childid)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                pCoreSkeleton->destroy();
                 delete pCoreSkeleton;
                 delete pCoreBone;
                 return false;

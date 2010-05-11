@@ -35,64 +35,14 @@
   * This function is the default constructor of the model instance.
   *****************************************************************************/
 
-CalModel::CalModel()
-  : m_pCoreModel(0)
+CalModel::CalModel(CalCoreModel *pCoreModel)
+  : m_pCoreModel(pCoreModel)
   , m_pSkeleton(0)
   , m_pMixer(0)
 {
-}
-
- /*****************************************************************************/
-/** Destructs the model instance.
-  *
-  * This function is the destructor of the model instance.
-  *****************************************************************************/
-
-CalModel::~CalModel()
-{
-  assert(m_vectorMesh.empty());
-}
-
-
-bool CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
-  // check if the mesh is already attached
-  for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
-  {
-    // check if we found the matching mesh
-    if(m_vectorMesh[meshId]->getCoreMesh() == pCoreMesh)
-    {
-      // mesh is already active -> do nothing
-      return true;
-    }
-  }
-
-  m_vectorMesh.push_back(new CalMesh(this, pCoreMesh));
-  return true;
-}
-
- /*****************************************************************************/
-/** Creates the model instance.
-  *
-  * This function creates the model instance based on a core model.
-  *
-  * @param pCoreModel A pointer to the core model on which this model instance
-  *                   should be based on.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-void CalModel::create(CalCoreModel *pCoreModel)
-{
   assert(pCoreModel);
 
-  m_pCoreModel = pCoreModel;
-
-  // allocate a new skeleton instance
-  CalSkeleton *pSkeleton = new CalSkeleton(pCoreModel->getCoreSkeleton());
-
-  m_pSkeleton = pSkeleton;
+  m_pSkeleton = new CalSkeleton(pCoreModel->getCoreSkeleton());
 
   // if a mixer was already set (from a previous call to create or
   // a call to setAbstractMixer), re-use it. Otherwise create a
@@ -110,13 +60,12 @@ void CalModel::create(CalCoreModel *pCoreModel)
 }
 
  /*****************************************************************************/
-/** Destroys the model instance.
+/** Destructs the model instance.
   *
-  * This function destroys all data stored in the model instance and frees all
-  * allocated memory.
+  * This function is the destructor of the model instance.
   *****************************************************************************/
 
-void CalModel::destroy()
+CalModel::~CalModel()
 {
   // destroy all active meshes
   for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
@@ -141,6 +90,23 @@ void CalModel::destroy()
   }
 
   m_pCoreModel = 0;
+}
+
+
+bool CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
+  // check if the mesh is already attached
+  for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
+  {
+    // check if we found the matching mesh
+    if(m_vectorMesh[meshId]->getCoreMesh() == pCoreMesh)
+    {
+      // mesh is already active -> do nothing
+      return true;
+    }
+  }
+
+  m_vectorMesh.push_back(new CalMesh(this, pCoreMesh));
+  return true;
 }
 
  /*****************************************************************************/

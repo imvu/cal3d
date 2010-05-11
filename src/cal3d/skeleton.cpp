@@ -19,8 +19,8 @@
 #include "cal3d/coremodel.h"
 #include "cal3d/corebone.h" // DEBUG
 
-CalSkeleton::CalSkeleton(CalCoreSkeleton* pCoreSkeleton)
-  : m_pCoreSkeleton(pCoreSkeleton)
+CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton)
+: m_pCoreSkeleton(pCoreSkeleton)
 {
   assert(pCoreSkeleton);
 
@@ -88,22 +88,6 @@ void CalSkeleton::clearState()
 CalBone *CalSkeleton::getBone(int boneId)
 {
   return &m_vectorBone[boneId];
-}
-
- /*****************************************************************************/
-/** Provides access to the core skeleton.
-  *
-  * This function returns the core skeleton on which this skeleton instance is
-  * based on.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core skeleton
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreSkeleton *CalSkeleton::getCoreSkeleton()
-{
-  return m_pCoreSkeleton;
 }
 
  /*****************************************************************************/

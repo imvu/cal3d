@@ -56,7 +56,7 @@ public:
 	std::list<int> GetListRootBoneCandidateId();
 	int GetParentSelectedId(int boneCandidateId);
 	int GetSelectedCount();
-  CalCoreSkeleton * GetCoreSkeleton() { return m_coreModel ? m_coreModel->getCoreSkeleton() : NULL; }
+  CalCoreSkeleton * GetCoreSkeleton() { return m_coreModel ? m_coreModel->getCoreSkeleton().get() : NULL; }
 	void GetTranslationAndRotation(int boneCandidateId, float time, CalVector& translation, CalQuaternion& rotation);
 	void GetTranslationAndRotationBoneSpace(int boneCandidateId, float time, CalVector& translation, CalQuaternion& rotation);
 	std::vector<CBoneCandidate *> GetVectorBoneCandidate();

@@ -170,18 +170,15 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
 
     CalCoreModel coreModel;
 
-    CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
+    boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
     coreModel.setCoreSkeleton(coreSkeleton);
 
-    CalModel model;
-    model.create(&coreModel);
+    CalModel model(&coreModel);
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->getSubmesh(0);
     const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate()[0];
     CHECK_EQUAL(0, texCoords.size());
-
-    model.destroy();
 }
 
 TEST(CalRenderer_getNormals_when_there_are_no_normals) {
@@ -192,11 +189,10 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
 
     CalCoreModel coreModel;
 
-    CalCoreSkeleton* coreSkeleton = new CalCoreSkeleton;
+    boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
     coreModel.setCoreSkeleton(coreSkeleton);
 
-    CalModel model;
-    model.create(&coreModel);
+    CalModel model(&coreModel);
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->getSubmesh(0);
@@ -206,8 +202,6 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
         model.getSkeleton()->boneTransforms.data,
         submesh,
         0);
-
-    model.destroy();
 }
 
 TEST(aabox_empty_without_vertices) {

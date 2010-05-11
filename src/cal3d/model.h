@@ -24,12 +24,10 @@ class CalMesh;
 class CAL3D_API CalModel : public Cal::Object
 {
 public: 
-  CalModel();
+  CalModel(CalCoreModel *pCoreModel);
   ~CalModel();
 
   bool attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
-  void create(CalCoreModel *pCoreModel);
-  void destroy();
   CalCoreModel *getCoreModel();
   CalMesh *getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   CalMixer *getMixer();

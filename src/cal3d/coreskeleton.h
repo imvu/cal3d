@@ -27,7 +27,6 @@ public:
 
   int addCoreBone(CalCoreBone *pCoreBone);
   void calculateState();
-  void destroy();
   CalCoreBone* getCoreBone(int coreBoneId);
   CalCoreBone* getCoreBone(const std::string& strName);
   int getCoreBoneId(const std::string& strName);

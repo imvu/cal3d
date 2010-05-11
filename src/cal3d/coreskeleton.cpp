@@ -12,34 +12,22 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/error.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
-
- /*****************************************************************************/
-/** Constructs the core skeleton instance.
-  *
-  * This function is the default constructor of the core skeleton instance.
-  *****************************************************************************/
 
 CalCoreSkeleton::CalCoreSkeleton()
 {
 }
 
- /*****************************************************************************/
-/** Destructs the core skeleton instance.
-  *
-  * This function is the destructor of the core skeleton instance.
-  *****************************************************************************/
-
 CalCoreSkeleton::~CalCoreSkeleton()
 {
-  assert(m_listRootCoreBoneId.empty());
-  assert(m_vectorCoreBone.empty());
+  // destroy all core animations
+  std::vector<CalCoreBone *>::iterator iteratorCoreBone;
+  for(iteratorCoreBone = m_vectorCoreBone.begin(); iteratorCoreBone != m_vectorCoreBone.end(); ++iteratorCoreBone)
+  {
+    delete (*iteratorCoreBone);
+  }
 }
 
  /*****************************************************************************/
@@ -89,31 +77,6 @@ void CalCoreSkeleton::calculateState()
   {
     m_vectorCoreBone[*iteratorRootCoreBoneId]->calculateState(this);
   }
-}
-
- /*****************************************************************************/
-/** Destroys the core skeleton instance.
-  *
-  * This function destroys all data stored in the core skeleton instance and
-  * frees all allocated memory.
-  *****************************************************************************/
-
-void CalCoreSkeleton::destroy()
-{
-  // destroy all core animations
-  std::vector<CalCoreBone *>::iterator iteratorCoreBone;
-  for(iteratorCoreBone = m_vectorCoreBone.begin(); iteratorCoreBone != m_vectorCoreBone.end(); ++iteratorCoreBone)
-  {
-    delete (*iteratorCoreBone);
-  }
-
-  m_vectorCoreBone.clear();
-
-  // clear the bone name mapping
-  m_mapCoreBoneNames.clear();
-
-  // clear root bone id list
-  m_listRootCoreBoneId.clear();
 }
 
  /*****************************************************************************/
