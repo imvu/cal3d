@@ -22,55 +22,19 @@
 #include "cal3d/loader.h"
 #include "cal3d/saver.h"
 
-static unsigned int const CalCoreModelMagic = 0x77884455;
-
-int CalCoreModel::addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial)
-{
-  // get the id of the core material
-  int materialId;
-  materialId = m_vectorCoreMaterial.size();
-
-  m_vectorCoreMaterial.push_back(pCoreMaterial);
-
-  return materialId;
-}
-
-boost::shared_ptr<CalCoreMaterial> CalCoreModel::getCoreMaterial(int coreMaterialId)
-{
-  if((coreMaterialId < 0) || (coreMaterialId >= (int)m_vectorCoreMaterial.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return boost::shared_ptr<CalCoreMaterial>();
-  }
-
-  return m_vectorCoreMaterial[coreMaterialId];
-}
-
-int CalCoreModel::getCoreMaterialCount()
-{
-  return m_vectorCoreMaterial.size();
-}
-
-int CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId)
+boost::shared_ptr<CalCoreMaterial> CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId)
 {
     std::pair<int, int> key = std::make_pair(coreMaterialThreadId, coreMaterialSetId);
     if (m_mapCoreMaterialThread.count(key) == 0) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-        return -1;
+        return boost::shared_ptr<CalCoreMaterial>();
     }
 
     return m_mapCoreMaterialThread[key];
 }
 
-bool CalCoreModel::setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId)
+void CalCoreModel::setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, const boost::shared_ptr<CalCoreMaterial>& coreMaterial)
 {
   std::pair<int, int> key = std::make_pair(coreMaterialThreadId, coreMaterialSetId);
-    
-  // remove a possible entry in the core material thread
-  m_mapCoreMaterialThread.erase(key);
-
-  // set the given set id in the core material thread to the given core material id
-  m_mapCoreMaterialThread.insert(std::make_pair(key, coreMaterialId));
-
-  return true;
+  m_mapCoreMaterialThread[key] = coreMaterial;
 }

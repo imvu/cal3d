@@ -198,24 +198,9 @@ void CalCoreModel_Delete(CalCoreModel *self)
   delete self;
 }
 
-int CalCoreModel_GetCoreMaterialCount(CalCoreModel *self)
-{
-  return self->getCoreMaterialCount();
-}
-
-int CalCoreModel_GetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId, int coreMaterialSetId)
-{
-  return self->getCoreMaterialId(coreMaterialThreadId, coreMaterialSetId);
-}
-
 CalCoreModel *CalCoreModel_New()
 {
   return new CalCoreModel();
-}
-
-Boolean CalCoreModel_SetCoreMaterialId(CalCoreModel *self, int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId)
-{
-  return self->setCoreMaterialId(coreMaterialThreadId, coreMaterialSetId, coreMaterialId) ? True : False;
 }
 
 //****************************************************************************//

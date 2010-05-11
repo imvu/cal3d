@@ -20,11 +20,11 @@ class CalCoreMaterial;
 class CAL3D_API CalCoreModel : public Cal::Object
 {
 public:
-  int addCoreMaterial(boost::shared_ptr<CalCoreMaterial> pCoreMaterial);
-  boost::shared_ptr<CalCoreMaterial> getCoreMaterial(int coreMaterialId);
-  int getCoreMaterialCount();
-  int getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
-  bool setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, int coreMaterialId);
+  size_t getCoreMaterialCount() const {
+    return m_mapCoreMaterialThread.size();
+  }
+  boost::shared_ptr<CalCoreMaterial> getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId);
+  void setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, const boost::shared_ptr<CalCoreMaterial>& coreMaterialId);
 
   const boost::shared_ptr<CalCoreSkeleton>& getCoreSkeleton() const {
     return m_pCoreSkeleton;
@@ -35,6 +35,7 @@ public:
   }
 
   boost::shared_ptr<CalCoreSkeleton> m_pCoreSkeleton;
-  std::vector< boost::shared_ptr<CalCoreMaterial> > m_vectorCoreMaterial;
-  std::map<std::pair<int, int>, int> m_mapCoreMaterialThread;
+
+  typedef std::map<std::pair<int, int>, boost::shared_ptr<CalCoreMaterial> > MaterialMap;
+  MaterialMap m_mapCoreMaterialThread;
 };
