@@ -44,7 +44,6 @@ class Cal3dTransformTest(imvu.test.TestCase):
 
         test_data_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test_data"))
         self.testDataFs = imvu.fs.FileSystem(test_data_dir)
-        #self.cflManager = pyCFL.CflManager.CflManager()
         
         self.__tempFiles = []
 

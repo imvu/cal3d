@@ -4,17 +4,17 @@ logger = logging.getLogger("imvu." + __name__)
 
 import cal3d.CalInspector
 import os
-import imvu.cfl.CflManager
 import imvu.test
+import imvu.fs
+import imvu.cfl
 
 class CalInspectorTest(imvu.test.TestCase):
     def setUp(self):
-        self.cflManager = imvu.cfl.CflManager.CflManager()
-        self.cflFilename = os.path.dirname(os.path.abspath(__file__)) + "/../test_data/product191.cfl"
+        self.cfl = imvu.cfl.CFL(imvu.fs.getSourceFileSystem(), 'Source/test_data/product191.cfl')
 
     def test_getMaterialMaps(self):
         entryname = 'Male03_Anime01_eyebrows02_alpha.xrf'
-        data = self.cflManager.getCflEntryData(self.cflFilename, entryname)
+        data = self.cfl.getContents(entryname)
 
         result = cal3d.CalInspector.getMaterialInfo(data)['maps']
         logger.info("result: %r", result)
@@ -24,7 +24,7 @@ class CalInspectorTest(imvu.test.TestCase):
 
     def test_getMeshInfo(self):
         entryname = 'Male03_Anime01_HeadMorphFile.xmf'
-        data = self.cflManager.getCflEntryData(self.cflFilename, entryname)
+        data = self.cfl.getContents(entryname)
 
         result = cal3d.CalInspector.getMeshInfo(data)
         logger.info("result: %r", result)
