@@ -19,17 +19,17 @@ CalCoreKeyframe::CalCoreKeyframe()
 {
 }
 
-const CalQuaternion& CalCoreKeyframe::getRotation()
+const CalQuaternion& CalCoreKeyframe::getRotation() const
 {
   return m_rotation;
 }
 
-float CalCoreKeyframe::getTime()
+float CalCoreKeyframe::getTime() const
 {
   return m_time;
 }
 
-const CalVector& CalCoreKeyframe::getTranslation()
+const CalVector& CalCoreKeyframe::getTranslation() const
 {
   return m_translation;
 }

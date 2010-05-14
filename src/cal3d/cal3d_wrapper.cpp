@@ -296,9 +296,9 @@ void CalCoreSubmesh_SetLodCount(CalCoreSubmesh *self, int lodCount)
 // CalCoreTrack wrapper functions definition                                  //
 //****************************************************************************//
 
-Boolean CalCoreTrack_AddCoreKeyframe(CalCoreTrack *self, CalCoreKeyframe *pCoreKeyframe)
+Boolean CalCoreTrack_AddCoreKeyframe(CalCoreTrack *self, CalCoreKeyframe &coreKeyframe)
 {
-  return self->addCoreKeyframe(pCoreKeyframe) ? True : False;
+  return self->addCoreKeyframe(coreKeyframe) ? True : False;
 }
 
 Boolean CalCoreTrack_Create(CalCoreTrack *self)

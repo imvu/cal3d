@@ -40,6 +40,8 @@
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"
 
+#include <boost/scoped_ptr.hpp>
+
 int CalLoader::loadingMode;
 double CalLoader::translationTolerance = 0.25;
 double CalLoader::rotationToleranceDegrees = 0.1;
@@ -88,7 +90,7 @@ bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec
 
 
 bool
-TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool translationIsDynamic )
+TranslationWritten( CalCoreKeyframe const * lastCoreKeyframe, bool translationRequired, bool translationIsDynamic )
 {
   return ( translationRequired && ( !lastCoreKeyframe || translationIsDynamic ) );
 }
@@ -1146,7 +1148,7 @@ CalLoader::usesAnimationCompression( int version )
 #if 0
 void
 TestAnimationCompression( CalCoreBone * coreboneOrNull, int version, 
-                         CalCoreKeyframe * prevCoreKeyframe,
+                         CalCoreKeyframe const * prevCoreKeyframe,
                          bool translationRequired, bool highRangeRequired, bool translationIsDynamic, 
                          CalVector * translationInOut, 
                          CalQuaternion * rotationInOut, 
@@ -1169,24 +1171,11 @@ TestAnimationCompression( CalCoreBone * coreboneOrNull, int version,
 }
 #endif
 
-
- /*****************************************************************************/
-/** Loads a core keyframe instance.
-  *
-  * This function loads a core keyframe instance from a data source.
-  *
-  * @param dataSrc The data source to load the core keyframe instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core keyframe
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreKeyframe *CalLoader::loadCoreKeyframe(
+bool CalLoader::loadCoreKeyframe(
   CalDataSource& dataSrc, CalCoreBone * coreboneOrNull, int version, 
-  CalCoreKeyframe * prevCoreKeyframe,
+  CalCoreKeyframe const * prevCoreKeyframe,
   bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-  bool useAnimationCompression)
+  bool useAnimationCompression, CalCoreKeyframe & calCoreKeyFrame)
 {
   if(!dataSrc.ok())
   {
@@ -1203,7 +1192,7 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
     unsigned char buf[ 100 ];
     if( !dataSrc.readBytes( buf, bytesRequired ) ) {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      return NULL;
+      return 0;
     }
     CalVector vec;
     CalQuaternion quat;
@@ -1213,7 +1202,7 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
       useAnimationCompression);
     if( bytesRead != bytesRequired ) {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      return NULL;
+      return 0;
     }
     tx = vec.x;
     ty = vec.y;
@@ -1279,17 +1268,17 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
   }
 
   // set all attributes of the keyframe
-  pCoreKeyframe->setTime(time);
-  pCoreKeyframe->setTranslation(CalVector(tx, ty, tz));
-  pCoreKeyframe->setRotation(CalQuaternion(rx, ry, rz, rw));
+  calCoreKeyFrame.setTime(time);
+  calCoreKeyFrame.setTranslation(CalVector(tx, ty, tz));
+  calCoreKeyFrame.setRotation(CalQuaternion(rx, ry, rz, rw));
 
-  return pCoreKeyframe;
+  return true;
 }
 
 
 // Return the number of bytes required by the compressed binary format of a keyframe with these attributes.
 unsigned int
-CalLoader::compressedKeyframeRequiredBytes( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic )
+CalLoader::compressedKeyframeRequiredBytes( CalCoreKeyframe const * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic )
 {
   unsigned int bytes = 0;
   if( translationRequired ) {
@@ -1351,7 +1340,7 @@ unsigned int
 CalLoader::readCompressedKeyframe(
   unsigned char * buf, unsigned int bytes, CalCoreBone * coreboneOrNull, 
   CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
-  CalCoreKeyframe * lastCoreKeyframe,
+  CalCoreKeyframe const * lastCoreKeyframe,
   bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
   bool useAnimationCompression)
 {
@@ -1901,7 +1890,7 @@ CalCoreTrack *CalLoader::loadCoreTrack(
   if(!dataSrc.ok())
   {
     dataSrc.setError();
-    return 0;
+    return false;
   }
 
   // Read the bone id.
@@ -1933,14 +1922,14 @@ CalCoreTrack *CalLoader::loadCoreTrack(
   } else {
     if(!dataSrc.readInteger(coreBoneId) || (coreBoneId < 0)) {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      return 0;
+      return false;
     }
 
     // Read the number of keyframes.
     if(!dataSrc.readInteger(keyframeCount) || (keyframeCount <= 0))
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      return 0;
+      return false;
     }
   }
 
@@ -1950,7 +1939,7 @@ CalCoreTrack *CalLoader::loadCoreTrack(
   if(pCoreTrack == 0)
   {
     CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
+    return false;
   }
 
   // create the core track instance
@@ -1966,39 +1955,39 @@ CalCoreTrack *CalLoader::loadCoreTrack(
 
   // load all core keyframes
   int keyframeId;
-  CalCoreKeyframe * lastCoreKeyframe = NULL;
+  boost::scoped_ptr<CalCoreKeyframe> lastCoreKeyframe(new CalCoreKeyframe);
   for(keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
   {
     // load the core keyframe
-    CalCoreKeyframe *pCoreKeyframe = loadCoreKeyframe(
-      dataSrc, cb, version, lastCoreKeyframe, translationRequired, highRangeRequired, translationIsDynamic,
-      useAnimationCompression);
-    lastCoreKeyframe = pCoreKeyframe;
-    if(pCoreKeyframe == 0)
+    CalCoreKeyframe coreKeyframe;
+
+    if(loadCoreKeyframe(dataSrc, cb, version, lastCoreKeyframe.get(), translationRequired, highRangeRequired, translationIsDynamic,
+            useAnimationCompression, coreKeyframe) == 0)
     {
       pCoreTrack->destroy();
       delete pCoreTrack;
       return 0;
     }
+    *lastCoreKeyframe = coreKeyframe;
     if (loadingMode & LOADER_ROTATE_X_AXIS)
     {
       // Check for anim rotation
       if (skel && skel->getCoreBone(coreBoneId)->getParentId() == -1)  // root bone
       {
         // rotate root bone quaternion
-        CalQuaternion rot = pCoreKeyframe->getRotation();
+        CalQuaternion rot = coreKeyframe.getRotation();
         CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
         rot *= x_axis_90;
-        pCoreKeyframe->setRotation(rot);
+        coreKeyframe.setRotation(rot);
         // rotate root bone displacement
-        CalVector vec = pCoreKeyframe->getTranslation();
+        CalVector vec = coreKeyframe.getTranslation();
 	    vec *= x_axis_90;
-        pCoreKeyframe->setTranslation(vec);
+        coreKeyframe.setTranslation(vec);
       }
     }    
 
     // add the core keyframe to the core track instance
-    pCoreTrack->addCoreKeyframe(pCoreKeyframe);
+    pCoreTrack->addCoreKeyframe(coreKeyframe);
   }
 
   // Whenever I load the track, I update its translationRequired status.  The status can

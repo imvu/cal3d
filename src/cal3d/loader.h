@@ -112,10 +112,10 @@ public:
     numCompressedAnimations = 0;
   }
   static bool usesAnimationCompression( int version );
-  static unsigned int compressedKeyframeRequiredBytes( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic );
+  static unsigned int compressedKeyframeRequiredBytes( CalCoreKeyframe const * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic );
   static unsigned int readCompressedKeyframe( unsigned char * buf, unsigned int bytes, CalCoreBone * coreboneOrNull,
     CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
-    CalCoreKeyframe * lastCoreKeyframe,
+    CalCoreKeyframe const * lastCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
     bool useAnimationCompression);
   static unsigned int writeCompressedKeyframe( unsigned char * buf, unsigned int bufLen, const std::string& strFilename, 
@@ -147,10 +147,10 @@ public:
 
 private:
   static CalCoreBone *loadCoreBones(CalDataSource& dataSrc, int version);
-  static CalCoreKeyframe *loadCoreKeyframe(CalDataSource& dataSrc, CalCoreBone * coreboneOrNull, 
-                                             int version, CalCoreKeyframe * lastCoreKeyframe, 
+  static bool loadCoreKeyframe(CalDataSource& dataSrc, CalCoreBone * coreboneOrNull,
+                                             int version, CalCoreKeyframe const * lastCoreKeyframe,
                                              bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-                                             bool useAnimationCompression);
+                                             bool useAnimationCompression, CalCoreKeyframe & returnCireKeyFrame);
   static CalCoreMorphKeyframe *loadCoreMorphKeyframe(CalDataSource& dataSrc);
   static CalCoreSubmesh *loadCoreSubmesh(CalDataSource& dataSrc, int version);
   static CalCoreTrack *loadCoreTrack(CalDataSource & dataSrc, CalCoreSkeleton * skel, int version, bool useAnimationCompresssion);

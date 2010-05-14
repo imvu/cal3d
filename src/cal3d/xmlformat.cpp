@@ -22,6 +22,7 @@
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"
+#include <boost/scoped_ptr.hpp>
 
 
 static inline void ReadPair( char const * buffer, float * f1, float * f2 )
@@ -821,7 +822,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         TiXmlElement* keyframe= track->FirstChildElement();
 
         // load all core keyframes
-        CalCoreKeyframe * prevCoreKeyframe = NULL;
+        boost::scoped_ptr<CalCoreKeyframe> prevCoreKeyframe(new CalCoreKeyframe);
         int keyframeId;
         for(keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
         {
@@ -931,24 +932,13 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             }
             ReadQuadFloat( rotationdata->Value(), &rx, &ry, &rz, &rw );  
 
-            // allocate a new core keyframe instance
-
-            CalCoreKeyframe *pCoreKeyframe;
-            pCoreKeyframe = new CalCoreKeyframe();
-            if(pCoreKeyframe == 0)
-            {
-                delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;        
-                CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-                return 0;
-            }
+            CalCoreKeyframe coreKeyframe;
 
             // set all attributes of the keyframe
-            pCoreKeyframe->setTime(time);
-            pCoreKeyframe->setTranslation(CalVector(tx, ty, tz));
-            pCoreKeyframe->setRotation(CalQuaternion(rx, ry, rz, rw));
-            prevCoreKeyframe = pCoreKeyframe;
+            coreKeyframe.setTime(time);
+            coreKeyframe.setTranslation(CalVector(tx, ty, tz));
+            coreKeyframe.setRotation(CalQuaternion(rx, ry, rz, rw));
+            *prevCoreKeyframe = coreKeyframe;
 
             if (loadingMode & LOADER_ROTATE_X_AXIS)
             {
@@ -956,19 +946,19 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
                 if (skel && skel->getCoreBone(coreBoneId)->getParentId() == -1)  // root bone
                 {
                     // rotate root bone quaternion
-                    CalQuaternion rot = pCoreKeyframe->getRotation();
+                    CalQuaternion rot = coreKeyframe.getRotation();
                     CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
                     rot *= x_axis_90;
-                    pCoreKeyframe->setRotation(rot);
+                    coreKeyframe.setRotation(rot);
                     // rotate root bone displacement
-                    CalVector trans = pCoreKeyframe->getTranslation();
+                    CalVector trans = coreKeyframe.getTranslation();
                     trans *= x_axis_90;
-                    pCoreKeyframe->setTranslation(trans);
+                    coreKeyframe.setTranslation(trans);
                 }
             }    
 
             // add the core keyframe to the core track instance
-            pCoreTrack->addCoreKeyframe(pCoreKeyframe);
+            pCoreTrack->addCoreKeyframe(coreKeyframe);
 
             keyframe = keyframe->NextSiblingElement();
 

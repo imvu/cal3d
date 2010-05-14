@@ -13,9 +13,9 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
+#include "cal3d/corekeyframe.h"
 
 class CalCoreBone;
-class CalCoreKeyframe;
 class CalCoreSkeleton;
 
 
@@ -34,7 +34,8 @@ private:
   static int m_translationNotRequiredCount;
 
   /// List of keyframes, always sorted by time.
-  std::vector<CalCoreKeyframe*> m_keyframes;
+  typedef std::vector<CalCoreKeyframe> CalCoreKeyFrameVector;
+  CalCoreKeyFrameVector m_keyframes;
 
 public:
   CalCoreTrack();
@@ -50,11 +51,11 @@ public:
   bool setCoreBoneId(int coreBoneId);
   
   int getCoreKeyframeCount();
-  CalCoreKeyframe* getCoreKeyframe(int idx);
+  CalCoreKeyframe const &getCoreKeyframe(int idx);
 
   static int translationRequiredCount() { return m_translationRequiredCount; }
   static int translationNotRequiredCount() { return m_translationNotRequiredCount; }
-  bool addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe);
+  bool addCoreKeyframe(CalCoreKeyframe coreKeyframe);
   bool getTranslationRequired() { return m_translationRequired; }
   void setTranslationRequired( bool p ) { m_translationRequired = p; }
   bool getTranslationIsDynamic() { return m_translationIsDynamic; }
@@ -65,7 +66,7 @@ public:
 
   void scale(float factor);
   void compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull );
-  bool roundTranslation( CalCoreKeyframe const * prev, CalCoreKeyframe * p, double translationTolerance );
+  bool roundTranslation( CalCoreKeyframe const & prev, CalCoreKeyframe & p, double translationTolerance );
   void translationCompressibility( 
     bool * transRequiredResult, bool * transDynamicResult, bool * highRangeRequiredResult,
     float threshold, float highRangeThreshold, CalCoreSkeleton * skel );
@@ -73,9 +74,9 @@ public:
 
 private:
 
-  bool keyframeEliminatable( CalCoreKeyframe * prev, CalCoreKeyframe * p, CalCoreKeyframe * next,
+  bool keyframeEliminatable( CalCoreKeyframe & prev, CalCoreKeyframe & p, CalCoreKeyframe & next,
 	   double translationTolerance, double rotationToleranceDegrees);
 
 private:
-  std::vector<CalCoreKeyframe*>::iterator getUpperBound(float time);
+  CalCoreKeyFrameVector::iterator getUpperBound(float time);
 };

@@ -322,7 +322,7 @@ CAL3D_WRAPPER_API enum Boolean  CalCoreSubmesh_EnableTangents(struct CalCoreSubm
 // CalCoreTrack wrapper functions declaration                                 //
 //****************************************************************************//
 
-  CAL3D_WRAPPER_API enum Boolean CalCoreTrack_AddCoreKeyframe(struct CalCoreTrack *self, struct CalCoreKeyframe *pCoreKeyframe);
+  CAL3D_WRAPPER_API enum Boolean CalCoreTrack_AddCoreKeyframe(struct CalCoreTrack *self, struct CalCoreKeyframe &pCoreKeyframe);
   CAL3D_WRAPPER_API enum Boolean CalCoreTrack_Create(struct CalCoreTrack *self);
   CAL3D_WRAPPER_API void CalCoreTrack_Delete(struct CalCoreTrack *self);
   CAL3D_WRAPPER_API void CalCoreTrack_Destroy(struct CalCoreTrack *self);
