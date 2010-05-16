@@ -134,9 +134,15 @@ public:
   CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
   size_t size() const;
-  int getCoreMaterialThreadId();
-  int getFaceCount();
-  int getLodCount();
+  int getCoreMaterialThreadId() const {
+    return m_coreMaterialThreadId;
+  }
+  int getFaceCount() const {
+    return m_vectorFace.size();
+  }
+  int getLodCount() const {
+    return m_lodCount;
+  }
   bool hasNonWhiteVertexColors() const {
     return m_hasNonWhiteVertexColors;
   }
@@ -158,7 +164,9 @@ public:
 
   std::vector<LodData>& getLodData() { return m_lodData; }
 
-  int getVertexCount();
+  int getVertexCount() const {
+    return m_vertices.size();
+  }
   void setCoreMaterialThreadId(int coreMaterialThreadId);
   bool setFace(int faceId, const Face& face);
   void setLodCount(int lodCount);

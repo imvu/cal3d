@@ -10,7 +10,6 @@ sources = Split('''
     animation_cycle.cpp
     bone.cpp
     buffersource.cpp
-    cal3d_wrapper.cpp
     calxmlbindings.cpp
     coreanimatedmorph.cpp
     coreanimation.cpp
@@ -62,6 +61,15 @@ imvu_shared_library(
     'cal3d${IMVU_LIBRARY_SUFFIX}${VERSION_SUFFIX}',
     sources + [PCH_OBJ])
 
-# Build tests.
+# Tests
 if not ARGUMENTS.get('skiptests', ''):
     SConscript('test/shared.scons')
+
+# Python bindings
+
+pyd_env = env.Clone(tools=[boost, boost_python, python, cal3d])
+pyd_env['SHLIBSUFFIX'] = '.pyd'
+imvu_shared_library(
+    pyd_env,
+    '_cal3d${IMVU_LIBRARY_SUFFIX}',
+    ['pycal3d.cpp'])

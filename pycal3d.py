@@ -1,9 +1,8 @@
 import os
-
-from imvu import imvuctypes
 import tempfile
 
-cal3d_dll = imvuctypes.imvudll('cal3d')
+from imvu import imvuctypes
+import cal3d
 
 class Cal3d:
     def __init__(self):
@@ -37,19 +36,19 @@ class Cal3d:
         return self.__convert(calCoreType=calCoreType, data=data, extension=extension)
 
     def __convert(self, calCoreType, data, extension):
-        loaderFunc = getattr(cal3d_dll, "CalLoader_Load"+calCoreType+"FromBuffer")
-        saverFunc = getattr(cal3d_dll, "CalSaver_Save"+calCoreType)
+        loaderFunc = getattr(cal3d, "load"+calCoreType+"FromBuffer")
+        saverFunc = getattr(cal3d, "save"+calCoreType)
         if not loaderFunc:
             raise Exception("could not find Loader for calCoreType %s" % calCoreType)
         if not saverFunc:
             raise Exception("could not find Saver for calCoreType %s" % calCoreType)
-        object = loaderFunc(None, data, len(data))
+        object = loaderFunc(data)
         if not object:
             cal3d_dll.CalError_PrintLastError()
             raise Exception("could not load data (len %s) for calCoreType %s" % (len(data), calCoreType))
         path = "%s.%s" % (tempfile.mktemp(), extension)
         try:
-            r = saverFunc(None, path, object)
+            r = saverFunc(object, path)
             if not r:
                 cal3d_dll.CalError_PrintLastError();
                 raise Exception("could not save object 0x%x (calCoreType=%s) to path %s" % (object, calCoreType, path))

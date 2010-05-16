@@ -41,11 +41,6 @@ enum
 
 bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec );
 
-
- /*****************************************************************************/
-/** The loader class.
-  *****************************************************************************/
-
 class CAL3D_API CalLoader
 {
 // member functions
@@ -77,7 +72,7 @@ public:
 
   static CalCoreAnimation *loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel);
   static CalCoreAnimatedMorph *loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len);
-  static CalCoreMaterial *loadCoreMaterialFromBuffer(const void* inputBuffer, unsigned int len);
+  static CalCoreMaterial* loadCoreMaterialFromBuffer(const void* inputBuffer, unsigned int len);
   static CalCoreMesh *loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len);
   static CalCoreSkeleton *loadCoreSkeletonFromBuffer(const void* inputBuffer, unsigned int len);
 

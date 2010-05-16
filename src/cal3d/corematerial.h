@@ -12,11 +12,8 @@
 
 #include "cal3d/global.h"
 
-class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder
-{
-// misc
+class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder {
 public:
-  /// The core material Color.
   typedef struct
   {
     unsigned char red;
@@ -25,21 +22,21 @@ public:
     unsigned char alpha;
   } Color;
 
-  /// The core material Map.
-  typedef struct
-  {
+  struct Map {
     std::string strFilename;
     std::string mapType;
-  } Map;
 
-private:
+    bool operator==(const Map& rhs) const {
+        return strFilename == rhs.strFilename && mapType == rhs.mapType;
+    }
+  };
+
   Color m_ambientColor;
   Color m_diffuseColor;
   Color m_specularColor;
   float m_shininess;
   std::vector<Map> m_vectorMap;
 
-public:
   Color& getAmbientColor();
   Color& getDiffuseColor();
   int getMapCount() const;

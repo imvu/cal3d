@@ -81,24 +81,8 @@ size_t CalCoreSubmesh::size() const {
   return r;
 }
 
-int CalCoreSubmesh::getCoreMaterialThreadId() {
-  return m_coreMaterialThreadId;
-}
-
-int CalCoreSubmesh::getFaceCount() {
-  return m_vectorFace.size();
-}
-
-int CalCoreSubmesh::getLodCount() {
-  return m_lodCount;
-}
-
 const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const {
   return m_vectorFace;
-}
-
-int CalCoreSubmesh::getVertexCount() {
-  return m_vertices.size();
 }
 
 void CalCoreSubmesh::setCoreMaterialThreadId(int coreMaterialThreadId) {
