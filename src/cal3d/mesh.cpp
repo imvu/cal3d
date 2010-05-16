@@ -38,7 +38,7 @@ CalMesh::CalMesh(CalModel* pModel, const boost::shared_ptr<CalCoreMesh>& pCoreMe
   assert(pCoreMesh);
 
   // clone the mesh structure of the core mesh
-  std::vector<CalCoreSubmesh *>& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
+  CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
 
   int submeshCount = vectorCoreSubmesh.size();
   m_vectorSubmesh.reserve(submeshCount);

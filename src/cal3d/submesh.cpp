@@ -26,7 +26,7 @@ BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 // not yet have a value by setting this field to this specific invalid value.
 static float const ReplacementAttenuationNull = 100.0; // Any number not between zero and one.
 
-CalSubmesh::CalSubmesh(CalCoreSubmesh *pCoreSubmesh)
+CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
   : m_pCoreSubmesh(pCoreSubmesh)
 {
   assert(pCoreSubmesh);

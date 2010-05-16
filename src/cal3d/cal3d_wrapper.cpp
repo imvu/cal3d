@@ -156,11 +156,6 @@ void CalCoreMaterial_SetShininess(CalCoreMaterial *self, float shininess)
 // CalCoreMesh wrapper functions definition                                   //
 //****************************************************************************//
 
-int CalCoreMesh_AddCoreSubmesh(CalCoreMesh *self, CalCoreSubmesh *pCoreSubmesh)
-{
-  return self->addCoreSubmesh(pCoreSubmesh);
-}
-
 void CalCoreMesh_Delete(CalCoreMesh *self)
 {
   delete self;
@@ -168,7 +163,7 @@ void CalCoreMesh_Delete(CalCoreMesh *self)
 
 CalCoreSubmesh *CalCoreMesh_GetCoreSubmesh(CalCoreMesh *self, int id)
 {
-  return self->getCoreSubmesh(id);
+  return self->getCoreSubmesh(id).get();
 }
 
 int CalCoreMesh_GetCoreSubmeshCount(CalCoreMesh *self)

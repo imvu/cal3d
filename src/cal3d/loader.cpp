@@ -905,9 +905,8 @@ CalCoreMesh *CalLoader::loadCoreMesh(CalDataSource& dataSrc)
   for(submeshId = 0; submeshId < submeshCount; ++submeshId)
   {
     // load the core submesh
-    CalCoreSubmesh *pCoreSubmesh;
-    pCoreSubmesh = loadCoreSubmesh(dataSrc, version);
-    if(pCoreSubmesh == 0)
+    boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(loadCoreSubmesh(dataSrc, version));
+    if(!pCoreSubmesh)
     {
       delete pCoreMesh;
       return 0;

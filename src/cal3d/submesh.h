@@ -28,8 +28,8 @@ class CAL3D_API CalSubmesh : public Cal::UserDataHolder
 public:
   typedef CalCoreSubmesh::Face Face;
 
-  CalSubmesh(CalCoreSubmesh* pCoreSubmesh);
-  CalCoreSubmesh *getCoreSubmesh() const {
+  CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh);
+  const boost::shared_ptr<CalCoreSubmesh>& getCoreSubmesh() const {
     return m_pCoreSubmesh;
   }
 
@@ -82,7 +82,7 @@ public:
   void setSubMorphTargetGroupAttenuationArray( unsigned int len, float const * attenuationArray );
 
 private:
-  CalCoreSubmesh *m_pCoreSubmesh;
+  boost::shared_ptr<CalCoreSubmesh> m_pCoreSubmesh;
   std::vector<float> m_vectorMorphTargetWeight;
   std::vector<float> m_vectorAccumulatedWeight;
   std::vector<float> m_vectorReplacementAttenuation;

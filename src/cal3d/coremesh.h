@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
 class CalCoreSubmesh;
@@ -17,19 +18,19 @@ class CalCoreSubmesh;
 class CAL3D_API CalCoreMesh : public Cal::Object
 {
 public:
-  ~CalCoreMesh();
-
-  typedef std::vector<CalCoreSubmesh*> CalCoreSubmeshVector;
+  typedef std::vector<boost::shared_ptr<CalCoreSubmesh> > CalCoreSubmeshVector;
 
   size_t size() const;
-  int addCoreSubmesh(CalCoreSubmesh *pCoreSubmesh);
-  CalCoreSubmesh *getCoreSubmesh(int id);
-  int getCoreSubmeshCount();
-  void reserve(int submeshes) { m_vectorCoreSubmesh.reserve(submeshes); }
-  std::vector<CalCoreSubmesh *>& getVectorCoreSubmesh();
+  int addCoreSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh);
+  const boost::shared_ptr<CalCoreSubmesh>& getCoreSubmesh(int id) const {
+      return m_vectorCoreSubmesh[id];
+  }
+  size_t getCoreSubmeshCount() const {
+      return m_vectorCoreSubmesh.size();
+  }
+  CalCoreSubmeshVector& getVectorCoreSubmesh();
   int addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & morphTargetName);
   void scale(float factor);
 
-private:
-  std::vector<CalCoreSubmesh*> m_vectorCoreSubmesh;
+  CalCoreSubmeshVector m_vectorCoreSubmesh;
 };

@@ -567,7 +567,7 @@ bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMe
   }
 
   // get the submesh vector
-  std::vector<CalCoreSubmesh *>& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
+  CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
 
   // write the number of submeshes
   if(!CalPlatform::writeInteger(file, vectorCoreSubmesh.size()))
@@ -581,7 +581,7 @@ bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMe
   for(submeshId = 0; submeshId < (int)vectorCoreSubmesh.size(); ++submeshId)
   {
     // write the core submesh
-    if(!saveCoreSubmesh(file, strFilename, vectorCoreSubmesh[submeshId]))
+      if(!saveCoreSubmesh(file, strFilename, vectorCoreSubmesh[submeshId].get()))
     {
       return false;
     }
@@ -1383,13 +1383,13 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCor
   mesh.SetAttribute("NUMSUBMESH",pCoreMesh->getCoreSubmeshCount());
 
   // get the submesh vector
-  std::vector<CalCoreSubmesh *>& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
+  CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
 
   // write all core submeshes
   int submeshId;
   for(submeshId = 0; submeshId < (int)vectorCoreSubmesh.size(); ++submeshId)
   {
-    CalCoreSubmesh *pCoreSubmesh=vectorCoreSubmesh[submeshId];
+    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh = vectorCoreSubmesh[submeshId];
 
     TiXmlElement submesh("SUBMESH");
 

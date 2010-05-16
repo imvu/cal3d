@@ -155,15 +155,15 @@ TEST(is_not_static_if_has_morph_targets) {
 }
 
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
-    CalCoreSubmesh csm(0, 0, 0);
+    boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
 
-    CalSubmesh sm(&csm);
+    CalSubmesh sm(csm);
 
     sm.getVectorFace();
 }
 
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
-    CalCoreSubmesh* coreSubmesh = new CalCoreSubmesh(0, 1, 0);
+    boost::shared_ptr<CalCoreSubmesh> coreSubmesh(new CalCoreSubmesh(0, 1, 0));
 
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
@@ -182,7 +182,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
 }
 
 TEST(CalRenderer_getNormals_when_there_are_no_normals) {
-    CalCoreSubmesh* coreSubmesh = new CalCoreSubmesh(0, 0, 0);
+    boost::shared_ptr<CalCoreSubmesh> coreSubmesh(new CalCoreSubmesh(0, 0, 0));
 
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
@@ -240,46 +240,46 @@ TEST(aabox_is_min_max_of_all_vertices) {
 
 
 TEST(base_weight_with_no_morph_targets) {
-    CalCoreSubmesh csm(0, 0, 0);
-    CalSubmesh submesh(&csm);
+    boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
+    CalSubmesh submesh(csm);
     CHECK_EQUAL(1.0f, submesh.getBaseWeight());
 }
 
 TEST(base_weight_with_two_morph_targets) {
-    CalCoreSubmesh csm(0, 0, 0);
-    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("a")));
-    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("b")));
+    boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
+    csm->addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("a")));
+    csm->addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("b")));
 
-    CalSubmesh submesh(&csm);
+    CalSubmesh submesh(csm);
     CHECK_EQUAL(1.0f, submesh.getBaseWeight());
 }
 
 TEST(base_weight_with_two_active_morph_targets) {
-    CalCoreSubmesh csm(0, 0, 0);
-    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt1")));
-    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt2")));
+    boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
+    csm->addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt1")));
+    csm->addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt2")));
 
-    CalSubmesh submesh(&csm);
+    CalSubmesh submesh(csm);
     submesh.setMorphTargetWeight("mt1", 0.5f);
     submesh.setMorphTargetWeight("mt2", 0.25f);
     CHECK_EQUAL(0.25f, submesh.getBaseWeight());
 }
 
 TEST(base_weight_with_active_then_cleared_morph_target) {
-    CalCoreSubmesh csm(0, 0, 0);
-    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt")));
+    boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
+    csm->addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt")));
 
-    CalSubmesh submesh(&csm);
+    CalSubmesh submesh(csm);
     submesh.setMorphTargetWeight("mt", 0.5f);
     submesh.clearMorphTargetScales();
     CHECK_EQUAL(1.0f, submesh.getBaseWeight());
 }
 
 TEST(base_weight_with_active_then_cleared_morph_target_state) {
-    CalCoreSubmesh csm(0, 0, 0);
-    csm.addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt")));
+    boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
+    csm->addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget>(new CalCoreSubMorphTarget("mt")));
 
-    CalSubmesh submesh(&csm);
+    CalSubmesh submesh(csm);
     submesh.setMorphTargetWeight("mt", 0.5f);
     submesh.clearMorphTargetState("mt");
     CHECK_EQUAL(1.0f, submesh.getBaseWeight());

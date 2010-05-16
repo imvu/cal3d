@@ -54,10 +54,14 @@ static inline void ReadPair( char const * buffer, int * f1, int * f2 )
 
 
 template<class T>
-static inline bool _ValidateTag( T * element, char const * requiredTag,
-                                CalCoreMesh * pCoreMesh, CalCoreSubmesh * pCoreSubmesh,
-                                char const * file, int line )
-{
+static inline bool _ValidateTag(
+    T* element,
+    char const* requiredTag,
+    CalCoreMesh* pCoreMesh,
+    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh,
+    char const* file,
+    int line
+) {
     bool ok = true;
 #if CAL3D_VALIDATE_XML_TAGS
     if(!element) {
@@ -73,9 +77,6 @@ static inline bool _ValidateTag( T * element, char const * requiredTag,
         if( pCoreMesh ) {
             delete pCoreMesh;
         }
-        if( pCoreSubmesh ) {
-            delete pCoreSubmesh;
-        }
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, file, line);
     }
 #endif
@@ -86,9 +87,13 @@ static inline bool _ValidateTag( T * element, char const * requiredTag,
 #define ValidateTag(a,b,c,d) _ValidateTag(a,b,c,d,__FILE__,__LINE__)
 
 
-static inline bool TexCoordFromXml( TiXmlElement * texcoord, char const * tag,
-                                   CalCoreSubmesh::TextureCoordinate * texCoord, int loadingMode,
-                                   CalCoreMesh * pCoreMesh, CalCoreSubmesh * pCoreSubmesh)
+static inline bool TexCoordFromXml(
+    TiXmlElement * texcoord,
+    char const * tag,
+    CalCoreSubmesh::TextureCoordinate * texCoord,
+    int loadingMode,
+    CalCoreMesh * pCoreMesh,
+    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
 {
     if( !ValidateTag(texcoord, tag, pCoreMesh, pCoreSubmesh) ) {
         return false;
@@ -127,9 +132,13 @@ static inline void ReadTripleFloat( char const * buffer, float * f1, float * f2,
 
 
 
-static inline bool CalVectorFromXml( TiXmlElement * pos, char const * tag, CalVector * calVec,
-                                    CalCoreMesh * pCoreMesh, CalCoreSubmesh * pCoreSubmesh)
-{
+static inline bool CalVectorFromXml(
+    TiXmlElement* pos,
+    char const* tag,
+    CalVector* calVec,
+    CalCoreMesh* pCoreMesh,
+    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+) {
     if( !ValidateTag(pos, tag, pCoreMesh, pCoreSubmesh) ) {
         return false;
     }
@@ -1176,7 +1185,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         }
 
         // allocate a new core submesh instance
-        CalCoreSubmesh* pCoreSubmesh = new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount);
+        boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
 
         pCoreSubmesh->setHasNonWhiteVertexColors( false );
 
@@ -1221,7 +1230,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             if(!node)
             {
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
@@ -1229,7 +1237,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             if(!normdata)
             {
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
@@ -1242,7 +1249,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             {
                 if( hasVertexColors ) {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 } else {
@@ -1253,7 +1259,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!node)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1261,7 +1266,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!vcdata)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1279,7 +1283,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             if(!collapse)
             {
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
@@ -1289,7 +1292,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!node)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1297,7 +1299,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!collapseid)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1307,7 +1308,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!collapseCount|| _stricmp(collapseCount->Value(),"COLLAPSECOUNT")!=0)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1316,7 +1316,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!node)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1324,7 +1323,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!collapseCountdata)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1350,7 +1348,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!texcoord || _stricmp(texcoord->Value(),"TEXCOORD")!=0)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1359,7 +1356,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!node)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1367,7 +1363,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!texcoorddata)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1392,7 +1387,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 return 0;
             }
 
@@ -1408,7 +1402,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!influence ||_stricmp(influence->Value(),"INFLUENCE")!=0)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1417,7 +1410,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!node)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1425,7 +1417,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(!influencedata)
                 {
                     delete pCoreMesh;
-                    delete pCoreSubmesh;
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
@@ -1448,7 +1439,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             if(!spring ||_stricmp(spring->Value(),"SPRING")!=0)
             {
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
@@ -1461,7 +1451,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         for( int morphId = 0; morphId < morphCount; morphId++ ) {
             if( _stricmp(morph->Value(), "MORPH") != 0 ) {
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
@@ -1503,9 +1492,15 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                     for(textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
                     {
                         CalCoreSubmesh::TextureCoordinate textureCoordinate;
-                        if(!TexCoordFromXml(texcoord, "TEXCOORD", &textureCoordinate, 
-                            loadingMode,
-                            pCoreMesh, pCoreSubmesh)) {
+                        if(
+                            !TexCoordFromXml(
+                                texcoord,
+                                "TEXCOORD",
+                                &textureCoordinate, 
+                                loadingMode,
+                                pCoreMesh,
+                                pCoreSubmesh)
+                        ) {
                                 return 0;
                         }
                         Vertex.textureCoords.push_back(textureCoordinate);
@@ -1531,7 +1526,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
             if(!face || _stricmp(face->Value(),"FACE")!=0)
             {
                 delete pCoreMesh;
-                delete pCoreSubmesh;
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return 0;
             }
@@ -1552,7 +1546,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                 if(tmp[0]>65535 || tmp[1]>65535 || tmp[2]>65535)
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    delete pCoreSubmesh;
                     return 0;
                 }
             }
