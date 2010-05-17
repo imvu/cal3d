@@ -68,7 +68,11 @@ if not ARGUMENTS.get('skiptests', ''):
 # Python bindings
 
 pyd_env = env.Clone(tools=[boost, boost_python, python, cal3d])
-pyd_env['SHLIBSUFFIX'] = '.pyd'
+
+pyd_env['SHLIBPREFIX'] = ''
+if sys.platform == 'win32':
+    pyd_env['SHLIBSUFFIX'] = '.pyd'
+
 imvu_shared_library(
     pyd_env,
     '_cal3d${IMVU_LIBRARY_SUFFIX}',
