@@ -36,7 +36,6 @@ public:
   CalSkeleton *getSkeleton();
   std::vector<CalMesh *>& getVectorMesh();
   void setLodLevel(float lodLevel);
-  void setMaterialSet(int setId);
 
 private:
   CalCoreModel *m_pCoreModel;

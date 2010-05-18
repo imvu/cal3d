@@ -104,7 +104,7 @@ CalMesh* CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
     }
   }
 
-  CalMesh* mesh = new CalMesh(this, pCoreMesh);
+  CalMesh* mesh = new CalMesh(pCoreMesh);
   m_vectorMesh.push_back(mesh);
   return mesh;
 }
@@ -249,24 +249,5 @@ void CalModel::setLodLevel(float lodLevel)
   {
     // set the lod level in the mesh
     (*iteratorMesh)->setLodLevel(lodLevel);
-  }
-}
-
- /*****************************************************************************/
-/** Sets the material set.
-  *
-  * This function sets the material set of all attached meshes.
-  *
-  * @param setId The ID of the material set.
-  *****************************************************************************/
-
-void CalModel::setMaterialSet(int setId)
-{
-  // set the lod level in all meshes
-  std::vector<CalMesh *>::iterator iteratorMesh;
-  for(iteratorMesh = m_vectorMesh.begin(); iteratorMesh != m_vectorMesh.end(); ++iteratorMesh)
-  {
-    // set the material set in the mesh
-    (*iteratorMesh)->setMaterialSet(setId);
   }
 }

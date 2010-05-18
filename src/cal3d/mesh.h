@@ -13,19 +13,14 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-class CalModel;
+class CalCoreModel;
 class CalCoreMesh;
 class CalSubmesh;
 
 class CAL3D_API CalMesh : public Cal::Object
 {
-private:
-  CalModel *m_pModel;
-  boost::shared_ptr<CalCoreMesh> m_pCoreMesh;
-  std::vector<CalSubmesh *> m_vectorSubmesh;
-
 public:
-  CalMesh(CalModel* pModel, const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+  CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   ~CalMesh();
 
   const boost::shared_ptr<CalCoreMesh>& getCoreMesh() const {
@@ -35,5 +30,9 @@ public:
   int getSubmeshCount();
   std::vector<CalSubmesh *>& getVectorSubmesh();
   void setLodLevel(float lodLevel);
-  void setMaterialSet(int setId);
+  void setMaterialSet(CalCoreModel* model, int setId);
+
+private:
+  boost::shared_ptr<CalCoreMesh> m_pCoreMesh;
+  std::vector<CalSubmesh *> m_vectorSubmesh;
 };

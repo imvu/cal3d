@@ -30,11 +30,9 @@
   * This function is the default constructor of the mesh instance.
   *****************************************************************************/
 
-CalMesh::CalMesh(CalModel* pModel, const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
-  : m_pModel(pModel)
-  , m_pCoreMesh(pCoreMesh)
+CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
+: m_pCoreMesh(pCoreMesh)
 {
-  assert(pModel);
   assert(pCoreMesh);
 
   // clone the mesh structure of the core mesh
@@ -126,20 +124,12 @@ void CalMesh::setLodLevel(float lodLevel)
   }
 }
 
- /*****************************************************************************/
-/** Sets the material set.
-  *
-  * This function sets the material set of the mesh instance.
-  *
-  * @param setId The ID of the material set.
-  *****************************************************************************/
-
-void CalMesh::setMaterialSet(int setId) {
-  for(int submeshId = 0; submeshId < (int)m_vectorSubmesh.size(); ++submeshId) {
-    int coreMaterialThreadId = m_vectorSubmesh[submeshId]->getCoreSubmesh()->getCoreMaterialThreadId();
-
-    boost::shared_ptr<CalCoreMaterial> material = m_pModel->getCoreModel()->getCoreMaterialId(coreMaterialThreadId, setId);
-
-    m_vectorSubmesh[submeshId]->setMaterial(material);
-  }
+void CalMesh::setMaterialSet(CalCoreModel* model, int setId) {
+    for (size_t submeshId = 0; submeshId < m_vectorSubmesh.size(); ++submeshId) {
+        CalSubmesh* submesh = m_vectorSubmesh[submeshId];
+        submesh->setMaterial(
+            model->getCoreMaterialId(
+                submesh->getCoreSubmesh()->getCoreMaterialThreadId(),
+                setId));
+    }
 }
