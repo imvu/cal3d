@@ -21,12 +21,14 @@
 #include "cal3d/model.h"
 
 CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
-: m_pCoreMesh(pCoreMesh)
+: coreMesh(pCoreMesh)
 {
   assert(pCoreMesh);
 
   // clone the mesh structure of the core mesh
   CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
+
+  SubmeshVector& m_vectorSubmesh = const_cast<SubmeshVector&>(submeshes); // Oh for a 'readonly' keyword like C#
 
   int submeshCount = vectorCoreSubmesh.size();
   m_vectorSubmesh.reserve(submeshCount);
@@ -37,35 +39,19 @@ CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
 }
 
 
-CalSubmesh *CalMesh::getSubmesh(int id)
-{
-  return m_vectorSubmesh[id].get();
-}
-
-int CalMesh::getSubmeshCount()
-{
-  return m_vectorSubmesh.size();
-}
-
-CalMesh::SubmeshVector& CalMesh::getVectorSubmesh()
-{
-  return m_vectorSubmesh;
-}
-
 void CalMesh::setLodLevel(float lodLevel)
 {
   // change lod level of every submesh
-  int submeshId;
-  for(submeshId = 0; submeshId < (int)m_vectorSubmesh.size(); ++submeshId)
+  for(size_t submeshId = 0; submeshId < submeshes.size(); ++submeshId)
   {
     // set the lod level in the submesh
-    m_vectorSubmesh[submeshId]->setLodLevel(lodLevel);
+    submeshes[submeshId]->setLodLevel(lodLevel);
   }
 }
 
 void CalMesh::setMaterialSet(CalCoreModel* model, int setId) {
-    for (size_t submeshId = 0; submeshId < m_vectorSubmesh.size(); ++submeshId) {
-        CalSubmesh* submesh = m_vectorSubmesh[submeshId].get();
+    for (size_t submeshId = 0; submeshId < submeshes.size(); ++submeshId) {
+        CalSubmesh* submesh = submeshes[submeshId].get();
         submesh->setMaterial(
             model->getCoreMaterialId(
                 submesh->getCoreSubmesh()->getCoreMaterialThreadId(),

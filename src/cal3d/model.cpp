@@ -98,7 +98,7 @@ CalMesh* CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
   for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
   {
     // check if we found the matching mesh
-    if(m_vectorMesh[meshId]->getCoreMesh() == pCoreMesh)
+    if(m_vectorMesh[meshId]->coreMesh == pCoreMesh)
     {
       return m_vectorMesh[meshId];
     }
@@ -144,7 +144,7 @@ CalMesh *CalModel::getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
   for(meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
   {
     // check if we found the matching mesh
-    if(m_vectorMesh[meshId]->getCoreMesh() == pCoreMesh)
+    if(m_vectorMesh[meshId]->coreMesh == pCoreMesh)
     {
       return m_vectorMesh[meshId];
     }

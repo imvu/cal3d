@@ -24,16 +24,9 @@ public:
 
   CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
 
-  const boost::shared_ptr<CalCoreMesh>& getCoreMesh() const {
-    return m_pCoreMesh;
-  }
-  CalSubmesh* getSubmesh(int id);
-  int getSubmeshCount();
-  SubmeshVector& getVectorSubmesh();
+  const boost::shared_ptr<CalCoreMesh> coreMesh;
+  const SubmeshVector submeshes;
+
   void setLodLevel(float lodLevel);
   void setMaterialSet(CalCoreModel* model, int setId);
-
-private:
-  boost::shared_ptr<CalCoreMesh> m_pCoreMesh;
-  SubmeshVector m_vectorSubmesh;
 };
