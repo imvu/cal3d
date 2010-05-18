@@ -27,9 +27,9 @@ public:
   CalModel(CalCoreModel *pCoreModel);
   ~CalModel();
 
-  bool attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+  CalMesh* attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   CalCoreModel *getCoreModel();
-  CalMesh *getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+  CalMesh* getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   CalMixer *getMixer();
   CalAbstractMixer *getAbstractMixer();
   void setAbstractMixer(CalAbstractMixer* pMixer);

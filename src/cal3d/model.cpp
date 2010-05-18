@@ -93,20 +93,20 @@ CalModel::~CalModel()
 }
 
 
-bool CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
+CalMesh* CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
   // check if the mesh is already attached
   for(int meshId = 0; meshId < (int)m_vectorMesh.size(); ++meshId)
   {
     // check if we found the matching mesh
     if(m_vectorMesh[meshId]->getCoreMesh() == pCoreMesh)
     {
-      // mesh is already active -> do nothing
-      return true;
+      return m_vectorMesh[meshId];
     }
   }
 
-  m_vectorMesh.push_back(new CalMesh(this, pCoreMesh));
-  return true;
+  CalMesh* mesh = new CalMesh(this, pCoreMesh);
+  m_vectorMesh.push_back(mesh);
+  return mesh;
 }
 
  /*****************************************************************************/
