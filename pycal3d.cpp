@@ -63,7 +63,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     {
         scope CalCoreMaterial_class(
             class_<CalCoreMaterial, boost::shared_ptr<CalCoreMaterial> >("CoreMaterial")
-                .def_readwrite("maps", &CalCoreMaterial::m_vectorMap)
+                .def_readwrite("maps", &CalCoreMaterial::maps)
         );
 
         class_< std::vector<CalCoreMaterial::Map> >("MapVector")
@@ -71,8 +71,8 @@ BOOST_PYTHON_MODULE(_cal3d)
             ;
 
         class_<CalCoreMaterial::Map>("Map")
-            .def_readonly("filename", &CalCoreMaterial::Map::strFilename)
-            .def_readonly("type", &CalCoreMaterial::Map::mapType)
+            .def_readonly("filename", &CalCoreMaterial::Map::filename)
+            .def_readonly("type", &CalCoreMaterial::Map::type)
             ;
     }
 

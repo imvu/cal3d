@@ -471,7 +471,7 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
     coreColor.green = (unsigned char)(255.0f * color[1]);
     coreColor.blue = (unsigned char)(255.0f * color[2]);
     coreColor.alpha = (unsigned char)(255.0f * color[3]);
-    coreMaterial.setAmbientColor(coreColor);
+    coreMaterial.ambientColor = coreColor;
 
 
     // set the diffuse color
@@ -480,7 +480,7 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
     coreColor.green = (unsigned char)(255.0f * color[1]);
     coreColor.blue = (unsigned char)(255.0f * color[2]);
     coreColor.alpha = (unsigned char)(255.0f * color[3]);
-    coreMaterial.setDiffuseColor(coreColor);
+    coreMaterial.diffuseColor = coreColor;
 
     // set the specular color
     pMaterialCandidate->GetSpecularColor(&color[0]);
@@ -488,16 +488,13 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
     coreColor.green = (unsigned char)(255.0f * color[1]);
     coreColor.blue = (unsigned char)(255.0f * color[2]);
     coreColor.alpha = (unsigned char)(255.0f * color[3]);
-    coreMaterial.setSpecularColor(coreColor);
+    coreMaterial.specularColor = coreColor;
 
     // set the shininess factor
-    coreMaterial.setShininess(pMaterialCandidate->GetShininess());
+    coreMaterial.shininess = pMaterialCandidate->GetShininess();
 
     // get the map vector of the material candidate
     std::vector<CMaterialCandidate::Map>& vectorMap = pMaterialCandidate->GetVectorMap();
-
-    // reserve memory for all the material data
-    coreMaterial.reserve(vectorMap.size());
 
     // load all maps
     for(size_t mapId = 0; mapId < vectorMap.size(); mapId++)
@@ -505,11 +502,11 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
         CalCoreMaterial::Map map;
 
         // set map data
-        map.strFilename = vectorMap[mapId].strFilename;
-        map.mapType = vectorMap[mapId].mapType;
+        map.filename = vectorMap[mapId].strFilename;
+        map.type = vectorMap[mapId].mapType;
 
         // set map in the core material instance
-        coreMaterial.setMap(mapId, map);
+        coreMaterial.maps.push_back(map);
     }
 
     // save core mesh to the file

@@ -14,42 +14,27 @@
 
 class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder {
 public:
-  typedef struct
-  {
+  struct Color {
     unsigned char red;
     unsigned char green;
     unsigned char blue;
     unsigned char alpha;
-  } Color;
+  };
 
   struct Map {
-    std::string strFilename;
-    std::string mapType;
+    std::string filename;
+    std::string type;
 
     bool operator==(const Map& rhs) const {
-        return strFilename == rhs.strFilename && mapType == rhs.mapType;
+        return filename == rhs.filename && type == rhs.type;
     }
   };
 
-  Color m_ambientColor;
-  Color m_diffuseColor;
-  Color m_specularColor;
-  float m_shininess;
-  std::vector<Map> m_vectorMap;
+  Color ambientColor;
+  Color diffuseColor;
+  Color specularColor;
+  float shininess;
+  std::vector<Map> maps;
 
-  Color& getAmbientColor();
-  Color& getDiffuseColor();
-  int getMapCount() const;
-  const std::string& getMapFilename(int mapId) const;
-  const std::string& getMapType(int mapId) const;
-  float getShininess();
-  Color& getSpecularColor();
-  std::vector<Map>& getVectorMap();
-  void reserve(int mapCount);
-  void setAmbientColor(const Color& ambientColor);
-  void setDiffuseColor(const Color& diffuseColor);
-  bool setMap(int mapId, const Map& map);
-  void setShininess(float shininess);
-  void setSpecularColor(const Color& specularColor);
-  bool getTwoSided() const { return getMapCount() > 1; } // Should come from check box.
+  bool getTwoSided() const { return maps.size() > 1; } // Should come from check box.
 };

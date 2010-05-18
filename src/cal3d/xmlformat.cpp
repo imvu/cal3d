@@ -1781,10 +1781,10 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     fshininess = (float)atof(shininessdata->Value());
 
     // set the colors and the shininess
-    pCoreMaterial->setAmbientColor(ambientColor);
-    pCoreMaterial->setDiffuseColor(diffuseColor);
-    pCoreMaterial->setSpecularColor(specularColor);
-    pCoreMaterial->setShininess(fshininess);
+    pCoreMaterial->ambientColor = ambientColor;
+    pCoreMaterial->diffuseColor = diffuseColor;
+    pCoreMaterial->specularColor = specularColor;
+    pCoreMaterial->shininess = fshininess;
 
     std::vector<std::string> MatFileName;
     std::vector<std::string> MatTypes;
@@ -1826,19 +1826,15 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
         MatTypes.push_back(mapType);
     }
 
-    pCoreMaterial->reserve(MatFileName.size());
-
-
-
     for (unsigned int mapId=0; mapId < MatFileName.size(); ++mapId)
     {
         CalCoreMaterial::Map Map;
 
-        Map.strFilename= MatFileName[mapId];    
-        Map.mapType = MatTypes[mapId];
+        Map.filename = MatFileName[mapId];    
+        Map.type = MatTypes[mapId];
 
         // set map in the core material instance
-        pCoreMaterial->setMap(mapId, Map);
+        pCoreMaterial->maps.push_back(Map);
     }
 
     doc.Clear();

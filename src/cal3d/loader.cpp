@@ -805,10 +805,10 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
   }
 
   // set the colors and the shininess
-  pCoreMaterial->setAmbientColor(ambientColor);
-  pCoreMaterial->setDiffuseColor(diffuseColor);
-  pCoreMaterial->setSpecularColor(specularColor);
-  pCoreMaterial->setShininess(shininess);
+  pCoreMaterial->ambientColor = ambientColor;
+  pCoreMaterial->diffuseColor = diffuseColor;
+  pCoreMaterial->specularColor = specularColor;
+  pCoreMaterial->shininess = shininess;
 
   // read the number of maps
   int mapCount;
@@ -818,26 +818,19 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
     return 0;
   }
 
-  pCoreMaterial->reserve(mapCount);
-
   // load all maps
-  int mapId;
-  for(mapId = 0; mapId < mapCount; ++mapId)
+  for(int mapId = 0; mapId < mapCount; ++mapId)
   {
     CalCoreMaterial::Map map;
 
-    // read the filename of the map
-    std::string strName;
-    dataSrc.readString(map.strFilename);
+    dataSrc.readString(map.filename);
 
-    // if we support map types, read the type of the map
     if( hasMaterialTypes ) {
-      dataSrc.readString(map.mapType);
+      dataSrc.readString(map.type);
     } else {
-      map.mapType = "";
+      map.type = "";
     }
     
-    // check if an error happened
     if(!dataSrc.ok())
     {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
@@ -845,8 +838,7 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
       return 0;
     }
 
-    // set map in the core material instance
-    pCoreMaterial->setMap(mapId, map);
+    pCoreMaterial->maps.push_back(map);
   }
 
   return pCoreMaterial;

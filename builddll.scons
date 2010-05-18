@@ -15,7 +15,6 @@ sources = Split('''
     coreanimation.cpp
     corebone.cpp
     corekeyframe.cpp
-    corematerial.cpp
     coremesh.cpp
     coremodel.cpp
     coremorphkeyframe.cpp

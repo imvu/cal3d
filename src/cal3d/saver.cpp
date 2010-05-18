@@ -466,23 +466,18 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
     return false;
   }
 
-  // write the ambient color
-  CalCoreMaterial::Color ambientColor;
-  ambientColor = pCoreMaterial->getAmbientColor();
+  CalCoreMaterial::Color ambientColor = pCoreMaterial->ambientColor;
   CalPlatform::writeBytes(file, &ambientColor, sizeof(ambientColor));
 
-  // write the diffuse color
-  CalCoreMaterial::Color diffusetColor;
-  diffusetColor = pCoreMaterial->getDiffuseColor();
+  CalCoreMaterial::Color diffusetColor = pCoreMaterial->diffuseColor;
   CalPlatform::writeBytes(file, &diffusetColor, sizeof(diffusetColor));
 
   // write the specular color
-  CalCoreMaterial::Color specularColor;
-  specularColor = pCoreMaterial->getSpecularColor();
+  CalCoreMaterial::Color specularColor = pCoreMaterial->specularColor;
   CalPlatform::writeBytes(file, &specularColor, sizeof(specularColor));
 
   // write the shininess factor
-  CalPlatform::writeFloat(file, pCoreMaterial->getShininess());
+  CalPlatform::writeFloat(file, pCoreMaterial->shininess);
 
   // check if an error happend
   if(!file)
@@ -492,7 +487,7 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
   }
 
   // get the map vector
-  std::vector<CalCoreMaterial::Map>& vectorMap = pCoreMaterial->getVectorMap();
+  std::vector<CalCoreMaterial::Map>& vectorMap = pCoreMaterial->maps;
 
   // write the number of maps
   if(!CalPlatform::writeInteger(file, vectorMap.size()))
@@ -508,9 +503,9 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
     CalCoreMaterial::Map& map = vectorMap[mapId];
 
     // write the filename of the map
-    bool ret = CalPlatform::writeString(file, map.strFilename);
+    bool ret = CalPlatform::writeString(file, map.filename);
     if( ret ) {
-      ret = CalPlatform::writeString(file, map.mapType);
+      ret = CalPlatform::writeString(file, map.type);
     }
     if( !ret )
     {
@@ -1668,12 +1663,11 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
   doc.InsertEndChild(header);
 
   TiXmlElement material("MATERIAL");
-  material.SetAttribute("NUMMAPS",pCoreMaterial->getVectorMap().size());
+  material.SetAttribute("NUMMAPS",pCoreMaterial->maps.size());
   
   TiXmlElement ambient("AMBIENT");
 
-  CalCoreMaterial::Color ambientColor;
-  ambientColor = pCoreMaterial->getAmbientColor();
+  CalCoreMaterial::Color ambientColor = pCoreMaterial->ambientColor;
 
 
   str.str("");
@@ -1690,8 +1684,7 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
 
   TiXmlElement diffuse("DIFFUSE");
 
-  CalCoreMaterial::Color diffuseColor;
-  diffuseColor = pCoreMaterial->getDiffuseColor();
+  CalCoreMaterial::Color diffuseColor = pCoreMaterial->diffuseColor;
   
   str.str("");
   str << (int)diffuseColor.red << " " 
@@ -1707,8 +1700,7 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
 
   TiXmlElement specular("SPECULAR");
 
-  CalCoreMaterial::Color specularColor;
-  specularColor = pCoreMaterial->getSpecularColor();
+  CalCoreMaterial::Color specularColor = pCoreMaterial->specularColor;
 
   str.str("");
   str << (int)specularColor.red << " " 
@@ -1724,21 +1716,20 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
   TiXmlElement shininess("SHININESS");
 
   str.str("");
-  str << pCoreMaterial->getShininess();    
+  str << pCoreMaterial->shininess;    
 
   TiXmlText shininessdata(str.str());
 
   shininess.InsertEndChild(shininessdata);
   material.InsertEndChild(shininess);  
 
-  std::vector<CalCoreMaterial::Map>& vectorMap = pCoreMaterial->getVectorMap();
+  std::vector<CalCoreMaterial::Map>& vectorMap = pCoreMaterial->maps;
   
-  int mapId;
-  for(mapId = 0; mapId < (int)vectorMap.size(); ++mapId)
+  for(int mapId = 0; mapId < (int)vectorMap.size(); ++mapId)
   {
     TiXmlElement map("MAP");
-    map.SetAttribute("TYPE",vectorMap[mapId].mapType);
-    TiXmlText mapdata(vectorMap[mapId].strFilename);
+    map.SetAttribute("TYPE",vectorMap[mapId].type);
+    TiXmlText mapdata(vectorMap[mapId].filename);
     map.InsertEndChild(mapdata);
       material.InsertEndChild(map);
   }

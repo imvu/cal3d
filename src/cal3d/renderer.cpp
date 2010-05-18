@@ -32,7 +32,7 @@ int CalRenderer::getMapCount(const CalSubmesh* submesh)
   const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
   if(!pCoreMaterial) return 0;
 
-  return pCoreMaterial->getMapCount();
+  return pCoreMaterial->maps.size();
 }
 
 Cal::UserData* CalRenderer::getMaterialUserData(const CalSubmesh* submesh)
@@ -59,7 +59,7 @@ void CalRenderer::getSpecularColor(const CalSubmesh* submesh, unsigned char *pCo
   }
 
   // get the specular color of the material
-  CalCoreMaterial::Color& color = pCoreMaterial->getSpecularColor();
+  CalCoreMaterial::Color& color = pCoreMaterial->specularColor;
 
   // write it to the color buffer
   pColorBuffer[0] = color.red;
