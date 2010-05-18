@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/mesh.h"
 #include "cal3d/error.h"
 #include "cal3d/coremesh.h"
@@ -23,12 +19,6 @@
 #include "cal3d/submesh.h"
 #include "cal3d/coremodel.h"
 #include "cal3d/model.h"
-
- /*****************************************************************************/
-/** Constructs the mesh instance.
-  *
-  * This function is the default constructor of the mesh instance.
-  *****************************************************************************/
 
 CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
 : m_pCoreMesh(pCoreMesh)
@@ -42,76 +32,25 @@ CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
   m_vectorSubmesh.reserve(submeshCount);
   for(int submeshId = 0; submeshId < submeshCount; ++submeshId)
   {
-    m_vectorSubmesh.push_back(new CalSubmesh(vectorCoreSubmesh[submeshId]));
+    m_vectorSubmesh.push_back(boost::shared_ptr<CalSubmesh>(new CalSubmesh(vectorCoreSubmesh[submeshId])));
   }
 }
 
-CalMesh::~CalMesh()
-{
-  std::vector<CalSubmesh *>::iterator iteratorSubmesh;
-  for(iteratorSubmesh = m_vectorSubmesh.begin(); iteratorSubmesh != m_vectorSubmesh.end(); ++iteratorSubmesh)
-  {
-    delete (*iteratorSubmesh);
-  }
-}
-
- /*****************************************************************************/
-/** Provides access to a submesh.
-  *
-  * This function returns the submesh with the given ID.
-  *
-  * @param id The ID of the submesh that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the submesh
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
 
 CalSubmesh *CalMesh::getSubmesh(int id)
 {
-  if((id < 0) || (id >= (int)m_vectorSubmesh.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return 0;
-  }
-
-  return m_vectorSubmesh[id];
+  return m_vectorSubmesh[id].get();
 }
-
- /*****************************************************************************/
-/** Returns the number of submeshes.
-  *
-  * This function returns the number of submeshes in the mesh instance.
-  *
-  * @return The number of submeshes.
-  *****************************************************************************/
 
 int CalMesh::getSubmeshCount()
 {
   return m_vectorSubmesh.size();
 }
 
- /*****************************************************************************/
-/** Returns the submesh vector.
-  *
-  * This function returns the vector that contains all submeshes of the mesh
-  * instance.
-  *
-  * @return A reference to the submesh vector.
-  *****************************************************************************/
-
-std::vector<CalSubmesh *>& CalMesh::getVectorSubmesh()
+CalMesh::SubmeshVector& CalMesh::getVectorSubmesh()
 {
   return m_vectorSubmesh;
 }
-
- /*****************************************************************************/
-/** Sets the LOD level.
-  *
-  * This function sets the LOD level of the mesh instance.
-  *
-  * @param lodLevel The LOD level in the range [0.0, 1.0].
-  *****************************************************************************/
 
 void CalMesh::setLodLevel(float lodLevel)
 {
@@ -126,7 +65,7 @@ void CalMesh::setLodLevel(float lodLevel)
 
 void CalMesh::setMaterialSet(CalCoreModel* model, int setId) {
     for (size_t submeshId = 0; submeshId < m_vectorSubmesh.size(); ++submeshId) {
-        CalSubmesh* submesh = m_vectorSubmesh[submeshId];
+        CalSubmesh* submesh = m_vectorSubmesh[submeshId].get();
         submesh->setMaterial(
             model->getCoreMaterialId(
                 submesh->getCoreSubmesh()->getCoreMaterialThreadId(),

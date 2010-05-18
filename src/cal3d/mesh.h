@@ -20,19 +20,20 @@ class CalSubmesh;
 class CAL3D_API CalMesh : public Cal::Object
 {
 public:
+  typedef std::vector<boost::shared_ptr<CalSubmesh> > SubmeshVector;
+
   CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
-  ~CalMesh();
 
   const boost::shared_ptr<CalCoreMesh>& getCoreMesh() const {
-      return m_pCoreMesh;
+    return m_pCoreMesh;
   }
-  CalSubmesh *getSubmesh(int id);
+  CalSubmesh* getSubmesh(int id);
   int getSubmeshCount();
-  std::vector<CalSubmesh *>& getVectorSubmesh();
+  SubmeshVector& getVectorSubmesh();
   void setLodLevel(float lodLevel);
   void setMaterialSet(CalCoreModel* model, int setId);
 
 private:
   boost::shared_ptr<CalCoreMesh> m_pCoreMesh;
-  std::vector<CalSubmesh *> m_vectorSubmesh;
+  SubmeshVector m_vectorSubmesh;
 };
