@@ -28,5 +28,4 @@ public:
   const SubmeshVector submeshes;
 
   void setLodLevel(float lodLevel);
-  void setMaterialSet(CalCoreModel* model, int setId);
 };

@@ -48,13 +48,3 @@ void CalMesh::setLodLevel(float lodLevel)
     submeshes[submeshId]->setLodLevel(lodLevel);
   }
 }
-
-void CalMesh::setMaterialSet(CalCoreModel* model, int setId) {
-    for (size_t submeshId = 0; submeshId < submeshes.size(); ++submeshId) {
-        CalSubmesh* submesh = submeshes[submeshId].get();
-        submesh->setMaterial(
-            model->getCoreMaterialId(
-                submesh->getCoreSubmesh()->getCoreMaterialThreadId(),
-                setId));
-    }
-}
