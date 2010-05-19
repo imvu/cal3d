@@ -15,7 +15,6 @@
 #include "cal3d/color.h"
 #include "cal3d/error.h"
 #include "cal3d/renderer.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/model.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/mesh.h"

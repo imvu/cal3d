@@ -16,7 +16,6 @@
 #include "cal3d/error.h"
 #include "cal3d/bone.h"
 #include "cal3d/coreskeleton.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/corebone.h" // DEBUG
 
 CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton)

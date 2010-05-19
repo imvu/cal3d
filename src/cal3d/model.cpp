@@ -22,7 +22,6 @@
 #include "cal3d/bone.h"
 #include "cal3d/mixer.h"
 #include "cal3d/renderer.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
@@ -35,14 +34,13 @@
   * This function is the default constructor of the model instance.
   *****************************************************************************/
 
-CalModel::CalModel(CalCoreModel *pCoreModel)
-  : m_pCoreModel(pCoreModel)
-  , m_pSkeleton(0)
+CalModel::CalModel(const boost::shared_ptr<CalCoreSkeleton>& skeleton)
+  : m_pSkeleton(0)
   , m_pMixer(0)
 {
-  assert(pCoreModel);
+  assert(skeleton);
 
-  m_pSkeleton = new CalSkeleton(pCoreModel->getCoreSkeleton());
+  m_pSkeleton = new CalSkeleton(skeleton);
 
   // if a mixer was already set (from a previous call to create or
   // a call to setAbstractMixer), re-use it. Otherwise create a
@@ -82,14 +80,7 @@ CalModel::~CalModel()
     m_pMixer = 0;
   }
   
-  // destroy the skeleton instance
-  if(m_pSkeleton != 0)
-  {
-    delete m_pSkeleton;
-    m_pSkeleton = 0;
-  }
-
-  m_pCoreModel = 0;
+  delete m_pSkeleton;
 }
 
 
@@ -108,34 +99,6 @@ CalMesh* CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
   m_vectorMesh.push_back(mesh);
   return mesh;
 }
-
- /*****************************************************************************/
-/** Provides access to the core model.
-  *
-  * This function returns the core model on which this model instance is based
-  * on.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core model
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalCoreModel *CalModel::getCoreModel()
-{
-  return m_pCoreModel;
-}
-
- /*****************************************************************************/
-/** Provides access to an attached mesh.
-  *
-  * This function returns the attached mesh with the given core mesh ID.
-  *
-  * @param coreMeshId The core mesh ID of the mesh that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the mesh
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
 
 CalMesh *CalModel::getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
 

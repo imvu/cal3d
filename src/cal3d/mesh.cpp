@@ -17,7 +17,6 @@
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/submesh.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/model.h"
 
 CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)

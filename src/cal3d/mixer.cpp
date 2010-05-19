@@ -18,7 +18,6 @@
 
 #include "cal3d/error.h"
 #include "cal3d/mixer.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/corebone.h"
 #include "cal3d/coreanimation.h"
 #include "cal3d/coretrack.h"
@@ -399,10 +398,6 @@ void CalMixer::create(CalModel *pModel)
   assert(pModel);
 
   m_pModel = pModel;
-
-  CalCoreModel *pCoreModel;
-  pCoreModel = m_pModel->getCoreModel();
-  assert(pCoreModel);
 
   // set the animation time/duration values to default
   m_animationTime = 0.0f;

@@ -17,7 +17,6 @@
 #include "cal3d/vector4.h"
 
 class CalCoreSkeleton;
-class CalCoreModel;
 class CalBone;
 
 class CAL3D_API CalSkeleton : public Cal::Object

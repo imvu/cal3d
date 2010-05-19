@@ -4,7 +4,6 @@
 #include "cal3d/error.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 #include "cal3d/coreanimation.h"

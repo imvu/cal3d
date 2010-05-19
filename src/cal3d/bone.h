@@ -17,7 +17,6 @@
 
 class CalSkeleton;
 class CalModel;
-class CalCoreModel;
 
 class CAL3D_API CalBone : public Cal::Object
 {

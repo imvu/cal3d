@@ -15,10 +15,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-
 class CalCoreSkeleton;
-class CalCoreModel;
-
 
 enum CalLightType {
   LIGHT_TYPE_NONE,

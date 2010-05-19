@@ -13,7 +13,6 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-class CalCoreModel;
 class CalCoreMesh;
 class CalSubmesh;
 

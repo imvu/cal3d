@@ -14,8 +14,8 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
+class CalCoreSkeleton;
 class CalCoreMesh;
-class CalCoreModel;
 class CalSkeleton;
 class CalAbstractMixer;
 class CalMixer;
@@ -24,11 +24,10 @@ class CalMesh;
 class CAL3D_API CalModel : public Cal::Object
 {
 public: 
-  CalModel(CalCoreModel *pCoreModel);
+  CalModel(const boost::shared_ptr<CalCoreSkeleton>& pCoreModel);
   ~CalModel();
 
   CalMesh* attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
-  CalCoreModel *getCoreModel();
   CalMesh* getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   CalMixer *getMixer();
   CalAbstractMixer *getAbstractMixer();
@@ -38,7 +37,6 @@ public:
   void setLodLevel(float lodLevel);
 
 private:
-  CalCoreModel *m_pCoreModel;
   CalSkeleton *m_pSkeleton;
   CalAbstractMixer *m_pMixer;
   std::vector<CalMesh *> m_vectorMesh;

@@ -19,7 +19,6 @@
 #include "cal3d/error.h"
 #include "cal3d/corebone.h"
 #include "cal3d/coreskeleton.h"
-#include "cal3d/coremodel.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
 

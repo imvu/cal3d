@@ -17,7 +17,6 @@
 #include "cal3d/datasource.h"
 #include "cal3d/tinyxml.h"
 
-class CalCoreModel;
 class CalCoreSkeleton;
 class CalCoreBone;
 class CalCoreAnimation;

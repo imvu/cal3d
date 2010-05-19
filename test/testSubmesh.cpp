@@ -1,5 +1,4 @@
 #include "TestPrologue.h"
-#include <cal3d/coremodel.h>
 #include <cal3d/renderer.h>
 #include <cal3d/model.h>
 #include <cal3d/skeleton.h>
@@ -168,12 +167,9 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
 
-    CalCoreModel coreModel;
-
     boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
-    coreModel.setCoreSkeleton(coreSkeleton);
 
-    CalModel model(&coreModel);
+    CalModel model(coreSkeleton);
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();
@@ -187,12 +183,9 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
 
-    CalCoreModel coreModel;
-
     boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
-    coreModel.setCoreSkeleton(coreSkeleton);
 
-    CalModel model(&coreModel);
+    CalModel model(coreSkeleton);
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();

@@ -25,7 +25,6 @@
 
 CSkeletonCandidate::CSkeletonCandidate()
 {
-  m_coreModel = NULL;
 }
 
 //----------------------------------------------------------------------------//
@@ -233,11 +232,6 @@ int CSkeletonCandidate::BuildSelectedId()
 
 void CSkeletonCandidate::Clear()
 {
-  if( m_coreModel ) {
-    delete m_coreModel;
-    m_coreModel = NULL;
-  }
-
 	// destroy all bone candidates stored in this skeleton candidate
 	for(size_t boneCandidateId = 0; boneCandidateId < m_vectorBoneCandidate.size(); boneCandidateId++)
 	{
@@ -282,37 +276,30 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 
 	m_strFilename = strFilename;
 
-	// create a core model instance
-	CalCoreModel * coreModel = new CalCoreModel;
-
 	// load the core skeleton instance
 	// get core skeleton
-	CalCoreSkeleton *pCoreSkeleton = CalLoader::loadCoreSkeleton(m_strFilename);
+	m_skeleton.reset(CalLoader::loadCoreSkeleton(m_strFilename));
 
-        if(!pCoreSkeleton)
+        if(!m_skeleton)
 	{
 		theExporter.SetLastErrorFromCal(__FILE__, __LINE__);
 		return false;
 	}
 
-        coreModel->setCoreSkeleton(boost::shared_ptr<CalCoreSkeleton>(pCoreSkeleton));
-	
 	// get core bone vector
-	std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
+	std::vector<CalCoreBone *>& vectorCoreBone = m_skeleton->getVectorCoreBone();
 
 	// loop through all root core bones
 	std::vector<int>::const_iterator iteratorRootCoreBoneId;
-	for(iteratorRootCoreBoneId = pCoreSkeleton->getListRootCoreBoneId().begin(); iteratorRootCoreBoneId != pCoreSkeleton->getListRootCoreBoneId().end(); ++iteratorRootCoreBoneId)
+	for(iteratorRootCoreBoneId = m_skeleton->getListRootCoreBoneId().begin(); iteratorRootCoreBoneId != m_skeleton->getListRootCoreBoneId().end(); ++iteratorRootCoreBoneId)
 	{
 		// recursively add the core bone to the skeleton candidate
-		if(!AddNode(pCoreSkeleton, vectorCoreBone[*iteratorRootCoreBoneId], -1))
+		if(!AddNode(m_skeleton.get(), vectorCoreBone[*iteratorRootCoreBoneId], -1))
 		{
 			return false;
 		}
 	}
 
-	// destroy core model
-	m_coreModel = coreModel;
 	return true;
 }
 

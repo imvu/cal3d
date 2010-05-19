@@ -12,7 +12,6 @@
 
 #include "cal3d/global.h"
 
-class CalCoreModel;
 class CalCoreSkeleton;
 class CalCoreBone;
 class CalCoreAnimation;

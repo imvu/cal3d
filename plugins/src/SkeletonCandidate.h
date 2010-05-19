@@ -11,39 +11,23 @@
 #ifndef SKELETON_CANDIDATE_H
 #define SKELETON_CANDIDATE_H
 
-#include "cal3d/coremodel.h"
-
-//----------------------------------------------------------------------------//
-// Forward declarations                                                       //
-//----------------------------------------------------------------------------//
-
 class CBoneCandidate;
 class CBaseNode;
 class CalCoreSkeleton;
 class CalCoreBone;
 
-//----------------------------------------------------------------------------//
-// Class declaration                                                          //
-//----------------------------------------------------------------------------//
-
 class CSkeletonCandidate
 {
-// member variables
 protected:
 	std::vector<CBoneCandidate *> m_vectorBoneCandidate;
 	std::list<int> m_listRootBoneCandidateId;
 	std::string m_strFilename;
+        boost::shared_ptr<CalCoreSkeleton> m_skeleton;
 
-  // Valid if loaded it from CreateFromSkeletonFile().
-  CalCoreModel * m_coreModel;
-
-// constructors/destructor
 public:
 	CSkeletonCandidate();
 	virtual ~CSkeletonCandidate();
 
-// member functions
-public:
 	int BuildSelectedId();
 	void Clear();
 	bool CreateFromInterface();
@@ -56,7 +40,7 @@ public:
 	std::list<int> GetListRootBoneCandidateId();
 	int GetParentSelectedId(int boneCandidateId);
 	int GetSelectedCount();
-  CalCoreSkeleton * GetCoreSkeleton() { return m_coreModel ? m_coreModel->getCoreSkeleton().get() : NULL; }
+        CalCoreSkeleton * GetCoreSkeleton() { return m_skeleton.get(); }
 	void GetTranslationAndRotation(int boneCandidateId, float time, CalVector& translation, CalQuaternion& rotation);
 	void GetTranslationAndRotationBoneSpace(int boneCandidateId, float time, CalVector& translation, CalQuaternion& rotation);
 	std::vector<CBoneCandidate *> GetVectorBoneCandidate();
