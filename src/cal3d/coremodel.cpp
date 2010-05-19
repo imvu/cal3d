@@ -21,20 +21,3 @@
 #include "cal3d/corematerial.h"
 #include "cal3d/loader.h"
 #include "cal3d/saver.h"
-
-boost::shared_ptr<CalCoreMaterial> CalCoreModel::getCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId)
-{
-    std::pair<int, int> key = std::make_pair(coreMaterialThreadId, coreMaterialSetId);
-    if (m_mapCoreMaterialThread.count(key) == 0) {
-        CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-        return boost::shared_ptr<CalCoreMaterial>();
-    }
-
-    return m_mapCoreMaterialThread[key];
-}
-
-void CalCoreModel::setCoreMaterialId(int coreMaterialThreadId, int coreMaterialSetId, const boost::shared_ptr<CalCoreMaterial>& coreMaterial)
-{
-  std::pair<int, int> key = std::make_pair(coreMaterialThreadId, coreMaterialSetId);
-  m_mapCoreMaterialThread[key] = coreMaterial;
-}

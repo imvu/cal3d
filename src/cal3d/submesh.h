@@ -39,7 +39,7 @@ public:
   const boost::shared_ptr<CalCoreMaterial>& getMaterial() const {
     return m_material;
   }
-  void setMaterial(boost::shared_ptr<CalCoreMaterial> material) {
+  void setMaterial(const boost::shared_ptr<CalCoreMaterial>& material) {
     m_material = material;
   }
 
