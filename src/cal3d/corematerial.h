@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
 class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder {
@@ -38,3 +39,4 @@ public:
 
   bool getTwoSided() const { return maps.size() > 1; } // Should come from check box.
 };
+typedef boost::shared_ptr<CalCoreMaterial> CalCoreMaterialPtr;
