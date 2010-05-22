@@ -13,6 +13,7 @@ sources = Split('''
 env = env.Clone(tools=[cal3d, boost_test, python])
 env.Append(CPPPATH=['../../..',
                     '../../../avatarwindow'])
+
 imvu_test_program(
     env,
     'test_cal3d${IMVU_LIBRARY_SUFFIX}',
