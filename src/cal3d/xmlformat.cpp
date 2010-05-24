@@ -577,7 +577,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         parentId = atoi(parentid->Value());
 
         // allocate a new core bone instance
-        CalCoreBone *pCoreBone = new CalCoreBone(strName);
+        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(strName));
 
         // set the parent of the bone
         pCoreBone->setParentId(parentId);
@@ -615,7 +615,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreSkeleton;
-                delete pCoreBone;
                 return false;
             }
 
@@ -624,7 +623,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreSkeleton;
-                delete pCoreBone;
                 return false;
             }
             TiXmlText* childid = node->ToText();
@@ -632,7 +630,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreSkeleton;
-                delete pCoreBone;
                 return false;
             }
 

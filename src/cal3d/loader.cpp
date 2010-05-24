@@ -970,8 +970,8 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
   for(int boneId = 0; boneId < boneCount; ++boneId)
   {
     // load the core bone
-    CalCoreBone *pCoreBone = loadCoreBones(dataSrc, version);
-    if(pCoreBone == 0)
+    boost::shared_ptr<CalCoreBone> pCoreBone(loadCoreBones(dataSrc, version));
+    if(!pCoreBone)
     {
       delete pCoreSkeleton;
       return 0;

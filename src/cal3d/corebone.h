@@ -11,6 +11,7 @@
 #pragma once
 
 #include <list>
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"

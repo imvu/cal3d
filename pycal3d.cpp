@@ -2,6 +2,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include <cal3d/coreanimatedmorph.h>
+#include <cal3d/corebone.h>
 #include <cal3d/corematerial.h>
 #include <cal3d/coremesh.h>
 #include <cal3d/coreskeleton.h>
@@ -57,7 +58,12 @@ BOOST_PYTHON_MODULE(_cal3d_debug)
 BOOST_PYTHON_MODULE(_cal3d)
 #endif
 {
+    class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone", no_init)
+        .def(init<std::string>())
+        ;
+
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
+        .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
         ;
 
     {

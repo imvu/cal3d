@@ -129,7 +129,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			selectedId++;
 
 			// allocate new core bone instance
-			CalCoreBone *pCoreBone = new CalCoreBone(pBoneCandidate->GetNode()->GetName());
+                        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(pBoneCandidate->GetNode()->GetName()));
 
 			// get the parent id of the bone candidate
 			int parentId;
@@ -169,7 +169,6 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 				if(pParentCoreBone == 0)
 				{
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-					delete pCoreBone;
 					return false;
 				}
 

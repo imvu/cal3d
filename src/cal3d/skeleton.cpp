@@ -24,13 +24,13 @@ CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton
   assert(pCoreSkeleton);
 
   // clone the skeleton structure of the core skeleton
-  std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
+  std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
 
   size_t boneCount = vectorCoreBone.size();
   m_vectorBone.reserve(boneCount);
 
   for(size_t boneId = 0; boneId < boneCount; ++boneId) {
-    m_vectorBone.push_back(CalBone(vectorCoreBone[boneId]));
+    m_vectorBone.push_back(CalBone(vectorCoreBone[boneId].get()));
   }
 
   boneTransforms.resize(boneCount);

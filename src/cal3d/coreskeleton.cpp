@@ -16,37 +16,10 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-CalCoreSkeleton::CalCoreSkeleton()
-{
-}
-
-CalCoreSkeleton::~CalCoreSkeleton()
-{
-  // destroy all core animations
-  std::vector<CalCoreBone *>::iterator iteratorCoreBone;
-  for(iteratorCoreBone = m_vectorCoreBone.begin(); iteratorCoreBone != m_vectorCoreBone.end(); ++iteratorCoreBone)
-  {
-    delete (*iteratorCoreBone);
-  }
-}
-
- /*****************************************************************************/
-/** Adds a core bone.
-  *
-  * This function adds a core bone to the core skeleton instance.
-  *
-  * @param pCoreBone A pointer to the core bone that should be added.
-  *
-  * @return One of the following values:
-  *         \li the assigned bone \b ID of the added core bone
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreSkeleton::addCoreBone(CalCoreBone *pCoreBone)
+int CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone)
 {
   // get next bone id
-  int boneId;
-  boneId = m_vectorCoreBone.size();
+  int boneId = m_vectorCoreBone.size();
 
   m_vectorCoreBone.push_back(pCoreBone);
 
@@ -99,7 +72,7 @@ CalCoreBone *CalCoreSkeleton::getCoreBone(int coreBoneId)
     return 0;
   }
 
-  return m_vectorCoreBone[coreBoneId];
+  return m_vectorCoreBone[coreBoneId].get();
 }
 
  /*****************************************************************************/
@@ -196,7 +169,7 @@ const std::vector<int>& CalCoreSkeleton::getListRootCoreBoneId()
   * @return A reference to the core bone vector.
   *****************************************************************************/
 
-std::vector<CalCoreBone *>& CalCoreSkeleton::getVectorCoreBone()
+std::vector<boost::shared_ptr<CalCoreBone> >& CalCoreSkeleton::getVectorCoreBone()
 {
   return m_vectorCoreBone;
 }

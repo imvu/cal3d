@@ -193,13 +193,13 @@ bool CSkeletonCandidate::AddNode(CalCoreSkeleton *pCoreSkeleton, CalCoreBone *pC
 	}
 
 	// get core bone vector
-	std::vector<CalCoreBone *>& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
+	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
 
 	// handle all children of the core bone
 	std::vector<int>::const_iterator iteratorChildId;
 	for(iteratorChildId = pCoreBone->getListChildId().begin(); iteratorChildId != pCoreBone->getListChildId().end(); ++iteratorChildId)
 	{
-		if(!AddNode(pCoreSkeleton, vectorCoreBone[*iteratorChildId], pBoneCandidate->GetId())) return false;
+            if(!AddNode(pCoreSkeleton, vectorCoreBone[*iteratorChildId].get(), pBoneCandidate->GetId())) return false;
 	}
 
 	return true;
@@ -287,14 +287,14 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	}
 
 	// get core bone vector
-	std::vector<CalCoreBone *>& vectorCoreBone = m_skeleton->getVectorCoreBone();
+	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = m_skeleton->getVectorCoreBone();
 
 	// loop through all root core bones
 	std::vector<int>::const_iterator iteratorRootCoreBoneId;
 	for(iteratorRootCoreBoneId = m_skeleton->getListRootCoreBoneId().begin(); iteratorRootCoreBoneId != m_skeleton->getListRootCoreBoneId().end(); ++iteratorRootCoreBoneId)
 	{
 		// recursively add the core bone to the skeleton candidate
-		if(!AddNode(m_skeleton.get(), vectorCoreBone[*iteratorRootCoreBoneId], -1))
+            if(!AddNode(m_skeleton.get(), vectorCoreBone[*iteratorRootCoreBoneId].get(), -1))
 		{
 			return false;
 		}

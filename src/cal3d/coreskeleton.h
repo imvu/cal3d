@@ -13,6 +13,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
@@ -21,24 +22,21 @@ class CalCoreBone;
 class CAL3D_API CalCoreSkeleton : public Cal::Object
 {
 public:
-  CalCoreSkeleton();
-  ~CalCoreSkeleton();
-
-  int addCoreBone(CalCoreBone *pCoreBone);
+  int addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone);
   void calculateState();
   CalCoreBone* getCoreBone(int coreBoneId);
   CalCoreBone* getCoreBone(const std::string& strName);
   int getCoreBoneId(const std::string& strName);
   bool mapCoreBoneName(int coreBoneId, const std::string& strName);
   const std::vector<int>& getListRootCoreBoneId();
-  std::vector<CalCoreBone *>& getVectorCoreBone();
+  std::vector<boost::shared_ptr<CalCoreBone> >& getVectorCoreBone();
   void scale(float factor);
   unsigned int getNumCoreBones() { return ( unsigned int ) m_vectorCoreBone.size(); }
   void setSceneAmbientColor( CalVector const & color );
   void getSceneAmbientColor( CalVector & color );
 
 private:
-  std::vector<CalCoreBone*> m_vectorCoreBone;
+  std::vector< boost::shared_ptr<CalCoreBone> > m_vectorCoreBone;
   std::map<std::string, int> m_mapCoreBoneNames;
   std::vector<int> m_listRootCoreBoneId;
   CalVector m_sceneAmbientColor;
