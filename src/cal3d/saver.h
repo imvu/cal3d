@@ -44,7 +44,7 @@ public:
 
 private:
   static bool saveCoreBones(std::ofstream& file, const std::string& strFilename, CalCoreBone *pCoreBone);
-  static bool saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreKeyframe const &pCoreKeyframe, int version,
+  static bool saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreKeyframe *pCoreKeyframe, int version, 
     bool needTranslation, bool highRangeRequired, bool useAnimationCompression );
   static bool saveCoreSubmesh(std::ofstream& file, const std::string& strFilename, CalCoreSubmesh *pCoreSubmesh);
   static bool saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack, bool useAnimationCompression, int version);

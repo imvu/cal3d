@@ -232,18 +232,27 @@ OutputDebugString(str);
 			// only export keyframes for the selected bone candidates
 			if(pBoneCandidate->IsSelected())
 			{
-				CalCoreKeyframe coreKeyframe;
+				// allocate new core keyframe instance
+				CalCoreKeyframe *pCoreKeyframe;
+				pCoreKeyframe = new CalCoreKeyframe();
+				if(pCoreKeyframe == 0)
+				{
+					SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+					coreMorphAnimation.destroy();
+					return false;
+				}
 
 				// create the core keyframe instance
-				if(!coreKeyframe.create())
+				if(!pCoreKeyframe->create())
 				{
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
+					delete pCoreKeyframe;
 					coreMorphAnimation.destroy();
 					return false;
 				}
 
 				// set the frame time
-				coreKeyframe.setTime((float)outputFrame / (float)param->m_framerate + wrapTime);
+				pCoreKeyframe->setTime((float)outputFrame / (float)param->m_framerate + wrapTime);
 
 				// get the translation and the rotation of the bone candidate
 				CalVector translation;
@@ -251,8 +260,8 @@ OutputDebugString(str);
 				skeletonCandidate.GetTranslationAndRotation(boneCandidateId, time, translation, rotation);
 
 				// set the translation and rotation
-				coreKeyframe.setTranslation(translation);
-				coreKeyframe.setRotation(rotation);
+				pCoreKeyframe->setTranslation(translation);
+				pCoreKeyframe->setRotation(rotation);
 
 				// get the core track for this bone candidate
 				CalCoreTrack *pCoreTrack;
@@ -260,12 +269,13 @@ OutputDebugString(str);
 				if(pCoreTrack == 0)
 				{
 					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
+					delete pCoreKeyframe;
 					coreMorphAnimation.destroy();
 					return false;
 				}
 
 				// add this core keyframe to the core track
-				pCoreTrack->addCoreKeyframe(coreKeyframe);
+				pCoreTrack->addCoreKeyframe(pCoreKeyframe);
 			}
 		}
 

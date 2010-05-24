@@ -20,9 +20,9 @@ public:
   CalCoreKeyframe();
 
   size_t size() const { return sizeof(*this); }
-  const CalQuaternion& getRotation() const;
-  float getTime() const;
-  const CalVector& getTranslation() const;
+  const CalQuaternion& getRotation();
+  float getTime();
+  const CalVector& getTranslation();
   void setRotation(const CalQuaternion& rotation);
   void setTime(float time);
   void setTranslation(const CalVector& translation);

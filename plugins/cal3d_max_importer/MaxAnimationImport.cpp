@@ -67,10 +67,10 @@ CMaxAnimationImport::DoImport(
     SuspendAnimate();
     AnimateOn();
     for (unsigned i = 0; i < kfCount; ++i) {
-      CalCoreKeyframe const & kf = track->getCoreKeyframe(i);
-      CalQuaternion kf_q = kf.getRotation();
-      CalVector     kf_v = kf.getTranslation();
-      TimeValue     time = SecToTicks(kf.getTime());
+      CalCoreKeyframe* kf = track->getCoreKeyframe(i);
+      CalQuaternion kf_q = kf->getRotation();
+      CalVector     kf_v = kf->getTranslation();
+      TimeValue     time = SecToTicks(kf->getTime());
 
       Matrix3 tm;
       tm.IdentityMatrix();
