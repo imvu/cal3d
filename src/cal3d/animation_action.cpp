@@ -362,15 +362,15 @@ bool CalAnimationAction::update(float deltaTime)
   if(m_state == STATE_STEADY)
   {
     // check if we reached OUT phase
-    if(!m_autoLock && m_time >= m_pCoreAnimation->getDuration() - m_delayOut)
+    if(!m_autoLock && m_time >= m_pCoreAnimation->duration - m_delayOut)
     {
       m_state = STATE_OUT;
     }
     // if the anim is supposed to stay locked on last keyframe, reset the time here.
-    else if (m_autoLock && m_time > m_pCoreAnimation->getDuration())
+    else if (m_autoLock && m_time > m_pCoreAnimation->duration)
 	{
 	  m_state = STATE_STOPPED;
-	  m_time = m_pCoreAnimation->getDuration();
+	  m_time = m_pCoreAnimation->duration;
 	}      
   }
 
@@ -378,10 +378,9 @@ bool CalAnimationAction::update(float deltaTime)
   if(m_state == STATE_OUT)
   {
     // check if we are still in the OUT phase
-    if(m_time < m_pCoreAnimation->getDuration())
+    if(m_time < m_pCoreAnimation->duration)
     {
-      m_weight = (m_pCoreAnimation->getDuration() - m_time) / m_delayOut * m_weightTarget;
-//      m_weight = (m_pCoreAnimation->getDuration() - m_time) / m_delayOut;
+      m_weight = (m_pCoreAnimation->duration - m_time) / m_delayOut * m_weightTarget;
     }
     else
     {

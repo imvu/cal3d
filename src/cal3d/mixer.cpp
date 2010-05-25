@@ -183,7 +183,7 @@ bool CalMixer::animationDuration(const boost::shared_ptr<CalCoreAnimation>& core
     if (!coreAnimation) {
         return false;
     }
-    *result = coreAnimation->getDuration();
+    *result = coreAnimation->duration;
     return true;
 }
 
@@ -650,14 +650,14 @@ void CalMixer::updateSkeleton()
       const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
       
       // get the list of core tracks of above core animation
-      std::list<CalCoreTrack *>& listCoreTrack = pCoreAnimation->getListCoreTrack();
+      CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
       
       // loop through all core tracks of the core animation
-      std::list<CalCoreTrack *>::iterator itct;
+      CalCoreAnimation::TrackList::iterator itct;
       for( itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++ ) {
         
         // get the appropriate bone of the track
-        CalCoreTrack * ct = * itct;
+        CalCoreTrack* ct = itct->get();
         if( ct->getCoreBoneId() >= int(vectorBone.size()) ) {
           continue;
         }

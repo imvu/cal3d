@@ -136,7 +136,7 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
         // set the duration of the animation
 	float duration;
 	duration = (float)(param->m_endframe - param->m_startframe) / (float)m_pInterface->GetFps();
-	coreAnimation.setDuration(duration);
+	coreAnimation.duration = duration;
 
 	// get bone candidate vector
 	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
@@ -152,27 +152,13 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 		if(pBoneCandidate->IsSelected())
 		{
 			// allocate new core track instance
-			CalCoreTrack *pCoreTrack;
-			pCoreTrack = new CalCoreTrack();
-			if(pCoreTrack == 0)
-			{
-				SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				return false;
-			}
-
-			// create the core track instance
-			pCoreTrack->create();
+			CalCoreTrackPtr pCoreTrack(new CalCoreTrack);
 
 			// set the core bone id
 			pCoreTrack->setCoreBoneId(boneCandidateId);
 
 			// add the core track to the core animation instance
-			if(!coreAnimation.addCoreTrack(pCoreTrack))
-			{
-				SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-				delete pCoreTrack;
-				return false;
-			}
+			coreAnimation.tracks.push_back(pCoreTrack);
 		}
 	}
 
@@ -240,17 +226,7 @@ OutputDebugString(str);
 				pCoreKeyframe->setRotation(rotation);
 
 				// get the core track for this bone candidate
-				CalCoreTrack *pCoreTrack;
-				pCoreTrack = coreAnimation.getCoreTrack(pBoneCandidate->GetId());
-				if(pCoreTrack == 0)
-				{
-					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-					delete pCoreKeyframe;
-					return false;
-				}
-
-				// add this core keyframe to the core track
-				pCoreTrack->addCoreKeyframe(pCoreKeyframe);
+				coreAnimation.getCoreTrack(pBoneCandidate->GetId())->addCoreKeyframe(pCoreKeyframe);
 			}
 		}
 

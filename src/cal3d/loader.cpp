@@ -592,7 +592,7 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
   }
 
   // set the duration in the core animation instance
-  pCoreAnimation->setDuration(duration);
+  pCoreAnimation->duration = duration;
 
   // read the number of tracks
   int trackCount;
@@ -606,16 +606,15 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
   for(int trackId = 0; trackId < trackCount; ++trackId)
   {
     // load the core track
-    CalCoreTrack *pCoreTrack;
-    pCoreTrack = loadCoreTrack(dataSrc,skel, version, useAnimationCompression);
-    if(pCoreTrack == 0)
+    CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc,skel, version, useAnimationCompression));
+    if(!pCoreTrack)
     {
       delete pCoreAnimation;
       return 0;
     }
 
     // add the core track to the core animation instance
-    pCoreAnimation->addCoreTrack(pCoreTrack);
+    pCoreAnimation->tracks.push_back(pCoreTrack);
   }
 
   return pCoreAnimation;
@@ -626,11 +625,11 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
 void
 CalLoader::compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel )
 {
-  std::list<CalCoreTrack *>& listCoreTrack = anim->getListCoreTrack();
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
+  CalCoreAnimation::TrackList& listCoreTrack = anim->tracks;
+  CalCoreAnimation::TrackList::iterator iteratorCoreTrack;
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
-    CalCoreTrack *pCoreTrack=*iteratorCoreTrack;
+    CalCoreTrackPtr pCoreTrack=*iteratorCoreTrack;
     pCoreTrack->compress( translationTolerance, rotationToleranceDegrees, skel );
   }
 }
@@ -1943,9 +1942,6 @@ CalCoreTrack *CalLoader::loadCoreTrack(
     return 0;
   }
 
-  // create the core track instance
-  pCoreTrack->create();
-
   // link the core track to the appropriate core bone instance
   pCoreTrack->setCoreBoneId(coreBoneId);
   CalCoreBone * cb = NULL;
@@ -1966,7 +1962,6 @@ CalCoreTrack *CalLoader::loadCoreTrack(
     lastCoreKeyframe = pCoreKeyframe;
     if(pCoreKeyframe == 0)
     {
-      pCoreTrack->destroy();
       delete pCoreTrack;
       return 0;
     }

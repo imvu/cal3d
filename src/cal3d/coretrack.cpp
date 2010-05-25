@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/coretrack.h"
 #include "cal3d/corebone.h"
 #include "cal3d/coreskeleton.h"
@@ -26,15 +22,12 @@
 int CalCoreTrack::m_translationRequiredCount = 0;
 int CalCoreTrack::m_translationNotRequiredCount = 0;
 
- /*****************************************************************************/
-/** Constructs the core track instance.
-  *
-  * This function is the default constructor of the core track instance.
-  *****************************************************************************/
-
 CalCoreTrack::CalCoreTrack()
   : m_coreBoneId(-1)
 {
+  m_translationRequired = true;
+  m_highRangeRequired = true;
+  m_translationIsDynamic = true;
 }
 
 size_t sizeInBytes(CalCoreKeyframe* const& t) {
@@ -45,16 +38,12 @@ size_t CalCoreTrack::size() const {
   return sizeof(CalCoreTrack) + sizeInBytes(m_keyframes);
 }
 
-
- /*****************************************************************************/
-/** Destructs the core track instance.
-  *
-  * This function is the destructor of the core track instance.
-  *****************************************************************************/
-
 CalCoreTrack::~CalCoreTrack()
 {
-  assert(m_keyframes.empty());
+  for (unsigned i = 0; i < m_keyframes.size(); ++i)
+  {
+    delete m_keyframes[i];
+  }
 }
 
  /*****************************************************************************/
@@ -454,44 +443,6 @@ CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * tra
       * transRequiredResult = true;
     }
   }
-}
-
-
-
- /*****************************************************************************/
-/** Creates the core track instance.
-  *
-  * This function creates the core track instance.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-void CalCoreTrack::create()
-{
-  m_translationRequired = true;
-  m_highRangeRequired = true;
-  m_translationIsDynamic = true;
-}
-
- /*****************************************************************************/
-/** Destroys the core track instance.
-  *
-  * This function destroys all data stored in the core track instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalCoreTrack::destroy()
-{
-  // destroy all core keyframes
-  for (unsigned i = 0; i < m_keyframes.size(); ++i)
-  {
-    delete m_keyframes[i];
-  }
-  m_keyframes.clear();
-
-  m_coreBoneId = -1;
 }
 
  /*****************************************************************************/

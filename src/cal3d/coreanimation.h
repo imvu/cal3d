@@ -11,29 +11,21 @@
 #pragma once
 
 #include <list>
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-class CalCoreTrack;
+typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 class CalCoreSkeleton;
 
 class CAL3D_API CalCoreAnimation : public Cal::Object
 {
 public:
-  CalCoreAnimation();
-  ~CalCoreAnimation();
-
   size_t size();
-  void fillInvalidTranslations( CalCoreSkeleton * skel );
-  bool addCoreTrack(CalCoreTrack *pCoreTrack);
-  CalCoreTrack *getCoreTrack(int coreBoneId);
-  unsigned int numCoreTracks();
-  CalCoreTrack * nthCoreTrack( unsigned int );
-  float getDuration();
-  std::list<CalCoreTrack *>& getListCoreTrack();
-  void setDuration(float duration);
+  void fillInvalidTranslations(CalCoreSkeleton* skel);
+  CalCoreTrackPtr getCoreTrack(int coreBoneId);
   void scale(float factor);
 
-private:
-  float m_duration;
-  std::list<CalCoreTrack *> m_listCoreTrack;
+  float duration;
+  typedef std::vector<CalCoreTrackPtr> TrackList;
+  TrackList tracks;
 };

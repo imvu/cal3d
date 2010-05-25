@@ -17,62 +17,36 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-CalCoreAnimation::CalCoreAnimation()
-{
-}
-
-CalCoreAnimation::~CalCoreAnimation()
-{
-  // destroy all core tracks
-  while(!m_listCoreTrack.empty())
-  {
-    CalCoreTrack *pCoreTrack;
-    pCoreTrack = m_listCoreTrack.front();
-    m_listCoreTrack.pop_front();
-
-    pCoreTrack->destroy();
-    delete pCoreTrack;
-  }
-}
-
-bool CalCoreAnimation::addCoreTrack(CalCoreTrack *pCoreTrack) {
-  m_listCoreTrack.push_back(pCoreTrack);
-
-  return true;
-}
-
-size_t sizeInBytes(CalCoreTrack* const& t) {
-    return sizeof(CalCoreTrack*) + t->size();
+size_t sizeInBytes(const CalCoreTrackPtr& t) {
+    return sizeof(CalCoreTrackPtr) + t->size();
 }
 
 size_t CalCoreAnimation::size() {
-  return sizeof(*this) + sizeInBytes(m_listCoreTrack);
+  return sizeof(*this) + sizeInBytes(tracks);
 }
 
 
-CalCoreTrack *CalCoreAnimation::getCoreTrack(int coreBoneId)
+CalCoreTrackPtr CalCoreAnimation::getCoreTrack(int coreBoneId)
 {
   // loop through all core track
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack)
+  TrackList::iterator iteratorCoreTrack;
+  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
   {
-    // get the core bone
-    CalCoreTrack *pCoreTrack;
-    pCoreTrack = *iteratorCoreTrack;
-
-    // check if we found the matching core bone
-    if(pCoreTrack->getCoreBoneId() == coreBoneId) return pCoreTrack;
+    CalCoreTrackPtr& pCoreTrack = *iteratorCoreTrack;
+    if (pCoreTrack->getCoreBoneId() == coreBoneId) {
+        return pCoreTrack;
+    }
   }
 
   // no match found
-  return 0;
+  return CalCoreTrackPtr();
 }
 
 void CalCoreAnimation::fillInvalidTranslations( CalCoreSkeleton * skel ) {
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack)
+  TrackList::iterator iteratorCoreTrack;
+  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
   {
-    CalCoreTrack * tr = * iteratorCoreTrack;
+    CalCoreTrackPtr tr = * iteratorCoreTrack;
     int boneId = tr->getCoreBoneId();
     assert( boneId != -1 );
     CalCoreBone * bo = skel->getCoreBone( boneId );
@@ -83,42 +57,11 @@ void CalCoreAnimation::fillInvalidTranslations( CalCoreSkeleton * skel ) {
   }
 }
 
-
-unsigned int CalCoreAnimation::numCoreTracks() {
-  return m_listCoreTrack.size();
-}
-
-CalCoreTrack* CalCoreAnimation::nthCoreTrack(unsigned int i) {
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
-  for( iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack ) {
-    if( i == 0 ) return * iteratorCoreTrack;
-    i--;
-  }
-  return NULL;
-}
-
-
-float CalCoreAnimation::getDuration()
-{
-  return m_duration;
-}
-
-std::list<CalCoreTrack *>& CalCoreAnimation::getListCoreTrack()
-{
-  return m_listCoreTrack;
-}
-
-void CalCoreAnimation::setDuration(float duration)
-{
-  m_duration = duration;
-}
-
-void CalCoreAnimation::scale(float factor)
-{
+void CalCoreAnimation::scale(float factor) {
   // loop through all core track
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack)
+  TrackList::iterator iteratorCoreTrack;
+  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
   {
-	  (*iteratorCoreTrack)->scale(factor);
+    (*iteratorCoreTrack)->scale(factor);
   }
 }

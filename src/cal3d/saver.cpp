@@ -93,14 +93,14 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
   }
 
   // write the duration of the core animation
-  if(!CalPlatform::writeFloat(file, pCoreAnimation->getDuration()))
+  if(!CalPlatform::writeFloat(file, pCoreAnimation->duration))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
 
   // get core track list
-  std::list<CalCoreTrack *>& listCoreTrack = pCoreAnimation->getListCoreTrack();
+  CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
 
   // write the number of tracks
   if(!CalPlatform::writeInteger(file, listCoreTrack.size()))
@@ -110,11 +110,11 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
   }
 
   // write all core bones
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
+  CalCoreAnimation::TrackList::iterator iteratorCoreTrack;
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
     // save core track
-    if(!saveCoreTrack(file, strFilename, *iteratorCoreTrack, useCompression, version))
+    if(!saveCoreTrack(file, strFilename, iteratorCoreTrack->get(), useCompression, version))
     {
       return false;
     }
@@ -1176,20 +1176,20 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
   doc.InsertEndChild(header);
 
   str.str("");
-  str << pCoreAnimation->getDuration(); 
+  str << pCoreAnimation->duration; 
   animation.SetAttribute("DURATION",str.str());
   
   // get core track list
-  std::list<CalCoreTrack *>& listCoreTrack = pCoreAnimation->getListCoreTrack();
+  CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
 
   animation.SetAttribute("NUMTRACKS",listCoreTrack.size());
   
 
     // write all core bones
-  std::list<CalCoreTrack *>::iterator iteratorCoreTrack;
+  CalCoreAnimation::TrackList::iterator iteratorCoreTrack;
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
-    CalCoreTrack *pCoreTrack=*iteratorCoreTrack;
+    CalCoreTrack* pCoreTrack = iteratorCoreTrack->get();
 
     TiXmlElement track("TRACK");
     track.SetAttribute("BONEID",pCoreTrack->getCoreBoneId());

@@ -763,7 +763,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
     }
 
     // set the duration in the core animation instance
-    pCoreAnimation->setDuration(duration);
+    pCoreAnimation->duration = duration;
     TiXmlElement* track=animation->FirstChildElement();
 
     // load all core bones
@@ -776,10 +776,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             return 0;
         }
 
-        CalCoreTrack *pCoreTrack = new CalCoreTrack();
-
-        // create the core track instance
-        pCoreTrack->create();
+        CalCoreTrackPtr pCoreTrack(new CalCoreTrack);
 
         int coreBoneId = atoi(track->Attribute("BONEID"));
         const char * trstr = track->Attribute("TRANSLATIONREQUIRED");
@@ -817,8 +814,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         if(keyframeCount <= 0)
         {
             delete pCoreAnimation;
-            pCoreTrack->destroy();
-            delete pCoreTrack;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return 0;
         }
@@ -835,8 +830,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;
                 return 0;
             }
 
@@ -877,8 +870,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;
                 return 0;
             }
             if( _stricmp(translation->Value(),"TRANSLATION") ==0) {
@@ -887,8 +878,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     delete pCoreAnimation;
-                    pCoreTrack->destroy();
-                    delete pCoreTrack;
                     return 0;
                 }
 
@@ -897,8 +886,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     delete pCoreAnimation;
-                    pCoreTrack->destroy();
-                    delete pCoreTrack;
                     return 0;
                 }
                 ReadTripleFloat( translationdata->Value(), &tx, &ty, &tz );
@@ -909,8 +896,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;
                 return 0;
             }
 
@@ -921,8 +906,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;
                 return 0;
             }
             TiXmlText* rotationdata = node->ToText();
@@ -930,8 +913,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;
                 return 0;
             }
             ReadQuadFloat( rotationdata->Value(), &rx, &ry, &rz, &rw );  
@@ -943,8 +924,6 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(pCoreKeyframe == 0)
             {
                 delete pCoreAnimation;
-                pCoreTrack->destroy();
-                delete pCoreTrack;        
                 CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
                 return 0;
             }
@@ -988,7 +967,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             // translationRequired flag; instead it will leave it, as above.
             pCoreTrack->compress( translationTolerance, rotationToleranceDegrees, skel );
         }
-        pCoreAnimation->addCoreTrack(pCoreTrack);   
+        pCoreAnimation->tracks.push_back(pCoreTrack);   
         track=track->NextSiblingElement();
     }
 

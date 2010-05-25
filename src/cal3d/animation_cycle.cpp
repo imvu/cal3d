@@ -130,7 +130,7 @@ void CalAnimationCycle::setAsync(float time, float duration)
     }
     else
     {
-      m_timeFactor = m_pCoreAnimation->getDuration() / duration;
+      m_timeFactor = m_pCoreAnimation->duration / duration;
       m_time = time * m_timeFactor;
     }
 
@@ -179,12 +179,12 @@ bool CalAnimationCycle::update(float deltaTime)
   if(m_state == STATE_ASYNC)
   {
     m_time += deltaTime * m_timeFactor;
-    if(m_time >= m_pCoreAnimation->getDuration())
+    if(m_time >= m_pCoreAnimation->duration)
     {
-      m_time = (float) fmod(m_time, m_pCoreAnimation->getDuration());
+      m_time = (float) fmod(m_time, m_pCoreAnimation->duration);
     }
 	if (m_time < 0)
-      m_time += m_pCoreAnimation->getDuration();
+      m_time += m_pCoreAnimation->duration;
 
   }
 

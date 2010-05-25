@@ -52,13 +52,13 @@ TEST(LoadSimpleXmlAnimation) {
 
   // Check animation.
 
-  CHECK_EQUAL(anim->numCoreTracks(), 1);
-  CHECK_EQUAL(anim->getDuration(), 40);
+  CHECK_EQUAL(anim->tracks.size(), 1);
+  CHECK_EQUAL(anim->duration, 40);
 
   // Check tracks.
 
-  CalCoreTrack* track1 = anim->nthCoreTrack(0);
-  CalCoreTrack* track2 = anim->getCoreTrack(/*boneid*/ 0);
+  CalCoreTrack* track1 = anim->tracks[0].get();
+  CalCoreTrack* track2 = anim->getCoreTrack(/*boneid*/ 0).get();
   CHECK(track1);
   CHECK_EQUAL(track1, track2);
 

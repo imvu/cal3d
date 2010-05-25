@@ -40,8 +40,6 @@ public:
   CalCoreTrack();
   ~CalCoreTrack();
 
-  void create();
-  void destroy();
   size_t size() const;
 
   bool getState(float time, CalVector& translation, CalQuaternion& rotation);
