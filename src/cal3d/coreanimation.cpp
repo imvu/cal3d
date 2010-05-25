@@ -18,11 +18,11 @@
 #include "cal3d/corebone.h"
 
 size_t sizeInBytes(const CalCoreTrackPtr& t) {
-    return sizeof(CalCoreTrackPtr) + t->size();
+    return sizeof(CalCoreTrackPtr) + t->sizeInBytes();
 }
 
-size_t CalCoreAnimation::size() {
-  return sizeof(*this) + sizeInBytes(tracks);
+size_t CalCoreAnimation::sizeInBytes() const {
+  return sizeof(*this) + ::sizeInBytes(tracks);
 }
 
 

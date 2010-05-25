@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include <fstream>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
@@ -1130,46 +1126,6 @@ CalLoader::usesAnimationCompression( int version )
   return (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION);
 }
 
-
-
-#if 0
-void
-TestAnimationCompression( CalCoreBone * coreboneOrNull, int version, 
-                         CalCoreKeyframe * prevCoreKeyframe,
-                         bool translationRequired, bool highRangeRequired, bool translationIsDynamic, 
-                         CalVector * translationInOut, 
-                         CalQuaternion * rotationInOut, 
-                         float * calTimeInOut )
-{
-  highRangeRequired = true;
-  bool needTranslation = true;
-  unsigned char buf[ 100 ];
-  unsigned char * p = buf;
-  std::string strFilename( "test" );
-  unsigned int bytesWritten = CalLoader::writeCompressedKeyframe( buf, 100, strFilename, * translationInOut, * rotationInOut, * calTimeInOut, 
-    Cal::CURRENT_FILE_VERSION, needTranslation, highRangeRequired );
-  assert( bytesWritten != 0 );
-  unsigned int bytesRead = CalLoader::readCompressedKeyframe( buf, bytesWritten, coreboneOrNull, 
-    translationInOut, rotationInOut, calTimeInOut,
-    prevCoreKeyframe,
-    translationRequired, highRangeRequired, translationIsDynamic,
-    useAnimationCompression);
-  assert( bytesWritten == bytesRead );
-}
-#endif
-
-
- /*****************************************************************************/
-/** Loads a core keyframe instance.
-  *
-  * This function loads a core keyframe instance from a data source.
-  *
-  * @param dataSrc The data source to load the core keyframe instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core keyframe
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreKeyframe *CalLoader::loadCoreKeyframe(
   CalDataSource& dataSrc, CalCoreBone * coreboneOrNull, int version, 

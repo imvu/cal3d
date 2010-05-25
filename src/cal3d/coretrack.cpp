@@ -19,9 +19,6 @@
 #include "cal3d/corekeyframe.h"
 #include "cal3d/loader.h"
 
-int CalCoreTrack::m_translationRequiredCount = 0;
-int CalCoreTrack::m_translationNotRequiredCount = 0;
-
 CalCoreTrack::CalCoreTrack()
   : m_coreBoneId(-1)
 {
@@ -34,8 +31,8 @@ size_t sizeInBytes(CalCoreKeyframe* const& t) {
   return sizeof(CalCoreKeyframe*) + sizeof(CalCoreKeyframe);
 }
 
-size_t CalCoreTrack::size() const {
-  return sizeof(CalCoreTrack) + sizeInBytes(m_keyframes);
+size_t CalCoreTrack::sizeInBytes() const {
+  return sizeof(CalCoreTrack) + ::sizeInBytes(m_keyframes);
 }
 
 CalCoreTrack::~CalCoreTrack()
@@ -301,11 +298,6 @@ CalCoreTrack::compress( double translationTolerance, double rotationToleranceDeg
       & m_translationIsDynamic, 
       & m_highRangeRequired,
       translationTolerance, CalLoader::keyframePosRangeSmall, skelOrNull );
-    if( m_translationRequired ) {
-      m_translationRequiredCount++;
-    } else {
-      m_translationNotRequiredCount++;
-    }
   }
 }
 

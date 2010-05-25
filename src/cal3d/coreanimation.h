@@ -20,7 +20,7 @@ class CalCoreSkeleton;
 class CAL3D_API CalCoreAnimation : public Cal::Object
 {
 public:
-  size_t size();
+  size_t sizeInBytes() const;
   void fillInvalidTranslations(CalCoreSkeleton* skel);
   CalCoreTrackPtr getCoreTrack(int coreBoneId);
   void scale(float factor);

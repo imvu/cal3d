@@ -133,7 +133,7 @@ public:
 
   CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
-  size_t size() const;
+  size_t sizeInBytes() const;
   int getCoreMaterialThreadId() const {
     return m_coreMaterialThreadId;
   }
@@ -230,3 +230,4 @@ private:
   std::vector<Influence> m_influences;
   CalAABox m_boundingVolume;
 };
+typedef boost::shared_ptr<CalCoreSubmesh> CalCoreSubmeshPtr;

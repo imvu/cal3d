@@ -17,13 +17,12 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
-size_t CalCoreMesh::size() const {
-    unsigned int r = sizeof(CalCoreMesh);
-    CalCoreSubmeshVector::const_iterator iter1;
-    for (iter1 = m_vectorCoreSubmesh.begin(); iter1 != m_vectorCoreSubmesh.end(); ++iter1) {
-        r += (*iter1)->size();
-    }
-    return r;
+size_t sizeInBytes(const CalCoreSubmeshPtr& submesh) {
+    return sizeof(CalCoreSubmeshPtr) + submesh->sizeInBytes();
+}
+
+size_t CalCoreMesh::sizeInBytes() const {
+    return sizeof(*this) + ::sizeInBytes(m_vectorCoreSubmesh);
 }
 
 int CalCoreMesh::addCoreSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh) {

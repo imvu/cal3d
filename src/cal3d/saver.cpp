@@ -83,7 +83,7 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
   }
 
   // write whether we're going to use compression.
-  bool useCompression = false;    // Default to off!  It causes many long animations to get mangled.
+  const bool useCompression = false;    // Default to off!  It causes many long animations to get mangled.
   if (Cal::versionHasCompressionFlag(Cal::CURRENT_FILE_VERSION)) {
     int useCompressionFlag = useCompression;
     if (!CalPlatform::writeInteger(file, useCompressionFlag)) {

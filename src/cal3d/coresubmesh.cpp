@@ -67,17 +67,17 @@ size_t sizeInBytes(const CalCoreSubmesh::InfluenceSet& is) {
     return sizeof(is) + sizeInBytes(is.influences);
 }
 
-size_t CalCoreSubmesh::size() const {
-  unsigned int r = sizeof(CalCoreSubmesh);
-  r += sizeInBytes(m_vertices);
-  r += sizeInBytes(m_vertexColors);
-  r += sizeInBytes(m_lodData);
-  r += sizeInBytes(m_influenceRanges);
-  r += sizeInBytes(m_vectorFace);
-  r += sizeInBytes(m_vectorSubMorphTargetGroupIndex);
-  r += sizeInBytes(m_influenceSetIds);
-  r += sizeInBytes(m_staticInfluenceSet);
-  r += sizeInBytes(m_influences);
+size_t CalCoreSubmesh::sizeInBytes() const {
+  size_t r = sizeof(*this);
+  r += ::sizeInBytes(m_vertices);
+  r += ::sizeInBytes(m_vertexColors);
+  r += ::sizeInBytes(m_lodData);
+  r += ::sizeInBytes(m_influenceRanges);
+  r += ::sizeInBytes(m_vectorFace);
+  r += ::sizeInBytes(m_vectorSubMorphTargetGroupIndex);
+  r += ::sizeInBytes(m_influenceSetIds);
+  r += ::sizeInBytes(m_staticInfluenceSet);
+  r += ::sizeInBytes(m_influences);
   return r;
 }
 

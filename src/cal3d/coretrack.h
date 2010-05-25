@@ -18,29 +18,12 @@ class CalCoreBone;
 class CalCoreKeyframe;
 class CalCoreSkeleton;
 
-
-class CAL3D_API CalCoreTrack : public Cal::Object
-{
-private:
-  /// The index of the associated CoreBone in the CoreSkeleton.
-  int m_coreBoneId;
-
-  // If translationRequired is false, then the translations are the same as the
-  // skeleton's translations.
-  bool m_translationRequired;
-  bool m_highRangeRequired;
-  bool m_translationIsDynamic;
-  static int m_translationRequiredCount;
-  static int m_translationNotRequiredCount;
-
-  /// List of keyframes, always sorted by time.
-  std::vector<CalCoreKeyframe*> m_keyframes;
-
+class CAL3D_API CalCoreTrack : public Cal::Object {
 public:
   CalCoreTrack();
   ~CalCoreTrack();
 
-  size_t size() const;
+  size_t sizeInBytes() const;
 
   bool getState(float time, CalVector& translation, CalQuaternion& rotation);
 
@@ -50,8 +33,6 @@ public:
   int getCoreKeyframeCount();
   CalCoreKeyframe* getCoreKeyframe(int idx);
 
-  static int translationRequiredCount() { return m_translationRequiredCount; }
-  static int translationNotRequiredCount() { return m_translationNotRequiredCount; }
   bool addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe);
   bool getTranslationRequired() { return m_translationRequired; }
   void setTranslationRequired( bool p ) { m_translationRequired = p; }
@@ -70,10 +51,24 @@ public:
   void collapseSequences( double translationTolerance, double rotationToleranceDegrees );
 
 private:
+  bool keyframeEliminatable(
+      CalCoreKeyframe* prev,
+      CalCoreKeyframe* p,
+      CalCoreKeyframe* next,
+      double translationTolerance,
+      double rotationToleranceDegrees);
 
-  bool keyframeEliminatable( CalCoreKeyframe * prev, CalCoreKeyframe * p, CalCoreKeyframe * next,
-	   double translationTolerance, double rotationToleranceDegrees);
-
-private:
   std::vector<CalCoreKeyframe*>::iterator getUpperBound(float time);
+
+  /// The index of the associated CoreBone in the CoreSkeleton.
+  int m_coreBoneId;
+
+  // If translationRequired is false, then the translations are the same as the
+  // skeleton's translations.
+  bool m_translationRequired;
+  bool m_highRangeRequired;
+  bool m_translationIsDynamic;
+
+  /// List of keyframes, always sorted by time.
+  std::vector<CalCoreKeyframe*> m_keyframes;
 };
