@@ -35,7 +35,6 @@
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"
 
-int CalLoader::loadingMode;
 double CalLoader::translationTolerance = 0.25;
 double CalLoader::rotationToleranceDegrees = 0.1;
 bool CalLoader::loadingCompressionOn = false;
@@ -88,11 +87,6 @@ TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired
   return ( translationRequired && ( !lastCoreKeyframe || translationIsDynamic ) );
 }
 
-
-void CalLoader::setLoadingMode(int flags)
-{
-    loadingMode = flags;
-}
 
 CalCoreAnimationPtr CalLoader::loadCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
 {
@@ -822,19 +816,6 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
   CalQuaternion rotbs(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
   CalVector trans(tx,ty,tz);
 
-  if (loadingMode & LOADER_ROTATE_X_AXIS)
-  {
-    if (parentId == -1) // only root bone necessary
-    {
-      // Root bone must have quaternion rotated
-      CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
-      rot *= x_axis_90;
-      // Root bone must have translation rotated also
-      trans *= x_axis_90;
-    }
-  }
-  
-
   // check if an error happened
   if(!dataSrc.ok())
   {
@@ -1330,11 +1311,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       dataSrc.readFloat(textureCoordinate.u);
       dataSrc.readFloat(textureCoordinate.v);
 
-      if (loadingMode & LOADER_INVERT_V_COORD)
-      {
-          textureCoordinate.v = 1.0f - textureCoordinate.v;
-      }
-
       // check if an error happened
       if(!dataSrc.ok())
       {
@@ -1447,10 +1423,6 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
           dataSrc.readFloat(textureCoordinate.u);
           dataSrc.readFloat(textureCoordinate.v);
 
-          if (loadingMode & LOADER_INVERT_V_COORD)
-          {
-            textureCoordinate.v = 1.0f - textureCoordinate.v;
-          }
           Vertex.textureCoords.push_back(textureCoordinate);
         }
         if( ! dataSrc.ok() ) {
@@ -1515,22 +1487,12 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
   return pCoreSubmesh;
 }
 
- /*****************************************************************************/
-/** Loads a core track instance.
-  *
-  * This function loads a core track instance from a data source.
-  *
-  * @param dataSrc The data source to load the core track instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core track
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreTrack *CalLoader::loadCoreTrack(
-  CalDataSource& dataSrc, CalCoreSkeleton *skel,
-  int version, bool useAnimationCompression)
-{
+CalCoreTrack* CalLoader::loadCoreTrack(
+  CalDataSource& dataSrc,
+  CalCoreSkeleton *skel,
+  int version,
+  bool useAnimationCompression
+) {
   if(!dataSrc.ok())
   {
     dataSrc.setError();
@@ -1577,16 +1539,8 @@ CalCoreTrack *CalLoader::loadCoreTrack(
     }
   }
 
-// allocate a new core track instance
-  CalCoreTrack *pCoreTrack;
-  pCoreTrack = new CalCoreTrack();
-  if(pCoreTrack == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
+  CalCoreTrack* pCoreTrack = new CalCoreTrack();
 
-  // link the core track to the appropriate core bone instance
   pCoreTrack->setCoreBoneId(coreBoneId);
   CalCoreBone * cb = NULL;
   if( skel ) {
@@ -1595,9 +1549,8 @@ CalCoreTrack *CalLoader::loadCoreTrack(
 
 
   // load all core keyframes
-  int keyframeId;
-  CalCoreKeyframe * lastCoreKeyframe = NULL;
-  for(keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
+  CalCoreKeyframe* lastCoreKeyframe = NULL;
+  for(int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
   {
     // load the core keyframe
     CalCoreKeyframe *pCoreKeyframe = loadCoreKeyframe(
@@ -1609,23 +1562,6 @@ CalCoreTrack *CalLoader::loadCoreTrack(
       delete pCoreTrack;
       return 0;
     }
-    if (loadingMode & LOADER_ROTATE_X_AXIS)
-    {
-      // Check for anim rotation
-      if (skel && skel->getCoreBone(coreBoneId)->getParentId() == -1)  // root bone
-      {
-        // rotate root bone quaternion
-        CalQuaternion rot = pCoreKeyframe->rotation;
-        CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
-        rot *= x_axis_90;
-        pCoreKeyframe->rotation = rot;
-        // rotate root bone displacement
-        CalVector vec = pCoreKeyframe->translation;
-	vec *= x_axis_90;
-        pCoreKeyframe->translation = vec;
-      }
-    }    
-
     // add the core keyframe to the core track instance
     pCoreTrack->addCoreKeyframe(pCoreKeyframe);
   }

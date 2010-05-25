@@ -32,13 +32,6 @@ class CalCoreMaterial;
 class CalVector;
 class CalQuaternion;
 
-enum
-{
-    LOADER_ROTATE_X_AXIS = 1,
-    LOADER_INVERT_V_COORD = 2
-};
-
-
 bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec );
 
 class CAL3D_API CalLoader
@@ -82,7 +75,6 @@ public:
   static CalCoreMesh *loadCoreMesh(CalDataSource& inputSrc);
   static CalCoreSkeleton *loadCoreSkeleton(CalDataSource& inputSrc);
 
-  static void setLoadingMode(int flags);
   static void setAnimationCollapseSequencesOn( bool p );
   static void setAnimationLoadingCompressionOn( bool p );
   static void setAnimationTranslationTolerance( double p );
@@ -147,7 +139,6 @@ private:
   static CalCoreTrack *loadCoreTrack(CalDataSource & dataSrc, CalCoreSkeleton * skel, int version, bool useAnimationCompresssion);
   static CalCoreMorphTrack *loadCoreMorphTrack(CalDataSource& dataSrc);
 
-  static int loadingMode;
   static double translationTolerance;
   static double rotationToleranceDegrees;
   static bool loadingCompressionOn;

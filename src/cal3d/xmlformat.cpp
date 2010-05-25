@@ -89,7 +89,6 @@ static inline bool TexCoordFromXml(
     TiXmlElement * texcoord,
     char const * tag,
     CalCoreSubmesh::TextureCoordinate * texCoord,
-    int loadingMode,
     CalCoreMesh * pCoreMesh,
     const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
 {
@@ -108,10 +107,6 @@ static inline bool TexCoordFromXml(
 
     ReadPair( texcoorddata->Value(), &texCoord->u, &texCoord->v );
 
-    if (loadingMode & LOADER_INVERT_V_COORD)
-    {
-        texCoord->v = 1.0f - texCoord->v;
-    }
     return true;
 }
 
@@ -586,19 +581,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, rw);
 
-        if (loadingMode & LOADER_ROTATE_X_AXIS)
-        {
-            if (parentId == -1) // only root bone necessary
-            {
-                // Root bone must have quaternion rotated
-                CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
-                rot *= x_axis_90;
-                // Root bone must have translation rotated also
-                trans *= x_axis_90;
-            }
-        }   
-
-
         pCoreBone->setTranslation(trans);
         pCoreBone->setRotation(rot);
         pCoreBone->setTranslationBoneSpace(CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace));
@@ -922,23 +904,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             pCoreKeyframe->translation = CalVector(tx, ty, tz);
             pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
             prevCoreKeyframe = pCoreKeyframe;
-
-            if (loadingMode & LOADER_ROTATE_X_AXIS)
-            {
-                // Check for anim rotation
-                if (skel && skel->getCoreBone(coreBoneId)->getParentId() == -1)  // root bone
-                {
-                    // rotate root bone quaternion
-                    CalQuaternion rot = pCoreKeyframe->rotation;
-                    CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
-                    rot *= x_axis_90;
-                    pCoreKeyframe->rotation = rot;
-                    // rotate root bone displacement
-                    CalVector trans = pCoreKeyframe->translation;
-                    trans *= x_axis_90;
-                    pCoreKeyframe->translation = trans;
-                }
-            }    
 
             // add the core keyframe to the core track instance
             pCoreTrack->addCoreKeyframe(pCoreKeyframe);
@@ -1317,12 +1282,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 
                 ReadPair( texcoorddata->Value(), &textureCoordinate.u, &textureCoordinate.v );
 
-                if (loadingMode & LOADER_INVERT_V_COORD)
-                {
-                    textureCoordinate.v = 1.0f - textureCoordinate.v;
-                }
-
-
                 // set texture coordinate in the core submesh instance
                 pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinateId, textureCoordinate);
                 texcoord = texcoord->NextSiblingElement();
@@ -1445,7 +1404,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
                                 texcoord,
                                 "TEXCOORD",
                                 &textureCoordinate, 
-                                loadingMode,
                                 pCoreMesh,
                                 pCoreSubmesh)
                         ) {
