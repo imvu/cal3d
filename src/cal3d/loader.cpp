@@ -1268,9 +1268,9 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
   }
 
   // set all attributes of the keyframe
-  pCoreKeyframe->setTime(time);
-  pCoreKeyframe->setTranslation(CalVector(tx, ty, tz));
-  pCoreKeyframe->setRotation(CalQuaternion(rx, ry, rz, rw));
+  pCoreKeyframe->time = time;
+  pCoreKeyframe->translation = CalVector(tx, ty, tz);
+  pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
 
   return pCoreKeyframe;
 }
@@ -1353,7 +1353,7 @@ CalLoader::readCompressedKeyframe(
     // they are the same for all the keyframes in the track, though different from the skeleton), then
     // just use the translation from the last keyframe.
     if( lastCoreKeyframe && !translationIsDynamic ) {
-      * vecResult = lastCoreKeyframe->getTranslation();
+      * vecResult = lastCoreKeyframe->translation;
     } else {
       unsigned int data;
       float tx, ty, tz;
@@ -1971,14 +1971,14 @@ CalCoreTrack *CalLoader::loadCoreTrack(
       if (skel && skel->getCoreBone(coreBoneId)->getParentId() == -1)  // root bone
       {
         // rotate root bone quaternion
-        CalQuaternion rot = pCoreKeyframe->getRotation();
+        CalQuaternion rot = pCoreKeyframe->rotation;
         CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
         rot *= x_axis_90;
-        pCoreKeyframe->setRotation(rot);
+        pCoreKeyframe->rotation = rot;
         // rotate root bone displacement
-        CalVector vec = pCoreKeyframe->getTranslation();
-	    vec *= x_axis_90;
-        pCoreKeyframe->setTranslation(vec);
+        CalVector vec = pCoreKeyframe->translation;
+	vec *= x_axis_90;
+        pCoreKeyframe->translation = vec;
       }
     }    
 

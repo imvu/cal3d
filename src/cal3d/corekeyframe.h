@@ -14,21 +14,13 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-class CAL3D_API CalCoreKeyframe : public Cal::Object
-{
+class CalCoreKeyframe {
 public:
-  CalCoreKeyframe();
+  CalCoreKeyframe() {
+    time = 0.0f;
+  }
 
-  size_t size() const { return sizeof(*this); }
-  const CalQuaternion& getRotation();
-  float getTime();
-  const CalVector& getTranslation();
-  void setRotation(const CalQuaternion& rotation);
-  void setTime(float time);
-  void setTranslation(const CalVector& translation);
-
-private:
-  float m_time;
-  CalVector m_translation;
-  CalQuaternion m_rotation;
+  float time;
+  CalVector translation;
+  CalQuaternion rotation;
 };

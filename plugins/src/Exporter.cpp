@@ -186,7 +186,7 @@ OutputDebugString(str);
 				}
 
 				// set the frame time
-				pCoreKeyframe->setTime((float)outputFrame / (float)sheet.GetFps() + wrapTime);
+				pCoreKeyframe->time = (float)outputFrame / (float)sheet.GetFps() + wrapTime;
 
 				// get the translation and the rotation of the bone candidate
 				CalVector translation;
@@ -194,8 +194,8 @@ OutputDebugString(str);
 				skeletonCandidate.GetTranslationAndRotation(boneCandidateId, time, translation, rotation);
 
 				// set the translation and rotation
-				pCoreKeyframe->setTranslation(translation);
-				pCoreKeyframe->setRotation(rotation);
+				pCoreKeyframe->translation = translation;
+				pCoreKeyframe->rotation = rotation;
 
 				// get the core track for this bone candidate
 				CalCoreTrackPtr pCoreTrack = coreAnimation.getCoreTrack(pBoneCandidate->GetId());

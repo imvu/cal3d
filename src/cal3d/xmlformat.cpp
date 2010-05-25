@@ -860,7 +860,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             // values for all but the first frame, and for each frame's translation I will
             // copy the translation from the previous frame.
             if( prevCoreKeyframe && !translationIsDynamic && translationRequired ) {
-                CalVector const & vec = prevCoreKeyframe->getTranslation();
+                CalVector const & vec = prevCoreKeyframe->translation;
                 tx = vec.x;
                 ty = vec.y;
                 tz = vec.z;
@@ -929,9 +929,9 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             }
 
             // set all attributes of the keyframe
-            pCoreKeyframe->setTime(time);
-            pCoreKeyframe->setTranslation(CalVector(tx, ty, tz));
-            pCoreKeyframe->setRotation(CalQuaternion(rx, ry, rz, rw));
+            pCoreKeyframe->time = time;
+            pCoreKeyframe->translation = CalVector(tx, ty, tz);
+            pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
             prevCoreKeyframe = pCoreKeyframe;
 
             if (loadingMode & LOADER_ROTATE_X_AXIS)
@@ -940,14 +940,14 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
                 if (skel && skel->getCoreBone(coreBoneId)->getParentId() == -1)  // root bone
                 {
                     // rotate root bone quaternion
-                    CalQuaternion rot = pCoreKeyframe->getRotation();
+                    CalQuaternion rot = pCoreKeyframe->rotation;
                     CalQuaternion x_axis_90(0.7071067811f,0.0f,0.0f,0.7071067811f);
                     rot *= x_axis_90;
-                    pCoreKeyframe->setRotation(rot);
+                    pCoreKeyframe->rotation = rot;
                     // rotate root bone displacement
-                    CalVector trans = pCoreKeyframe->getTranslation();
+                    CalVector trans = pCoreKeyframe->translation;
                     trans *= x_axis_90;
-                    pCoreKeyframe->setTranslation(trans);
+                    pCoreKeyframe->translation = trans;
                 }
             }    
 

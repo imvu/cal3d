@@ -31,7 +31,7 @@ CalCoreTrack::CalCoreTrack()
 }
 
 size_t sizeInBytes(CalCoreKeyframe* const& t) {
-    return sizeof(CalCoreKeyframe*) + t->size();
+  return sizeof(CalCoreKeyframe*) + sizeof(CalCoreKeyframe);
 }
 
 size_t CalCoreTrack::size() const {
@@ -62,7 +62,7 @@ bool CalCoreTrack::addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe)
 {
   m_keyframes.push_back(pCoreKeyframe);
   int idx = m_keyframes.size() - 1;
-  while (idx > 0 && m_keyframes[idx]->getTime() < m_keyframes[idx - 1]->getTime()) {
+  while (idx > 0 && m_keyframes[idx]->time < m_keyframes[idx - 1]->time) {
     std::swap(m_keyframes[idx], m_keyframes[idx - 1]);
     --idx;
   }
@@ -130,8 +130,8 @@ CalCoreTrack::roundTranslation( CalCoreKeyframe const * prevp, CalCoreKeyframe *
   assert( prev && p );
 
   // blend between the two keyframes
-  translation = prev->getTranslation();
-  CalVector const ppos = p->getTranslation();
+  translation = prev->translation;
+  CalVector const ppos = p->translation;
   float dist = Distance( translation, ppos );
 
   // Identical returns false.
@@ -139,7 +139,7 @@ CalCoreTrack::roundTranslation( CalCoreKeyframe const * prevp, CalCoreKeyframe *
 
   // Compare with tolerance.
   if( dist < transTolerance ) { // equal case handled above.
-    p->setTranslation( translation );
+    p->translation = translation;
     return true;
   } else {
     return false;
@@ -156,17 +156,17 @@ CalCoreTrack::keyframeEliminatable( CalCoreKeyframe * prev,
   CalVector translation;
   CalQuaternion rotation;
   assert( prev && p && next );
-  float time = p->getTime();
+  float time = p->time;
   float blendFactor;
-  blendFactor = ( time - prev->getTime() ) / ( next->getTime() - prev->getTime() );
+  blendFactor = ( time - prev->time ) / ( next->time - prev->time );
 
   // blend between the two keyframes
-  translation = prev->getTranslation();
-  translation.blend( blendFactor, next->getTranslation() );
-  rotation = prev->getRotation();
-  rotation.blend( blendFactor, next->getRotation() );
-  CalVector const ppos = p->getTranslation();
-  CalQuaternion const pori = p->getRotation();
+  translation = prev->translation;
+  translation.blend( blendFactor, next->translation );
+  rotation = prev->rotation;
+  rotation.blend( blendFactor, next->rotation );
+  CalVector const ppos = p->translation;
+  CalQuaternion const pori = p->rotation;
   return Near( translation, rotation, ppos, pori, transTolerance, rotTolerance );
 }
 
@@ -182,13 +182,13 @@ struct KeyLink {
 unsigned int
 KeyFrameSequenceLength( KeyLink * p, double transTolerance, double rotTolerance )
 {
-  CalVector translation = p->keyframe_->getTranslation();
-  CalQuaternion rotation = p->keyframe_->getRotation();
+  CalVector translation = p->keyframe_->translation;
+  CalQuaternion rotation = p->keyframe_->rotation;
   p = p->next_;
   unsigned int len = 1;
   while( p ) {
-    CalVector const ppos = p->keyframe_->getTranslation();
-    CalQuaternion const pori = p->keyframe_->getRotation();
+    CalVector const ppos = p->keyframe_->translation;
+    CalQuaternion const pori = p->keyframe_->rotation;
     if( Near( translation, rotation, ppos, pori, transTolerance, rotTolerance ) ) {
       len++;
       p = p->next_;
@@ -400,9 +400,9 @@ CalCoreTrack::fillInvalidTranslations( CalVector const & trans )
   int numFrames = m_keyframes.size();
   for( unsigned i = 0; i < numFrames; i++ ) {
     CalCoreKeyframe * keyframe = m_keyframes[ i ];
-    const CalVector & kftrans = keyframe->getTranslation();
+    const CalVector & kftrans = keyframe->translation;
     if( TranslationInvalid( kftrans ) ) {
-      keyframe->setTranslation( trans );
+      keyframe->translation = trans;
     }
   }
 }
@@ -424,14 +424,14 @@ CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * tra
   unsigned int i;
   for( i = 0; i < numFrames; i++ ) {
     CalCoreKeyframe * keyframe = m_keyframes[ i ];
-    const CalVector & kftrans = keyframe->getTranslation();
+    const CalVector & kftrans = keyframe->translation;
     if( fabsf( kftrans.x ) >= highRangeThreshold
       ||  fabsf( kftrans.y ) >= highRangeThreshold
       ||  fabsf( kftrans.z ) >= highRangeThreshold ) {
       * highRangeRequiredResult = true;
     }
     if( i == 0 ) {
-      trans0 = keyframe->getTranslation();
+      trans0 = keyframe->translation;
     } else {
       float d2 = DistanceSquared( trans0, kftrans );
       if( d2 > t2 ) {
@@ -491,8 +491,8 @@ bool CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
   {
     // return the last keyframe state
     --iteratorCoreKeyframeAfter;
-    rotation = (*iteratorCoreKeyframeAfter)->getRotation();
-    translation = (*iteratorCoreKeyframeAfter)->getTranslation();
+    rotation = (*iteratorCoreKeyframeAfter)->rotation;
+    translation = (*iteratorCoreKeyframeAfter)->translation;
 
     return true;
   }
@@ -501,8 +501,8 @@ bool CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
   if(iteratorCoreKeyframeAfter == m_keyframes.begin())
   {
     // return the first keyframe state
-    rotation = (*iteratorCoreKeyframeAfter)->getRotation();
-    translation = (*iteratorCoreKeyframeAfter)->getTranslation();
+    rotation = (*iteratorCoreKeyframeAfter)->rotation;
+    translation = (*iteratorCoreKeyframeAfter)->translation;
 
     return true;
   }
@@ -519,14 +519,14 @@ bool CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
 
   // calculate the blending factor between the two keyframe states
   float blendFactor;
-  blendFactor = (time - pCoreKeyframeBefore->getTime()) / (pCoreKeyframeAfter->getTime() - pCoreKeyframeBefore->getTime());
+  blendFactor = (time - pCoreKeyframeBefore->time) / (pCoreKeyframeAfter->time - pCoreKeyframeBefore->time);
 
   // blend between the two keyframes
-  translation = pCoreKeyframeBefore->getTranslation();
-  translation.blend(blendFactor, pCoreKeyframeAfter->getTranslation());
+  translation = pCoreKeyframeBefore->translation;
+  translation.blend(blendFactor, pCoreKeyframeAfter->translation);
 
-  rotation = pCoreKeyframeBefore->getRotation();
-  rotation.blend(blendFactor, pCoreKeyframeAfter->getRotation());
+  rotation = pCoreKeyframeBefore->rotation;
+  rotation.blend(blendFactor, pCoreKeyframeAfter->rotation);
 
   return true;
 }
@@ -541,7 +541,7 @@ std::vector<CalCoreKeyframe*>::iterator CalCoreTrack::getUpperBound(float time)
   {
 	  int middle = (lowerBound+upperBound)/2;
 
-	  if(time >= m_keyframes[middle]->getTime())
+	  if(time >= m_keyframes[middle]->time)
 	  {
 		  lowerBound=middle;
 	  }
@@ -609,9 +609,9 @@ void CalCoreTrack::scale(float factor)
 	int keyframeId;
 	for(keyframeId = 0; keyframeId < m_keyframes.size(); keyframeId++)
 	{
-		CalVector translation = m_keyframes[keyframeId]->getTranslation();
+		CalVector translation = m_keyframes[keyframeId]->translation;
 		translation*=factor;
-		m_keyframes[keyframeId]->setTranslation(translation);
+		m_keyframes[keyframeId]->translation = translation;
 	}
 
 }
