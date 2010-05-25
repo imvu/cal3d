@@ -1389,85 +1389,6 @@ CalLoader::readCompressedKeyframe(
 
 
 
-unsigned int
-CalLoader::writeCompressedKeyframe( unsigned char * buf, unsigned int bufLen, const std::string& strFilename, 
-                            CalVector const & translation, CalQuaternion const & rotation, float caltime,
-                            int version, 
-                            bool translationWritten, bool highRangeRequired )
-{
-  assert( CalLoader::usesAnimationCompression( version ) );
-  assert( bufLen >= CalLoader::keyframePosBytes );
-  
-  // Write the translation iff necessary.
-  float posRange;
-  unsigned int posBits;
-  unsigned int padBits;
-  unsigned int bytesRequired;
-  unsigned int bytesWritten = 0;
-  if( highRangeRequired ) {
-    padBits = CalLoader::keyframeBitsPerPosPadding;
-    posBits = CalLoader::keyframeBitsPerUnsignedPosComponent;
-    posRange = CalLoader::keyframePosRange;
-    bytesRequired = CalLoader::keyframePosBytes;
-  } else {
-    padBits = CalLoader::keyframeBitsPerPosPaddingSmall;
-    posBits = CalLoader::keyframeBitsPerUnsignedPosComponentSmall;
-    posRange = CalLoader::keyframePosRangeSmall;
-    bytesRequired = CalLoader::keyframePosBytesSmall;
-  }
-  if( translationWritten ) {
-    BitWriter bw( buf );
-    float len;
-    unsigned int sign;
-    unsigned int data = 0;
-    unsigned int i;
-    for( i = 0; i < 3; i++ ) {
-      sign = 0;
-      len = translation[ i ] / posRange;
-      if( len < 0.0f ) {
-        sign = 1;
-        len = - len;
-      }
-      if( len > 1.0f ) {
-        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-        return 0;
-      }
-      data = FloatZeroToOneToFixedPoint( len, posBits );
-      bw.write( data, posBits );
-      bw.write( sign, 1 );
-    }
-    
-    // Now even it off to 4 or 8 bytes, depending on highRangeRequired.
-    bw.write( data, padBits );
-    assert( bw.bytesWritten() == bytesRequired );
-    buf += bytesRequired;
-    bytesWritten += bytesRequired;
-  }
-  
-  // Write the quat and time.
-  float wquat[] = { rotation.x, rotation.y, rotation.z, rotation.w };
-
-  unsigned int steps = ( unsigned int ) floor( caltime * 30 + 0.5 );
-
-  /*
-  Removed the animation time limit so Matt can do his ice skating room.
-
-  if( steps >= keyframeTimeMax ) {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-    return 0;
-  }
-  */
-
-  unsigned int bw = WriteQuatAndExtra( buf, wquat, steps, CalLoader::keyframeBitsPerOriComponent, CalLoader::keyframeBitsPerTime );
-  (void)bw;
-  assert( bw == 6 );
-  buf += 6;
-  bytesWritten += 6;
-  return bytesWritten;
-}
-
-
-
  /*****************************************************************************/
 /** Loads a core morphKeyframe instance.
   *
@@ -2036,39 +1957,6 @@ CalCoreMorphTrack *CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc)
   }
 
   return pCoreMorphTrack;
-}
-
-
-
-void
-BitWriter::write( unsigned int data, unsigned int numBits )
-{
-  // I write out full bytes, so the most bits I can have residually is 7.
-  assert( bitsInBuf_ <= 7 );
-
-  // 7 + 25 = 32.
-  assert( numBits <= 25 );
-  buf_ |= ( data << bitsInBuf_ );
-  bitsInBuf_ += numBits;
-
-  // Write it out low order byte first.
-  while( bitsInBuf_ >= 8 ) {
-    dest_[ bytesWritten_ ] = ( unsigned char ) buf_;
-    buf_ >>= 8;
-    bitsInBuf_ -= 8;
-    bytesWritten_++;
-  }
-}
-
-void
-BitWriter::flush()
-{
-  if( bitsInBuf_ != 0 ) {
-    dest_[ bytesWritten_ ] = ( unsigned char ) buf_;
-    bytesWritten_++;
-    bitsInBuf_ = 0;
-    dest_ = NULL;
-  }
 }
 
 void 

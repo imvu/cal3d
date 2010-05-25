@@ -82,10 +82,8 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
     return false;
   }
 
-  // write whether we're going to use compression.
-  const bool useCompression = false;    // Default to off!  It causes many long animations to get mangled.
   if (Cal::versionHasCompressionFlag(Cal::CURRENT_FILE_VERSION)) {
-    int useCompressionFlag = useCompression;
+    int useCompressionFlag = 0; // no compression
     if (!CalPlatform::writeInteger(file, useCompressionFlag)) {
       CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
       return false;
@@ -114,7 +112,7 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
     // save core track
-    if(!saveCoreTrack(file, strFilename, iteratorCoreTrack->get(), useCompression, version))
+    if(!saveCoreTrack(file, strFilename, iteratorCoreTrack->get(), version))
     {
       return false;
     }
@@ -320,7 +318,7 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
 
 bool 
 CalSaver::saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreKeyframe *pCoreKeyframe, int version, 
-                           bool translationWritten, bool highRangeRequired, bool useAnimationCompression)
+                           bool translationWritten, bool highRangeRequired)
 {
   if(!file)
   {
@@ -331,46 +329,19 @@ CalSaver::saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, 
   const CalQuaternion& rotation = pCoreKeyframe->rotation;
   float caltime = pCoreKeyframe->time;
  
-  if (useAnimationCompression) {
-    unsigned char buf[ 100 ];
-    unsigned int bytesWritten = CalLoader::writeCompressedKeyframe( buf, 100, strFilename, 
-      translation, rotation, caltime, 
-      version, translationWritten, highRangeRequired );
-    if( bytesWritten == 0 ) return false;
-    CalPlatform::writeBytes( file, buf, bytesWritten );
-    if(version < Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION6 ) {
-      if(version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION4 ) {
-        if( version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION5 ) {
-          if( translationWritten ) {
-            CalPlatform::writeFloat(file, translation[0]);
-            CalPlatform::writeFloat(file, translation[1]);
-            CalPlatform::writeFloat(file, translation[2]);
-          }
-        }
-        
-        // write the rotation of the keyframe
-        CalPlatform::writeFloat(file, rotation[0]);
-        CalPlatform::writeFloat(file, rotation[1]);
-        CalPlatform::writeFloat(file, rotation[2]);
-        CalPlatform::writeFloat(file, rotation[3]);
-      }
-    }
-  } else {
+  // write the time of the keyframe
+  CalPlatform::writeFloat(file, caltime);
     
-    // write the time of the keyframe
-    CalPlatform::writeFloat(file, caltime );
+  // write the translation of the keyframe
+  CalPlatform::writeFloat(file, translation[0]);
+  CalPlatform::writeFloat(file, translation[1]);
+  CalPlatform::writeFloat(file, translation[2]);
     
-    // write the translation of the keyframe
-    CalPlatform::writeFloat(file, translation[0]);
-    CalPlatform::writeFloat(file, translation[1]);
-    CalPlatform::writeFloat(file, translation[2]);
-    
-    // write the rotation of the keyframe
-    CalPlatform::writeFloat(file, rotation[0]);
-    CalPlatform::writeFloat(file, rotation[1]);
-    CalPlatform::writeFloat(file, rotation[2]);
-    CalPlatform::writeFloat(file, rotation[3]);
-  }
+  // write the rotation of the keyframe
+  CalPlatform::writeFloat(file, rotation[0]);
+  CalPlatform::writeFloat(file, rotation[1]);
+  CalPlatform::writeFloat(file, rotation[2]);
+  CalPlatform::writeFloat(file, rotation[3]);
 
   // check if an error happend
   if(!file)
@@ -888,7 +859,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack, bool useAnimationCompression, int version)
+bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack, int version)
 {
   if(!file)
   {
@@ -902,38 +873,18 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
   bool highRangeRequired = pCoreTrack->getHighRangeRequired();
   bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
 
-  // Write the bone id.
-  if( useAnimationCompression ) {
-    int coreBoneId = pCoreTrack->getCoreBoneId();
-    int numKeyframes = pCoreTrack->getCoreKeyframeCount();
-    unsigned char buf[ 4 ];
-    buf[ 0 ] = coreBoneId & 0xff;
-    buf[ 1 ] = ( ( coreBoneId >> 8 ) & 0x1f ) 
-      + ( translationRequired ? 0x80 : 0 )
-      + ( highRangeRequired ? 0x40 : 0 )
-      + ( translationIsDynamic ? 0x20 : 0 );
-    buf[ 2 ] = numKeyframes & 0xff;
-    buf[ 3 ] = ( numKeyframes >> 8 ) & 0xff;
-    if( !CalPlatform::writeBytes( file, buf, 4 ) ) {
-      CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      return false;
-    }
-  } else {
-
     // Write the coreBoneId.
-    if(!CalPlatform::writeInteger(file, pCoreTrack->getCoreBoneId())) {
-      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-      return false;
-    }
-
-    // Write the number of keyframes
-    if(!CalPlatform::writeInteger(file, pCoreTrack->getCoreKeyframeCount()))
-    {
-      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-      return false;
-    }
+  if(!CalPlatform::writeInteger(file, pCoreTrack->getCoreBoneId())) {
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    return false;
   }
 
+  // Write the number of keyframes
+  if(!CalPlatform::writeInteger(file, pCoreTrack->getCoreKeyframeCount()))
+  {
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    return false;
+  }
 
   // save all core keyframes
   for(int i = 0; i < pCoreTrack->getCoreKeyframeCount(); ++i)
@@ -946,7 +897,7 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
       translationWritten = false;
     }
     if(!saveCoreKeyframe(file, strFilename, pCoreTrack->getCoreKeyframe(i), version,
-                         translationWritten, highRangeRequired, useAnimationCompression))
+                         translationWritten, highRangeRequired))
     {
       return false;
     }

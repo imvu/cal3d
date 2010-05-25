@@ -112,10 +112,6 @@ public:
     CalCoreKeyframe * lastCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
     bool useAnimationCompression);
-  static unsigned int writeCompressedKeyframe( unsigned char * buf, unsigned int bufLen, const std::string& strFilename, 
-    CalVector const & translation, CalQuaternion const & rotation, float caltime,
-    int version, 
-    bool needTranslation, bool highRangeRequired );
   static void compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel );
 
   // xmlformat.cpp
@@ -166,25 +162,6 @@ private:
 };
 
 
-class BitWriter {
-public:
-  BitWriter( unsigned char * dest ) {
-    dest_ = dest;
-    buf_ = 0;
-    bitsInBuf_ = 0;
-    bytesWritten_ = 0;
-  }
-  void write( unsigned int data, unsigned int numBits );
-  void flush();
-  inline unsigned int bytesWritten() { return bytesWritten_; }
-private:
-  unsigned int buf_;
-  unsigned int bitsInBuf_;
-  unsigned int bytesWritten_;
-  unsigned char * dest_;
-};
-
-
 class BitReader {
 public:
   BitReader( unsigned char const * source ) {
@@ -221,93 +198,11 @@ BitReader::read( unsigned int * data, unsigned int numBits )
   bitsInBuf_ -= numBits;
 }
 
-inline unsigned int
-FloatZeroToOneToFixedPoint( float zeroToOne, unsigned int numBits )
-{
-
-  // Consider the case of numBits = 2.
-  // Then maxVal = 3.
-  // The fractional values convert to fixed point at these thresholds:
-  //
-  //    0/1 --> 0
-  //    1/6 --> 1
-  //    3/6 --> 2
-  //    5/6 --> 3
-  //
-  // Then they convert back by:
-  //
-  //    0 --> 0/1
-  //    1 --> 1/3
-  //    2 --> 2/3
-  //    3 --> 1/1
-  //
-  // Note that we can represent the endpoints inclusively.  However, the midway value
-  // is right on a threshold, and will get rounded up:
-  //
-  //    1/2 --> 2 --> 2/3.
-  //
-  // Thus while endpoints are represented accurately in fixed point, the midpoint will not be.
-  unsigned int maxVal = ( 1 << numBits ) - 1;
-  return ( unsigned int ) ( maxVal * zeroToOne + 0.5f );
-}
-
 inline float
 FixedPointToFloatZeroToOne( unsigned int fixedPoint, unsigned int numBits )
 {
   unsigned int maxVal = ( 1 << numBits ) - 1;
   return ( float ) fixedPoint / maxVal;
-}
-
-
-
-// Return the number of bytes written.
-inline unsigned int
-WriteQuatAndExtra( unsigned char * dest, float const * vals, unsigned int extra,
-                 unsigned int bitsPerComponent, unsigned int bitsPerExtra )
-{
-  float absVals[] = { fabsf( vals[ 0 ] ), fabsf( vals[ 1 ] ), fabsf( vals[ 2 ] ), fabsf( vals[ 3 ] ) };
-
-  // Calculate largest magnitude component.
-  unsigned int i;
-  unsigned int bigi = 0;
-  float biggest = absVals[ bigi ];
-  for( i = 1; i < 4; i++ ) {
-    if( absVals[ i ] > biggest ) {
-      biggest = absVals[ i ];
-      bigi = i;
-    }
-  }
-
-  // If largest component is negative, reverse sign of all components including largest, so
-  // that I can assume largest in result is non-negative.
-  unsigned int signOne = ( vals[ bigi ] < 0 ) ? 0 : 1;
-  unsigned int signZero = 1 - signOne;
-
-  // Format: 
-  // selection (2), 
-  // asign (1), afixed (n), 
-  // bsign (1), bfixed (n), 
-  // csign (1), cfixed (n), 
-  // extra
-  BitWriter bw( dest );
-  bw.write( bigi, 2 );
-  for( i = 0; i < 4; i++ ) {
-    if( i != bigi ) {
-
-      // Add the sign bit for the component.
-      if( vals[ i ] < 0 ) {
-        bw.write( signOne, 1 );
-      } else {
-        bw.write( signZero, 1 );
-      }
-
-      // Add the fixed point bits.
-      bw.write( FloatZeroToOneToFixedPoint( absVals[ i ], bitsPerComponent ), bitsPerComponent );
-    }
-  }
-  bw.write( extra, bitsPerExtra );
-  bw.flush();
-  return bw.bytesWritten();
 }
 
 
