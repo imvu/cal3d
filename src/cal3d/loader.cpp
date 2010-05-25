@@ -110,8 +110,10 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(const std::string& strFilename,
     return CalCoreAnimationPtr();
   }
 
+  CalStreamSource streamSource = CalStreamSource(file);
+
   return loadCoreAnimation(
-    CalStreamSource(file),
+    streamSource,
     skel);
 }
 
