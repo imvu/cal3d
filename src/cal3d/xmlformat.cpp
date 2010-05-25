@@ -294,7 +294,7 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(const void *dataSrc)
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreAnimation*CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCoreSkeleton *skel)
 { 
     TiXmlDocument doc;
     doc.Clear();
@@ -303,7 +303,7 @@ CalCoreAnimation*CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCoreSke
     if(doc.Error())
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return 0;
+        return CalCoreAnimationPtr();
     }
 
     return loadXmlCoreAnimation(doc, skel);
@@ -323,7 +323,7 @@ CalCoreAnimation*CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCoreSke
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreAnimatedMorph*CalLoader::loadXmlCoreAnimatedMorph(const void *dataSrc)
+CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const void *dataSrc)
 { 
     TiXmlDocument doc;
     doc.Clear();
@@ -332,7 +332,7 @@ CalCoreAnimatedMorph*CalLoader::loadXmlCoreAnimatedMorph(const void *dataSrc)
     if(doc.Error())
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return 0;
+        return CalCoreAnimatedMorphPtr();
     }
 
     return loadXmlCoreAnimatedMorph(doc);
@@ -662,14 +662,13 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreAnimation *CalLoader::loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
 {
-    std::stringstream str;
     TiXmlDocument doc(strFilename);
     if(!doc.LoadFile())
     {
         CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
+        return CalCoreAnimationPtr();
     }
     return loadXmlCoreAnimation(doc, skel);
 }
@@ -687,14 +686,14 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(const std::string& strFilename
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(const std::string& strFilename)
+CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const std::string& strFilename)
 {
     std::stringstream str;
     TiXmlDocument doc(strFilename);
     if(!doc.LoadFile())
     {
         CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
+        return CalCoreAnimatedMorphPtr();
     }
     return loadXmlCoreAnimatedMorph(doc);
 }
@@ -712,8 +711,9 @@ CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(const std::string& str
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSkeleton *skel)
 {
+    const CalCoreAnimationPtr null;
     std::stringstream str;
 
     const std::string strFilename = "";
@@ -725,41 +725,40 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         str.clear();
         str << "Header element is " << (header ? header->Value() : "<unknown>");
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, str.str());
-        return 0;
+        return null;
     }
 
 
     if(_stricmp(header->Attribute("MAGIC"),Cal::ANIMATION_XMLFILE_EXTENSION)!=0)
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return 0;
+        return null;
     }    
 
     if(atoi(header->Attribute("VERSION")) < Cal::EARLIEST_COMPATIBLE_FILE_VERSION )
     {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return 0;
+        return null;
     }
 
     TiXmlElement*animation = header->NextSiblingElement();
     if(!animation || _stricmp(animation->Value(),"ANIMATION")!=0)
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return 0;
+        return null;
     }  
 
     int trackCount= atoi(animation->Attribute("NUMTRACKS"));
     float duration= (float) atof(animation->Attribute("DURATION"));
 
     // allocate a new core animation instance
-    CalCoreAnimation *pCoreAnimation = new CalCoreAnimation();
+    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
 
     // check for a valid duration
     if(duration <= 0.0f)
     {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
-        delete pCoreAnimation;
-        return 0;
+        return null;
     }
 
     // set the duration in the core animation instance
@@ -772,8 +771,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
         if(!track || _stricmp(track->Value(),"TRACK")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            delete pCoreAnimation;
-            return 0;
+            return null;
         }
 
         CalCoreTrackPtr pCoreTrack(new CalCoreTrack);
@@ -813,9 +811,8 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
 
         if(keyframeCount <= 0)
         {
-            delete pCoreAnimation;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return 0;
+            return null;
         }
 
         TiXmlElement* keyframe= track->FirstChildElement();
@@ -829,8 +826,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!keyframe|| _stricmp(keyframe->Value(),"KEYFRAME")!=0)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                delete pCoreAnimation;
-                return 0;
+                return null;
             }
 
             float time= (float) atof(keyframe->Attribute("TIME"));
@@ -869,24 +865,21 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!translation )
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                delete pCoreAnimation;
-                return 0;
+                return null;
             }
             if( _stricmp(translation->Value(),"TRANSLATION") ==0) {
                 node = translation->FirstChild();
                 if(!node)
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    delete pCoreAnimation;
-                    return 0;
+                    return null;
                 }
 
                 TiXmlText* translationdata = node->ToText();
                 if(!translationdata)
                 {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    delete pCoreAnimation;
-                    return 0;
+                    return null;
                 }
                 ReadTripleFloat( translationdata->Value(), &tx, &ty, &tz );
                 rotation = rotation->NextSiblingElement();
@@ -895,8 +888,7 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!rotation || _stricmp(rotation->Value(),"ROTATION")!=0)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                delete pCoreAnimation;
-                return 0;
+                return null;
             }
 
             float rx, ry, rz, rw;
@@ -905,15 +897,13 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             if(!node)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                delete pCoreAnimation;
-                return 0;
+                return null;
             }
             TiXmlText* rotationdata = node->ToText();
             if(!rotationdata)
             {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                delete pCoreAnimation;
-                return 0;
+                return null;
             }
             ReadQuadFloat( rotationdata->Value(), &rx, &ry, &rz, &rw );  
 
@@ -923,9 +913,8 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
             pCoreKeyframe = new CalCoreKeyframe();
             if(pCoreKeyframe == 0)
             {
-                delete pCoreAnimation;
                 CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-                return 0;
+                return null;
             }
 
             // set all attributes of the keyframe
@@ -977,26 +966,9 @@ CalCoreAnimation *CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSke
     return pCoreAnimation;
 }
 
-
-
-
-
-/*****************************************************************************/
-/** Loads a core animatedMorph instance from a XML file.
-*
-* This function loads a core animatedMorph instance from a XML file.
-*
-* @param strFilename The name of the file to load the core animatedMorph instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core animatedMorph
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
+CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
 {
-    //std::stringstream str;
+    const CalCoreAnimatedMorphPtr null;
 
     std::string strFilename = "";
 
@@ -1005,51 +977,42 @@ CalCoreAnimatedMorph *CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
     CalHeader headerData;
     if( !header || !BindFromXml( *header, &headerData ) ) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return 0;
+        return null;
     }
 
 
     if(_stricmp(headerData.magic,Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)!=0)
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return 0;
+        return null;
     }    
 
     if(headerData.version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION )
     {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return 0;
+        return null;
     }
 
     // allocate a new core animatedMorph instance
-    CalCoreAnimatedMorph *pCoreAnimatedMorph;
-    pCoreAnimatedMorph = new CalCoreAnimatedMorph();
-    if(pCoreAnimatedMorph == 0)
-    {
-        CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-        return 0;
-    }
+    CalCoreAnimatedMorphPtr pCoreAnimatedMorph(new CalCoreAnimatedMorph);
 
     TiXmlElement*animatedMorph = header->NextSiblingElement();
     if(!animatedMorph || _stricmp(animatedMorph->Value(),"ANIMATION")!=0)
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        delete pCoreAnimatedMorph;
-        return 0;
+        return null;
     }  
 
-    if( !BindFromXml( *animatedMorph, pCoreAnimatedMorph ) ) {
+    if( !BindFromXml( *animatedMorph, pCoreAnimatedMorph.get() ) ) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        delete pCoreAnimatedMorph;
-        return 0;
+        return null;
     }
 
     // check for a valid duration
     if(pCoreAnimatedMorph->getDuration() <= 0.0f)
     {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
-        delete pCoreAnimatedMorph;
-        return 0;
+        return null;
     }
 
     // explicitly close the file

@@ -12,6 +12,7 @@
 // Includes                                                                   //
 //----------------------------------------------------------------------------//
 
+#include <cal3d/loader.h>
 #include "StdAfx.h"
 #include "Exporter.h"
 #include "SkeletonCandidate.h"

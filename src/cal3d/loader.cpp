@@ -89,102 +89,45 @@ TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired
 }
 
 
- /*****************************************************************************/
-/** Sets optional flags which affect how the model is loaded into memory.
-  *
-  * This function sets the loading mode for all future loader calls.
-  *
-  * @param flags A boolean OR of any of the following flags
-  *         \li LOADER_ROTATE_X_AXIS will rotate the mesh 90 degrees about the X axis,
-  *             which has the effect of swapping Y/Z coordinates.
-  *         \li LOADER_INVERT_V_COORD will substitute (1-v) for any v texture coordinate
-  *             to eliminate the need for texture inversion after export.
-  *
-  *****************************************************************************/
 void CalLoader::setLoadingMode(int flags)
 {
     loadingMode = flags;
 }
 
- /*****************************************************************************/
-/** Loads a core animation instance.
-  *
-  * This function loads a core animation instance from a file.
-  *
-  * @param strFilename The file to load the core animation instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animation
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreAnimation *CalLoader::loadCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
 {
-  if(strFilename.size() >= 3 &&
-    _stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION) == 0)
+  if (
+    strFilename.size() >= 3 &&
+    _stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION) == 0
+  ) {
     return loadXmlCoreAnimation(strFilename, skel);
+  }
 
-  // open the file
   std::ifstream file(strFilename.c_str(), std::ios::in | std::ios::binary);
-
-  //make sure it was opened properly
   if(!file)
   {
     CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-    return 0;
+    return CalCoreAnimationPtr();
   }
 
-  //make a new stream data source and use it to load the animation
-  CalStreamSource streamSrc( file );
-  
-  CalCoreAnimation* coreanim = loadCoreAnimation( streamSrc,skel );
-
-  //close the file
-  file.close();
-
-  return coreanim;
+  return loadCoreAnimation(
+    CalStreamSource(file),
+    skel);
 }
 
- /*****************************************************************************/
-/** Loads a core animatedMorph instance.
-  *
-  * This function loads a core animatedMorph instance from a file.
-  *
-  * @param strFilename The file to load the core animatedMorph instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animatedMorph
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(const std::string& strFilename)
-{
+CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(const std::string& strFilename) {
   if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)==0)
     return loadXmlCoreAnimatedMorph(strFilename);
   else {
     std::ifstream file(strFilename.c_str(), std::ios::in | std::ios::binary);
     if(!file) {
       CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-      return 0;
+      return CalCoreAnimatedMorphPtr();
     }
-    CalStreamSource streamSrc( file );
-    CalCoreAnimatedMorph* result = loadCoreAnimatedMorph(streamSrc);
-    file.close();
-    return result;
+    CalStreamSource streamSrc(file);
+    return loadCoreAnimatedMorph(streamSrc);
   }
 }
-
- /*****************************************************************************/
-/** Loads a core material instance.
-  *
-  * This function loads a core material instance from a file.
-  *
-  * @param strFilename The file to load the core material instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core material
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreMaterial *CalLoader::loadCoreMaterial(const std::string& strFilename)
 {
@@ -215,18 +158,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(const std::string& strFilename)
 
 }
 
- /*****************************************************************************/
-/** Loads a core mesh instance.
-  *
-  * This function loads a core mesh instance from a file.
-  *
-  * @param strFilename The file to load the core mesh instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core mesh
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
 CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
 {
 
@@ -255,18 +186,6 @@ CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
   return coremesh;
 
 }
-
- /*****************************************************************************/
-/** Loads a core skeleton instance.
-  *
-  * This function loads a core skeleton instance from a file.
-  *
-  * @param strFilename The file to load the core skeleton instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core skeleton
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreSkeleton *CalLoader::loadCoreSkeleton(const std::string& strFilename)
 {
@@ -298,85 +217,30 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(const std::string& strFilename)
 }
 
 
- /*****************************************************************************/
-/** Loads a core animation instance.
-  *
-  * This function loads a core animation instance from an input stream.
-  *
-  * @param inputStream The stream to load the core animation instance from. This
-  *                    stream should be initialized and ready to be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animation
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreAnimation *CalLoader::loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel )
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel)
 {
-   //Create a new istream data source and pass it on
    CalStreamSource streamSrc(inputStream);
    return loadCoreAnimation(streamSrc, skel);
 }
 
-CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(std::istream& inputStream)
+CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(std::istream& inputStream)
 {
-   //Create a new istream data source and pass it on
    CalStreamSource streamSrc(inputStream);
    return loadCoreAnimatedMorph(streamSrc);
 }
 
- /*****************************************************************************/
-/** Loads a core material instance.
-  *
-  * This function loads a core material instance from an input stream.
-  *
-  * @param inputStream The stream to load the core material instance from. This
-  *                    stream should be initialized and ready to be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core material
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreMaterial *CalLoader::loadCoreMaterial(std::istream& inputStream)
 {
-   //Create a new istream data source and pass it on
    CalStreamSource streamSrc(inputStream);
    return loadCoreMaterial(streamSrc);
 }
 
- /*****************************************************************************/
-/** Loads a core mesh instance.
-  *
-  * This function loads a core mesh instance from an input stream.
-  *
-  * @param inputStream The stream to load the core mesh instance from. This
-  *                    stream should be initialized and ready to be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core mesh
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
 CalCoreMesh *CalLoader::loadCoreMesh(std::istream& inputStream)
 {
-   //Create a new istream data source and pass it on
    CalStreamSource streamSrc(inputStream);
    return loadCoreMesh(streamSrc);
 }
-
- /*****************************************************************************/
-/** Loads a core skeleton instance.
-  *
-  * This function loads a core skeleton instance from an input stream.
-  *
-  * @param inputStream The stream to load the core skeleton instance from. This
-  *                    stream should be initialized and ready to be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core skeleton
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreSkeleton *CalLoader::loadCoreSkeleton(std::istream& inputStream)
 {
@@ -385,28 +249,11 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(std::istream& inputStream)
    return loadCoreSkeleton(streamSrc);
 }
 
-
-
-
- /*****************************************************************************/
-/** Loads a core animation instance.
-  *
-  * This function loads a core animation instance from a memory buffer.
-  *
-  * @param inputBuffer The memory buffer to load the core animation instance 
-  *                    from. This buffer should be initialized and ready to 
-  *                    be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animation
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreAnimation *CalLoader::loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel)
 {
-   //Create a new buffer data source and pass it on
+   // Create a new buffer data source and pass it on
    CalBufferSource bufferSrc(inputBuffer, len);
-   CalCoreAnimation * result = loadCoreAnimation(bufferSrc,skel);
+   CalCoreAnimationPtr result = loadCoreAnimation(bufferSrc,skel);
    if( result ) {
      return result;
    } else {
@@ -414,30 +261,16 @@ CalCoreAnimation *CalLoader::loadCoreAnimationFromBuffer(const void* inputBuffer
        // Assumes inputBuffer is zero-terminated, which may not be the case.
        return loadXmlCoreAnimation(static_cast<const char*>(inputBuffer), skel);
      } else {
-       return 0;
+       return CalCoreAnimationPtr();
      }
    }
 }
 
- /*****************************************************************************/
-/** Loads a core animatedMorph instance.
-  *
-  * This function loads a core animatedMorph instance from a memory buffer.
-  *
-  * @param inputBuffer The memory buffer to load the core animatedMorph instance 
-  *                    from. This buffer should be initialized and ready to 
-  *                    be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animatedMorph
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len )
+CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len )
 {
    //Create a new buffer data source and pass it on
    CalBufferSource bufferSrc(inputBuffer, len);
-   CalCoreAnimatedMorph * result = loadCoreAnimatedMorph(bufferSrc);
+   CalCoreAnimatedMorphPtr result = loadCoreAnimatedMorph(bufferSrc);
    if( result ) {
      return result;
    } else {
@@ -445,20 +278,6 @@ CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorphFromBuffer(const void* inp
    }
 
 }
-
- /*****************************************************************************/
-/** Loads a core material instance.
-  *
-  * This function loads a core material instance from a memory buffer.
-  *
-  * @param inputBuffer The memory buffer to load the core material instance 
-  *                    from. This buffer should be initialized and ready to 
-  *                    be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core material
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreMaterial *CalLoader::loadCoreMaterialFromBuffer(const void* inputBuffer, unsigned int len)
 {
@@ -472,20 +291,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterialFromBuffer(const void* inputBuffer, 
    }
 }
 
- /*****************************************************************************/
-/** Loads a core mesh instance.
-  *
-  * This function loads a core mesh instance from a memory buffer.
-  *
-  * @param inputBuffer The memory buffer to load the core mesh instance from. 
-  *                    This buffer should be initialized and ready to be 
-  *                    read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core mesh
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
 CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len)
 {
    //Create a new buffer data source and pass it on
@@ -497,20 +302,6 @@ CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned
      return loadXmlCoreMesh(inputBuffer);
    }
 }
-
- /*****************************************************************************/
-/** Loads a core skeleton instance.
-  *
-  * This function loads a core skeleton instance from a memory buffer.
-  *
-  * @param inputBuffer The memory buffer to load the core skeleton instance 
-  *                    from. This buffer should be initialized and ready to 
-  *                    be read from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core skeleton
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreSkeleton *CalLoader::loadCoreSkeletonFromBuffer(const void* inputBuffer, unsigned int len)
 {
@@ -524,27 +315,16 @@ CalCoreSkeleton *CalLoader::loadCoreSkeletonFromBuffer(const void* inputBuffer, 
    }
 }
 
- /*****************************************************************************/
-/** Loads a core animation instance.
-  *
-  * This function loads a core animation instance from a data source.
-  *
-  * @param dataSrc The data source to load the core animation instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animation
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
-
-CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton *skel)
 {
+  const CalCoreAnimationPtr null;
 
   // check if this is a valid file
   char magic[4];
   if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATION_FILE_MAGIC, 4) != 0))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    return 0;
+    return null;
   }
 
   // check if the version is compatible with the library
@@ -552,7 +332,7 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
   if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
   {
     CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
-    return 0;
+    return null;
   }
 
   bool useAnimationCompression = CalLoader::usesAnimationCompression(version);
@@ -560,31 +340,26 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
     int compressionFlag = 0;
     if (!dataSrc.readInteger(compressionFlag)) {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-      return 0;
+      return null;
     }
     // Only really need the first bit.
     useAnimationCompression = (compressionFlag != 0);
   }
 
 
-  // allocate a new core animation instance
-  CalCoreAnimation *pCoreAnimation = new CalCoreAnimation();
+  CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
 
-  // get the duration of the core animation
   float duration;
   if(!dataSrc.readFloat(duration))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    delete pCoreAnimation;
-    return 0;
+    return null;
   }
 
-  // check for a valid duration
   if(duration <= 0.0f)
   {
     CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__);
-    delete pCoreAnimation;
-    return 0;
+    return null;
   }
 
   // set the duration in the core animation instance
@@ -595,7 +370,7 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
   if(!dataSrc.readInteger(trackCount) || (trackCount <= 0))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    return 0;
+    return null;
   }
 
   // load all core bones
@@ -605,8 +380,7 @@ CalCoreAnimation *CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSk
     CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc,skel, version, useAnimationCompression));
     if(!pCoreTrack)
     {
-      delete pCoreAnimation;
-      return 0;
+      return null;
     }
 
     // add the core track to the core animation instance
@@ -644,15 +418,15 @@ CalLoader::compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel
   *         \li \b 0 if an error happened
   *****************************************************************************/
 
-CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
+CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
 {
+  const CalCoreAnimatedMorphPtr null;
 
-  // check if this is a valid file
   char magic[4];
   if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATEDMORPH_FILE_MAGIC, 4) != 0))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    return 0;
+    return null;
   }
 
   // check if the version is compatible with the library
@@ -660,33 +434,25 @@ CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
   if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
   {
     CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
-    return 0;
+    return null;
   }
 
   // allocate a new core animatedMorph instance
-  CalCoreAnimatedMorph *pCoreAnimatedMorph;
-  pCoreAnimatedMorph = new CalCoreAnimatedMorph();
-  if(pCoreAnimatedMorph == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
+  CalCoreAnimatedMorphPtr pCoreAnimatedMorph(new CalCoreAnimatedMorph);
 
   // get the duration of the core animatedMorph
   float duration;
   if(!dataSrc.readFloat(duration))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    delete pCoreAnimatedMorph;
-    return 0;
+    return null;
   }
 
   // check for a valid duration
   if(duration <= 0.0f)
   {
     CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__);
-    delete pCoreAnimatedMorph;
-    return 0;
+    return null;
   }
 
   // set the duration in the core animatedMorph instance
@@ -697,7 +463,7 @@ CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
   if(!dataSrc.readInteger(trackCount) || (trackCount <= 0))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-    return 0;
+    return null;
   }
 
   // load all core bones
@@ -709,8 +475,7 @@ CalCoreAnimatedMorph *CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
     pCoreTrack = loadCoreMorphTrack(dataSrc);
     if(pCoreTrack == 0)
     {
-      delete pCoreAnimatedMorph;
-      return 0;
+      return null;
     }
 
     // add the core track to the core animatedMorph instance

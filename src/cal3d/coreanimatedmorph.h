@@ -11,6 +11,7 @@
 #pragma once
 
 #include <list>
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/coremorphtrack.h"
 
@@ -36,3 +37,4 @@ private:
   std::list<CalCoreMorphTrack> m_listCoreTrack;
   std::list<CalCoreMorphTrack*> m_tracksToDelete;
 };
+typedef boost::shared_ptr<CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;

@@ -2,6 +2,8 @@
 #include "TestPrologue.h"
 #include <sstream>
 #include <cal3d/coresubmesh.h>
+#include <cal3d/loader.h>
+#include <cal3d/saver.h>
 
 #if defined(_MSC_VER)
 
@@ -44,19 +46,15 @@ const char* animationText =
 ;
 
 TEST(LoadSimpleXmlAnimation) {
-
   // Load animation.
-
-  CalCoreAnimation* anim = CalLoader::loadXmlCoreAnimation(animationText, 0);
+  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animationText, 0);
   CHECK(anim);
 
   // Check animation.
-
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
   // Check tracks.
-
   CalCoreTrack* track1 = anim->tracks[0].get();
   CalCoreTrack* track2 = anim->getCoreTrack(/*boneid*/ 0).get();
   CHECK(track1);
@@ -68,13 +66,10 @@ TEST(LoadSimpleXmlAnimation) {
   CHECK_EQUAL(track1->getCoreKeyframeCount(), 2);
 
   // Save the animation back to an XML file.
-
   std::ostringstream ss;
-  CalSaver::saveXmlCoreAnimation(ss, anim);
+  CalSaver::saveXmlCoreAnimation(ss, anim.get());
 
   CHECK_EQUAL(ss.str(), animationText);
-
-  delete anim;
 }
 
 

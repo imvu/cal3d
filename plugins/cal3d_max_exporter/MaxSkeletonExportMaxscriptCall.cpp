@@ -30,10 +30,7 @@
 // any later version.                                                         //
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-// Includes                                                                   //
-//----------------------------------------------------------------------------//
-
+#include <cal3d/saver.h>
 #include "StdAfx.h"
 #include "Exporter.h"
 #include "SkeletonCandidate.h"
@@ -43,9 +40,6 @@
 #include "MaxInterface.h"
 #include "SkeletonExportsheet.h"
 
-//----------------------------------------------------------------------------//
-// Create a skeleton candidate instance from the exporter interface           //
-//----------------------------------------------------------------------------//
 bool CSkeletonCandidate::CreateFromInterfaceFromMaxScriptCall()
 {
 	int nodeId;

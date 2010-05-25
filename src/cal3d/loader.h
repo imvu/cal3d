@@ -19,8 +19,8 @@
 
 class CalCoreSkeleton;
 class CalCoreBone;
-class CalCoreAnimation;
-class CalCoreAnimatedMorph;
+typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
+typedef boost::shared_ptr<class CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;
 class CalCoreTrack;
 class CalCoreKeyframe;
 class CalCoreMorphTrack;
@@ -57,26 +57,26 @@ public:
   static float const keyframePosRangeSmall;
   static unsigned int const keyframePosBytesSmall;
 
-  static CalCoreAnimation *loadCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel);
-  static CalCoreAnimatedMorph *loadCoreAnimatedMorph(const std::string& strFilename);
+  static CalCoreAnimationPtr loadCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel);
+  static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(const std::string& strFilename);
   static CalCoreMaterial *loadCoreMaterial(const std::string& strFilename);
   static CalCoreMesh *loadCoreMesh(const std::string& strFilename);
   static CalCoreSkeleton *loadCoreSkeleton(const std::string& strFilename);
 
-  static CalCoreAnimation *loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel);
-  static CalCoreAnimatedMorph *loadCoreAnimatedMorph(std::istream& inputStream);
+  static CalCoreAnimationPtr loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel);
+  static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(std::istream& inputStream);
   static CalCoreMaterial *loadCoreMaterial(std::istream& inputStream);
   static CalCoreMesh *loadCoreMesh(std::istream& inputStream);
   static CalCoreSkeleton *loadCoreSkeleton(std::istream& inputStream);
 
-  static CalCoreAnimation *loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel);
-  static CalCoreAnimatedMorph *loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len);
+  static CalCoreAnimationPtr loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel);
+  static CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len);
   static CalCoreMaterial* loadCoreMaterialFromBuffer(const void* inputBuffer, unsigned int len);
   static CalCoreMesh *loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len);
   static CalCoreSkeleton *loadCoreSkeletonFromBuffer(const void* inputBuffer, unsigned int len);
 
-  static CalCoreAnimation *loadCoreAnimation(CalDataSource& inputSrc, CalCoreSkeleton *skel);
-  static CalCoreAnimatedMorph *loadCoreAnimatedMorph(CalDataSource& inputSrc);
+  static CalCoreAnimationPtr loadCoreAnimation(CalDataSource& inputSrc, CalCoreSkeleton *skel);
+  static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(CalDataSource& inputSrc);
   static CalCoreMaterial *loadCoreMaterial(CalDataSource& inputSrc);
   static CalCoreMesh *loadCoreMesh(CalDataSource& inputSrc);
   static CalCoreSkeleton *loadCoreSkeleton(CalDataSource& inputSrc);
@@ -115,13 +115,13 @@ public:
   static void compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel );
 
   // xmlformat.cpp
-  static CalCoreAnimation *loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton* skel);
-  static CalCoreAnimation *loadXmlCoreAnimation(const char*, CalCoreSkeleton* skel);
-  static CalCoreAnimation *loadXmlCoreAnimation(TiXmlDocument & doc, CalCoreSkeleton* skel);
+  static CalCoreAnimationPtr loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton* skel);
+  static CalCoreAnimationPtr loadXmlCoreAnimation(const char*, CalCoreSkeleton* skel);
+  static CalCoreAnimationPtr loadXmlCoreAnimation(TiXmlDocument & doc, CalCoreSkeleton* skel);
 
-  static CalCoreAnimatedMorph *loadXmlCoreAnimatedMorph(const std::string& strFilename);
-  static CalCoreAnimatedMorph *loadXmlCoreAnimatedMorph(const void *);
-  static CalCoreAnimatedMorph *loadXmlCoreAnimatedMorph(TiXmlDocument & doc);
+  static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const std::string& strFilename);
+  static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const void *);
+  static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(TiXmlDocument & doc);
 
   static CalCoreSkeleton *loadXmlCoreSkeletonFromFile(const std::string& strFilename);
   static CalCoreSkeleton *loadXmlCoreSkeleton(const void *);
