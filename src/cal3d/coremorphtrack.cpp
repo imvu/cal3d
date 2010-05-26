@@ -29,7 +29,7 @@ CalCoreMorphTrack::~CalCoreMorphTrack()
 
 CAL3D_DEFINE_SIZE(CalCoreMorphKeyframe*);
 
-size_t sizeInBytes(CalCoreMorphKeyframe const& keyFrame) {
+size_t sizeInBytes(CalCoreMorphKeyframe const&) {
     return sizeof(CalCoreMorphKeyframe);
 }
 

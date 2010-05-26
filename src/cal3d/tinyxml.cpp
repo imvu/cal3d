@@ -29,12 +29,10 @@ distribution.
 #include <sstream>
 #endif
 
-void SetFactory( TiXmlAttribute * item, PiClassFactory * f )
-{
+void SetFactory(TiXmlAttribute*, PiClassFactory*) {
 }
 
-void SetFactory( TiXmlNode * item, PiClassFactory * f )
-{
+void SetFactory(TiXmlNode* item, PiClassFactory* f) {
   item->TiXmlNode::factory_ = f;
 }
 

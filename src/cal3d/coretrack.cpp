@@ -27,7 +27,7 @@ CalCoreTrack::CalCoreTrack()
   m_translationIsDynamic = true;
 }
 
-size_t sizeInBytes(CalCoreKeyframe* const& t) {
+size_t sizeInBytes(CalCoreKeyframe* const&) {
   return sizeof(CalCoreKeyframe*) + sizeof(CalCoreKeyframe);
 }
 

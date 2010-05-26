@@ -100,11 +100,11 @@ public:
   }
   static bool usesAnimationCompression( int version );
   static unsigned int compressedKeyframeRequiredBytes( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic );
-  static unsigned int readCompressedKeyframe( unsigned char * buf, unsigned int bytes, CalCoreBone * coreboneOrNull,
-    CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
-    CalCoreKeyframe * lastCoreKeyframe,
-    bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-    bool useAnimationCompression);
+  static unsigned int readCompressedKeyframe(
+      unsigned char * buf, CalCoreBone * coreboneOrNull,
+      CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
+      CalCoreKeyframe * lastCoreKeyframe,
+      bool translationRequired, bool highRangeRequired, bool translationIsDynamic);
   static void compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel );
 
   // xmlformat.cpp

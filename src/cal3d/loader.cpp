@@ -900,10 +900,10 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
     }
     CalVector vec;
     CalQuaternion quat;
-    unsigned int bytesRead = readCompressedKeyframe( buf, bytesRequired, coreboneOrNull, 
-      & vec, & quat, & time, prevCoreKeyframe,
-      translationRequired, highRangeRequired, translationIsDynamic,
-      useAnimationCompression);
+    unsigned int bytesRead = readCompressedKeyframe(
+        buf, coreboneOrNull, 
+        & vec, & quat, & time, prevCoreKeyframe,
+        translationRequired, highRangeRequired, translationIsDynamic);
     if( bytesRead != bytesRequired ) {
       CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
       return NULL;
@@ -1042,11 +1042,10 @@ TranslationInvalid( CalVector const & result )
 // Returns number of byts read.
 unsigned int
 CalLoader::readCompressedKeyframe(
-  unsigned char * buf, unsigned int bytes, CalCoreBone * coreboneOrNull, 
+  unsigned char * buf, CalCoreBone * coreboneOrNull, 
   CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
   CalCoreKeyframe * lastCoreKeyframe,
-  bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-  bool useAnimationCompression)
+  bool translationRequired, bool highRangeRequired, bool translationIsDynamic)
 {
   unsigned char * bufStart = buf;
   

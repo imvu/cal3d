@@ -989,7 +989,7 @@ public:
 	virtual TiXmlNode* Clone() const;
 	// [internal use]
 	virtual void Print( FILE* cfile, int depth ) const;
-        virtual void Print( std::ostream& os, int depth ) const {
+        virtual void Print(std::ostream&, int) const {
           assert(false);
         }
 protected:

@@ -112,7 +112,7 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
     // save core track
-    if(!saveCoreTrack(file, strFilename, iteratorCoreTrack->get(), version))
+    if(!saveCoreTrack(file, strFilename, iteratorCoreTrack->get()))
     {
       return false;
     }
@@ -317,9 +317,11 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
   *****************************************************************************/
 
 bool 
-CalSaver::saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreKeyframe *pCoreKeyframe, int version, 
-                           bool translationWritten, bool highRangeRequired)
-{
+CalSaver::saveCoreKeyframe(
+    std::ofstream& file,
+    const std::string& strFilename,
+    CalCoreKeyframe *pCoreKeyframe
+) {
   if(!file)
   {
     CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, strFilename);
@@ -859,7 +861,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack, int version)
+bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack)
 {
   if(!file)
   {
@@ -870,7 +872,6 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
   // Always save out the flags, and save out the translation iff required.
   // I calculate translation required on load, and just fetch the saved result upon save.
   bool translationRequired = pCoreTrack->getTranslationRequired();
-  bool highRangeRequired = pCoreTrack->getHighRangeRequired();
   bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
 
     // Write the coreBoneId.
@@ -896,8 +897,7 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
     if( i != 0 && !translationIsDynamic ) {
       translationWritten = false;
     }
-    if(!saveCoreKeyframe(file, strFilename, pCoreTrack->getCoreKeyframe(i), version,
-                         translationWritten, highRangeRequired))
+    if(!saveCoreKeyframe(file, strFilename, pCoreTrack->getCoreKeyframe(i)))
     {
       return false;
     }

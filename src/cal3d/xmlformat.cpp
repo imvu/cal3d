@@ -56,7 +56,7 @@ static inline bool _ValidateTag(
     T* element,
     char const* requiredTag,
     CalCoreMesh* pCoreMesh,
-    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh,
+    const boost::shared_ptr<CalCoreSubmesh>& /*pCoreSubmesh*/,
     char const* file,
     int line
 ) {

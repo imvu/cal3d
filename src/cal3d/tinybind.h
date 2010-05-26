@@ -484,7 +484,7 @@ public:
         return mph;
     }
 
-    virtual bool fromXml( TiXmlElement const & elem, T * data, SerializeParams const & params ) const 
+    virtual bool fromXml( TiXmlElement const & elem, T * data, SerializeParams const &) const 
     {
         TiXmlElement const * child = elem.FirstChildElement();
         for( size_t i = 0; i < members_.size(); i++ ) {
