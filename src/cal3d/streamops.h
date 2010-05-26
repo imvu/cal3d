@@ -3,6 +3,7 @@
 #include <iosfwd>
 #include <cal3d/aabox.h>
 #include <cal3d/vector4.h>
+#include <cal3d/quaternion.h>
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector4& v) {
   return os << v.x << "," << v.y << "," << v.z << "," << v.w;
@@ -18,4 +19,8 @@ inline std::ostream& operator<<(std::ostream& os, const CalVector& v) {
 
 inline std::ostream& operator<<(std::ostream& os, const CalAABox& box) {
     return os << "[min=" << box.min << " max=" << box.max << "]";
+}
+
+inline std::ostream& operator<<(std::ostream&os, const CalQuaternion& quat) {
+    return os << quat.x << ", " << quat.y << ", " << quat.z << ", " << quat.w;
 }

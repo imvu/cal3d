@@ -631,19 +631,6 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     return pCoreSkeleton;
 }
 
-/*****************************************************************************/
-/** Loads a core animation instance from a XML file.
-*
-* This function loads a core animation instance from a XML file.
-*
-* @param strFilename The name of the file to load the core animation instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core animation
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
 CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
 {
     TiXmlDocument doc(strFilename);
@@ -654,19 +641,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const std::string& strFilena
     }
     return loadXmlCoreAnimation(doc, skel);
 }
-
-/*****************************************************************************/
-/** Loads a core animatedMorph instance from a XML file.
-*
-* This function loads a core animatedMorph instance from a XML file.
-*
-* @param strFilename The name of the file to load the core animatedMorph instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core animatedMorph
-*         \li \b 0 if an error happened
-*****************************************************************************/
 
 CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const std::string& strFilename)
 {
@@ -679,19 +653,6 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const std::string& s
     }
     return loadXmlCoreAnimatedMorph(doc);
 }
-
-/*****************************************************************************/
-/** Loads a core animation instance from a XML file.
-*
-* This function loads a core animation instance from a XML file.
-*
-* @param strFilename The name of the file to load the core animation instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core animation
-*         \li \b 0 if an error happened
-*****************************************************************************/
 
 CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSkeleton *skel)
 {
@@ -730,7 +691,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         return null;
     }  
 
-    int trackCount= atoi(animation->Attribute("NUMTRACKS"));
     float duration= (float) atof(animation->Attribute("DURATION"));
 
     // allocate a new core animation instance
@@ -743,13 +703,12 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         return null;
     }
 
-    // set the duration in the core animation instance
     pCoreAnimation->duration = duration;
-    TiXmlElement* track=animation->FirstChildElement();
-
-    // load all core bones
-    for(int trackId = 0; trackId < trackCount; ++trackId)
-    {
+    for (
+        TiXmlElement* track = animation->FirstChildElement();
+        track;
+        track = track->NextSiblingElement()
+    ) {
         if(!track || _stricmp(track->Value(),"TRACK")!=0)
         {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
@@ -797,13 +756,13 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             return null;
         }
 
-        TiXmlElement* keyframe= track->FirstChildElement();
-
         // load all core keyframes
-        CalCoreKeyframe * prevCoreKeyframe = NULL;
-        int keyframeId;
-        for(keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
-        {
+        CalCoreKeyframe* prevCoreKeyframe = 0;
+        for (
+            TiXmlElement* keyframe= track->FirstChildElement();
+            keyframe;
+            keyframe = keyframe->NextSiblingElement()
+        ) {
             // load the core keyframe
             if(!keyframe|| _stricmp(keyframe->Value(),"KEYFRAME")!=0)
             {
@@ -811,7 +770,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
                 return null;
             }
 
-            float time= (float) atof(keyframe->Attribute("TIME"));
+            float time = (float)atof(keyframe->Attribute("TIME"));
 
             // Translation component in the XML is now optional.
             // I first fill the translation with zero.
@@ -825,7 +784,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
                 CalCoreBone * cb = skel->getCoreBone( coreBoneId );
                 if (!cb) {
                     std::stringstream buf;
-                    buf << "loadXmlCoreAnimation: track " << trackId << " keyframe " << keyframeId << " refers to a bone (" << coreBoneId << ") that does not exist";
+                    buf << "loadXmlCoreAnimation: keyframe refers to a bone (" << coreBoneId << ") that does not exist";
                     throw std::runtime_error(buf.str().c_str());
                 }
                 CalVector const & cbtrans = cb->getTranslation();
@@ -889,17 +848,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             }
             ReadQuadFloat( rotationdata->Value(), &rx, &ry, &rz, &rw );  
 
-            // allocate a new core keyframe instance
-
-            CalCoreKeyframe *pCoreKeyframe;
-            pCoreKeyframe = new CalCoreKeyframe();
-            if(pCoreKeyframe == 0)
-            {
-                CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-                return null;
-            }
-
-            // set all attributes of the keyframe
+            CalCoreKeyframe* pCoreKeyframe = new CalCoreKeyframe();
             pCoreKeyframe->time = time;
             pCoreKeyframe->translation = CalVector(tx, ty, tz);
             pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
@@ -907,9 +856,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
 
             // add the core keyframe to the core track instance
             pCoreTrack->addCoreKeyframe(pCoreKeyframe);
-
-            keyframe = keyframe->NextSiblingElement();
-
         }
         pCoreTrack->setTranslationRequired( translationRequired );
         pCoreTrack->setHighRangeRequired( highRangeRequired );
@@ -922,7 +868,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             pCoreTrack->compress( translationTolerance, rotationToleranceDegrees, skel );
         }
         pCoreAnimation->tracks.push_back(pCoreTrack);   
-        track=track->NextSiblingElement();
     }
 
     // explicitly close the file

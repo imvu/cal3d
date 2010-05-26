@@ -3,11 +3,13 @@
 #include <sstream>
 #include <cal3d/buffersource.h>
 #include <cal3d/coreanimation.h>
+#include <cal3d/corekeyframe.h>
 #include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
 #include <cal3d/coretrack.h>
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
+#include <cal3d/streamops.h>
 
 #if defined(_MSC_VER)
 
@@ -76,25 +78,116 @@ TEST(LoadSimpleXmlAnimation) {
   CHECK_EQUAL(ss.str(), animationText);
 }
 
+const char* animation_with_translations =
+"<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
+"<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
+"    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"1\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
+"        <KEYFRAME TIME=\"0\">\n"
+"            <TRANSLATION>1.0 2.0 3.0</TRANSLATION>\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"        <KEYFRAME TIME=\"40\">\n"
+"            <TRANSLATION>4.0 5.0 6.0</TRANSLATION>\n"
+"            <ROTATION>0.5 0.5 0.5 0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"    </TRACK>\n"
+"</ANIMATION>\n"
+;
 
-#if 0
-TEST(Simple) {
-  CalLoader loader;
-  CalCoreAnimation* ca1 = loader.loadCoreAnimation();
-  CalCoreAnimation* ca2 = loader.loadCoreAnimation();
+TEST(load_animation_with_translation) {
+  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_translations, 0);
+  CHECK(anim);
 
-  CHECK(ca1);
-  CHECK(ca2);
-  CHECK_EQUAL(*ca1, *ca2);
+  CHECK_EQUAL(anim->tracks.size(), 1);
+  CHECK_EQUAL(anim->duration, 40);
 
-  ca1->Destroy();
-  delete ca1;
+  CalCoreTrack* track = anim->tracks[0].get();
+  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
 
-  ca2->Destroy();
-  delete ca2;
+  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CHECK_EQUAL(0.0f, k1->time);
+  CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1->rotation);
+  CHECK_EQUAL(CalVector(1, 2, 3), k1->translation);
+
+  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CHECK_EQUAL(40.0f, k2->time);
+  CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2->rotation);
+  CHECK_EQUAL(CalVector(4, 5, 6), k2->translation);
 }
-#endif
 
+const char* animation_with_static_translations =
+"<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
+"<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
+"    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"1\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
+"        <KEYFRAME TIME=\"0\">\n"
+"            <TRANSLATION>1.0 2.0 3.0</TRANSLATION>\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"        <KEYFRAME TIME=\"40\">\n"
+"            <ROTATION>0.5 0.5 0.5 0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"    </TRACK>\n"
+"</ANIMATION>\n"
+;
+
+TEST(load_animation_with_static_translations) {
+  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_static_translations, 0);
+  CHECK(anim);
+
+  CHECK_EQUAL(anim->tracks.size(), 1);
+  CHECK_EQUAL(anim->duration, 40);
+
+  CalCoreTrack* track = anim->tracks[0].get();
+  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+
+  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CHECK_EQUAL(0.0f, k1->time);
+  CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1->rotation);
+  CHECK_EQUAL(CalVector(1, 2, 3), k1->translation);
+
+  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CHECK_EQUAL(40.0f, k2->time);
+  CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2->rotation);
+  CHECK_EQUAL(CalVector(1, 2, 3), k2->translation);
+}
+
+const char* animation_with_mismatched_track_and_keyframe_count=
+"<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
+"<ANIMATION NUMTRACKS=\"2\" DURATION=\"40\">\n"
+"    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"1\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"3\">\n"
+"        <KEYFRAME TIME=\"0\">\n"
+"            <TRANSLATION>1.0 2.0 3.0</TRANSLATION>\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"        <KEYFRAME TIME=\"40\">\n"
+"            <ROTATION>0.5 0.5 0.5 0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"    </TRACK>\n"
+"</ANIMATION>\n"
+;
+
+TEST(load_animation_with_mismatched_counts) {
+  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_mismatched_track_and_keyframe_count, 0);
+  CHECK(anim);
+
+  CHECK_EQUAL(anim->tracks.size(), 1);
+  CHECK_EQUAL(anim->duration, 40);
+
+  CalCoreTrack* track = anim->tracks[0].get();
+  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+
+  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CHECK_EQUAL(0.0f, k1->time);
+  CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1->rotation);
+  CHECK_EQUAL(CalVector(1, 2, 3), k1->translation);
+
+  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CHECK_EQUAL(40.0f, k2->time);
+  CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2->rotation);
+  CHECK_EQUAL(CalVector(1, 2, 3), k2->translation);
+}
+
+// non-track siblings
 
 TEST(CalVectorFromDataSrc) {
   char buf[7];
