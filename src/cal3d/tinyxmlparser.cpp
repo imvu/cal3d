@@ -281,9 +281,10 @@ const char* TiXmlBase::GetEntity( const char* p, char* value )
 
 bool TiXmlBase::StringEqual( const char* p,
 							 const char* tag,
-							 bool)
+							 bool ignoreCase)
 {
 #ifdef PLATFORM_HAS_STRNICMP
+  (void)ignoreCase;
   if( _strnicmp( p, tag, strlen(tag) ) == 0 ) {
     return true;
   } else {
