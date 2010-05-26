@@ -112,7 +112,7 @@ struct SSEAllocator {
         ::new(p) T(value);
     }
 
-    void deallocate(pointer ptr, size_type count) {
+    void deallocate(pointer ptr, size_type) {
         _aligned_free(ptr);
     }
 
