@@ -43,8 +43,6 @@
 #include "msPlugIn.h"
 #include "msLib.h"
 
-#include "cal3d/cal3d.h"
-
 #include "resource.h"
 
 //----------------------------------------------------------------------------//

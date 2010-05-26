@@ -1,5 +1,4 @@
 #include <afxdlgs.h>
-#include <cal3d/cal3d.h>
 #include "MaxAnimationImport.h"
 
 

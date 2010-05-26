@@ -33,6 +33,10 @@
 // Includes                                                                   //
 //----------------------------------------------------------------------------//
 
+#include <cal3d/coreanimation.h>
+#include <cal3d/coretrack.h>
+#include <cal3d/corekeyframe.h>
+#include <cal3d/error.h>
 #include <cal3d/saver.h>
 #include "StdAfx.h"
 #include "Exporter.h"

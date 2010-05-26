@@ -1,4 +1,6 @@
 #include "TestPrologue.h"
+#include <cal3d/coremesh.h>
+#include <cal3d/mesh.h>
 #include <cal3d/renderer.h>
 #include <cal3d/model.h>
 #include <cal3d/skeleton.h>
@@ -6,6 +8,7 @@
 #include <cal3d/physique.h>
 #include <cal3d/vector4.h>
 #include <cal3d/streamops.h>
+#include <cal3d/coreskeleton.h>
 #include <cal3d/coresubmorphtarget.h>
 
 const CalColor32 black = 0;

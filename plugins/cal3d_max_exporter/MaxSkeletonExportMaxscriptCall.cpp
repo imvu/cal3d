@@ -30,6 +30,8 @@
 // any later version.                                                         //
 //----------------------------------------------------------------------------//
 
+#include <cal3d/coreskeleton.h>
+#include <cal3d/error.h>
 #include <cal3d/saver.h>
 #include "StdAfx.h"
 #include "Exporter.h"

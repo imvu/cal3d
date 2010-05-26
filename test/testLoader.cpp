@@ -1,7 +1,11 @@
 //#include <windows.h>
 #include "TestPrologue.h"
 #include <sstream>
+#include <cal3d/buffersource.h>
+#include <cal3d/coreanimation.h>
+#include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
+#include <cal3d/coretrack.h>
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
 

@@ -11,10 +11,14 @@
 #ifndef SKELETON_CANDIDATE_H
 #define SKELETON_CANDIDATE_H
 
+#include <boost/shared_ptr.hpp>
+
 class CBoneCandidate;
 class CBaseNode;
 class CalCoreSkeleton;
 class CalCoreBone;
+class CalQuaternion;
+class CalVector;
 
 class CSkeletonCandidate
 {

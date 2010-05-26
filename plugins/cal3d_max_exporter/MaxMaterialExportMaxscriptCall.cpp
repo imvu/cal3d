@@ -35,6 +35,7 @@
 //----------------------------------------------------------------------------//
 
 #include "StdAfx.h"
+#include <cal3d/error.h>
 #include <cal3d/saver.h>
 #include <cal3d/corematerial.h>
 #include "Exporter.h"

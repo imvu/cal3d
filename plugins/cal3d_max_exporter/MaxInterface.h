@@ -11,33 +11,18 @@
 #ifndef MAX_INTERFACE_H
 #define MAX_INTERFACE_H
 
-//----------------------------------------------------------------------------//
-// Includes                                                                   //
-//----------------------------------------------------------------------------//
-
 #include "BaseInterface.h"
 #include "stdmat.h"
-
-//----------------------------------------------------------------------------//
-// Defines                                                                    //
-//----------------------------------------------------------------------------//
 
 // this is the class for all biped controllers except the root and the footsteps
 #define BIPSLAVE_CONTROL_CLASS_ID Class_ID(0x9154,0)
 // this is the class for the center of mass, biped root controller ("Bip01")
 #define BIPBODY_CONTROL_CLASS_ID  Class_ID(0x9156,0) 
 
-//----------------------------------------------------------------------------//
-// Forward declarations                                                       //
-//----------------------------------------------------------------------------//
-
+class CalQuaternion;
 class CBaseNode;
 class CMaxNode;
 class CBaseMaterial;
-
-//----------------------------------------------------------------------------//
-// Class declaration                                                          //
-//----------------------------------------------------------------------------//
 
 class CMaxInterface : public CBaseInterface
 {

@@ -11,18 +11,12 @@
 #ifndef BASE_INTERFACE_H
 #define BASE_INTERFACE_H
 
-//----------------------------------------------------------------------------//
-// Forward declarations                                                       //
-//----------------------------------------------------------------------------//
-
+class CalVector;
+class CalQuaternion;
 class CWnd;
 class CBaseNode;
 class CBaseMesh;
 class CBaseMaterial;
-
-//----------------------------------------------------------------------------//
-// Class declaration                                                          //
-//----------------------------------------------------------------------------//
 
 class CBaseInterface
 {

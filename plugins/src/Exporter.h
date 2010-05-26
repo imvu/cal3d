@@ -21,23 +21,13 @@
 
 #include <MeshCandidate.h>
 
-//----------------------------------------------------------------------------//
-// Forward declarations                                                       //
-//----------------------------------------------------------------------------//
-
 class CBaseInterface;
+class CalCoreMesh;
+class CalVector;
 
-
-//----------------------------------------------------------------------------//
-// Export options                                                             //
-//----------------------------------------------------------------------------//
 #define CAL3D_EXPORT_OPTION_DESELECT_DUMMY_NODES ( 0 )
 #define CAL3D_EXPORT_OPTION_DESELECT_EX_NODES ( 1 )
 #define CAL3D_EXPORT_OPTION_DESELECT_EX_NODES_PREFIX_STRING "ex_"
-
-//----------------------------------------------------------------------------//
-// Class declaration                                                          //
-//----------------------------------------------------------------------------//
 
 class CExporter
 {

@@ -8,8 +8,6 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#include "cal3d/cal3d.h"
-
 #define SKELETON 0
 #define MESH 1
 #define ANIMATION 2

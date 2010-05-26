@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------//
 
 #include "StdAfx.h"
+#include <cal3d/coreskeleton.h>
 #include <cal3d/loader.h>
 #include "Exporter.h"
 #include "SkeletonCandidate.h"

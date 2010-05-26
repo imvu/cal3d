@@ -30,7 +30,7 @@ public:
   void scale(float factor);
   void removeZeroScaleTracks();
 
-  size_t size() const;
+  size_t sizeInBytes() const;
 
 private:
   float m_duration;

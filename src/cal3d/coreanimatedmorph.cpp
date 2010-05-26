@@ -22,10 +22,10 @@ size_t sizeInBytes(const CalCoreMorphTrack& t) {
     return t.size();
 }
 
-size_t CalCoreAnimatedMorph::size() const {
+size_t CalCoreAnimatedMorph::sizeInBytes() const {
     size_t r = sizeof(*this);
-    r += sizeInBytes(m_listCoreTrack);
-    r += sizeInBytes(m_tracksToDelete);
+    r += ::sizeInBytes(m_listCoreTrack);
+    r += ::sizeInBytes(m_tracksToDelete);
     return r;
 }
 

@@ -33,8 +33,10 @@
 //----------------------------------------------------------------------------//
 // Includes                                                                   //
 //----------------------------------------------------------------------------//
-#include <cal3d/saver.h>
 #include "StdAfx.h"
+#include <cal3d/coremesh.h>
+#include <cal3d/error.h>
+#include <cal3d/saver.h>
 #include "Exporter.h"
 #include "BaseInterface.h"
 #include "SkeletonCandidate.h"
