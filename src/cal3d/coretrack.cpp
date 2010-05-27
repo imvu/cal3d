@@ -19,8 +19,8 @@
 #include "cal3d/corekeyframe.h"
 #include "cal3d/loader.h"
 
-CalCoreTrack::CalCoreTrack()
-  : m_coreBoneId(-1)
+CalCoreTrack::CalCoreTrack(int coreBone)
+  : coreBoneId(coreBone)
 {
   m_translationRequired = true;
   m_highRangeRequired = true;
@@ -35,28 +35,7 @@ size_t CalCoreTrack::sizeInBytes() const {
   return sizeof(CalCoreTrack) + ::sizeInBytes(m_keyframes);
 }
 
-CalCoreTrack::~CalCoreTrack()
-{
-  for (unsigned i = 0; i < m_keyframes.size(); ++i)
-  {
-    delete m_keyframes[i];
-  }
-}
-
- /*****************************************************************************/
-/** Adds a core keyframe.
-  *
-  * This function adds a core keyframe to the core track instance.
-  *
-  * @param pCoreKeyframe A pointer to the core keyframe that should be added.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreTrack::addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe)
-{
+bool CalCoreTrack::addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe) {
   m_keyframes.push_back(pCoreKeyframe);
   int idx = m_keyframes.size() - 1;
   while (idx > 0 && m_keyframes[idx]->time < m_keyframes[idx - 1]->time) {
@@ -67,27 +46,18 @@ bool CalCoreTrack::addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe)
   return true;
 }
 
-
-inline float
-DistanceSquared( CalVector const & v1, CalVector const & v2 )
-{
+inline float DistanceSquared( CalVector const & v1, CalVector const & v2 ) {
   float dx = ( v1.x - v2.x );
   float dy = ( v1.y - v2.y );
   float dz = ( v1.z - v2.z );
-  float diff2 = dx * dx + dy * dy + dz * dz;
-  return diff2;
+  return dx * dx + dy * dy + dz * dz;
 }
 
-inline float
-Distance( CalVector const & p1, CalVector const & p2 )
-{
-  float dist = sqrtf( DistanceSquared( p1, p2 ) );
-  return dist;
+inline float Distance( CalVector const & p1, CalVector const & p2 ) {
+  return sqrtf( DistanceSquared( p1, p2 ) );
 }
 
-float
-DistanceDegrees( CalQuaternion const & p1, CalQuaternion const & p2 )
-{
+float DistanceDegrees( CalQuaternion const & p1, CalQuaternion const & p2 ) {
 
   // To determine the angular distance between the oris, multiply one by the inverse
   // of the other, which should leave us with an identity ori if they are equal.  If
@@ -409,7 +379,7 @@ CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * tra
   * transDynamicResult = false;
   * highRangeRequiredResult = false;
   int numFrames = m_keyframes.size();
-  CalCoreBone * cb = skel->getCoreBone( m_coreBoneId );
+  CalCoreBone * cb = skel->getCoreBone( coreBoneId );
   const CalVector & cbtrans = cb->getTranslation();
   CalVector trans0;
   float t2 = threshold * threshold;
@@ -437,23 +407,7 @@ CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * tra
   }
 }
 
- /*****************************************************************************/
-/** Returns the ID of the core bone.
-  *
-  * This function returns the ID of the core bone to which the core track
-  * instance is attached to.
-  *
-  * @return One of the following values:
-  *         \li the \b ID of the core bone
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
-int CalCoreTrack::getCoreBoneId()
-{
-  return m_coreBoneId;
-}
-
- /*****************************************************************************/
+/*****************************************************************************/
 /** Returns a specified state.
   *
   * This function returns the state (translation and rotation of the core bone)
@@ -547,34 +501,6 @@ std::vector<CalCoreKeyframe*>::iterator CalCoreTrack::getUpperBound(float time)
 
 }
 
- /*****************************************************************************/
-/** Sets the ID of the core bone.
-  *
-  * This function sets the ID of the core bone to which the core track instance
-  * is attached to.
-  *
-  * @param coreBoneId The ID of the bone to which the core track instance should
-  *                   be attached to.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreTrack::setCoreBoneId(int coreBoneId)
-{
-  if(coreBoneId < 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
-
-  m_coreBoneId = coreBoneId;
-
-  return true;
-}
-
-
 int CalCoreTrack::getCoreKeyframeCount()
 {
   return m_keyframes.size();
@@ -607,5 +533,3 @@ void CalCoreTrack::scale(float factor)
 	}
 
 }
-
-//****************************************************************************//

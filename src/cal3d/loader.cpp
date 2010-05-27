@@ -1444,9 +1444,8 @@ CalCoreTrack* CalLoader::loadCoreTrack(
     }
   }
 
-  CalCoreTrack* pCoreTrack = new CalCoreTrack();
+  CalCoreTrack* pCoreTrack = new CalCoreTrack(coreBoneId);
 
-  pCoreTrack->setCoreBoneId(coreBoneId);
   CalCoreBone * cb = NULL;
   if( skel ) {
     cb = skel->getCoreBone( coreBoneId );

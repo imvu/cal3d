@@ -157,10 +157,7 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 		if(pBoneCandidate->IsSelected())
 		{
 			// allocate new core track instance
-			CalCoreTrackPtr pCoreTrack(new CalCoreTrack);
-
-			// set the core bone id
-			pCoreTrack->setCoreBoneId(boneCandidateId);
+			CalCoreTrackPtr pCoreTrack(new CalCoreTrack(boneCandidateId));
 
 			// add the core track to the core animation instance
 			coreAnimation.tracks.push_back(pCoreTrack);

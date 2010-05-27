@@ -658,10 +658,10 @@ void CalMixer::updateSkeleton()
         
         // get the appropriate bone of the track
         CalCoreTrack* ct = itct->get();
-        if( ct->getCoreBoneId() >= int(vectorBone.size()) ) {
+        if( ct->coreBoneId >= int(vectorBone.size()) ) {
           continue;
         }
-        CalBone * pBone = &vectorBone[ ct->getCoreBoneId() ];
+        CalBone * pBone = &vectorBone[ct->coreBoneId];
         
         // get the current translation and rotation
         CalVector translation;

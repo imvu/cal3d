@@ -875,7 +875,7 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
   bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
 
     // Write the coreBoneId.
-  if(!CalPlatform::writeInteger(file, pCoreTrack->getCoreBoneId())) {
+  if(!CalPlatform::writeInteger(file, pCoreTrack->coreBoneId)) {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
@@ -1143,7 +1143,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
     CalCoreTrack* pCoreTrack = iteratorCoreTrack->get();
 
     TiXmlElement track("TRACK");
-    track.SetAttribute("BONEID",pCoreTrack->getCoreBoneId());
+    track.SetAttribute("BONEID",pCoreTrack->coreBoneId);
 
     // Always save out the TRANSLATIONREQUIRED flag in XML, and save the translations iff the flag is true.
     bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();

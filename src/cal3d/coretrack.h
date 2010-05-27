@@ -20,16 +20,14 @@ class CalCoreSkeleton;
 
 class CAL3D_API CalCoreTrack : public Cal::Object {
 public:
-  CalCoreTrack();
-  ~CalCoreTrack();
+  const int coreBoneId; 
+
+  CalCoreTrack(int coreBoneId);
 
   size_t sizeInBytes() const;
 
   bool getState(float time, CalVector& translation, CalQuaternion& rotation);
 
-  int getCoreBoneId();
-  bool setCoreBoneId(int coreBoneId);
-  
   int getCoreKeyframeCount();
   CalCoreKeyframe* getCoreKeyframe(int idx);
 
@@ -60,15 +58,9 @@ private:
 
   std::vector<CalCoreKeyframe*>::iterator getUpperBound(float time);
 
-  /// The index of the associated CoreBone in the CoreSkeleton.
-  int m_coreBoneId;
-
-  // If translationRequired is false, then the translations are the same as the
-  // skeleton's translations.
   bool m_translationRequired;
   bool m_highRangeRequired;
   bool m_translationIsDynamic;
 
-  /// List of keyframes, always sorted by time.
   std::vector<CalCoreKeyframe*> m_keyframes;
 };

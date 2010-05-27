@@ -715,9 +715,9 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             return null;
         }
 
-        CalCoreTrackPtr pCoreTrack(new CalCoreTrack);
-
         int coreBoneId = atoi(track->Attribute("BONEID"));
+        CalCoreTrackPtr pCoreTrack(new CalCoreTrack(coreBoneId));
+
         const char * trstr = track->Attribute("TRANSLATIONREQUIRED");
         bool translationRequired = true; // Default value if flag is not supplied (for backwards compatibility).
         if( trstr ) {
@@ -743,9 +743,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         // If XML files do not have the flag, then we assume translation is required until we decide otherwise.
         // If the caller has passed in a skeleton (not NULL for the skeleton), then we will re-derive 
         // whether translation is required, and we will update the translationRequired flag.
-
-        // link the core track to the appropriate core bone instance
-        pCoreTrack->setCoreBoneId(coreBoneId);
 
         // read the number of keyframes
         int keyframeCount= atoi(track->Attribute("NUMKEYFRAMES"));

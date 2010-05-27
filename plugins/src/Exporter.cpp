@@ -135,8 +135,7 @@ bool CExporter::ExportAnimation(const std::string& strFilename)
 		// only create tracks for the selected bone candidates
 		if(pBoneCandidate->IsSelected())
 		{
-			CalCoreTrackPtr pCoreTrack(new CalCoreTrack);
-			pCoreTrack->setCoreBoneId(boneCandidateId);
+			CalCoreTrackPtr pCoreTrack(new CalCoreTrack(boneCandidateId));
 			coreAnimation.tracks.push_back(pCoreTrack);
 		}
 	}
