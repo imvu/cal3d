@@ -243,7 +243,7 @@ OutputDebugString(str);
 		// there is no pCoreTrack for bones that are deselected
 		if( pCoreTrack && useCompression ) {
                   CalCoreSkeleton * skelOrNull = skeletonCandidate.GetCoreSkeleton();
-		  pCoreTrack->compress(translationTolerance, rotationToleranceDegrees, skelOrNull );
+		  pCoreTrack = pCoreTrack->compress(translationTolerance, rotationToleranceDegrees, skelOrNull );
 		}
 	}
 

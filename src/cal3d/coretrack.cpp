@@ -88,15 +88,12 @@ static bool Near(
 
 
 // Returns true if rounding took place and they were not exactly equal.
-bool
-CalCoreTrack::roundTranslation( CalCoreKeyframe const * prevp, CalCoreKeyframe * p, double transTolerance  )
-{
-  CalCoreKeyframe * prev = const_cast< CalCoreKeyframe * >( prevp );
-  CalVector translation;
-  assert( prev && p );
+static bool roundTranslation(CalCoreKeyframe const * prevp, CalCoreKeyframe * p, double transTolerance) {
+  CalCoreKeyframe * prev = const_cast<CalCoreKeyframe*>(prevp);
+  assert(prev && p);
 
   // blend between the two keyframes
-  translation = prev->translation;
+  CalVector translation = prev->translation;
   CalVector const ppos = p->translation;
   float dist = Distance( translation, ppos );
 
@@ -160,11 +157,14 @@ KeyFrameSequenceLength( KeyLink * p, double transTolerance, double rotTolerance 
 }
 
 
-void CalCoreTrack::compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull )
-{
+CalCoreTrackPtr CalCoreTrack::compress(
+    double translationTolerance,
+    double rotationToleranceDegrees,
+    CalCoreSkeleton* skelOrNull
+) const {
   size_t numFrames = m_keyframes.size();
   if (!numFrames) {
-      return;
+      return CalCoreTrackPtr(new CalCoreTrack(coreBoneId));
   }
 
   // I want to iterate through the vector as a list, and remove elements easily.
@@ -223,28 +223,31 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
     p = p->next_;
   }
 
+  std::vector<CalCoreKeyframe*> output;
+
   // Rebuild the vector, freeing any of the eliminated keyframes.
-  unsigned int numKept = 0;
   for( unsigned i = 0; i < numFrames; i++ ) {
     KeyLink * kl = & keyLinkArray[ i ];
     if( !kl->eliminated_ ) {
-      m_keyframes[numKept] = kl->keyframe_;
-      numKept++;
-    } else {
-      delete kl->keyframe_;
+      output.push_back(new CalCoreKeyframe(*kl->keyframe_));
     }
   }
 
-  m_keyframes.resize( numKept );
+  CalCoreTrackPtr result(new CalCoreTrack(coreBoneId));
+  for (KeyframeList::const_iterator i = output.begin(); i != output.end(); ++i) {
+      result->addCoreKeyframe(*i);
+  }
 
   // Update the flag saying whether the translation, which I have loaded, is actually required.
   // If translation is not required, I can't do any better than that so I leave it alone.
   if( skelOrNull && m_translationRequired ) {
-    translationCompressibility( 
-      & m_translationRequired, 
-      & m_translationIsDynamic, 
+    result->translationCompressibility( 
+      &result->m_translationRequired, 
+      &result->m_translationIsDynamic, 
       translationTolerance, CalLoader::keyframePosRangeSmall, skelOrNull );
   }
+
+  return result;
 }
 
 

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
@@ -17,6 +18,7 @@
 class CalCoreBone;
 class CalCoreKeyframe;
 class CalCoreSkeleton;
+typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 
 class CAL3D_API CalCoreTrack : public Cal::Object {
 public:
@@ -39,18 +41,20 @@ public:
   void fillInvalidTranslations( CalVector const & trans );
 
   void scale(float factor);
-  void compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull );
-  bool roundTranslation( CalCoreKeyframe const * prev, CalCoreKeyframe * p, double translationTolerance );
+  CalCoreTrackPtr compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull ) const;
   void translationCompressibility( 
     bool* transRequiredResult, bool* transDynamicResult,
     float threshold, float highRangeThreshold, CalCoreSkeleton * skel );
   void collapseSequences( double translationTolerance, double rotationToleranceDegrees );
 
 private:
-  std::vector<CalCoreKeyframe*>::iterator getUpperBound(float time);
+  typedef std::vector<CalCoreKeyframe*> KeyframeList;
+
+  KeyframeList::iterator getUpperBound(float time);
 
   bool m_translationRequired;
   bool m_translationIsDynamic;
 
-  std::vector<CalCoreKeyframe*> m_keyframes;
+  KeyframeList m_keyframes;
 };
+typedef boost::shared_ptr<CalCoreTrack> CalCoreTrackPtr;
