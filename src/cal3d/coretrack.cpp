@@ -23,7 +23,6 @@ CalCoreTrack::CalCoreTrack(int coreBone)
   : coreBoneId(coreBone)
 {
   m_translationRequired = true;
-  m_highRangeRequired = true;
   m_translationIsDynamic = true;
 }
 
@@ -216,14 +215,10 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
   // tolerance.  The reason we do this is so lossless compression algorithms will eliminate
   // redundancy.  There seems to be numerical jitter in the translation when there are rotations,
   // which will make those translation values not compress well.
-  int numRounded = 0;
   KeyLink * prev = & keyLinkArray[ 0 ];
   KeyLink * p = prev->next_;
   while( p ) {
-    bool didRound = roundTranslation( prev->keyframe_, p->keyframe_, translationTolerance );
-    if( didRound ) {
-      numRounded++;
-    }
+    roundTranslation( prev->keyframe_, p->keyframe_, translationTolerance );
     prev = p;
     p = p->next_;
   }
@@ -233,10 +228,10 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
   for( unsigned i = 0; i < numFrames; i++ ) {
     KeyLink * kl = & keyLinkArray[ i ];
     if( !kl->eliminated_ ) {
-      m_keyframes[ numKept ] = kl->keyframe_;
+      m_keyframes[numKept] = kl->keyframe_;
       numKept++;
     } else {
-        delete kl->keyframe_;
+      delete kl->keyframe_;
     }
   }
 
@@ -248,7 +243,6 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
     translationCompressibility( 
       & m_translationRequired, 
       & m_translationIsDynamic, 
-      & m_highRangeRequired,
       translationTolerance, CalLoader::keyframePosRangeSmall, skelOrNull );
   }
 }
@@ -350,12 +344,11 @@ CalCoreTrack::fillInvalidTranslations( CalVector const & trans )
 
 
 void
-CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * transDynamicResult, bool * highRangeRequiredResult,
+CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * transDynamicResult,
                                   float threshold, float highRangeThreshold, CalCoreSkeleton * skel )
 {
   * transRequiredResult = false;
   * transDynamicResult = false;
-  * highRangeRequiredResult = false;
   int numFrames = m_keyframes.size();
   CalCoreBone * cb = skel->getCoreBone( coreBoneId );
   const CalVector & cbtrans = cb->getTranslation();
@@ -365,11 +358,6 @@ CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * tra
   for( i = 0; i < numFrames; i++ ) {
     CalCoreKeyframe * keyframe = m_keyframes[ i ];
     const CalVector & kftrans = keyframe->translation;
-    if( fabsf( kftrans.x ) >= highRangeThreshold
-      ||  fabsf( kftrans.y ) >= highRangeThreshold
-      ||  fabsf( kftrans.z ) >= highRangeThreshold ) {
-      * highRangeRequiredResult = true;
-    }
     if( i == 0 ) {
       trans0 = keyframe->translation;
     } else {

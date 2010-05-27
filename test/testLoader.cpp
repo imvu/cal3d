@@ -64,7 +64,6 @@ TEST(LoadSimpleXmlAnimation) {
 
   CHECK_EQUAL(track1->getTranslationRequired(), false);
   CHECK_EQUAL(track1->getTranslationIsDynamic(), false);
-  CHECK_EQUAL(track1->getHighRangeRequired(), true);
   CHECK_EQUAL(track1->getCoreKeyframeCount(), 2);
 
   std::ostringstream ss;

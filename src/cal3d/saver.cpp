@@ -869,11 +869,6 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
     return false;
   }
 
-  // Always save out the flags, and save out the translation iff required.
-  // I calculate translation required on load, and just fetch the saved result upon save.
-  bool translationRequired = pCoreTrack->getTranslationRequired();
-  bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
-
     // Write the coreBoneId.
   if(!CalPlatform::writeInteger(file, pCoreTrack->coreBoneId)) {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
@@ -890,13 +885,6 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
   // save all core keyframes
   for(int i = 0; i < pCoreTrack->getCoreKeyframeCount(); ++i)
   {
-
-    // If translationRequired is false, then I don't need the the translation, but even if it is true,
-    // if translationIsDynamic is false then I don't need translation for any frames but the first.
-    bool translationWritten = translationRequired;
-    if( i != 0 && !translationIsDynamic ) {
-      translationWritten = false;
-    }
     if(!saveCoreKeyframe(file, strFilename, pCoreTrack->getCoreKeyframe(i)))
     {
       return false;
@@ -1148,10 +1136,10 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
     // Always save out the TRANSLATIONREQUIRED flag in XML, and save the translations iff the flag is true.
     bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
 // translationIsDynamic = true;
-    track.SetAttribute( "TRANSLATIONREQUIRED", ( pCoreTrack->getTranslationRequired() ? 1 : 0 ) );
-    track.SetAttribute( "TRANSLATIONISDYNAMIC", ( translationIsDynamic ? 1 : 0 ) );
-    track.SetAttribute( "HIGHRANGEREQUIRED", ( pCoreTrack->getHighRangeRequired() ? 1 : 0 ) );  
-    track.SetAttribute( "NUMKEYFRAMES",pCoreTrack->getCoreKeyframeCount());
+    track.SetAttribute("TRANSLATIONREQUIRED", ( pCoreTrack->getTranslationRequired() ? 1 : 0 ) );
+    track.SetAttribute("TRANSLATIONISDYNAMIC", ( translationIsDynamic ? 1 : 0 ) );
+    track.SetAttribute("HIGHRANGEREQUIRED", 1);  
+    track.SetAttribute("NUMKEYFRAMES",pCoreTrack->getCoreKeyframeCount());
 
     // save all core keyframes
     for (int i = 0; i < pCoreTrack->getCoreKeyframeCount(); ++i)

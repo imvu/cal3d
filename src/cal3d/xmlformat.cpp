@@ -855,7 +855,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             pCoreTrack->addCoreKeyframe(pCoreKeyframe);
         }
         pCoreTrack->setTranslationRequired( translationRequired );
-        pCoreTrack->setHighRangeRequired( highRangeRequired );
         pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
         pCoreAnimation->tracks.push_back(pCoreTrack);   
     }

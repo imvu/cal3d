@@ -1,6 +1,7 @@
 Import('*')
 
 sources = Split('''
+    testAnimationCompression.cpp
     testLoader.cpp
     testSubmesh.cpp
     testTinyXml.cpp

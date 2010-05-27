@@ -1469,7 +1469,6 @@ CalCoreTrack* CalLoader::loadCoreTrack(
   // Whenever I load the track, I update its translationRequired status.  The status can
   // go from required to not required, but not the other way around.
   pCoreTrack->setTranslationRequired( translationRequired );
-  pCoreTrack->setHighRangeRequired( highRangeRequired );
   pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
   return pCoreTrack;
 }
