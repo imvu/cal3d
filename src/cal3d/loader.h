@@ -80,21 +80,6 @@ public:
 
   static double getAnimationTranslationTolerance() { return translationTolerance; }
   static double getAnimationRotationToleranceDegrees() { return rotationToleranceDegrees; }
-  static int getAnimationNumEliminatedKeyframes() { return numEliminatedKeyframes; }
-  static int getAnimationNumKeptKeyframes() { return numKeptKeyframes; }
-  static int getAnimationNumRoundedKeyframes() { return numRoundedKeyframes; }
-  static int getAnimationNumCompressedAnimations() { return numCompressedAnimations; }
-  static void addAnimationCompressionStatistic( int totalKeyframes, int eliminatedKeyframes, int numRounded ) {
-    numEliminatedKeyframes += eliminatedKeyframes;
-    numKeptKeyframes += totalKeyframes - eliminatedKeyframes;
-    numRoundedKeyframes += numRounded;
-    numCompressedAnimations++;
-  }
-  static void resetCompressionStatistics() {
-    numEliminatedKeyframes = 0;
-    numKeptKeyframes = 0;
-    numCompressedAnimations = 0;
-  }
   static bool usesAnimationCompression( int version );
   static unsigned int compressedKeyframeRequiredBytes( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic );
   static unsigned int readCompressedKeyframe(
@@ -137,11 +122,6 @@ private:
 
   static double translationTolerance;
   static double rotationToleranceDegrees;
-
-  static int numEliminatedKeyframes;
-  static int numKeptKeyframes;
-  static int numCompressedAnimations;
-  static int numRoundedKeyframes;
 
   CalLoader();
   ~CalLoader();

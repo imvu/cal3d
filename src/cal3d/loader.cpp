@@ -37,10 +37,6 @@
 
 double CalLoader::translationTolerance = 0.25;
 double CalLoader::rotationToleranceDegrees = 0.1;
-int CalLoader::numEliminatedKeyframes = 0;
-int CalLoader::numKeptKeyframes = 0;
-int CalLoader::numCompressedAnimations = 0;
-int CalLoader::numRoundedKeyframes = 0;
 
 // Quat format: 
 //

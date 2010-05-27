@@ -75,11 +75,11 @@ float DistanceDegrees( CalQuaternion const & p1, CalQuaternion const & p2 ) {
   return fabsf( distdegrees );
 }
 
-bool
-Near( CalVector const & p1, CalQuaternion const & q1, CalVector const & p2, CalQuaternion const & q2,
-     double transTolerance,
-     double rotTolerance )
-{
+static bool Near(
+    CalVector const & p1, CalQuaternion const & q1, CalVector const & p2, CalQuaternion const & q2,
+    double transTolerance,
+    double rotTolerance
+) {
   float distdegrees = DistanceDegrees( q1, q2 );
   if( distdegrees > rotTolerance ) return false;
   float dist = Distance( p1, p2 );
@@ -113,28 +113,22 @@ CalCoreTrack::roundTranslation( CalCoreKeyframe const * prevp, CalCoreKeyframe *
   }
 }
 
-bool
-CalCoreTrack::keyframeEliminatable( CalCoreKeyframe * prev, 
-                                   CalCoreKeyframe * p, 
-                                   CalCoreKeyframe * next,
-                                   double transTolerance,
-                                   double rotTolerance )
-{
-  CalVector translation;
-  CalQuaternion rotation;
+static bool keyframeEliminatable(
+    const CalCoreKeyframe* prev, 
+    const CalCoreKeyframe* p, 
+    const CalCoreKeyframe* next,
+    double transTolerance,
+    double rotTolerance
+) {
   assert( prev && p && next );
-  float time = p->time;
-  float blendFactor;
-  blendFactor = ( time - prev->time ) / ( next->time - prev->time );
+  float blendFactor = (p->time - prev->time) / (next->time - prev->time);
 
   // blend between the two keyframes
-  translation = prev->translation;
+  CalVector translation = prev->translation;
   translation.blend( blendFactor, next->translation );
-  rotation = prev->rotation;
+  CalQuaternion rotation = prev->rotation;
   rotation.blend( blendFactor, next->rotation );
-  CalVector const ppos = p->translation;
-  CalQuaternion const pori = p->rotation;
-  return Near( translation, rotation, ppos, pori, transTolerance, rotTolerance );
+  return Near(translation, rotation, p->translation, p->rotation, transTolerance, rotTolerance);
 }
 
 
@@ -167,12 +161,12 @@ KeyFrameSequenceLength( KeyLink * p, double transTolerance, double rotTolerance 
 }
 
 
-void
-CalCoreTrack::compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull )
+void CalCoreTrack::compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull )
 {
-  int numFrames = m_keyframes.size();
-  if( !numFrames ) return;
-  unsigned int numFramesEliminated = 0;
+  size_t numFrames = m_keyframes.size();
+  if (!numFrames) {
+      return;
+  }
 
   // I want to iterate through the vector as a list, and remove elements easily.
   static int arrayLen = 0;
@@ -221,7 +215,6 @@ CalCoreTrack::compress( double translationTolerance, double rotationToleranceDeg
         // of the curve.
         prev = next;
         removedFrame = true;
-        numFramesEliminated++;
       } else {
         prev = p;
       }
@@ -243,7 +236,6 @@ CalCoreTrack::compress( double translationTolerance, double rotationToleranceDeg
     prev = p;
     p = p->next_;
   }
-  CalLoader::addAnimationCompressionStatistic( numFrames, numFramesEliminated, numRounded );
 
   // Rebuild the vector, freeing any of the eliminated keyframes.
   unsigned int numKept = 0;

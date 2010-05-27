@@ -49,13 +49,6 @@ public:
   void collapseSequences( double translationTolerance, double rotationToleranceDegrees );
 
 private:
-  bool keyframeEliminatable(
-      CalCoreKeyframe* prev,
-      CalCoreKeyframe* p,
-      CalCoreKeyframe* next,
-      double translationTolerance,
-      double rotationToleranceDegrees);
-
   std::vector<CalCoreKeyframe*>::iterator getUpperBound(float time);
 
   bool m_translationRequired;
