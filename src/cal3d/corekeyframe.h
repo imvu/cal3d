@@ -20,6 +20,12 @@ public:
     time = 0.0f;
   }
 
+  CalCoreKeyframe(float t, const CalVector& tr, const CalQuaternion& ro)
+      : time(t)
+      , translation(tr)
+      , rotation(ro)
+  {}
+
   float time;
   CalVector translation;
   CalQuaternion rotation;
