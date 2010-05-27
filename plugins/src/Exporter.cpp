@@ -243,7 +243,7 @@ OutputDebugString(str);
 		static double rotationToleranceDegrees = 0.1;
 		// there is no pCoreTrack for bones that are deselected
 		if( pCoreTrack && useCompression ) {
-      CalCoreSkeleton * skelOrNull = skeletonCandidate.GetCoreSkeleton();
+                  CalCoreSkeleton * skelOrNull = skeletonCandidate.GetCoreSkeleton();
 		  pCoreTrack->compress(translationTolerance, rotationToleranceDegrees, skelOrNull );
 		}
 	}

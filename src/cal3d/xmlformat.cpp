@@ -860,13 +860,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         pCoreTrack->setTranslationRequired( translationRequired );
         pCoreTrack->setHighRangeRequired( highRangeRequired );
         pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
-        if( loadingCompressionOn ) {
-
-            // This function MIGHT call setTranslationRequired() on the track.
-            // Alas, you may be passing me NULL for skel, in which case compress() won't update the 
-            // translationRequired flag; instead it will leave it, as above.
-            pCoreTrack->compress( translationTolerance, rotationToleranceDegrees, skel );
-        }
         pCoreAnimation->tracks.push_back(pCoreTrack);   
     }
 

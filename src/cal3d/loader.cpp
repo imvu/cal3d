@@ -37,8 +37,6 @@
 
 double CalLoader::translationTolerance = 0.25;
 double CalLoader::rotationToleranceDegrees = 0.1;
-bool CalLoader::loadingCompressionOn = false;
-bool CalLoader::collapseSequencesOn = false;
 int CalLoader::numEliminatedKeyframes = 0;
 int CalLoader::numKeptKeyframes = 0;
 int CalLoader::numCompressedAnimations = 0;
@@ -387,32 +385,6 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCore
 }
 
 
-
-void
-CalLoader::compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel )
-{
-  CalCoreAnimation::TrackList& listCoreTrack = anim->tracks;
-  CalCoreAnimation::TrackList::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
-  {
-    CalCoreTrackPtr pCoreTrack=*iteratorCoreTrack;
-    pCoreTrack->compress( translationTolerance, rotationToleranceDegrees, skel );
-  }
-}
-
-
-
- /*****************************************************************************/
-/** Loads a core animatedMorph instance.
-  *
-  * This function loads a core animatedMorph instance from a data source.
-  *
-  * @param dataSrc The data source to load the core animatedMorph instance from.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core animatedMorph
-  *         \li \b 0 if an error happened
-  *****************************************************************************/
 
 CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
 {
@@ -1570,17 +1542,6 @@ CalCoreTrack* CalLoader::loadCoreTrack(
   pCoreTrack->setTranslationRequired( translationRequired );
   pCoreTrack->setHighRangeRequired( highRangeRequired );
   pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
-  if( collapseSequencesOn ) {
-    pCoreTrack->collapseSequences( translationTolerance, rotationToleranceDegrees );
-  }
-  if( loadingCompressionOn ) {
-    
-    // This function MIGHT call setTranslationRequired() on the track.
-    // Alas, you may be passing me NULL for skel, in which case compress() won't update the 
-    // translationRequired flag; instead it will leave it, as above.
-    pCoreTrack->compress( translationTolerance, rotationToleranceDegrees, skel );
-  }
-
   return pCoreTrack;
 }
 
@@ -1662,16 +1623,6 @@ CalCoreMorphTrack *CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc)
 }
 
 void 
-CalLoader::setAnimationCollapseSequencesOn( bool p ) 
-{ 
-  collapseSequencesOn = p; 
-}
-void 
-CalLoader::setAnimationLoadingCompressionOn( bool p ) 
-{ 
-  loadingCompressionOn = p; 
-}
-void 
 CalLoader::setAnimationTranslationTolerance( double p )
 { 
   translationTolerance = p; 
@@ -1681,6 +1632,3 @@ CalLoader::setAnimationRotationToleranceDegrees( double p )
 { 
   rotationToleranceDegrees = p; 
 }
-
-//****************************************************************************//
-

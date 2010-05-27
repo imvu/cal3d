@@ -75,12 +75,9 @@ public:
   static CalCoreMesh *loadCoreMesh(CalDataSource& inputSrc);
   static CalCoreSkeleton *loadCoreSkeleton(CalDataSource& inputSrc);
 
-  static void setAnimationCollapseSequencesOn( bool p );
-  static void setAnimationLoadingCompressionOn( bool p );
   static void setAnimationTranslationTolerance( double p );
   static void setAnimationRotationToleranceDegrees( double p );
 
-  static bool getAnimationLoadingCompressionOn() { return loadingCompressionOn; }
   static double getAnimationTranslationTolerance() { return translationTolerance; }
   static double getAnimationRotationToleranceDegrees() { return rotationToleranceDegrees; }
   static int getAnimationNumEliminatedKeyframes() { return numEliminatedKeyframes; }
@@ -105,7 +102,6 @@ public:
       CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
       CalCoreKeyframe * lastCoreKeyframe,
       bool translationRequired, bool highRangeRequired, bool translationIsDynamic);
-  static void compressCoreAnimation( CalCoreAnimation * anim, CalCoreSkeleton *skel );
 
   // xmlformat.cpp
   static CalCoreAnimationPtr loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton* skel);
@@ -141,8 +137,6 @@ private:
 
   static double translationTolerance;
   static double rotationToleranceDegrees;
-  static bool loadingCompressionOn;
-  static bool collapseSequencesOn;
 
   static int numEliminatedKeyframes;
   static int numKeptKeyframes;
