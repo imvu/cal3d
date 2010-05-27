@@ -52,15 +52,11 @@ const char* animationText =
 ;
 
 TEST(LoadSimpleXmlAnimation) {
-  // Load animation.
   CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animationText, 0);
   CHECK(anim);
-
-  // Check animation.
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
-  // Check tracks.
   CalCoreTrack* track1 = anim->tracks[0].get();
   CalCoreTrack* track2 = anim->getCoreTrack(/*boneid*/ 0).get();
   CHECK(track1);
@@ -71,11 +67,41 @@ TEST(LoadSimpleXmlAnimation) {
   CHECK_EQUAL(track1->getHighRangeRequired(), true);
   CHECK_EQUAL(track1->getCoreKeyframeCount(), 2);
 
-  // Save the animation back to an XML file.
   std::ostringstream ss;
   CalSaver::saveXmlCoreAnimation(ss, anim.get());
 
   CHECK_EQUAL(ss.str(), animationText);
+}
+
+const char* animation_with_out_of_order_keyframes =
+"<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
+"<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
+"    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"0\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
+"        <KEYFRAME TIME=\"40\">\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"        <KEYFRAME TIME=\"0\">\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"    </TRACK>\n"
+"</ANIMATION>\n"
+;
+
+TEST(sorts_keyframes_upon_load) {
+  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_out_of_order_keyframes, 0);
+  CHECK(anim);
+
+  CHECK_EQUAL(anim->tracks.size(), 1);
+  CHECK_EQUAL(anim->duration, 40);
+
+  CalCoreTrack* track = anim->tracks[0].get();
+  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+
+  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CHECK_EQUAL(0.0f, k1->time);
+
+  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CHECK_EQUAL(40.0f, k2->time);
 }
 
 const char* animation_with_translations =

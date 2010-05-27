@@ -169,17 +169,8 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
   }
 
   // I want to iterate through the vector as a list, and remove elements easily.
-  static int arrayLen = 0;
-  static KeyLink * keyLinkArray = NULL;
-  if( arrayLen < numFrames ) {
-    if( keyLinkArray ) {
-      delete [] keyLinkArray;
-    }
-    keyLinkArray = new( KeyLink [ numFrames ] );
-    arrayLen = numFrames;
-  }
-  unsigned int i;
-  for( i = 0; i < numFrames; i++ ) {
+  std::vector<KeyLink> keyLinkArray(numFrames);
+  for (size_t i = 0; i < numFrames; i++) {
     KeyLink * kl = & keyLinkArray[ i ];
     kl->keyframe_ = m_keyframes[ i ];
     kl->next_ = ( i == numFrames - 1 ) ? NULL : & keyLinkArray[ i + 1 ];
@@ -239,7 +230,7 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
 
   // Rebuild the vector, freeing any of the eliminated keyframes.
   unsigned int numKept = 0;
-  for( i = 0; i < numFrames; i++ ) {
+  for( unsigned i = 0; i < numFrames; i++ ) {
     KeyLink * kl = & keyLinkArray[ i ];
     if( !kl->eliminated_ ) {
       m_keyframes[ numKept ] = kl->keyframe_;
@@ -248,7 +239,6 @@ void CalCoreTrack::compress( double translationTolerance, double rotationToleran
         delete kl->keyframe_;
     }
   }
-  assert( numKept == numFrames - numFramesEliminated );
 
   m_keyframes.resize( numKept );
 
@@ -271,7 +261,6 @@ CalCoreTrack::collapseSequences( double translationTolerance, double rotationTol
 {
   int numFrames = m_keyframes.size();
   if( !numFrames ) return;
-  unsigned int numFramesEliminated = 0;
 
   // I want to iterate through the vector as a list, and remove elements easily.
   static int arrayLen = 0;
@@ -313,7 +302,6 @@ CalCoreTrack::collapseSequences( double translationTolerance, double rotationTol
       // Eliminate 0 or more frames before the middle (0 only in the case we skipped the first frame).
       for( ; i < lengthOfSequence / 2; i++ ) {
         p->eliminated_ = true;
-        numFramesEliminated++;
         p = p->next_;
       }
       
@@ -325,7 +313,6 @@ CalCoreTrack::collapseSequences( double translationTolerance, double rotationTol
       // the last frame of the sequence.
       for( ; i < lengthOfSequence && p->next_ ; i++ ) {
         p->eliminated_ = true;
-        numFramesEliminated++;
         p = p->next_;
       }
     }
@@ -342,7 +329,6 @@ CalCoreTrack::collapseSequences( double translationTolerance, double rotationTol
         delete kl->keyframe_;
     }
   }
-  assert( numKept == numFrames - numFramesEliminated );
 
   m_keyframes.resize( numKept );
 }
