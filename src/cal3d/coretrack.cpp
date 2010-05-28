@@ -248,6 +248,12 @@ void CalCoreTrack::translationCompressibility(
 }
 
 void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& rotation) const {
+  if (keyframes.empty()) {
+      translation.clear();
+      rotation.clear();
+      return;
+  }
+
   KeyframeList::const_iterator iteratorCoreKeyframeAfter = getUpperBound(time);
 
   if(iteratorCoreKeyframeAfter == keyframes.end())
