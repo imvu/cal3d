@@ -1,6 +1,7 @@
 import imvu
 import hashlib
 import logging
+import mmap
 
 import cal3d
 
@@ -9,7 +10,13 @@ logger = logging.getLogger("imvu." + __name__)
 class Cal3dException(Exception):
     pass
 
+def __mmap_to_string(b):
+    if isinstance(b, mmap.mmap):
+        b = b.read(b.size())
+    return b
+
 def getMaterialInfo(materialBuffer):
+    materialBuffer = __mmap_to_string(materialBuffer)
     cachekey = hashlib.md5(materialBuffer).hexdigest()
     material = cal3d.loadCoreMaterialFromBuffer(materialBuffer)
     if not material:
@@ -21,6 +28,7 @@ def getMaterialInfo(materialBuffer):
     return materialInfo
 
 def getMeshInfo(meshBuffer):
+    meshBuffer = __mmap_to_string(meshBuffer)
     mesh = cal3d.loadCoreMeshFromBuffer(meshBuffer)
     if not mesh:
         raise Cal3dException, cal3d_dll.CalError_GetLastErrorText()

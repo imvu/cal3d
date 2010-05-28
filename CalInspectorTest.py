@@ -1,6 +1,7 @@
 import imvu
 import logging
 logger = logging.getLogger("imvu." + __name__)
+import mmap
 
 import cal3d.CalInspector
 import os
@@ -22,13 +23,7 @@ class CalInspectorTest(imvu.test.TestCase):
         expected = {'Opacity': 'eyebrows001_alpha.tga', 'Diffuse Color': 'eyebrows001_brunette001.tga'}
         self.assertEqual(result, expected)
 
-    def test_getMeshInfo(self):
-        entryname = 'Male03_Anime01_HeadMorphFile.xmf'
-        data = self.cfl.getContents(entryname)
-
-        result = cal3d.CalInspector.getMeshInfo(data)
-        logger.info("result: %r", result)
-
+    def assertMeshInfo(self, result):
         expected = {
             0: {'faceCount': 1430,
                 'lodCount': 0,
@@ -52,6 +47,26 @@ class CalInspectorTest(imvu.test.TestCase):
             }
         }
         self.assertEqual(result, expected)
+
+    def test_getMeshInfo(self):
+        entryname = 'Male03_Anime01_HeadMorphFile.xmf'
+        data = self.cfl.getContents(entryname)
+
+        result = cal3d.CalInspector.getMeshInfo(data)
+        logger.info("result: %r", result)
+
+        self.assertMeshInfo(result)
+
+    def test_getMeshInfo_with_mmap(self):
+        entryname = 'Male03_Anime01_HeadMorphFile.xmf'
+        data = self.cfl.getContents(entryname)
+
+        with open('mmap.test.bin', 'wb') as f:
+            f.write(data)
+        with open('mmap.test.bin', 'r+b') as f:
+            map = mmap.mmap(f.fileno(), 0)
+            result = cal3d.CalInspector.getMeshInfo(map)
+        self.assertMeshInfo(result)
 
 if __name__ == "__main__":
     imvu.test.main()
