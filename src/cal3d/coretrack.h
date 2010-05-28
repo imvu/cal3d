@@ -40,12 +40,11 @@ public:
   void setTranslationIsDynamic( bool p ) { m_translationIsDynamic = p; }
   void fillInvalidTranslations( CalVector const & trans );
 
-  void scale(float factor);
-  CalCoreTrackPtr compress( double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton * skelOrNull ) const;
-  void translationCompressibility( 
+  CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
+  void translationCompressibility(
     bool* transRequiredResult, bool* transDynamicResult,
-    float threshold, float highRangeThreshold, CalCoreSkeleton * skel );
-  void collapseSequences( double translationTolerance, double rotationToleranceDegrees );
+    float threshold, float highRangeThreshold, CalCoreSkeleton * skel
+  ) const;
 
 private:
   typedef std::vector<CalCoreKeyframe*> KeyframeList;

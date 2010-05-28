@@ -252,88 +252,7 @@ CalCoreTrackPtr CalCoreTrack::compress(
 
 
 
-
-void
-CalCoreTrack::collapseSequences( double translationTolerance, double rotationToleranceDegrees )
-{
-  int numFrames = m_keyframes.size();
-  if( !numFrames ) return;
-
-  // I want to iterate through the vector as a list, and remove elements easily.
-  static int arrayLen = 0;
-  static KeyLink * keyLinkArray = NULL;
-  if( arrayLen < numFrames ) {
-    if( keyLinkArray ) {
-      delete [] keyLinkArray;
-    }
-    keyLinkArray = new( KeyLink [ numFrames ] );
-    arrayLen = numFrames;
-  }
-  unsigned int i;
-  for( i = 0; i < numFrames; i++ ) {
-    KeyLink * kl = & keyLinkArray[ i ];
-    kl->keyframe_ = m_keyframes[ i ];
-    kl->next_ = ( i == numFrames - 1 ) ? NULL : & keyLinkArray[ i + 1 ];
-    kl->eliminated_ = false;
-  }
-
-  // This loop does not preserve the next_ pointers.
-  // I must not eliminate the first frame in the track or the last, since their time markers
-  // bracket the duration of the animation.
-  KeyLink * p = & keyLinkArray[ 0 ];
-  KeyLink * pstart = p;
-  while( p ) {
-    unsigned int lengthOfSequence = KeyFrameSequenceLength( p, translationTolerance, rotationToleranceDegrees );
-    assert( lengthOfSequence >= 1 );
-    if( lengthOfSequence == 1 ) {
-      p = p->next_;
-    } else {
-
-      // Do not eliminate the first frame of the sequence.  Skip over it instead.
-      i = 0;
-      if( p == pstart ) {
-        i++;
-        p = p->next_;
-      }
-
-      // Eliminate 0 or more frames before the middle (0 only in the case we skipped the first frame).
-      for( ; i < lengthOfSequence / 2; i++ ) {
-        p->eliminated_ = true;
-        p = p->next_;
-      }
-      
-      // Keep the middle.
-      p = p->next_;
-      i++;
-      
-      // Eliminate the rest of the frames in the sequence, but do not eliminate
-      // the last frame of the sequence.
-      for( ; i < lengthOfSequence && p->next_ ; i++ ) {
-        p->eliminated_ = true;
-        p = p->next_;
-      }
-    }
-  }
-
-  // Rebuild the vector, freeing any of the eliminated keyframes.
-  unsigned int numKept = 0;
-  for( i = 0; i < numFrames; i++ ) {
-    KeyLink * kl = & keyLinkArray[ i ];
-    if( !kl->eliminated_ ) {
-      m_keyframes[ numKept ] = kl->keyframe_;
-      numKept++;
-    } else {
-        delete kl->keyframe_;
-    }
-  }
-
-  m_keyframes.resize( numKept );
-}
-
-
-void
-CalCoreTrack::fillInvalidTranslations( CalVector const & trans )
-{
+void CalCoreTrack::fillInvalidTranslations(const CalVector& trans) {
   int numFrames = m_keyframes.size();
   for( unsigned i = 0; i < numFrames; i++ ) {
     CalCoreKeyframe * keyframe = m_keyframes[ i ];
@@ -344,12 +263,13 @@ CalCoreTrack::fillInvalidTranslations( CalVector const & trans )
   }
 }
 
-
-
-void
-CalCoreTrack::translationCompressibility( bool * transRequiredResult, bool * transDynamicResult,
-                                  float threshold, float highRangeThreshold, CalCoreSkeleton * skel )
-{
+void CalCoreTrack::translationCompressibility(
+    bool * transRequiredResult,
+    bool * transDynamicResult,
+    float threshold,
+    float highRangeThreshold,
+    CalCoreSkeleton * skel
+) const {
   * transRequiredResult = false;
   * transDynamicResult = false;
   int numFrames = m_keyframes.size();
@@ -479,26 +399,4 @@ int CalCoreTrack::getCoreKeyframeCount()
 CalCoreKeyframe* CalCoreTrack::getCoreKeyframe(int idx)
 {
   return m_keyframes[idx];
-}
-
- /*****************************************************************************/
-/** Scale the core track.
-  *
-  * This function rescale all the data that are in the core track instance.
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
-
-void CalCoreTrack::scale(float factor)
-{
-	int keyframeId;
-	for(keyframeId = 0; keyframeId < m_keyframes.size(); keyframeId++)
-	{
-		CalVector translation = m_keyframes[keyframeId]->translation;
-		translation*=factor;
-		m_keyframes[keyframeId]->translation = translation;
-	}
-
 }

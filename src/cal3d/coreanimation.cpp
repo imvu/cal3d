@@ -56,12 +56,3 @@ void CalCoreAnimation::fillInvalidTranslations( CalCoreSkeleton * skel ) {
     }
   }
 }
-
-void CalCoreAnimation::scale(float factor) {
-  // loop through all core track
-  TrackList::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
-  {
-    (*iteratorCoreTrack)->scale(factor);
-  }
-}

@@ -23,7 +23,6 @@ public:
   size_t sizeInBytes() const;
   void fillInvalidTranslations(CalCoreSkeleton* skel);
   CalCoreTrackPtr getCoreTrack(int coreBoneId);
-  void scale(float factor);
 
   float duration;
   typedef std::vector<CalCoreTrackPtr> TrackList;
