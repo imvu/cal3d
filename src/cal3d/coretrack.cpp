@@ -19,8 +19,8 @@
 #include "cal3d/corekeyframe.h"
 #include "cal3d/loader.h"
 
-bool sortByTime(const CalCoreKeyframe* lhs, const CalCoreKeyframe* rhs) {
-    return lhs->time < rhs->time;
+bool sortByTime(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
+    return lhs.time < rhs.time;
 }
 
 CalCoreTrack::KeyframeList sorted(CalCoreTrack::KeyframeList ls) {
@@ -36,8 +36,8 @@ CalCoreTrack::CalCoreTrack(int coreBone, const KeyframeList& kf)
   m_translationIsDynamic = true;
 }
 
-size_t sizeInBytes(CalCoreKeyframe* const&) {
-  return sizeof(CalCoreKeyframe*) + sizeof(CalCoreKeyframe);
+size_t sizeInBytes(const CalCoreKeyframe&) {
+  return sizeof(CalCoreKeyframe);
 }
 
 size_t CalCoreTrack::sizeInBytes() const {
@@ -86,28 +86,6 @@ static bool Near(
 }
 
 
-// Returns true if rounding took place and they were not exactly equal.
-static bool roundTranslation(CalCoreKeyframe const * prevp, CalCoreKeyframe * p, double transTolerance) {
-  CalCoreKeyframe * prev = const_cast<CalCoreKeyframe*>(prevp);
-  assert(prev && p);
-
-  // blend between the two keyframes
-  CalVector translation = prev->translation;
-  CalVector const ppos = p->translation;
-  float dist = Distance( translation, ppos );
-
-  // Identical returns false.
-  if( dist == 0 ) return false;
-
-  // Compare with tolerance.
-  if( dist < transTolerance ) { // equal case handled above.
-    p->translation = translation;
-    return true;
-  } else {
-    return false;
-  }
-}
-
 static bool keyframeEliminatable(
     const CalCoreKeyframe* prev, 
     const CalCoreKeyframe* p, 
@@ -130,7 +108,7 @@ static bool keyframeEliminatable(
 
 struct KeyLink {
   bool eliminated_;
-  CalCoreKeyframe * keyframe_;
+  const CalCoreKeyframe* keyframe_;
   KeyLink * next_;
 };
 
@@ -170,7 +148,7 @@ CalCoreTrackPtr CalCoreTrack::compress(
   std::vector<KeyLink> keyLinkArray(numFrames);
   for (size_t i = 0; i < numFrames; i++) {
     KeyLink * kl = & keyLinkArray[ i ];
-    kl->keyframe_ = keyframes[ i ];
+    kl->keyframe_ = &keyframes[ i ];
     kl->next_ = ( i == numFrames - 1 ) ? NULL : & keyLinkArray[ i + 1 ];
     kl->eliminated_ = false;
   }
@@ -210,25 +188,13 @@ CalCoreTrackPtr CalCoreTrack::compress(
     }
   }
 
-  // Now go through and round off translation values to the prev value if they are within
-  // tolerance.  The reason we do this is so lossless compression algorithms will eliminate
-  // redundancy.  There seems to be numerical jitter in the translation when there are rotations,
-  // which will make those translation values not compress well.
-  KeyLink * prev = & keyLinkArray[ 0 ];
-  KeyLink * p = prev->next_;
-  while( p ) {
-    roundTranslation( prev->keyframe_, p->keyframe_, translationTolerance );
-    prev = p;
-    p = p->next_;
-  }
-
   KeyframeList output;
 
   // Rebuild the vector, freeing any of the eliminated keyframes.
   for( unsigned i = 0; i < numFrames; i++ ) {
     KeyLink * kl = & keyLinkArray[ i ];
     if( !kl->eliminated_ ) {
-      output.push_back(new CalCoreKeyframe(*kl->keyframe_));
+      output.push_back(CalCoreKeyframe(*kl->keyframe_));
     }
   }
 
@@ -264,8 +230,8 @@ void CalCoreTrack::translationCompressibility(
   float t2 = threshold * threshold;
   unsigned int i;
   for( i = 0; i < numFrames; i++ ) {
-    const CalCoreKeyframe * keyframe = keyframes[ i ];
-    const CalVector & kftrans = keyframe->translation;
+    const CalCoreKeyframe* keyframe = &keyframes[i];
+    const CalVector& kftrans = keyframe->translation;
     if( i == 0 ) {
       trans0 = keyframe->translation;
     } else {
@@ -282,55 +248,53 @@ void CalCoreTrack::translationCompressibility(
 }
 
 void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& rotation) const {
-  std::vector<CalCoreKeyframe*>::const_iterator iteratorCoreKeyframeAfter = getUpperBound(time);
+  KeyframeList::const_iterator iteratorCoreKeyframeAfter = getUpperBound(time);
 
   if(iteratorCoreKeyframeAfter == keyframes.end())
   {
     --iteratorCoreKeyframeAfter;
-    rotation = (*iteratorCoreKeyframeAfter)->rotation;
-    translation = (*iteratorCoreKeyframeAfter)->translation;
+    rotation = iteratorCoreKeyframeAfter->rotation;
+    translation = iteratorCoreKeyframeAfter->translation;
     return;
   }
 
   if(iteratorCoreKeyframeAfter == keyframes.begin())
   {
-    rotation = (*iteratorCoreKeyframeAfter)->rotation;
-    translation = (*iteratorCoreKeyframeAfter)->translation;
+    rotation = iteratorCoreKeyframeAfter->rotation;
+    translation = iteratorCoreKeyframeAfter->translation;
     return;
   }
 
-  std::vector<CalCoreKeyframe*>::const_iterator iteratorCoreKeyframeBefore = iteratorCoreKeyframeAfter;
+  KeyframeList::const_iterator iteratorCoreKeyframeBefore = iteratorCoreKeyframeAfter;
   --iteratorCoreKeyframeBefore;
 
-  CalCoreKeyframe* pCoreKeyframeBefore = *iteratorCoreKeyframeBefore;
-  CalCoreKeyframe* pCoreKeyframeAfter  = *iteratorCoreKeyframeAfter;
+  const CalCoreKeyframe& pCoreKeyframeBefore = *iteratorCoreKeyframeBefore;
+  const CalCoreKeyframe& pCoreKeyframeAfter  = *iteratorCoreKeyframeAfter;
 
-  float blendFactor = (time - pCoreKeyframeBefore->time) / (pCoreKeyframeAfter->time - pCoreKeyframeBefore->time);
+  float blendFactor = (time - pCoreKeyframeBefore.time) / (pCoreKeyframeAfter.time - pCoreKeyframeBefore.time);
 
-  translation = pCoreKeyframeBefore->translation;
-  translation.blend(blendFactor, pCoreKeyframeAfter->translation);
+  translation = pCoreKeyframeBefore.translation;
+  translation.blend(blendFactor, pCoreKeyframeAfter.translation);
 
-  rotation = pCoreKeyframeBefore->rotation;
-  rotation.blend(blendFactor, pCoreKeyframeAfter->rotation);
+  rotation = pCoreKeyframeBefore.rotation;
+  rotation.blend(blendFactor, pCoreKeyframeAfter.rotation);
 }
 
-std::vector<CalCoreKeyframe*>::const_iterator CalCoreTrack::getUpperBound(float time) const
-{
-
+CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float time) const {
   int lowerBound = 0;
   int upperBound = keyframes.size() - 1;
 
-  while(lowerBound<upperBound-1)
+  while (lowerBound < upperBound - 1)
   {
-	  int middle = (lowerBound+upperBound)/2;
+	  int middle = (lowerBound + upperBound) / 2;
 
-	  if(time >= keyframes[middle]->time)
+	  if(time >= keyframes[middle].time)
 	  {
-		  lowerBound=middle;
+		  lowerBound = middle;
 	  }
 	  else
 	  {
-		  upperBound=middle;
+		  upperBound = middle;
 	  }
   }
 

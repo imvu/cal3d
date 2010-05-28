@@ -206,15 +206,15 @@ OutputDebugString(str);
 			if(pBoneCandidate->IsSelected())
 			{
 				// allocate new core keyframe instance
-				CalCoreKeyframe* pCoreKeyframe = new CalCoreKeyframe();
-				pCoreKeyframe->time = (float)outputFrame / (float)param->m_framerate + wrapTime;
+				CalCoreKeyframe pCoreKeyframe;
+				pCoreKeyframe.time = (float)outputFrame / (float)param->m_framerate + wrapTime;
 
 				CalVector translation;
 				CalQuaternion rotation;
 				skeletonCandidate.GetTranslationAndRotation(boneCandidateId, time, translation, rotation);
 
-				pCoreKeyframe->translation = translation;
-				pCoreKeyframe->rotation = rotation;
+				pCoreKeyframe.translation = translation;
+				pCoreKeyframe.rotation = rotation;
 
                                 // oh god
                                 CalCoreTrack::KeyframeList& ls = const_cast<CalCoreTrack::KeyframeList&>(coreAnimation.getCoreTrack(pBoneCandidate->GetId())->keyframes);

@@ -11,18 +11,18 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include "cal3d/corekeyframe.h"
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
 class CalCoreBone;
-class CalCoreKeyframe;
 class CalCoreSkeleton;
 typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 
 class CAL3D_API CalCoreTrack : public Cal::Object {
 public:
-  typedef std::vector<CalCoreKeyframe*> KeyframeList;
+  typedef std::vector<CalCoreKeyframe> KeyframeList;
 
   const int coreBoneId; 
   const KeyframeList keyframes;

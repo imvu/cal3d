@@ -184,22 +184,15 @@ OutputDebugString(str);
 			if(pBoneCandidate->IsSelected())
 			{
 				// allocate new core keyframe instance
-				CalCoreKeyframe *pCoreKeyframe;
-				pCoreKeyframe = new CalCoreKeyframe();
-				if(pCoreKeyframe == 0)
-				{
-					SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-					return false;
-				}
-
-				pCoreKeyframe->time = (float)outputFrame / (float)sheet.GetFps() + wrapTime;
+				CalCoreKeyframe pCoreKeyframe;
+				pCoreKeyframe.time = (float)outputFrame / (float)sheet.GetFps() + wrapTime;
 
 				CalVector translation;
 				CalQuaternion rotation;
 				skeletonCandidate.GetTranslationAndRotation(boneCandidateId, time, translation, rotation);
 
-				pCoreKeyframe->translation = translation;
-				pCoreKeyframe->rotation = rotation;
+				pCoreKeyframe.translation = translation;
+				pCoreKeyframe.rotation = rotation;
 
                                 // oh god
                                 CalCoreTrack::KeyframeList& ls = const_cast<CalCoreTrack::KeyframeList&>(coreAnimation.getCoreTrack(pBoneCandidate->GetId())->keyframes);

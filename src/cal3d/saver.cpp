@@ -885,7 +885,7 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
   // save all core keyframes
   for(int i = 0; i < pCoreTrack->keyframes.size(); ++i)
   {
-    if(!saveCoreKeyframe(file, strFilename, pCoreTrack->keyframes[i]))
+    if(!saveCoreKeyframe(file, strFilename, &pCoreTrack->keyframes[i]))
     {
       return false;
     }
@@ -1130,12 +1130,12 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
     // save all core keyframes
     for (int i = 0; i < pCoreTrack->keyframes.size(); ++i)
     {
-      const CalCoreKeyframe *pCoreKeyframe = pCoreTrack->keyframes[i];
+      const CalCoreKeyframe& pCoreKeyframe = pCoreTrack->keyframes[i];
 
       TiXmlElement keyframe("KEYFRAME");
 
       str.str("");
-            str << pCoreKeyframe->time;          
+            str << pCoreKeyframe.time;          
       keyframe.SetAttribute("TIME",str.str());
       
       if( pCoreTrack->getTranslationRequired() ) {
@@ -1143,7 +1143,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
         // If translation required but not dynamic and i != 0, then I won't write the translation.
         if( translationIsDynamic || i == 0 ) {
           TiXmlElement translation("TRANSLATION");
-          const CalVector& translationVector = pCoreKeyframe->translation;
+          const CalVector& translationVector = pCoreKeyframe.translation;
           
           str.str("");
           str << translationVector.x << " "
@@ -1158,7 +1158,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
       }
 
       TiXmlElement rotation("ROTATION");
-      const CalQuaternion& rotationQuad = pCoreKeyframe->rotation;
+      const CalQuaternion& rotationQuad = pCoreKeyframe.rotation;
 
       str.str("");
       str << rotationQuad.x << " " 

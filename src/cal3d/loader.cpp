@@ -1449,20 +1449,30 @@ CalCoreTrack* CalLoader::loadCoreTrack(
 
 
   // load all core keyframes
-  CalCoreKeyframe* lastCoreKeyframe = NULL;
+  bool hasLastKeyframe = false;
+  CalCoreKeyframe lastCoreKeyframe;
   for(int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
   {
     // load the core keyframe
     CalCoreKeyframe *pCoreKeyframe = loadCoreKeyframe(
-      dataSrc, cb, version, lastCoreKeyframe, translationRequired, highRangeRequired, translationIsDynamic,
+      dataSrc,
+      cb,
+      version,
+      (hasLastKeyframe ? &lastCoreKeyframe : 0),
+      translationRequired,
+      highRangeRequired,
+      translationIsDynamic,
       useAnimationCompression);
-    lastCoreKeyframe = pCoreKeyframe;
     if(pCoreKeyframe == 0)
     {
       return 0;
     }
     // add the core keyframe to the core track instance
-    keyframes.push_back(pCoreKeyframe);
+    CalCoreKeyframe kf = *pCoreKeyframe;
+    lastCoreKeyframe = kf;
+    hasLastKeyframe = true;
+    delete pCoreKeyframe;
+    keyframes.push_back(kf);
   }
 
   CalCoreTrack* pCoreTrack = new CalCoreTrack(coreBoneId, keyframes);

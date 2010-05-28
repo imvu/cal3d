@@ -754,7 +754,8 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         }
 
         // load all core keyframes
-        CalCoreKeyframe* prevCoreKeyframe = 0;
+        bool hasLastKeyframe = false;
+        CalCoreKeyframe prevCoreKeyframe;
         for (
             TiXmlElement* keyframe= track->FirstChildElement();
             keyframe;
@@ -793,8 +794,8 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             // If translation is required but not dynamic, then I may elide the translation
             // values for all but the first frame, and for each frame's translation I will
             // copy the translation from the previous frame.
-            if( prevCoreKeyframe && !translationIsDynamic && translationRequired ) {
-                CalVector const & vec = prevCoreKeyframe->translation;
+            if( hasLastKeyframe && !translationIsDynamic && translationRequired ) {
+                CalVector const & vec = prevCoreKeyframe.translation;
                 tx = vec.x;
                 ty = vec.y;
                 tz = vec.z;
@@ -845,10 +846,8 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             }
             ReadQuadFloat( rotationdata->Value(), &rx, &ry, &rz, &rw );  
 
-            CalCoreKeyframe* pCoreKeyframe = new CalCoreKeyframe();
-            pCoreKeyframe->time = time;
-            pCoreKeyframe->translation = CalVector(tx, ty, tz);
-            pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
+            CalCoreKeyframe pCoreKeyframe(time, CalVector(tx, ty, tz), CalQuaternion(rx, ry, rz, rw));
+            hasLastKeyframe = true;
             prevCoreKeyframe = pCoreKeyframe;
 
             keyframes.push_back(pCoreKeyframe);
