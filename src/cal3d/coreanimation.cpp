@@ -41,18 +41,3 @@ CalCoreTrackPtr CalCoreAnimation::getCoreTrack(int coreBoneId)
   // no match found
   return CalCoreTrackPtr();
 }
-
-void CalCoreAnimation::fillInvalidTranslations( CalCoreSkeleton * skel ) {
-  TrackList::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
-  {
-    CalCoreTrackPtr tr = * iteratorCoreTrack;
-    int boneId = tr->coreBoneId;
-    assert( boneId != -1 );
-    CalCoreBone * bo = skel->getCoreBone( boneId );
-    if( bo ) {
-      CalVector trans = bo->getTranslation();
-      tr->fillInvalidTranslations( trans );
-    }
-  }
-}

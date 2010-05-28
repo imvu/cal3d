@@ -252,17 +252,6 @@ CalCoreTrackPtr CalCoreTrack::compress(
 
 
 
-void CalCoreTrack::fillInvalidTranslations(const CalVector& trans) {
-  int numFrames = m_keyframes.size();
-  for( unsigned i = 0; i < numFrames; i++ ) {
-    CalCoreKeyframe * keyframe = m_keyframes[ i ];
-    const CalVector & kftrans = keyframe->translation;
-    if( TranslationInvalid( kftrans ) ) {
-      keyframe->translation = trans;
-    }
-  }
-}
-
 void CalCoreTrack::translationCompressibility(
     bool * transRequiredResult,
     bool * transDynamicResult,

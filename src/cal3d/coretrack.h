@@ -38,7 +38,6 @@ public:
   void setTranslationRequired( bool p ) { m_translationRequired = p; }
   bool getTranslationIsDynamic() { return m_translationIsDynamic; }
   void setTranslationIsDynamic( bool p ) { m_translationIsDynamic = p; }
-  void fillInvalidTranslations( CalVector const & trans );
 
   CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
   void translationCompressibility(
