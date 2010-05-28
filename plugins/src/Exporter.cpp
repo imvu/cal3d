@@ -135,7 +135,7 @@ bool CExporter::ExportAnimation(const std::string& strFilename)
 		// only create tracks for the selected bone candidates
 		if(pBoneCandidate->IsSelected())
 		{
-			CalCoreTrackPtr pCoreTrack(new CalCoreTrack(boneCandidateId));
+			CalCoreTrackPtr pCoreTrack(new CalCoreTrack(boneCandidateId, CalCoreTrack::KeyframeList()));
 			coreAnimation.tracks.push_back(pCoreTrack);
 		}
 	}
@@ -192,21 +192,18 @@ OutputDebugString(str);
 					return false;
 				}
 
-				// set the frame time
 				pCoreKeyframe->time = (float)outputFrame / (float)sheet.GetFps() + wrapTime;
 
-				// get the translation and the rotation of the bone candidate
 				CalVector translation;
 				CalQuaternion rotation;
 				skeletonCandidate.GetTranslationAndRotation(boneCandidateId, time, translation, rotation);
 
-				// set the translation and rotation
 				pCoreKeyframe->translation = translation;
 				pCoreKeyframe->rotation = rotation;
 
-				// get the core track for this bone candidate
-				CalCoreTrackPtr pCoreTrack = coreAnimation.getCoreTrack(pBoneCandidate->GetId());
-				pCoreTrack->addCoreKeyframe(pCoreKeyframe);
+                                // oh god
+                                CalCoreTrack::KeyframeList& ls = const_cast<CalCoreTrack::KeyframeList&>(coreAnimation.getCoreTrack(pBoneCandidate->GetId())->keyframes);
+                                ls.push_back(pCoreKeyframe);
 			}
 		}
 

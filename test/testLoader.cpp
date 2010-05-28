@@ -64,7 +64,7 @@ TEST(LoadSimpleXmlAnimation) {
 
   CHECK_EQUAL(track1->getTranslationRequired(), false);
   CHECK_EQUAL(track1->getTranslationIsDynamic(), false);
-  CHECK_EQUAL(track1->getCoreKeyframeCount(), 2);
+  CHECK_EQUAL(track1->keyframes.size(), 2);
 
   std::ostringstream ss;
   CalSaver::saveXmlCoreAnimation(ss, anim.get());
@@ -94,12 +94,12 @@ TEST(sorts_keyframes_upon_load) {
   CHECK_EQUAL(anim->duration, 40);
 
   CalCoreTrack* track = anim->tracks[0].get();
-  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+  CHECK_EQUAL(track->keyframes.size(), 2);
 
-  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CalCoreKeyframe* k1 = track->keyframes[0];
   CHECK_EQUAL(0.0f, k1->time);
 
-  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CalCoreKeyframe* k2 = track->keyframes[1];
   CHECK_EQUAL(40.0f, k2->time);
 }
 
@@ -127,14 +127,14 @@ TEST(load_animation_with_translation) {
   CHECK_EQUAL(anim->duration, 40);
 
   CalCoreTrack* track = anim->tracks[0].get();
-  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+  CHECK_EQUAL(track->keyframes.size(), 2);
 
-  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CalCoreKeyframe* k1 = track->keyframes[0];
   CHECK_EQUAL(0.0f, k1->time);
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1->rotation);
   CHECK_EQUAL(CalVector(1, 2, 3), k1->translation);
 
-  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CalCoreKeyframe* k2 = track->keyframes[1];
   CHECK_EQUAL(40.0f, k2->time);
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2->rotation);
   CHECK_EQUAL(CalVector(4, 5, 6), k2->translation);
@@ -163,14 +163,14 @@ TEST(load_animation_with_static_translations) {
   CHECK_EQUAL(anim->duration, 40);
 
   CalCoreTrack* track = anim->tracks[0].get();
-  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+  CHECK_EQUAL(track->keyframes.size(), 2);
 
-  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CalCoreKeyframe* k1 = track->keyframes[0];
   CHECK_EQUAL(0.0f, k1->time);
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1->rotation);
   CHECK_EQUAL(CalVector(1, 2, 3), k1->translation);
 
-  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CalCoreKeyframe* k2 = track->keyframes[1];
   CHECK_EQUAL(40.0f, k2->time);
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2->rotation);
   CHECK_EQUAL(CalVector(1, 2, 3), k2->translation);
@@ -199,14 +199,14 @@ TEST(load_animation_with_mismatched_counts) {
   CHECK_EQUAL(anim->duration, 40);
 
   CalCoreTrack* track = anim->tracks[0].get();
-  CHECK_EQUAL(track->getCoreKeyframeCount(), 2);
+  CHECK_EQUAL(track->keyframes.size(), 2);
 
-  CalCoreKeyframe* k1 = track->getCoreKeyframe(0);
+  CalCoreKeyframe* k1 = track->keyframes[0];
   CHECK_EQUAL(0.0f, k1->time);
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1->rotation);
   CHECK_EQUAL(CalVector(1, 2, 3), k1->translation);
 
-  CalCoreKeyframe* k2 = track->getCoreKeyframe(1);
+  CalCoreKeyframe* k2 = track->keyframes[1];
   CHECK_EQUAL(40.0f, k2->time);
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2->rotation);
   CHECK_EQUAL(CalVector(1, 2, 3), k2->translation);
@@ -293,9 +293,9 @@ TEST(load_hmmm) {
     };
 
     CalCoreTrackPtr track2 = anim->tracks[2];
-    CHECK_EQUAL(14, track2->getCoreKeyframeCount());
+    CHECK_EQUAL(14, track2->keyframes.size());
     for (size_t i = 0; i < 14; ++i) {
-        CHECK_EQUAL(expected[i], *track2->getCoreKeyframe(i));
+        CHECK_EQUAL(expected[i], *track2->keyframes[i]);
     }
 }
 

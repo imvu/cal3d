@@ -716,7 +716,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         }
 
         int coreBoneId = atoi(track->Attribute("BONEID"));
-        CalCoreTrackPtr pCoreTrack(new CalCoreTrack(coreBoneId));
+        CalCoreTrack::KeyframeList keyframes;
 
         const char * trstr = track->Attribute("TRANSLATIONREQUIRED");
         bool translationRequired = true; // Default value if flag is not supplied (for backwards compatibility).
@@ -851,9 +851,9 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
             prevCoreKeyframe = pCoreKeyframe;
 
-            // add the core keyframe to the core track instance
-            pCoreTrack->addCoreKeyframe(pCoreKeyframe);
+            keyframes.push_back(pCoreKeyframe);
         }
+        CalCoreTrackPtr pCoreTrack(new CalCoreTrack(coreBoneId, keyframes));
         pCoreTrack->setTranslationRequired( translationRequired );
         pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
         pCoreAnimation->tracks.push_back(pCoreTrack);   

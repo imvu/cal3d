@@ -3,25 +3,27 @@
 #include <cal3d/corekeyframe.h>
 
 TEST(empty_track_compresses_to_empty_track) {
-    CalCoreTrack t(0);
+    CalCoreTrack t(0, CalCoreTrack::KeyframeList());
     CalCoreTrackPtr p = t.compress(0.1, 0.1, 0);
-    CHECK_EQUAL(0, p->getCoreKeyframeCount());
+    CHECK_EQUAL(0, p->keyframes.size());
 }
 
 TEST(one_frame_track_compresses_to_itself) {
-    CalCoreTrack t(0);
-    t.addCoreKeyframe(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
+    CalCoreTrack::KeyframeList keyframes;
+    keyframes.push_back(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
+    CalCoreTrack t(0, keyframes);
     CalCoreTrackPtr p = t.compress(0.1, 0.1, 0);
-    CHECK_EQUAL(1, p->getCoreKeyframeCount());
+    CHECK_EQUAL(1, p->keyframes.size());
 }
 
 TEST(four_frames_are_merged_if_identical) {
-    CalCoreTrack t(0);
-    t.addCoreKeyframe(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
-    t.addCoreKeyframe(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
-    t.addCoreKeyframe(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
-    t.addCoreKeyframe(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
+    CalCoreTrack::KeyframeList keyframes;
+    keyframes.push_back(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
+    keyframes.push_back(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
+    keyframes.push_back(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
+    keyframes.push_back(new CalCoreKeyframe(0, CalVector(), CalQuaternion()));
 
+    CalCoreTrack t(0, keyframes);
     CalCoreTrackPtr p = t.compress(0.1, 0.1, 0);
-    CHECK_EQUAL(2, p->getCoreKeyframeCount());
+    CHECK_EQUAL(2, p->keyframes.size());
 }

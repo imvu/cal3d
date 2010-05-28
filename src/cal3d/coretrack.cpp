@@ -19,8 +19,18 @@
 #include "cal3d/corekeyframe.h"
 #include "cal3d/loader.h"
 
-CalCoreTrack::CalCoreTrack(int coreBone)
-  : coreBoneId(coreBone)
+bool sortByTime(const CalCoreKeyframe* lhs, const CalCoreKeyframe* rhs) {
+    return lhs->time < rhs->time;
+}
+
+CalCoreTrack::KeyframeList sorted(CalCoreTrack::KeyframeList ls) {
+    std::sort(ls.begin(), ls.end(), sortByTime);
+    return ls;
+}
+
+CalCoreTrack::CalCoreTrack(int coreBone, const KeyframeList& kf)
+: coreBoneId(coreBone)
+, keyframes(sorted(kf))
 {
   m_translationRequired = true;
   m_translationIsDynamic = true;
@@ -31,18 +41,7 @@ size_t sizeInBytes(CalCoreKeyframe* const&) {
 }
 
 size_t CalCoreTrack::sizeInBytes() const {
-  return sizeof(CalCoreTrack) + ::sizeInBytes(m_keyframes);
-}
-
-bool CalCoreTrack::addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe) {
-  m_keyframes.push_back(pCoreKeyframe);
-  int idx = m_keyframes.size() - 1;
-  while (idx > 0 && m_keyframes[idx]->time < m_keyframes[idx - 1]->time) {
-    std::swap(m_keyframes[idx], m_keyframes[idx - 1]);
-    --idx;
-  }
-
-  return true;
+  return sizeof(CalCoreTrack) + ::sizeInBytes(keyframes);
 }
 
 inline float DistanceSquared( CalVector const & v1, CalVector const & v2 ) {
@@ -162,16 +161,16 @@ CalCoreTrackPtr CalCoreTrack::compress(
     double rotationToleranceDegrees,
     CalCoreSkeleton* skelOrNull
 ) const {
-  size_t numFrames = m_keyframes.size();
+  size_t numFrames = keyframes.size();
   if (!numFrames) {
-      return CalCoreTrackPtr(new CalCoreTrack(coreBoneId));
+      return CalCoreTrackPtr(new CalCoreTrack(coreBoneId, KeyframeList()));
   }
 
   // I want to iterate through the vector as a list, and remove elements easily.
   std::vector<KeyLink> keyLinkArray(numFrames);
   for (size_t i = 0; i < numFrames; i++) {
     KeyLink * kl = & keyLinkArray[ i ];
-    kl->keyframe_ = m_keyframes[ i ];
+    kl->keyframe_ = keyframes[ i ];
     kl->next_ = ( i == numFrames - 1 ) ? NULL : & keyLinkArray[ i + 1 ];
     kl->eliminated_ = false;
   }
@@ -223,7 +222,7 @@ CalCoreTrackPtr CalCoreTrack::compress(
     p = p->next_;
   }
 
-  std::vector<CalCoreKeyframe*> output;
+  KeyframeList output;
 
   // Rebuild the vector, freeing any of the eliminated keyframes.
   for( unsigned i = 0; i < numFrames; i++ ) {
@@ -233,10 +232,7 @@ CalCoreTrackPtr CalCoreTrack::compress(
     }
   }
 
-  CalCoreTrackPtr result(new CalCoreTrack(coreBoneId));
-  for (KeyframeList::const_iterator i = output.begin(); i != output.end(); ++i) {
-      result->addCoreKeyframe(*i);
-  }
+  CalCoreTrackPtr result(new CalCoreTrack(coreBoneId, output));
 
   // Update the flag saying whether the translation, which I have loaded, is actually required.
   // If translation is not required, I can't do any better than that so I leave it alone.
@@ -261,14 +257,14 @@ void CalCoreTrack::translationCompressibility(
 ) const {
   * transRequiredResult = false;
   * transDynamicResult = false;
-  int numFrames = m_keyframes.size();
+  int numFrames = keyframes.size();
   CalCoreBone * cb = skel->getCoreBone( coreBoneId );
   const CalVector & cbtrans = cb->getTranslation();
   CalVector trans0;
   float t2 = threshold * threshold;
   unsigned int i;
   for( i = 0; i < numFrames; i++ ) {
-    CalCoreKeyframe * keyframe = m_keyframes[ i ];
+    const CalCoreKeyframe * keyframe = keyframes[ i ];
     const CalVector & kftrans = keyframe->translation;
     if( i == 0 ) {
       trans0 = keyframe->translation;
@@ -285,87 +281,50 @@ void CalCoreTrack::translationCompressibility(
   }
 }
 
-/*****************************************************************************/
-/** Returns a specified state.
-  *
-  * This function returns the state (translation and rotation of the core bone)
-  * for the specified time and duration.
-  *
-  * @param time The time in seconds at which the state should be returned.
-  * @param translation A reference to the translation reference that will be
-  *                    filled with the specified state.
-  * @param rotation A reference to the rotation reference that will be filled
-  *                 with the specified state.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
+void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& rotation) const {
+  std::vector<CalCoreKeyframe*>::const_iterator iteratorCoreKeyframeAfter = getUpperBound(time);
 
-bool CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& rotation)
-{
-  std::vector<CalCoreKeyframe*>::iterator iteratorCoreKeyframeBefore;
-  std::vector<CalCoreKeyframe*>::iterator iteratorCoreKeyframeAfter;
-
-  // get the keyframe after the requested time
-  iteratorCoreKeyframeAfter = getUpperBound(time);
-
-  // check if the time is after the last keyframe
-  if(iteratorCoreKeyframeAfter == m_keyframes.end())
+  if(iteratorCoreKeyframeAfter == keyframes.end())
   {
-    // return the last keyframe state
     --iteratorCoreKeyframeAfter;
     rotation = (*iteratorCoreKeyframeAfter)->rotation;
     translation = (*iteratorCoreKeyframeAfter)->translation;
-
-    return true;
+    return;
   }
 
-  // check if the time is before the first keyframe
-  if(iteratorCoreKeyframeAfter == m_keyframes.begin())
+  if(iteratorCoreKeyframeAfter == keyframes.begin())
   {
-    // return the first keyframe state
     rotation = (*iteratorCoreKeyframeAfter)->rotation;
     translation = (*iteratorCoreKeyframeAfter)->translation;
-
-    return true;
+    return;
   }
 
-  // get the keyframe before the requested one
-  iteratorCoreKeyframeBefore = iteratorCoreKeyframeAfter;
+  std::vector<CalCoreKeyframe*>::const_iterator iteratorCoreKeyframeBefore = iteratorCoreKeyframeAfter;
   --iteratorCoreKeyframeBefore;
 
-  // get the two keyframe pointers
-  CalCoreKeyframe *pCoreKeyframeBefore;
-  pCoreKeyframeBefore = *iteratorCoreKeyframeBefore;
-  CalCoreKeyframe *pCoreKeyframeAfter;
-  pCoreKeyframeAfter = *iteratorCoreKeyframeAfter;
+  CalCoreKeyframe* pCoreKeyframeBefore = *iteratorCoreKeyframeBefore;
+  CalCoreKeyframe* pCoreKeyframeAfter  = *iteratorCoreKeyframeAfter;
 
-  // calculate the blending factor between the two keyframe states
-  float blendFactor;
-  blendFactor = (time - pCoreKeyframeBefore->time) / (pCoreKeyframeAfter->time - pCoreKeyframeBefore->time);
+  float blendFactor = (time - pCoreKeyframeBefore->time) / (pCoreKeyframeAfter->time - pCoreKeyframeBefore->time);
 
-  // blend between the two keyframes
   translation = pCoreKeyframeBefore->translation;
   translation.blend(blendFactor, pCoreKeyframeAfter->translation);
 
   rotation = pCoreKeyframeBefore->rotation;
   rotation.blend(blendFactor, pCoreKeyframeAfter->rotation);
-
-  return true;
 }
 
-std::vector<CalCoreKeyframe*>::iterator CalCoreTrack::getUpperBound(float time)
+std::vector<CalCoreKeyframe*>::const_iterator CalCoreTrack::getUpperBound(float time) const
 {
 
   int lowerBound = 0;
-  int upperBound = m_keyframes.size()-1;
+  int upperBound = keyframes.size() - 1;
 
   while(lowerBound<upperBound-1)
   {
 	  int middle = (lowerBound+upperBound)/2;
 
-	  if(time >= m_keyframes[middle]->time)
+	  if(time >= keyframes[middle]->time)
 	  {
 		  lowerBound=middle;
 	  }
@@ -375,17 +334,6 @@ std::vector<CalCoreKeyframe*>::iterator CalCoreTrack::getUpperBound(float time)
 	  }
   }
 
-  return m_keyframes.begin() + upperBound;
+  return keyframes.begin() + upperBound;
 
-}
-
-int CalCoreTrack::getCoreKeyframeCount()
-{
-  return m_keyframes.size();
-}
-
-
-CalCoreKeyframe* CalCoreTrack::getCoreKeyframe(int idx)
-{
-  return m_keyframes[idx];
 }

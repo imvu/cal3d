@@ -1440,7 +1440,7 @@ CalCoreTrack* CalLoader::loadCoreTrack(
     }
   }
 
-  CalCoreTrack* pCoreTrack = new CalCoreTrack(coreBoneId);
+  CalCoreTrack::KeyframeList keyframes;
 
   CalCoreBone * cb = NULL;
   if( skel ) {
@@ -1459,15 +1459,13 @@ CalCoreTrack* CalLoader::loadCoreTrack(
     lastCoreKeyframe = pCoreKeyframe;
     if(pCoreKeyframe == 0)
     {
-      delete pCoreTrack;
       return 0;
     }
     // add the core keyframe to the core track instance
-    pCoreTrack->addCoreKeyframe(pCoreKeyframe);
+    keyframes.push_back(pCoreKeyframe);
   }
 
-  // Whenever I load the track, I update its translationRequired status.  The status can
-  // go from required to not required, but not the other way around.
+  CalCoreTrack* pCoreTrack = new CalCoreTrack(coreBoneId, keyframes);
   pCoreTrack->setTranslationRequired( translationRequired );
   pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
   return pCoreTrack;

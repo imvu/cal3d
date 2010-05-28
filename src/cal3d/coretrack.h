@@ -22,18 +22,17 @@ typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 
 class CAL3D_API CalCoreTrack : public Cal::Object {
 public:
-  const int coreBoneId; 
+  typedef std::vector<CalCoreKeyframe*> KeyframeList;
 
-  CalCoreTrack(int coreBoneId);
+  const int coreBoneId; 
+  const KeyframeList keyframes;
+
+  CalCoreTrack(int coreBoneId, const KeyframeList& keyframes);
 
   size_t sizeInBytes() const;
 
-  bool getState(float time, CalVector& translation, CalQuaternion& rotation);
+  void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
 
-  int getCoreKeyframeCount();
-  CalCoreKeyframe* getCoreKeyframe(int idx);
-
-  bool addCoreKeyframe(CalCoreKeyframe *pCoreKeyframe);
   bool getTranslationRequired() { return m_translationRequired; }
   void setTranslationRequired( bool p ) { m_translationRequired = p; }
   bool getTranslationIsDynamic() { return m_translationIsDynamic; }
@@ -42,17 +41,13 @@ public:
   CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
   void translationCompressibility(
     bool* transRequiredResult, bool* transDynamicResult,
-    float threshold, float highRangeThreshold, CalCoreSkeleton * skel
+    float threshold, float highRangeThreshold, CalCoreSkeleton* skel
   ) const;
 
 private:
-  typedef std::vector<CalCoreKeyframe*> KeyframeList;
-
-  KeyframeList::iterator getUpperBound(float time);
+  KeyframeList::const_iterator getUpperBound(float time) const;
 
   bool m_translationRequired;
   bool m_translationIsDynamic;
-
-  KeyframeList m_keyframes;
 };
 typedef boost::shared_ptr<CalCoreTrack> CalCoreTrackPtr;

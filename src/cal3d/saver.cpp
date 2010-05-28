@@ -320,7 +320,7 @@ bool
 CalSaver::saveCoreKeyframe(
     std::ofstream& file,
     const std::string& strFilename,
-    CalCoreKeyframe *pCoreKeyframe
+    const CalCoreKeyframe *pCoreKeyframe
 ) {
   if(!file)
   {
@@ -876,16 +876,16 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
   }
 
   // Write the number of keyframes
-  if(!CalPlatform::writeInteger(file, pCoreTrack->getCoreKeyframeCount()))
+  if(!CalPlatform::writeInteger(file, pCoreTrack->keyframes.size()))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
 
   // save all core keyframes
-  for(int i = 0; i < pCoreTrack->getCoreKeyframeCount(); ++i)
+  for(int i = 0; i < pCoreTrack->keyframes.size(); ++i)
   {
-    if(!saveCoreKeyframe(file, strFilename, pCoreTrack->getCoreKeyframe(i)))
+    if(!saveCoreKeyframe(file, strFilename, pCoreTrack->keyframes[i]))
     {
       return false;
     }
@@ -893,20 +893,6 @@ bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename
 
   return true;
 }
-
- /*****************************************************************************/
-/** Saves a core morphTrack instance.
-  *
-  * This function saves a core morphTrack instance to a file stream.
-  *
-  * @param file The file stream to save the core morphTrack instance to.
-  * @param strFilename The name of the file stream.
-  * @param pCoreMorphTrack A pointer to the core morphTrack instance that should be saved.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
 bool CalSaver::saveCoreMorphTrack(std::ofstream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack)
 {
@@ -1139,12 +1125,12 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
     track.SetAttribute("TRANSLATIONREQUIRED", ( pCoreTrack->getTranslationRequired() ? 1 : 0 ) );
     track.SetAttribute("TRANSLATIONISDYNAMIC", ( translationIsDynamic ? 1 : 0 ) );
     track.SetAttribute("HIGHRANGEREQUIRED", 1);  
-    track.SetAttribute("NUMKEYFRAMES",pCoreTrack->getCoreKeyframeCount());
+    track.SetAttribute("NUMKEYFRAMES",pCoreTrack->keyframes.size());
 
     // save all core keyframes
-    for (int i = 0; i < pCoreTrack->getCoreKeyframeCount(); ++i)
+    for (int i = 0; i < pCoreTrack->keyframes.size(); ++i)
     {
-      CalCoreKeyframe *pCoreKeyframe=pCoreTrack->getCoreKeyframe(i);
+      const CalCoreKeyframe *pCoreKeyframe = pCoreTrack->keyframes[i];
 
       TiXmlElement keyframe("KEYFRAME");
 
