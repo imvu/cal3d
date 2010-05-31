@@ -5,6 +5,7 @@ import mmap
 
 import cal3d.CalInspector
 import os
+import tempfile
 import imvu.test
 import imvu.fs
 import imvu.cfl
@@ -61,9 +62,9 @@ class CalInspectorTest(imvu.test.TestCase):
         entryname = 'Male03_Anime01_HeadMorphFile.xmf'
         data = self.cfl.getContents(entryname)
 
-        with open('mmap.test.bin', 'wb') as f:
+        with open(os.path.join(tempfile.gettempdir(), 'mmap.test.bin'), 'wb') as f:
             f.write(data)
-        with open('mmap.test.bin', 'r+b') as f:
+        with open(os.path.join(tempfile.gettempdir(), 'mmap.test.bin'), 'r+b') as f:
             map = mmap.mmap(f.fileno(), 0)
             result = cal3d.CalInspector.getMeshInfo(map)
         self.assertMeshInfo(result)

@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import tempfile
 import weakref
 
 import imvu.test
@@ -30,10 +31,10 @@ class Test(imvu.test.TestCase):
         
 
     def assertEqual(self, a, b):
-        f = open("dataA", "w")
+        f = open(os.path.join(tempfile.gettempdir(), "dataA"), "w")
         f.write(str(a))
         f.close()
-        f = open("dataB", "w")
+        f = open(os.path.join(tempfile.gettempdir(), "dataB"), "w")
         f.write(str(b))
         f.close()
         imvu.test.TestCase.assertEqual(self, a,b)
