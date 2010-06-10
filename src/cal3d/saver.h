@@ -32,6 +32,8 @@ public:
   static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation);
   static bool saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph);
   static bool saveCoreMaterial(const std::string& strFilename, CalCoreMaterial *pCoreMaterial);
+  static bool saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCoreMaterial);
+  static std::string saveCoreMaterialToString(CalCoreMaterial *pCoreMaterial);
   static bool saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMesh);
   static bool saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton *pCoreSkeleton);
 

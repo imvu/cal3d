@@ -424,17 +424,33 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
     return false;
   }
 
+  bool result = saveCoreMaterialToStream(file, pCoreMaterial);
+  file.close();
+  return result;
+}
+
+std::string CalSaver::saveCoreMaterialToString(CalCoreMaterial *pCoreMaterial)
+{
+  std::stringstream file;
+  if(!saveCoreMaterialToStream(file, pCoreMaterial)) {
+      return std::string();
+  }
+  return file.str();
+}
+
+bool CalSaver::saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCoreMaterial)
+{
   // write magic tag
   if(!CalPlatform::writeBytes(file, &Cal::MATERIAL_FILE_MAGIC, sizeof(Cal::MATERIAL_FILE_MAGIC)))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
     return false;
   }
 
   // write version info
   if(!CalPlatform::writeInteger(file, Cal::CURRENT_FILE_VERSION))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
     return false;
   }
 
@@ -454,7 +470,7 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
   // check if an error happend
   if(!file)
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
     return false;
   }
 
@@ -464,7 +480,7 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
   // write the number of maps
   if(!CalPlatform::writeInteger(file, vectorMap.size()))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
     return false;
   }
 
@@ -481,13 +497,10 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial 
     }
     if( !ret )
     {
-      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
       return false;
     }
   }
-
-  // explicitly close the file
-  file.close();
 
   return true;
 }

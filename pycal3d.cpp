@@ -31,6 +31,9 @@ boost::shared_ptr<CalCoreMaterial> loadCoreMaterialFromBuffer(const std::string&
 bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const std::string& path) {
     return CalSaver::saveCoreMaterial(path, material.get());
 }
+std::string saveCoreMaterialToString(const boost::shared_ptr<CalCoreMaterial>& material) {
+    return CalSaver::saveCoreMaterialToString(material.get());
+}
 
 boost::shared_ptr<CalCoreMesh> loadCoreMeshFromBuffer(const std::string& buffer) {
     return boost::shared_ptr<CalCoreMesh>(
@@ -77,8 +80,8 @@ BOOST_PYTHON_MODULE(_cal3d)
             ;
 
         class_<CalCoreMaterial::Map>("Map")
-            .def_readonly("filename", &CalCoreMaterial::Map::filename)
-            .def_readonly("type", &CalCoreMaterial::Map::type)
+            .def_readwrite("filename", &CalCoreMaterial::Map::filename)
+            .def_readwrite("type", &CalCoreMaterial::Map::type)
             ;
     }
 
@@ -105,6 +108,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     def("loadCoreMaterialFromBuffer", &loadCoreMaterialFromBuffer);
     def("saveCoreMaterial", &saveCoreMaterial);
+    def("saveCoreMaterialToString", &saveCoreMaterialToString);
 
     def("loadCoreMeshFromBuffer", &loadCoreMeshFromBuffer);
     def("saveCoreMesh", &saveCoreMesh);
