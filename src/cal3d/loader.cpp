@@ -183,7 +183,8 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimationFromBuffer(const void* inputBuff
    } else {
      if (CalError::getLastErrorCode() == CalError::INVALID_FILE_FORMAT) {
        // Assumes inputBuffer is zero-terminated, which may not be the case.
-       return loadXmlCoreAnimation(static_cast<const char*>(inputBuffer), skel);
+       std::string nullTerm((const char*)inputBuffer, len);
+       return loadXmlCoreAnimation(nullTerm.c_str(), skel);
      } else {
        return CalCoreAnimationPtr();
      }
@@ -198,7 +199,8 @@ CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorphFromBuffer(const void* i
    if( result ) {
      return result;
    } else {
-     return loadXmlCoreAnimatedMorph(inputBuffer);
+       std::string nullTerm((const char*)inputBuffer, len);
+     return loadXmlCoreAnimatedMorph(nullTerm.c_str());
    }
 
 }
@@ -211,7 +213,8 @@ CalCoreMaterial *CalLoader::loadCoreMaterialFromBuffer(const void* inputBuffer, 
    if( result ) {
      return result;
    } else {
-     return loadXmlCoreMaterial(inputBuffer);
+       std::string nullTerm((const char*)inputBuffer, len);
+     return loadXmlCoreMaterial(nullTerm.c_str());
    }
 }
 
@@ -223,7 +226,8 @@ CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned
    if( result ) {
      return result;
    } else {
-     return loadXmlCoreMesh(inputBuffer);
+       std::string nullTerm((const char*)inputBuffer, len);
+     return loadXmlCoreMesh(nullTerm.c_str());
    }
 }
 
@@ -235,7 +239,8 @@ CalCoreSkeleton *CalLoader::loadCoreSkeletonFromBuffer(const void* inputBuffer, 
    if( result ) {
      return result;
    } else {
-     return loadXmlCoreSkeleton(inputBuffer);
+       std::string nullTerm((const char*)inputBuffer, len);
+     return loadXmlCoreSkeleton(nullTerm.c_str());
    }
 }
 
