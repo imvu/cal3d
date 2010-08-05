@@ -20,7 +20,7 @@ def getMaterialInfo(materialBuffer):
     cachekey = hashlib.md5(materialBuffer).hexdigest()
     material = cal3d.loadCoreMaterialFromBuffer(materialBuffer)
     if not material:
-        raise Cal3dException, cal3d_dll.CalError_GetLastErrorText()
+        raise Cal3dException, cal3d.getLastErrorText()
     materialInfo = {}
     materialInfo['maps'] = {}
     for m in material.maps:
@@ -31,7 +31,7 @@ def getMeshInfo(meshBuffer):
     meshBuffer = __mmap_to_string(meshBuffer)
     mesh = cal3d.loadCoreMeshFromBuffer(meshBuffer)
     if not mesh:
-        raise Cal3dException, cal3d_dll.CalError_GetLastErrorText()
+        raise Cal3dException, cal3d.getLastErrorText()
     result = {}
     for i, submesh in enumerate(mesh.submeshes):
         result[i] = {}
@@ -40,3 +40,11 @@ def getMeshInfo(meshBuffer):
         result[i]['lodCount'] = submesh.lodCount
         result[i]['vertexCount'] = submesh.vertexCount
     return result
+
+def getSkeletonInfo(skeletonBuffer):
+    skeletonBuffer = __mmap_to_string(skeletonBuffer)
+    skel = cal3d.loadCoreSkeletonFromBuffer(skeletonBuffer)
+    if not skel:
+        raise Cal3dException, cal3d.getLastErrorText()
+    return skel
+

@@ -9,6 +9,7 @@
 #include <cal3d/coresubmesh.h>
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
+#include <cal3d/error.h>
 
 using namespace boost::python;
 
@@ -55,6 +56,16 @@ bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animat
     return CalSaver::saveCoreAnimatedMorph(path, animatedMorph.get());
 }
 
+tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) {
+    CalVector sceneAmbient;
+    skel->getSceneAmbientColor(sceneAmbient);
+    return make_tuple(
+        sceneAmbient.x,
+        sceneAmbient.y,
+        sceneAmbient.z
+    );
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -67,6 +78,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
+        .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor)
         ;
 
     {
@@ -115,4 +127,6 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     def("loadCoreAnimatedMorphFromBuffer", &loadCoreAnimatedMorphFromBuffer);
     def("saveCoreAnimatedMorph", &saveCoreAnimatedMorph);
+
+    def("getLastErrorText", &CalError::getLastErrorText);
 }
