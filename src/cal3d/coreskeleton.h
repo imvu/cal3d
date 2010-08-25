@@ -35,7 +35,6 @@ public:
   void setSceneAmbientColor( CalVector const & color );
   void getSceneAmbientColor( CalVector & color );
 
-private:
   std::vector< boost::shared_ptr<CalCoreBone> > m_vectorCoreBone;
   std::map<std::string, int> m_mapCoreBoneNames;
   std::vector<int> m_listRootCoreBoneId;
