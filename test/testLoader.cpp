@@ -334,8 +334,9 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     delete loaded;
 }
 
-#if 0
 TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
+    disable_test();
+    #if 0
     CalCoreAnimation* anim1 = CalLoader::loadXmlCoreAnimation(animationText, 0);
     CHECK(anim1);
 
@@ -354,5 +355,5 @@ TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CalSaver::saveXmlCoreAnimation(buf2, anim2);
 
     CHECK_EQUAL_STR(buf1.str().c_str(), buf2.str().c_str());
+    #endif
 }
-#endif
