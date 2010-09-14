@@ -133,15 +133,7 @@ CalMixer::removeManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreA
 bool CalMixer::setManualAnimationOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, bool p) {
   CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
-  return setManualAnimationOn( aa, p );
-}
-
-
-bool 
-CalMixer::setManualAnimationOn( CalAnimation* aa, bool p )
-{
-  if( !aa->manual() ) return false;
-  return aa->setManualAnimationActionOn( p );
+  return true;
 }
 
 
@@ -159,8 +151,6 @@ CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>
 {
   CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
-  if( !aa->manual() ) return false;
-  setManualAnimationOn( aa, p.on_ );
   aa->time = p.time_;
   setManualAnimationWeight( aa, p.weight_ );
   setManualAnimationScale( aa, p.scale_ );
@@ -191,12 +181,12 @@ bool CalMixer::setManualAnimationTime(const boost::shared_ptr<CalCoreAnimation>&
 bool CalMixer::setManualAnimationWeight(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
   CalAnimation * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
-  return setManualAnimationWeight( aa, p );
+  setManualAnimationWeight( aa, p );
+  return true;
 }
 
-bool CalMixer::setManualAnimationWeight( CalAnimation * aa, float p ) {
-  aa->setManualAnimationActionWeight( p );
-  return true;
+void CalMixer::setManualAnimationWeight( CalAnimation * aa, float p ) {
+  aa->weight = p;
 }
 
 
@@ -243,15 +233,13 @@ CalMixer::setManualAnimationRampValue(const boost::shared_ptr<CalCoreAnimation>&
 {
   CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
-  return setManualAnimationRampValue( aa, p );
+  setManualAnimationRampValue( aa, p );
+  return true;
 }
 
 
-bool 
-CalMixer::setManualAnimationRampValue( CalAnimation * aa, float p )
-{
-  aa->setRampValue( p );
-  return true;
+void CalMixer::setManualAnimationRampValue( CalAnimation * aa, float p ) {
+  aa->rampValue = p;
 }
 
  /*****************************************************************************/
@@ -446,28 +434,6 @@ void CalMixer::updateAnimation(float deltaTime)
       m_animationTime += m_animationDuration;
 
   }
-
-  // update all active animation actions of this model
-  std::list<CalAnimation *>::iterator iteratorAnimationAction;
-  iteratorAnimationAction = m_listAnimationAction.begin();
-
-  while(iteratorAnimationAction != m_listAnimationAction.end())
-  {
-
-    // Update and check if animation action is still active.
-    // Manual actions will ignore the call to update and return true because
-    // they don't end.
-    if((*iteratorAnimationAction)->update(deltaTime))
-    {
-      ++iteratorAnimationAction;
-    }
-    else
-    {
-      // animation action has ended, destroy and remove it from the animation list
-      delete (*iteratorAnimationAction);
-      iteratorAnimationAction = m_listAnimationAction.erase(iteratorAnimationAction);
-    }
-  }
 }
 
 
@@ -550,36 +516,31 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
     // get the core animation instance
     CalAnimation * aa = * itaa;
     
-    // Manual animations can be on or off.  If they are off, they do not apply
-    // to the bone.
-    if( aa->on() ) {
-
-      const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
+    const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
+    
+    // get the list of core tracks of above core animation
+    CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
+    
+    // loop through all core tracks of the core animation
+    CalCoreAnimation::TrackList::iterator itct;
+    for( itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++ ) {
       
-      // get the list of core tracks of above core animation
-      CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
-      
-      // loop through all core tracks of the core animation
-      CalCoreAnimation::TrackList::iterator itct;
-      for( itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++ ) {
-        
-        // get the appropriate bone of the track
-        CalCoreTrack* ct = itct->get();
-        if( ct->coreBoneId >= int(vectorBone.size()) ) {
-          continue;
-        }
-        CalBone * pBone = &vectorBone[ct->coreBoneId];
-        
-        // get the current translation and rotation
-        CalVector translation;
-        CalQuaternion rotation;
-        ct->getState(aa->time, translation, rotation);
-        
-        // Replace and CrossFade both blend with the replace function.
-        bool replace = aa->getCompositionFunction() != CalAnimation::CompositionFunctionAverage;
-        float scale = aa->getScale();
-        pBone->blendState( aa->getWeight(), translation, rotation, scale, replace, aa->getRampValue() );
+      // get the appropriate bone of the track
+      CalCoreTrack* ct = itct->get();
+      if( ct->coreBoneId >= int(vectorBone.size()) ) {
+        continue;
       }
+      CalBone * pBone = &vectorBone[ct->coreBoneId];
+      
+      // get the current translation and rotation
+      CalVector translation;
+      CalQuaternion rotation;
+      ct->getState(aa->time, translation, rotation);
+      
+      // Replace and CrossFade both blend with the replace function.
+      bool replace = aa->getCompositionFunction() != CalAnimation::CompositionFunctionAverage;
+      float scale = aa->getScale();
+      pBone->blendState(aa->weight, translation, rotation, scale, replace, aa->rampValue);
     }
   }
 

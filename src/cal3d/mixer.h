@@ -166,10 +166,9 @@ public: // private:
   CalAnimation* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   CalAnimation* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   bool setManualAnimationCompositionFunction(CalAnimation*, CalAnimation::CompositionFunction p);
-  bool setManualAnimationRampValue(CalAnimation*, float p);
+  void setManualAnimationRampValue(CalAnimation*, float p);
   bool setManualAnimationScale(CalAnimation*, float p);
-  bool setManualAnimationWeight(CalAnimation*, float p);
-  bool setManualAnimationOn(CalAnimation*, bool p);
+  void setManualAnimationWeight(CalAnimation*, float p);
   void applyBoneAdjustments(CalSkeleton* skeleton);
 
 public:

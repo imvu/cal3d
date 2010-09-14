@@ -13,13 +13,10 @@
 #include "cal3d/coreanimation.h"
 
 CalAnimation::CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
-  : m_state(STATE_NONE)
-  , time(0.0f)
+  : time(0.0f)
   , timeFactor(1.0f)
-  , m_weight(0.0f)
+  , weight(0.0f)
 {
-  // For error checking, I initialize this here so you can't call execute on a manual action.
-  m_manualOn = false;
   m_scale = 1.0;
 
   m_pCoreAnimation = pCoreAnimation;
@@ -44,25 +41,8 @@ CalAnimation::CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnima
   *         \li \b false if was manual
   *****************************************************************************/
 
-bool CalAnimation::execute(float delayIn, float delayOut, float weightTarget,bool autoLock)
-{
-
-  // You cannot execute a manual action.
-  if( m_sequencingMode == SequencingModeManual ) {
-    return false;
-  }
-  m_state = STATE_IN;
-  m_weight = 0.0f;
-  m_delayIn = delayIn;
-  m_delayOut = delayOut;
-  time = 0.0f;
-  m_weightTarget = weightTarget;
-  m_autoLock = autoLock;
-  m_sequencingMode = SequencingModeAutomatic;
-  m_manualOn = false; // Irrelevant since not manual.
-  m_rampValue = 1.0;
-  m_compositionFunction = CompositionFunctionNull; // Initially NULL so we can recognize when it changes.
-  return true;
+bool CalAnimation::execute(float delayIn, float delayOut, float weightTarget, bool autoLock) {
+  return false;
 }
 
  /*****************************************************************************/
@@ -77,71 +57,10 @@ bool CalAnimation::execute(float delayIn, float delayOut, float weightTarget,boo
   *         \li \b false if an error happend
   *****************************************************************************/
 void CalAnimation::setManual() {
-  m_state = STATE_STEADY;
-  m_weight = 0.0f;
-  m_delayIn = 0.0f;
-  m_delayOut = 0.0f;
+  weight = 0.0f;
   time = 0.0f;
-  m_weightTarget = 10.0; // For debugging, an outrageous value.  This should be ignored.
-  m_autoLock = true;
-  m_sequencingMode = SequencingModeManual;
-  m_manualOn = true;
-  m_rampValue = 1.0;
+  rampValue = 1.0;
   m_compositionFunction = CompositionFunctionNull; // Initially NULL so we can recognize when it changes.
-}
-
-
- /*****************************************************************************/
-/** Tells you whether the animation action is on, i.e., should it apply to bones.
-  *
-  * Tells you whether the animation action is on, i.e., should it apply to bones.
-  * All actions are on unless they are both manual and explicitly turned off.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-bool
-CalAnimation::on()
-{
-  return m_sequencingMode != SequencingModeManual || m_manualOn;
-}
-
-
-
- /*****************************************************************************/
-/** Tells you whether the animation action is configured to be manual.
-  *
-  * Tells you whether the animation action is configured to be manual.
-  * Call setManual() to configure it to be manual.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-bool
-CalAnimation::manual()
-{
-  return m_sequencingMode == SequencingModeManual;
-}
-
-
- /*****************************************************************************/
-/** Sets the weight of the manual animation.
-  *
-  * Sets the weight of the manual animation.  Manual animations do not
-  * blend toward a weight target, so you set the weight directly, not a
-  * weight target.
-  *
-  * @return One of the following values:
-  *         \li \b true if manual
-  *         \li \b false if not manual
-  *****************************************************************************/
-bool CalAnimation::setManualAnimationActionWeight( float p )
-{
-  if( m_sequencingMode != SequencingModeManual ) return false;
-  m_weight = p;
-  return true;
 }
 
  /*****************************************************************************/
@@ -181,50 +100,6 @@ CalAnimation::getCompositionFunction()
 
 
  /*****************************************************************************/
-/** Sets the rampValue of the animation.
-  *
-  * The rampValue, from 0-1, scales the blend weight.  If the blending function
-  * is Replace, the rampValue also scales the blend weight of non-Replace and
-  * lower priority animations by 1 - rampValue.  Default should be 1.0.
-  *
-  * @return \li \b true always.
-  *****************************************************************************/
-bool
-CalAnimation::setRampValue( float p )
-{
-  m_rampValue = p;
-  return true;
-}
-
-
- /*****************************************************************************/
-/** Gets the RampValue of the animation.
-  *
-  * Gets the RampValue of the animation.  See setRampValue().
-  *
-  * @return \li \b RampValue value that was set with setRampValue().
-  *****************************************************************************/
-float
-CalAnimation::getRampValue()
-{
-  return m_rampValue;
-}
-
-
-
- /*****************************************************************************/
-/** Gets the scale of the animation.
-  *
-  * Gets the scale of the animation.  See setScale().
-  *
-  * @return \li \b scale value that was set with setScale().
-  *****************************************************************************/
-float CalAnimation::getScale()
-{
-  return m_scale;
-}
-
- /*****************************************************************************/
 /** Sets the scale of the animation.
   *
   * Sets the scale of the animation.  Scale is different from weight.  Weight
@@ -241,109 +116,3 @@ float CalAnimation::getScale()
   *         \li \b true if manual
   *         \li \b false if not manual
   *****************************************************************************/
-bool CalAnimation::setScale( float p )
-{
-  m_scale = p;
-  return true;
-}
-
-
- /*****************************************************************************/
-/** Sets the manual animation on or off.  If off, has no effect but retains
-  *
-  * Sets the manual animation on or off.  If off, has no effect but retains
-  * state.
-  *
-  * @return One of the following values:
-  *         \li \b true if manual
-  *         \li \b false if not manual
-  *****************************************************************************/
-bool CalAnimation::setManualAnimationActionOn( bool p )
-{
-  if( m_sequencingMode != SequencingModeManual ) return false;
-  m_manualOn = p;
-  return true;
-}
-
-
- /*****************************************************************************/
-/** Updates the animation action instance.
-  *
-  * This function updates the animation action instance for a given amount of
-  * time.  It has no effect on manual actions.
-  *
-  * @param deltaTime The elapsed time in seconds since the last update.
-  *
-  * @return One of the following values:
-  *         \li \b true if the animation action instance is still active or is manual
-  *         \li \b false if the execution of the animation action instance has
-  *             ended
-  *****************************************************************************/
-
-bool CalAnimation::update(float deltaTime)
-{
-
-  // Mixer should not call update on manual actions.
-  // Return true, not false, if manual, because we ignore manual, and our
-  // return parameter indicates whether the action has ended.  A manual action
-  // doesn't end.
-  if( m_sequencingMode != SequencingModeAutomatic ) return true; 
-
-  // update animation action time
-
-  if(m_state != STATE_STOPPED)
-  {
-      time += deltaTime * timeFactor;
-  }
-
-  // handle IN phase
-  if(m_state == STATE_IN)
-  {
-    // check if we are still in the IN phase
-    if(time < m_delayIn)
-    {
-      m_weight = time / m_delayIn * m_weightTarget;
-      //m_weight = m_time / m_delayIn;
-    }
-    else
-    {
-      m_state = STATE_STEADY;
-      m_weight = m_weightTarget;
-    }
-  }
-
-  // handle STEADY
-  if(m_state == STATE_STEADY)
-  {
-    // check if we reached OUT phase
-    if(!m_autoLock && time >= m_pCoreAnimation->duration - m_delayOut)
-    {
-      m_state = STATE_OUT;
-    }
-    // if the anim is supposed to stay locked on last keyframe, reset the time here.
-    else if (m_autoLock && time > m_pCoreAnimation->duration)
-    {
-      m_state = STATE_STOPPED;
-      time = m_pCoreAnimation->duration;
-    }      
-  }
-
-  // handle OUT phase
-  if(m_state == STATE_OUT)
-  {
-    // check if we are still in the OUT phase
-    if(time < m_pCoreAnimation->duration)
-    {
-      m_weight = (m_pCoreAnimation->duration - time) / m_delayOut * m_weightTarget;
-    }
-    else
-    {
-      // we reached the end of the action animation
-      m_weight = 0.0f;
-      return false;
-    }
-  }
-
-  return true;
-
-}
