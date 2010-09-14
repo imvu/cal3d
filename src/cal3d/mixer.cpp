@@ -23,7 +23,6 @@
 #include "cal3d/bone.h"
 #include "cal3d/animation.h"
 #include "cal3d/animation_action.h"
-#include "cal3d/animation_cycle.h"
 
  
 CalMixer::~CalMixer()
