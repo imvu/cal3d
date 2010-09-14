@@ -20,7 +20,6 @@
 #include "cal3d/model.h"
 #include "cal3d/skeleton.h"
 #include "cal3d/bone.h"
-#include "cal3d/mixer.h"
 #include "cal3d/renderer.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coremesh.h"
@@ -31,7 +30,6 @@
 CalModel::CalModel(const boost::shared_ptr<CalCoreSkeleton>& skeleton)
   : skeleton(new CalSkeleton(skeleton))
 {
-    mixer.reset(new CalMixer(this));
 }
 
 CalMesh* CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {

@@ -29,6 +29,5 @@ public:
   CalMesh* getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
 
   const boost::shared_ptr<CalSkeleton> skeleton;
-  boost::shared_ptr<CalMixer> mixer;
   std::vector< boost::shared_ptr<CalMesh> > meshes;
 };

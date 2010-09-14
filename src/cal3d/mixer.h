@@ -20,10 +20,11 @@
 // Forward declarations                                                       //
 //****************************************************************************//
 
-class CalModel;
 class CalAnimation;
 class CalAnimationAction;
 class CalAnimationCycle;
+class CalModel;
+class CalSkeleton;
 
 struct CalMixerManualAnimationAttributes : public Cal::Object {
   bool on_;
@@ -136,13 +137,13 @@ struct CalMixerBoneAdjustmentAndBoneId {
 class CAL3D_API CalMixer : public Cal::Object
 {
 public:
-  CalMixer(CalModel *pModel);
+  CalMixer();
   ~CalMixer();
 
   bool isDefaultMixer() { return true; }
   bool executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float delayIn, float delayOut, float weightTarget = 1.0f, bool autoLock=false);
   void updateAnimation(float deltaTime);
-  void updateSkeleton();
+  void updateSkeleton(CalSkeleton* skeleton);
   float getAnimationTime();
   float getAnimationDuration();
   void setAnimationTime(float animationTime);
@@ -173,10 +174,9 @@ public: // private:
   bool setManualAnimationWeight( CalAnimationAction *, float p );
   bool setManualAnimationTime( CalAnimationAction *, float p );
   bool setManualAnimationOn( CalAnimationAction *, bool p );
-  void applyBoneAdjustments();
+  void applyBoneAdjustments(CalSkeleton* skeleton);
 
 public:
-  CalModel *m_pModel;
   std::list<CalAnimationAction *> m_listAnimationAction;
   float m_animationTime;
   float m_animationDuration;

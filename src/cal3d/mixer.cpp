@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/error.h"
 #include "cal3d/mixer.h"
 #include "cal3d/corebone.h"
@@ -30,12 +26,6 @@
 #include "cal3d/animation_cycle.h"
 
  
- /*****************************************************************************/
-/** Destructs the mixer instance.
-  *
-  * This function is the destructor of the mixer instance.
-  *****************************************************************************/
-
 CalMixer::~CalMixer()
 {
   // destroy all active animation actions
@@ -401,11 +391,7 @@ CalMixer::stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
 
 
 
-CalMixer::CalMixer(CalModel *pModel) {
-  assert(pModel);
-
-  m_pModel = pModel;
-
+CalMixer::CalMixer() {
   // set the animation time/duration values to default
   m_animationTime = 0.0f;
   m_animationDuration = 0.0f;
@@ -517,10 +503,7 @@ void CalMixer::updateAnimation(float deltaTime)
 }
 
 
-void
-CalMixer::applyBoneAdjustments()
-{
-  CalSkeleton * pSkeleton = m_pModel->skeleton.get();
+void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
   std::vector<CalBone>& vectorBone = pSkeleton->getVectorBone();
   unsigned int i;
   for( i = 0; i < m_numBoneAdjustments; i++ ) {
@@ -581,9 +564,7 @@ CalMixer::removeBoneAdjustment( int boneId )
 }
 
 
-void CalMixer::updateSkeleton() {
-  CalSkeleton *pSkeleton = m_pModel->skeleton.get();
-
+void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
   pSkeleton->clearState();
 
   // get the bone vector of the skeleton
@@ -592,7 +573,7 @@ void CalMixer::updateSkeleton() {
   // The bone adjustments are "replace" so they have to go first, giving them
   // highest priority and full influence.  Subsequent animations affecting the same bones, 
   // including subsequent replace animations, will have their incluence attenuated appropriately.
-  applyBoneAdjustments();
+  applyBoneAdjustments(pSkeleton);
 
   // loop through all animation actions
   std::list<CalAnimationAction *>::iterator itaa;
