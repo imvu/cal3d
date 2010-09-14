@@ -17,7 +17,7 @@
 //****************************************************************************//
 
 #include <string>
-#include "cal3d/animation_action.h"
+#include "cal3d/animation.h"
 #include "cal3d/error.h"
 #include "cal3d/coreanimation.h"
 
@@ -27,7 +27,12 @@
   * This function is the default constructor of the animation action instance.
   *****************************************************************************/
 
-CalAnimationAction::CalAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
+CalAnimation::CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
+   : m_type(TYPE_NONE)
+   , m_state(STATE_NONE)
+   , time(0.0f)
+   , timeFactor(1.0f)
+   , m_weight(0.0f)
 {
   m_type = TYPE_ACTION;
 
@@ -57,7 +62,7 @@ CalAnimationAction::CalAnimationAction(const boost::shared_ptr<CalCoreAnimation>
   *         \li \b false if was manual
   *****************************************************************************/
 
-bool CalAnimationAction::execute(float delayIn, float delayOut, float weightTarget,bool autoLock)
+bool CalAnimation::execute(float delayIn, float delayOut, float weightTarget,bool autoLock)
 {
 
   // You cannot execute a manual action.
@@ -68,7 +73,7 @@ bool CalAnimationAction::execute(float delayIn, float delayOut, float weightTarg
   m_weight = 0.0f;
   m_delayIn = delayIn;
   m_delayOut = delayOut;
-  m_time = 0.0f;
+  time = 0.0f;
   m_weightTarget = weightTarget;
   m_autoLock = autoLock;
   m_sequencingMode = SequencingModeAutomatic;
@@ -89,12 +94,12 @@ bool CalAnimationAction::execute(float delayIn, float delayOut, float weightTarg
   *         \li \b true if successful
   *         \li \b false if an error happend
   *****************************************************************************/
-void CalAnimationAction::setManual() {
+void CalAnimation::setManual() {
   m_state = STATE_STEADY;
   m_weight = 0.0f;
   m_delayIn = 0.0f;
   m_delayOut = 0.0f;
-  m_time = 0.0f;
+  time = 0.0f;
   m_weightTarget = 10.0; // For debugging, an outrageous value.  This should be ignored.
   m_autoLock = true;
   m_sequencingMode = SequencingModeManual;
@@ -115,7 +120,7 @@ void CalAnimationAction::setManual() {
   *         \li \b false if an error happend
   *****************************************************************************/
 bool
-CalAnimationAction::on()
+CalAnimation::on()
 {
   return m_sequencingMode != SequencingModeManual || m_manualOn;
 }
@@ -133,7 +138,7 @@ CalAnimationAction::on()
   *         \li \b false if an error happend
   *****************************************************************************/
 bool
-CalAnimationAction::manual()
+CalAnimation::manual()
 {
   return m_sequencingMode == SequencingModeManual;
 }
@@ -150,7 +155,7 @@ CalAnimationAction::manual()
   *         \li \b true if manual
   *         \li \b false if not manual
   *****************************************************************************/
-bool CalAnimationAction::setManualAnimationActionWeight( float p )
+bool CalAnimation::setManualAnimationActionWeight( float p )
 {
   if( m_sequencingMode != SequencingModeManual ) return false;
   m_weight = p;
@@ -171,7 +176,7 @@ bool CalAnimationAction::setManualAnimationActionWeight( float p )
   *         \li \b false if setting to CompositionFunctionNull
   *****************************************************************************/
 bool 
-CalAnimationAction::setCompositionFunction( CompositionFunction p )
+CalAnimation::setCompositionFunction( CompositionFunction p )
 {
   if( p == CompositionFunctionNull ) return false;
   if( m_compositionFunction == p ) return true;
@@ -187,7 +192,7 @@ CalAnimationAction::setCompositionFunction( CompositionFunction p )
   * @return \li \b CompositionFunction value that was set with setCompositionFunction().
   *****************************************************************************/
 CalAnimation::CompositionFunction 
-CalAnimationAction::getCompositionFunction()
+CalAnimation::getCompositionFunction()
 {
   return m_compositionFunction;
 }
@@ -203,7 +208,7 @@ CalAnimationAction::getCompositionFunction()
   * @return \li \b true always.
   *****************************************************************************/
 bool
-CalAnimationAction::setRampValue( float p )
+CalAnimation::setRampValue( float p )
 {
   m_rampValue = p;
   return true;
@@ -218,7 +223,7 @@ CalAnimationAction::setRampValue( float p )
   * @return \li \b RampValue value that was set with setRampValue().
   *****************************************************************************/
 float
-CalAnimationAction::getRampValue()
+CalAnimation::getRampValue()
 {
   return m_rampValue;
 }
@@ -232,7 +237,7 @@ CalAnimationAction::getRampValue()
   *
   * @return \li \b scale value that was set with setScale().
   *****************************************************************************/
-float CalAnimationAction::getScale()
+float CalAnimation::getScale()
 {
   return m_scale;
 }
@@ -254,7 +259,7 @@ float CalAnimationAction::getScale()
   *         \li \b true if manual
   *         \li \b false if not manual
   *****************************************************************************/
-bool CalAnimationAction::setScale( float p )
+bool CalAnimation::setScale( float p )
 {
   m_scale = p;
   return true;
@@ -271,7 +276,7 @@ bool CalAnimationAction::setScale( float p )
   *         \li \b true if manual
   *         \li \b false if not manual
   *****************************************************************************/
-bool CalAnimationAction::setManualAnimationActionOn( bool p )
+bool CalAnimation::setManualAnimationActionOn( bool p )
 {
   if( m_sequencingMode != SequencingModeManual ) return false;
   m_manualOn = p;
@@ -293,7 +298,7 @@ bool CalAnimationAction::setManualAnimationActionOn( bool p )
   *             ended
   *****************************************************************************/
 
-bool CalAnimationAction::update(float deltaTime)
+bool CalAnimation::update(float deltaTime)
 {
 
   // Mixer should not call update on manual actions.
@@ -306,16 +311,16 @@ bool CalAnimationAction::update(float deltaTime)
 
   if(m_state != STATE_STOPPED)
   {
-	  m_time += deltaTime * m_timeFactor;
+	  time += deltaTime * timeFactor;
   }
 
   // handle IN phase
   if(m_state == STATE_IN)
   {
     // check if we are still in the IN phase
-    if(m_time < m_delayIn)
+    if(time < m_delayIn)
     {
-      m_weight = m_time / m_delayIn * m_weightTarget;
+      m_weight = time / m_delayIn * m_weightTarget;
       //m_weight = m_time / m_delayIn;
     }
     else
@@ -329,15 +334,15 @@ bool CalAnimationAction::update(float deltaTime)
   if(m_state == STATE_STEADY)
   {
     // check if we reached OUT phase
-    if(!m_autoLock && m_time >= m_pCoreAnimation->duration - m_delayOut)
+    if(!m_autoLock && time >= m_pCoreAnimation->duration - m_delayOut)
     {
       m_state = STATE_OUT;
     }
     // if the anim is supposed to stay locked on last keyframe, reset the time here.
-    else if (m_autoLock && m_time > m_pCoreAnimation->duration)
+    else if (m_autoLock && time > m_pCoreAnimation->duration)
 	{
 	  m_state = STATE_STOPPED;
-	  m_time = m_pCoreAnimation->duration;
+	  time = m_pCoreAnimation->duration;
 	}      
   }
 
@@ -345,9 +350,9 @@ bool CalAnimationAction::update(float deltaTime)
   if(m_state == STATE_OUT)
   {
     // check if we are still in the OUT phase
-    if(m_time < m_pCoreAnimation->duration)
+    if(time < m_pCoreAnimation->duration)
     {
-      m_weight = (m_pCoreAnimation->duration - m_time) / m_delayOut * m_weightTarget;
+      m_weight = (m_pCoreAnimation->duration - time) / m_delayOut * m_weightTarget;
     }
     else
     {

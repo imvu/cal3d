@@ -30,20 +30,20 @@ CalMixer::~CalMixer()
   // destroy all active animation actions
   while(!m_listAnimationAction.empty())
   {
-    CalAnimationAction* pAnimationAction = m_listAnimationAction.front();
+    CalAnimation* pAnimationAction = m_listAnimationAction.front();
     m_listAnimationAction.pop_front();
 
     delete pAnimationAction;
   }
 }
 
-CalAnimationAction* CalMixer::animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
-  std::list<CalAnimationAction *>::iterator iteratorAnimationAction;
+CalAnimation* CalMixer::animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
+  std::list<CalAnimation*>::iterator iteratorAnimationAction;
   iteratorAnimationAction = m_listAnimationAction.begin();
   while(iteratorAnimationAction != m_listAnimationAction.end())
   {
     // update and check if animation action is still active
-    CalAnimationAction * aa = *iteratorAnimationAction;
+    CalAnimation* aa = *iteratorAnimationAction;
     boost::shared_ptr<CalCoreAnimation> ca = aa->getCoreAnimation();
     if( ca ) {
       if( ca == coreAnimation ) {
@@ -113,7 +113,7 @@ CalMixer::addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAni
 bool 
 CalMixer::removeManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation)
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
+  CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   m_listAnimationAction.remove( aa );  
   delete aa;
@@ -132,14 +132,14 @@ CalMixer::removeManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreA
   *         \li \b false otherwise
   *****************************************************************************/
 bool CalMixer::setManualAnimationOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, bool p) {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
+  CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   return setManualAnimationOn( aa, p );
 }
 
 
 bool 
-CalMixer::setManualAnimationOn( CalAnimationAction * aa, bool p )
+CalMixer::setManualAnimationOn( CalAnimation* aa, bool p )
 {
   if( !aa->manual() ) return false;
   return aa->setManualAnimationActionOn( p );
@@ -158,11 +158,11 @@ CalMixer::setManualAnimationOn( CalAnimationAction * aa, bool p )
 bool
 CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalMixerManualAnimationAttributes const & p)
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
+  CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   if( !aa->manual() ) return false;
   setManualAnimationOn( aa, p.on_ );
-  setManualAnimationTime( aa, p.time_ );
+  aa->time = p.time_;
   setManualAnimationWeight( aa, p.weight_ );
   setManualAnimationScale( aa, p.scale_ );
   setManualAnimationRampValue( aa, p.rampValue_ );
@@ -171,16 +171,11 @@ CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>
 }
 
 bool CalMixer::setManualAnimationTime(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
+  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
-  setManualAnimationTime( aa, p );
+  aa->time = p;
   return true;
 }
-
-void CalMixer::setManualAnimationTime( CalAnimationAction * aa, float p ) {
-  aa->setTime( p );
-}
-
 
  /*****************************************************************************/
 /** Sets the weight of the manual animation.
@@ -195,12 +190,12 @@ void CalMixer::setManualAnimationTime( CalAnimationAction * aa, float p ) {
   *         \li \b false if not manual
   *****************************************************************************/
 bool CalMixer::setManualAnimationWeight(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
+  CalAnimation * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   return setManualAnimationWeight( aa, p );
 }
 
-bool CalMixer::setManualAnimationWeight( CalAnimationAction * aa, float p ) {
+bool CalMixer::setManualAnimationWeight( CalAnimation * aa, float p ) {
   aa->setManualAnimationActionWeight( p );
   return true;
 }
@@ -221,13 +216,13 @@ bool CalMixer::setManualAnimationWeight( CalAnimationAction * aa, float p ) {
   *         \li \b false if not manual
   *****************************************************************************/
 bool CalMixer::setManualAnimationScale(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
+  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationScale( aa, p );
 }
 
 bool 
-CalMixer::setManualAnimationScale( CalAnimationAction * aa, float p )
+CalMixer::setManualAnimationScale( CalAnimation * aa, float p )
 {
   aa->setScale( p );
   return true;
@@ -247,14 +242,14 @@ CalMixer::setManualAnimationScale( CalAnimationAction * aa, float p )
 bool 
 CalMixer::setManualAnimationRampValue(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p)
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
+  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationRampValue( aa, p );
 }
 
 
 bool 
-CalMixer::setManualAnimationRampValue( CalAnimationAction * aa, float p )
+CalMixer::setManualAnimationRampValue( CalAnimation * aa, float p )
 {
   aa->setRampValue( p );
   return true;
@@ -277,14 +272,14 @@ bool
 CalMixer::setManualAnimationCompositionFunction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, 
                                                 CalAnimation::CompositionFunction p )
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
+  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   return setManualAnimationCompositionFunction( aa, p );
 }
   
 
 bool 
-CalMixer::setManualAnimationCompositionFunction( CalAnimationAction * aa, 
+CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa, 
                                                 CalAnimation::CompositionFunction p )
 {
   if( p == CalAnimation::CompositionFunctionNull ) return false;
@@ -313,9 +308,9 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimationAction * aa,
     {
 
       // Average animations go after replace, but before Average.
-      std::list<CalAnimationAction *>::iterator aait2;
+      std::list<CalAnimation *>::iterator aait2;
       for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
-        CalAnimationAction * aa3 = * aait2;
+        CalAnimation * aa3 = * aait2;
         CalAnimation::CompositionFunction cf = aa3->getCompositionFunction();
         if( cf != CalAnimation::CompositionFunctionReplace ) {
           break;
@@ -328,9 +323,9 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimationAction * aa,
     {
 
       // Average animations go before the first Average animation.
-      std::list<CalAnimationAction *>::iterator aait2;
+      std::list<CalAnimation *>::iterator aait2;
       for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
-        CalAnimationAction * aa3 = * aait2;
+        CalAnimation * aa3 = * aait2;
         CalAnimation::CompositionFunction cf = aa3->getCompositionFunction();
         if( cf == CalAnimation::CompositionFunctionAverage ) { // Skip over replace and crossFade animations
           break;
@@ -364,7 +359,7 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimationAction * aa,
 bool
 CalMixer::stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
 {
-  CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
+  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   m_listAnimationAction.remove( aa );  
   delete aa;
@@ -403,7 +398,7 @@ bool CalMixer::executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnim
 {
 
   // Create a new action.  Test for error conditions.
-  CalAnimationAction * aa = newAnimationAction(coreAnimation);
+  CalAnimation * aa = newAnimationAction(coreAnimation);
   if( !aa ) return false;
 
   // If we got the action, then configure it for being update().
@@ -412,10 +407,10 @@ bool CalMixer::executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnim
 
 
 
-CalAnimationAction * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
+CalAnimation * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
 {
   // allocate a new animation action instance
-  CalAnimationAction* pAnimationAction = new CalAnimationAction(pCoreAnimation);
+  CalAnimation* pAnimationAction = new CalAnimation(pCoreAnimation);
 
   // insert new animation into the table
   m_listAnimationAction.push_front(pAnimationAction);
@@ -454,7 +449,7 @@ void CalMixer::updateAnimation(float deltaTime)
   }
 
   // update all active animation actions of this model
-  std::list<CalAnimationAction *>::iterator iteratorAnimationAction;
+  std::list<CalAnimation *>::iterator iteratorAnimationAction;
   iteratorAnimationAction = m_listAnimationAction.begin();
 
   while(iteratorAnimationAction != m_listAnimationAction.end())
@@ -550,11 +545,11 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
   applyBoneAdjustments(pSkeleton);
 
   // loop through all animation actions
-  std::list<CalAnimationAction *>::iterator itaa;
+  std::list<CalAnimation *>::iterator itaa;
   for( itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++ ) {
 
     // get the core animation instance
-    CalAnimationAction * aa = * itaa;
+    CalAnimation * aa = * itaa;
     
     // Manual animations can be on or off.  If they are off, they do not apply
     // to the bone.
@@ -579,7 +574,7 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
         // get the current translation and rotation
         CalVector translation;
         CalQuaternion rotation;
-        ct->getState( aa->getTime(), translation, rotation);
+        ct->getState(aa->time, translation, rotation);
         
         // Replace and CrossFade both blend with the replace function.
         bool replace = aa->getCompositionFunction() != CalAnimation::CompositionFunctionAverage;

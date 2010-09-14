@@ -21,8 +21,6 @@
 //****************************************************************************//
 
 class CalAnimation;
-class CalAnimationAction;
-class CalAnimationCycle;
 class CalModel;
 class CalSkeleton;
 
@@ -165,18 +163,17 @@ public:
   void removeAllBoneAdjustments();
 
 public: // private:
-  CalAnimationAction* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
-  CalAnimationAction* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
-  bool setManualAnimationCompositionFunction( CalAnimationAction *, CalAnimation::CompositionFunction p );
-  bool setManualAnimationRampValue( CalAnimationAction *, float p );
-  bool setManualAnimationScale( CalAnimationAction *, float p );
-  bool setManualAnimationWeight( CalAnimationAction *, float p );
-  void setManualAnimationTime( CalAnimationAction *, float p );
-  bool setManualAnimationOn( CalAnimationAction *, bool p );
+  CalAnimation* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+  CalAnimation* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+  bool setManualAnimationCompositionFunction(CalAnimation*, CalAnimation::CompositionFunction p);
+  bool setManualAnimationRampValue(CalAnimation*, float p);
+  bool setManualAnimationScale(CalAnimation*, float p);
+  bool setManualAnimationWeight(CalAnimation*, float p);
+  bool setManualAnimationOn(CalAnimation*, bool p);
   void applyBoneAdjustments(CalSkeleton* skeleton);
 
 public:
-  std::list<CalAnimationAction *> m_listAnimationAction;
+  std::list<CalAnimation*> m_listAnimationAction;
   float m_animationTime;
   float m_animationDuration;
   float m_timeFactor;
