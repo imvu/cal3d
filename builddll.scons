@@ -6,7 +6,6 @@ import sys
 
 sources = Split('''
     animation.cpp
-    animation_action.cpp
     bone.cpp
     buffersource.cpp
     calxmlbindings.cpp

@@ -7,16 +7,7 @@ class CalCoreAnimation;
 
 class CAL3D_API CalAnimation : public Cal::Object
 {
-// misc
 public:
-  enum Type
-  {
-    TYPE_NONE = 0,
-    TYPE_CYCLE,
-    TYPE_POSE,
-    TYPE_ACTION
-  };
-
   enum State
   {
     STATE_NONE = 0,
@@ -25,7 +16,7 @@ public:
     STATE_IN,
     STATE_STEADY,
     STATE_OUT,
-	STATE_STOPPED
+    STATE_STOPPED
   };
   enum CompositionFunction {
     CompositionFunctionNull = 0,
@@ -41,7 +32,6 @@ public:
       return m_pCoreAnimation;
   }
   State getState() { return m_state; }
-  Type getType() { return m_type; }
   float getWeight() { return m_weight; }
 
   CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
@@ -80,7 +70,6 @@ private:
 
 private:
   boost::shared_ptr<CalCoreAnimation> m_pCoreAnimation;
-  Type m_type;
   State m_state;
   float m_weight;
 };
