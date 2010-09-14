@@ -138,8 +138,6 @@ public:
   CalMixer();
   ~CalMixer();
 
-  bool isDefaultMixer() { return true; }
-  bool executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float delayIn, float delayOut, float weightTarget = 1.0f, bool autoLock=false);
   void updateAnimation(float deltaTime);
   void updateSkeleton(CalSkeleton* skeleton);
   float getAnimationTime();
@@ -165,9 +163,9 @@ public:
 public: // private:
   CalAnimation* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   CalAnimation* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
-  bool setManualAnimationCompositionFunction(CalAnimation*, CalAnimation::CompositionFunction p);
+  void setManualAnimationCompositionFunction(CalAnimation*, CalAnimation::CompositionFunction p);
   void setManualAnimationRampValue(CalAnimation*, float p);
-  bool setManualAnimationScale(CalAnimation*, float p);
+  void setManualAnimationScale(CalAnimation*, float p);
   void setManualAnimationWeight(CalAnimation*, float p);
   void applyBoneAdjustments(CalSkeleton* skeleton);
 

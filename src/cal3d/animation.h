@@ -9,36 +9,37 @@ class CAL3D_API CalAnimation : public Cal::Object
 {
 public:
   enum CompositionFunction {
-    CompositionFunctionNull = 0,
     CompositionFunctionReplace,
     CompositionFunctionAverage,
     CompositionFunctionCrossFade
   };
 
-public:
-  CalAnimation();
+  CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
 
   const boost::shared_ptr<CalCoreAnimation>& getCoreAnimation() const {
       return m_pCoreAnimation;
   }
-
-  CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
-
-  bool execute(float delayIn, float delayOut, float weightTarget = 1.0f,bool autoLock=false);
-  void setManual();
-  void setScale(float p) { m_scale = p; }
-  float getScale() { return m_scale; }
-  bool setCompositionFunction( CompositionFunction );
-  CompositionFunction getCompositionFunction();
 
   float time;
   float timeFactor;
   float weight;
   float rampValue;
 
-private:
-  float m_scale;
-  CompositionFunction m_compositionFunction;
+  /*****************************************************************************
+   * Scale is different from weight.  Weight
+   * is really relative weight.  All the weights are combined into a sum, and
+   * each animation contributes according to the ratio of its weight to the sum.
+   * In other words, the total influence of the weights is normalized to 1.0.
+   * In contrast, scale factors apply to animation actions independently.  Scaling
+   * one animation action up does not decrease the scale of other actions applying
+   * to the same bones.  Whereas the weights are used to compose animations onto
+   * a skeleton, scales are used to adjust the absolute, non-relative magnitude
+   * of an animation.
+   *****************************************************************************/
+  float scale;
 
+  CompositionFunction compositionFunction;
+
+private:
   boost::shared_ptr<CalCoreAnimation> m_pCoreAnimation;
 };

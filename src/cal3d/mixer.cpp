@@ -93,7 +93,7 @@ CalMixer::addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAni
     return false; // Already existed.
   }
 
-  newAnimationAction(coreAnimation)->setManual();
+  newAnimationAction(coreAnimation);
   return true;
 }
 
@@ -207,14 +207,12 @@ void CalMixer::setManualAnimationWeight( CalAnimation * aa, float p ) {
 bool CalMixer::setManualAnimationScale(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
   CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
-  return setManualAnimationScale( aa, p );
+  setManualAnimationScale( aa, p );
+  return true;
 }
 
-bool 
-CalMixer::setManualAnimationScale( CalAnimation * aa, float p )
-{
-  aa->setScale( p );
-  return true;
+void CalMixer::setManualAnimationScale( CalAnimation * aa, float p ) {
+  aa->scale = p;
 }
 
 
@@ -261,22 +259,22 @@ CalMixer::setManualAnimationCompositionFunction( const boost::shared_ptr<CalCore
 {
   CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
-  return setManualAnimationCompositionFunction( aa, p );
+  setManualAnimationCompositionFunction( aa, p );
+  return true;
 }
   
 
-bool 
+void
 CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa, 
                                                 CalAnimation::CompositionFunction p )
 {
-  if( p == CalAnimation::CompositionFunctionNull ) return false;
-  CalAnimation::CompositionFunction oldValue = aa->getCompositionFunction();
+  CalAnimation::CompositionFunction oldValue = aa->compositionFunction;
 
   // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
   // it at the front, which wouldn't preserve the property that the most recently inserted
   // animation is highest priority.
-  if( oldValue == p ) return true;
-  aa->setCompositionFunction( p );
+  if( oldValue == p ) return;
+  aa->compositionFunction = p;
 
   // Iterate through the list and remove this element.
   m_listAnimationAction.remove( aa );
@@ -298,7 +296,7 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa,
       std::list<CalAnimation *>::iterator aait2;
       for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
         CalAnimation * aa3 = * aait2;
-        CalAnimation::CompositionFunction cf = aa3->getCompositionFunction();
+        CalAnimation::CompositionFunction cf = aa3->compositionFunction;
         if( cf != CalAnimation::CompositionFunctionReplace ) {
           break;
         }
@@ -313,7 +311,7 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa,
       std::list<CalAnimation *>::iterator aait2;
       for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
         CalAnimation * aa3 = * aait2;
-        CalAnimation::CompositionFunction cf = aa3->getCompositionFunction();
+        CalAnimation::CompositionFunction cf = aa3->compositionFunction;
         if( cf == CalAnimation::CompositionFunctionAverage ) { // Skip over replace and crossFade animations
           break;
         }
@@ -327,7 +325,6 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa,
       break;
     }
   }
-  return true;
 }
 
 
@@ -363,39 +360,7 @@ CalMixer::CalMixer() {
   m_numBoneAdjustments = 0;
 }
 
- /*****************************************************************************/
-/** Executes an animation action.
-  *
-  * This function executes an animation action.
-  *
-  * @param id The ID of the animation cycle that should be blended.
-  * @param delayIn The time in seconds until the animation action reaches the
-  *                full weight from the beginning of its execution.
-  * @param delayOut The time in seconds in which the animation action reaches
-  *                 zero weight at the end of its execution.
-  * @param weightTarget No doxygen comment for this. FIXME.
-  * @param autoLock     This prevents the Action from being reset and removed
-  *                     on the last keyframe if true.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-bool CalMixer::executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float delayIn, float delayOut, float weightTarget, bool autoLock)
-{
-
-  // Create a new action.  Test for error conditions.
-  CalAnimation * aa = newAnimationAction(coreAnimation);
-  if( !aa ) return false;
-
-  // If we got the action, then configure it for being update().
-  return aa->execute(delayIn, delayOut, weightTarget, autoLock);
-}
-
-
-
-CalAnimation * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
-{
+CalAnimation * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation) {
   // allocate a new animation action instance
   CalAnimation* pAnimationAction = new CalAnimation(pCoreAnimation);
 
@@ -538,9 +503,8 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
       ct->getState(aa->time, translation, rotation);
       
       // Replace and CrossFade both blend with the replace function.
-      bool replace = aa->getCompositionFunction() != CalAnimation::CompositionFunctionAverage;
-      float scale = aa->getScale();
-      pBone->blendState(aa->weight, translation, rotation, scale, replace, aa->rampValue);
+      bool replace = aa->compositionFunction != CalAnimation::CompositionFunctionAverage;
+      pBone->blendState(aa->weight, translation, rotation, aa->scale, replace, aa->rampValue);
     }
   }
 
