@@ -38,7 +38,15 @@
 
 CalMixer::~CalMixer()
 {
-  assert(m_listAnimationAction.empty());
+  // destroy all active animation actions
+  while(!m_listAnimationAction.empty())
+  {
+    CalAnimationAction* pAnimationAction = m_listAnimationAction.front();
+    m_listAnimationAction.pop_front();
+
+    pAnimationAction->destroy();
+    delete pAnimationAction;
+  }
 }
 
 CalAnimationAction* CalMixer::animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
@@ -393,8 +401,7 @@ CalMixer::stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
 
 
 
-void CalMixer::create(CalModel *pModel)
-{
+CalMixer::CalMixer(CalModel *pModel) {
   assert(pModel);
 
   m_pModel = pModel;
@@ -404,21 +411,6 @@ void CalMixer::create(CalModel *pModel)
   m_animationDuration = 0.0f;
   m_timeFactor = 1.0f;
   m_numBoneAdjustments = 0;
-}
-
-void CalMixer::destroy()
-{
-  // destroy all active animation actions
-  while(!m_listAnimationAction.empty())
-  {
-    CalAnimationAction *pAnimationAction;
-    pAnimationAction = m_listAnimationAction.front();
-    m_listAnimationAction.pop_front();
-
-    pAnimationAction->destroy();
-    delete pAnimationAction;
-  }
-  m_pModel = 0;
 }
 
  /*****************************************************************************/
@@ -528,7 +520,7 @@ void CalMixer::updateAnimation(float deltaTime)
 void
 CalMixer::applyBoneAdjustments()
 {
-  CalSkeleton * pSkeleton = m_pModel->getSkeleton();
+  CalSkeleton * pSkeleton = m_pModel->skeleton.get();
   std::vector<CalBone>& vectorBone = pSkeleton->getVectorBone();
   unsigned int i;
   for( i = 0; i < m_numBoneAdjustments; i++ ) {
@@ -589,43 +581,9 @@ CalMixer::removeBoneAdjustment( int boneId )
 }
 
 
-unsigned int 
-CalMixer::numActiveOneShotAnimations()
-{
-  
-  // get the skeleton we need to update
-  CalSkeleton *pSkeleton;
-  pSkeleton = m_pModel->getSkeleton();
-  if(pSkeleton == 0) return 0;
-  unsigned int count = 0;
-  
-  // loop through all animation actions
-  std::list<CalAnimationAction *>::iterator itaa;
-  for( itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++ ) {
-    
-    // get the core animation instance
-    CalAnimationAction * aa = * itaa;
-    
-    // Manual animations can be on or off.  If they are off, they do not apply
-    // to the bone.
-    if( aa->on() ) {
-      count++;
-    }
-  }
-  return count;
-}
+void CalMixer::updateSkeleton() {
+  CalSkeleton *pSkeleton = m_pModel->skeleton.get();
 
-
-
-void CalMixer::updateSkeleton()
-{
-
-  // get the skeleton we need to update
-  CalSkeleton *pSkeleton;
-  pSkeleton = m_pModel->getSkeleton();
-  if(pSkeleton == 0) return;
-
-  // clear the skeleton state
   pSkeleton->clearState();
 
   // get the bone vector of the skeleton

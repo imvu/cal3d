@@ -17,7 +17,6 @@
 class CalCoreSkeleton;
 class CalCoreMesh;
 class CalSkeleton;
-class CalAbstractMixer;
 class CalMixer;
 class CalMesh;
 
@@ -25,19 +24,11 @@ class CAL3D_API CalModel : public Cal::Object
 {
 public: 
   CalModel(const boost::shared_ptr<CalCoreSkeleton>& pCoreModel);
-  ~CalModel();
 
   CalMesh* attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
   CalMesh* getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
-  CalMixer *getMixer();
-  CalAbstractMixer *getAbstractMixer();
-  void setAbstractMixer(CalAbstractMixer* pMixer);
-  CalSkeleton *getSkeleton();
-  std::vector<CalMesh *>& getVectorMesh();
-  void setLodLevel(float lodLevel);
 
-private:
-  CalSkeleton *m_pSkeleton;
-  CalAbstractMixer *m_pMixer;
-  std::vector<CalMesh *> m_vectorMesh;
+  const boost::shared_ptr<CalSkeleton> skeleton;
+  boost::shared_ptr<CalMixer> mixer;
+  std::vector< boost::shared_ptr<CalMesh> > meshes;
 };

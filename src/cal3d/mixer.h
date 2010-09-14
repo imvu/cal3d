@@ -133,124 +133,16 @@ struct CalMixerBoneAdjustmentAndBoneId {
  *
  *****************************************************************************/
 
-class CAL3D_API CalAbstractMixer : public Cal::Object
+class CAL3D_API CalMixer : public Cal::Object
 {
 public:
-  CalAbstractMixer() {}
-  virtual ~CalAbstractMixer() {}
+  CalMixer(CalModel *pModel);
+  ~CalMixer();
 
-  /*****************************************************************************/
-  /**
-   * Is the object an instance of the default mixer (i.e. an instance of CalMixer) ?
-   *
-   * @return \li \b true if an instance of CalMixer
-   *         \li \b false if not an instance of CalMixer
-   *
-   *****************************************************************************/
-  virtual bool isDefaultMixer() { return false; }
-
-  /*****************************************************************************/
-  /**
-   * Allocates and initializes all resources needed for the instance to
-   * operate.
-   *
-   * When subclassing, it is recommended that the constructor does as
-   * little as possible and leaves the work to the \b create
-   * method. The \b create method must be called before any other
-   * method. It MUST support multiple calls without undesirable side
-   * effects (for instance object->create(model) called twice without
-   * a call to object->destroy() in between must not leak memory).
-   *
-   * The CalModel::setAbstractMixer method will call \b create. The
-   * CalModel::create method will call \b create if called after the
-   * instance was set using CalModel::setAbstractMixer (otherwise
-   * an instance of CalMixer is allocated and its \b create method
-   * is called).
-   *
-   * @param pModel a pointer to the CalModel instance in which the
-   *        animations to be mixed are found.
-   * 
-   * @return \li \b true if successful
-   *         \li \b false if an error happend
-   *
-   *****************************************************************************/
-  virtual void create(CalModel *pModel) = 0;
-
-  /*****************************************************************************/
-  /**
-   * Releases all resources used by the instance and frees all
-   * allocated memory. It is recommended that the destructor of a
-   * CalAbstractMixer subclass does as little as possible and leaves
-   * the work to the destroy method. The \b destroy method MUST
-   * support multiple calls without undesirable side effects (such 
-   * as deallocating a pointer twice).
-   *
-   * The CalModel::destroy method will call destroy if the instance
-   * was allocated by CalModel::create (in which case it is a CalMixer
-   * instance) or if the instance was set via
-   * CalModel::setAbstractMixer.
-   *
-   *****************************************************************************/
-  virtual void destroy() = 0;
-
-  /*****************************************************************************/
-  /** 
-   * Notifies the instance that updateAnimation was last called
-   * deltaTime seconds ago. The internal scheduler of the instance
-   * should terminate animations or update the timing information of
-   * active animations accordingly. It should not blend animations
-   * together or otherwise modify the CalModel associated to these
-   * animations.
-   *
-   * The CalModel::update method will call updateSkeleton immediately
-   * after updateAnimation if the instance was allocated by
-   * CalModel::create (in which case it is a CalMixer instance) or if
-   * the instance was set via CalModel::setAbstractMixer.
-   *
-   * @param deltaTime The elapsed time in seconds since the last call.
-   *
-   *****************************************************************************/
-  virtual void updateAnimation(float deltaTime) = 0;
-
-  /*****************************************************************************/
-  /**
-   * Updates the skeleton of the corresponding CalModel (as provided to
-   * the create method) to match the current animation state (as
-   * updated by the last call to updateAnimation).  The tracks of each
-   * active animation are blended to compute the position and
-   * orientation of each bone of the skeleton. The updateAnimation
-   * method should be called just before calling updateSkeleton to
-   * define the set of active animations.
-   *
-   * The CalModel::update method will call updateSkeleton immediately
-   * after updateAnimation if the instance was allocated by
-   * CalModel::create (in which case it is a CalMixer instance) or if
-   * the instance was set via CalModel::setAbstractMixer.
-   *
-   *****************************************************************************/
-  virtual void updateSkeleton() = 0;
-};
-
-class CAL3D_API CalMixer : public CalAbstractMixer
-{
-public:
-  CalModel *m_pModel;
-  std::list<CalAnimationAction *> m_listAnimationAction;
-  float m_animationTime;
-  float m_animationDuration;
-  float m_timeFactor;
-  unsigned int m_numBoneAdjustments;
-  CalMixerBoneAdjustmentAndBoneId m_boneAdjustmentAndBoneIdArray[ CalMixerBoneAdjustmentsMax ];
-
-public:
-  virtual ~CalMixer();
-
-  virtual bool isDefaultMixer() { return true; }
-  virtual void create(CalModel *pModel);
-  virtual void destroy();
+  bool isDefaultMixer() { return true; }
   bool executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float delayIn, float delayOut, float weightTarget = 1.0f, bool autoLock=false);
-  virtual void updateAnimation(float deltaTime);
-  virtual void updateSkeleton();
+  void updateAnimation(float deltaTime);
+  void updateSkeleton();
   float getAnimationTime();
   float getAnimationDuration();
   void setAnimationTime(float animationTime);
@@ -271,10 +163,8 @@ public:
   bool addBoneAdjustment( int boneId, CalMixerBoneAdjustment const & );
   bool removeBoneAdjustment( int boneId );
   void removeAllBoneAdjustments();
-  unsigned int numActiveOneShotAnimations();
 
 public: // private:
-
   CalAnimationAction* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   CalAnimationAction* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   bool setManualAnimationCompositionFunction( CalAnimationAction *, CalAnimation::CompositionFunction p );
@@ -284,4 +174,13 @@ public: // private:
   bool setManualAnimationTime( CalAnimationAction *, float p );
   bool setManualAnimationOn( CalAnimationAction *, bool p );
   void applyBoneAdjustments();
+
+public:
+  CalModel *m_pModel;
+  std::list<CalAnimationAction *> m_listAnimationAction;
+  float m_animationTime;
+  float m_animationDuration;
+  float m_timeFactor;
+  unsigned int m_numBoneAdjustments;
+  CalMixerBoneAdjustmentAndBoneId m_boneAdjustmentAndBoneIdArray[ CalMixerBoneAdjustmentsMax ];
 };

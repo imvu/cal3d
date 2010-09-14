@@ -195,7 +195,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CHECK(submesh);
 
     CalPhysique::calculateVerticesAndNormals(
-        model.getSkeleton()->boneTransforms.data,
+        model.skeleton->boneTransforms.data,
         submesh,
         0);
 }
