@@ -34,7 +34,6 @@ CalMixer::~CalMixer()
     CalAnimationAction* pAnimationAction = m_listAnimationAction.front();
     m_listAnimationAction.pop_front();
 
-    pAnimationAction->destroy();
     delete pAnimationAction;
   }
 }
@@ -96,12 +95,8 @@ CalMixer::addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAni
     return false; // Already existed.
   }
 
-  // Create a new action.  Test for error conditions.
-  CalAnimationAction * aa = newAnimationAction( coreAnimation );
-  if( !aa ) return false;
-
-  // If we got the action, then configure it as manual.
-  return aa->setManual();
+  newAnimationAction(coreAnimation)->setManual();
+  return true;
 }
 
  /*****************************************************************************/
@@ -122,7 +117,6 @@ CalMixer::removeManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreA
   CalAnimationAction * aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   m_listAnimationAction.remove( aa );  
-  aa->destroy();
   delete aa;
   return true;
 }
@@ -177,25 +171,15 @@ CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>
   return true;
 }
 
-bool CalMixer::animationDuration(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float * result) {
-    if (!coreAnimation) {
-        return false;
-    }
-    *result = coreAnimation->duration;
-    return true;
-}
-
 bool CalMixer::setManualAnimationTime(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
   CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
-  return setManualAnimationTime( aa, p );
+  setManualAnimationTime( aa, p );
+  return true;
 }
 
-bool 
-CalMixer::setManualAnimationTime( CalAnimationAction * aa, float p )
-{
+void CalMixer::setManualAnimationTime( CalAnimationAction * aa, float p ) {
   aa->setTime( p );
-  return true;
 }
 
 
@@ -384,7 +368,6 @@ CalMixer::stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
   CalAnimationAction * aa = animationActionFromCoreAnimationId( coreAnimation );
   if( !aa ) return false;
   m_listAnimationAction.remove( aa );  
-  aa->destroy();
   delete aa;
   return true;
 }
@@ -433,14 +416,7 @@ bool CalMixer::executeAction(const boost::shared_ptr<CalCoreAnimation>& coreAnim
 CalAnimationAction * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
 {
   // allocate a new animation action instance
-  CalAnimationAction *pAnimationAction = new CalAnimationAction();
-
-  // create the new animation instance
-  if(!pAnimationAction->create(pCoreAnimation))
-  {
-    delete pAnimationAction;
-    return NULL;
-  }
+  CalAnimationAction* pAnimationAction = new CalAnimationAction(pCoreAnimation);
 
   // insert new animation into the table
   m_listAnimationAction.push_front(pAnimationAction);
@@ -495,7 +471,6 @@ void CalMixer::updateAnimation(float deltaTime)
     else
     {
       // animation action has ended, destroy and remove it from the animation list
-      (*iteratorAnimationAction)->destroy();
       delete (*iteratorAnimationAction);
       iteratorAnimationAction = m_listAnimationAction.erase(iteratorAnimationAction);
     }

@@ -18,14 +18,11 @@ class CalCoreAnimation;
 class CAL3D_API CalAnimationAction : public CalAnimation
 {
 public:
-  CalAnimationAction();
-  ~CalAnimationAction();
+  CalAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
 
-  bool create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
-  void destroy();
   bool execute(float delayIn, float delayOut, float weightTarget = 1.0f,bool autoLock=false);
   bool update(float deltaTime);
-  bool setManual();
+  void setManual();
   bool setManualAnimationActionOn( bool p );
   bool setManualAnimationActionWeight( float );
   bool setScale( float );
@@ -47,7 +44,6 @@ private:
   float m_rampValue;
   CompositionFunction m_compositionFunction;
   enum SequencingMode {
-    SequencingModeNull = 0,
     SequencingModeAutomatic,
     SequencingModeManual
   } m_sequencingMode;

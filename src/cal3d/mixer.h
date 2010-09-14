@@ -160,7 +160,6 @@ public:
   bool setManualAnimationRampValue( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p );
   bool setManualAnimationCompositionFunction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalAnimation::CompositionFunction p );
   bool setManualAnimationAttributes( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalMixerManualAnimationAttributes const & p );
-  bool animationDuration( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float * result );
   bool addBoneAdjustment( int boneId, CalMixerBoneAdjustment const & );
   bool removeBoneAdjustment( int boneId );
   void removeAllBoneAdjustments();
@@ -172,7 +171,7 @@ public: // private:
   bool setManualAnimationRampValue( CalAnimationAction *, float p );
   bool setManualAnimationScale( CalAnimationAction *, float p );
   bool setManualAnimationWeight( CalAnimationAction *, float p );
-  bool setManualAnimationTime( CalAnimationAction *, float p );
+  void setManualAnimationTime( CalAnimationAction *, float p );
   bool setManualAnimationOn( CalAnimationAction *, bool p );
   void applyBoneAdjustments(CalSkeleton* skeleton);
 

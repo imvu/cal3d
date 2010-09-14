@@ -27,49 +27,18 @@
   * This function is the default constructor of the animation action instance.
   *****************************************************************************/
 
-CalAnimationAction::CalAnimationAction() : CalAnimation()
+CalAnimationAction::CalAnimationAction(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
 {
   m_type = TYPE_ACTION;
-}
 
- /*****************************************************************************/
-/** Destructs the animation action instance.
-  *
-  * This function is the destructor of the animation action instance.
-  *****************************************************************************/
-
-CalAnimationAction::~CalAnimationAction()
-{
-}
-
-bool CalAnimationAction::create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation) {
   // For error checking, I initialize this here so you can't call execute on a manual action.
   m_manualOn = false;
   m_scale = 1.0;
-  if(pCoreAnimation == 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, std::string(__FILE__), __LINE__);
-    return false;
-  }
 
   m_pCoreAnimation = pCoreAnimation;
-
-  return true;
 }
 
- /*****************************************************************************/
-/** Destroys the animation action instance.
-  *
-  * This function destroys all data stored in the animation action instance and
-  * frees all allocated memory.
-  *****************************************************************************/
-
-void CalAnimationAction::destroy()
-{
-  m_pCoreAnimation.reset();
-}
-
- /*****************************************************************************/
+/*****************************************************************************/
 /** Executes the animation action instance.
   *
   * This function executes the animation action instance.  You cannot execute
@@ -120,8 +89,7 @@ bool CalAnimationAction::execute(float delayIn, float delayOut, float weightTarg
   *         \li \b true if successful
   *         \li \b false if an error happend
   *****************************************************************************/
-bool CalAnimationAction::setManual()
-{
+void CalAnimationAction::setManual() {
   m_state = STATE_STEADY;
   m_weight = 0.0f;
   m_delayIn = 0.0f;
@@ -133,7 +101,6 @@ bool CalAnimationAction::setManual()
   m_manualOn = true;
   m_rampValue = 1.0;
   m_compositionFunction = CompositionFunctionNull; // Initially NULL so we can recognize when it changes.
-  return true;
 }
 
 

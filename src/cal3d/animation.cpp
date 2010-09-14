@@ -11,12 +11,6 @@
 #include "cal3d/animation.h"
 #include "cal3d/error.h"
 #include "cal3d/coreanimation.h"
- 
- /*****************************************************************************/
-/** Constructs the animation instance.
-  *
-  * This function is the default constructor of the animation instance.
-  *****************************************************************************/
 
 CalAnimation::CalAnimation()
    : m_type(TYPE_NONE)
@@ -25,29 +19,6 @@ CalAnimation::CalAnimation()
    , m_timeFactor(1.0f)
    , m_weight(0.0f)
 {
-   //Member variables use initializer list
-}
-
-/******************************************************************************/
-/** Destructs the animation instance.
-  *
-  * This function is the destructor of the animation instance.
-  *****************************************************************************/
-
-CalAnimation::~CalAnimation()
-{
-}
-
- /*****************************************************************************/
-/** Destroys the animation instance.
-  *
-  * This function destroys all data stored in the animation instance and frees
-  * all allocated memory.
-  *****************************************************************************/
-
-void CalAnimation::destroy()
-{
-  m_pCoreAnimation.reset();
 }
 
 CalAnimation::State CalAnimation::getState()

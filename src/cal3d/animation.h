@@ -45,10 +45,8 @@ protected:
 protected:
   CalAnimation();
 public:
-  virtual ~CalAnimation();
+  virtual ~CalAnimation() {}
 
-  virtual bool create(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation) = 0;
-  virtual void destroy();
   const boost::shared_ptr<CalCoreAnimation>& getCoreAnimation() const {
       return m_pCoreAnimation;
   }
