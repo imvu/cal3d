@@ -121,23 +121,6 @@ CalMixer::removeManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreA
 
 
  /*****************************************************************************/
-/** Sets the manual animation on or off.  If off, has no effect but retains
-  *
-  * Sets the manual animation on or off.  If off, has no effect but retains
-  * state.
-  *
-  * @return One of the following values:
-  *         \li \b true if exists and manual
-  *         \li \b false otherwise
-  *****************************************************************************/
-bool CalMixer::setManualAnimationOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, bool p) {
-  CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
-  if( !aa ) return false;
-  return true;
-}
-
-
- /*****************************************************************************/
 /** Sets all the manual animation attributes.
   *
   * Sets all the manual animation attributes.  Action must already be manual.
@@ -152,146 +135,34 @@ CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>
   CalAnimation* aa = animationActionFromCoreAnimationId(coreAnimation);
   if( !aa ) return false;
   aa->time = p.time_;
-  setManualAnimationWeight( aa, p.weight_ );
-  setManualAnimationScale( aa, p.scale_ );
-  setManualAnimationRampValue( aa, p.rampValue_ );
-  setManualAnimationCompositionFunction( aa, p.compositionFunction_ );
-  return true;
-}
+  aa->weight = p.weight_;
+  aa->scale = p.scale_;
+  aa->rampValue = p.rampValue_;
 
-bool CalMixer::setManualAnimationTime(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
-  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
-  if( !aa ) return false;
-  aa->time = p;
-  return true;
-}
+  // now update composition function
 
- /*****************************************************************************/
-/** Sets the weight of the manual animation.
-  *
-  * Sets the weight of the manual animation.  Manual animations do not
-  * blend toward a weight target, so you set the weight directly, not a
-  * weight target.
-  * It is an error to call this function for an animation that is not manual.
-  *
-  * @return One of the following values:
-  *         \li \b true if manual
-  *         \li \b false if not manual
-  *****************************************************************************/
-bool CalMixer::setManualAnimationWeight(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
-  CalAnimation * aa = animationActionFromCoreAnimationId(coreAnimation);
-  if( !aa ) return false;
-  setManualAnimationWeight( aa, p );
-  return true;
-}
-
-void CalMixer::setManualAnimationWeight( CalAnimation * aa, float p ) {
-  aa->weight = p;
-}
-
-
- /*****************************************************************************/
-/** Sets the scale of the manual animation to 0-1.
-  *
-  * Sets the scale of the manual animation.  The scale is different from the weight.
-  * The weights control the relative influence.  The scale controls amplitude
-  * of the animation.  An animation with zero scale but high relative influence,
-  * if applied, will drown out other animations that are composed with it, whereas
-  * an animation with one scale but zero weight will have no effect.
-  * It is an error to call this function for an animation that is not manual.
-  *
-  * @return One of the following values:
-  *         \li \b true if manual
-  *         \li \b false if not manual
-  *****************************************************************************/
-bool CalMixer::setManualAnimationScale(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p) {
-  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
-  if( !aa ) return false;
-  setManualAnimationScale( aa, p );
-  return true;
-}
-
-void CalMixer::setManualAnimationScale( CalAnimation * aa, float p ) {
-  aa->scale = p;
-}
-
-
- /*****************************************************************************/
-/** Sets the RampValue of the manual animation to 0-1.
-  *
-  * Sets the RampValue of the manual animation.
-  * It is an error to call this function for an animation that is not manual.
-  *
-  * @return One of the following values:
-  *         \li \b true if manual
-  *         \li \b false if not manual
-  *****************************************************************************/
-bool 
-CalMixer::setManualAnimationRampValue(const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p)
-{
-  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
-  if( !aa ) return false;
-  setManualAnimationRampValue( aa, p );
-  return true;
-}
-
-
-void CalMixer::setManualAnimationRampValue( CalAnimation * aa, float p ) {
-  aa->rampValue = p;
-}
-
- /*****************************************************************************/
-/** Sets the composition function, which controls how animation blends with other simultaneous animations.
-  *
-  * If you set it to Replace, then when the animation is fully ramped on, all non-Replace
-  * and lower priority Replace animations will have zero influence.  This
-  * factor does not apply to cycling animations.  The priority of animations is,
-  * firstly whether they are Replace or not, and secondly how recently the animations were
-  * added, the most recently added animations having higher priority.
-  *
-  * @return One of the following values:
-  *         \li \b true if not setting to CompositionFunctionNull
-  *         \li \b false if setting to CompositionFunctionNull, or if action with id doesn't exist.
-  *****************************************************************************/
-bool 
-CalMixer::setManualAnimationCompositionFunction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, 
-                                                CalAnimation::CompositionFunction p )
-{
-  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
-  if( !aa ) return false;
-  setManualAnimationCompositionFunction( aa, p );
-  return true;
-}
-  
-
-void
-CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa, 
-                                                CalAnimation::CompositionFunction p )
-{
   CalAnimation::CompositionFunction oldValue = aa->compositionFunction;
 
   // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
   // it at the front, which wouldn't preserve the property that the most recently inserted
   // animation is highest priority.
-  if( oldValue == p ) return;
-  aa->compositionFunction = p;
+  if( oldValue == p.compositionFunction_ ) {
+      return true;
+  }
+  aa->compositionFunction = p.compositionFunction_;
 
   // Iterate through the list and remove this element.
   m_listAnimationAction.remove( aa );
 
   // Now insert it back in in the appropriate position.  Replace animations go in at the front.
   // Average animations go in after the replace animations.
-  switch( p ) {
-  case CalAnimation::CompositionFunctionReplace:
-    {
-
+  switch (p.compositionFunction_) {
+    case CalAnimation::CompositionFunctionReplace: {
       // Replace animations go on the front of the list.
       m_listAnimationAction.push_front( aa );
       break;
     }
-  case CalAnimation::CompositionFunctionCrossFade:
-    {
-
+    case CalAnimation::CompositionFunctionCrossFade: {
       // Average animations go after replace, but before Average.
       std::list<CalAnimation *>::iterator aait2;
       for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
@@ -304,9 +175,7 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa,
       m_listAnimationAction.insert( aait2, aa );
       break;
     }
-  case CalAnimation::CompositionFunctionAverage:
-    {
-
+    case CalAnimation::CompositionFunctionAverage: {
       // Average animations go before the first Average animation.
       std::list<CalAnimation *>::iterator aait2;
       for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
@@ -319,12 +188,12 @@ CalMixer::setManualAnimationCompositionFunction( CalAnimation * aa,
       m_listAnimationAction.insert( aait2, aa );
       break;
     }
-  default:
-    {
+    default: {
       assert( !"Unexpected" );
       break;
     }
   }
+  return true;
 }
 
 
