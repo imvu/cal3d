@@ -143,8 +143,6 @@ public:
   float getAnimationTime();
   float getAnimationDuration();
   void setAnimationTime(float animationTime);
-  void setTimeFactor(float timeFactor);
-  float getTimeFactor();
   bool actionOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   bool stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
   bool addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
@@ -155,16 +153,16 @@ public:
   bool removeBoneAdjustment( int boneId );
   void removeAllBoneAdjustments();
 
-public: // private:
   CalAnimation* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   CalAnimation* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   void applyBoneAdjustments(CalSkeleton* skeleton);
+
+  float timeFactor;
 
 public:
   std::list<CalAnimation*> m_listAnimationAction;
   float m_animationTime;
   float m_animationDuration;
-  float m_timeFactor;
   unsigned int m_numBoneAdjustments;
   CalMixerBoneAdjustmentAndBoneId m_boneAdjustmentAndBoneIdArray[ CalMixerBoneAdjustmentsMax ];
 };

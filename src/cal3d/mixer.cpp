@@ -225,7 +225,7 @@ CalMixer::CalMixer() {
   // set the animation time/duration values to default
   m_animationTime = 0.0f;
   m_animationDuration = 0.0f;
-  m_timeFactor = 1.0f;
+  timeFactor = 1.0f;
   m_numBoneAdjustments = 0;
 }
 
@@ -259,7 +259,7 @@ void CalMixer::updateAnimation(float deltaTime)
   }
   else
   {
-    m_animationTime += deltaTime * m_timeFactor;
+    m_animationTime += deltaTime * timeFactor;
     if(m_animationTime >= m_animationDuration)
     {
       m_animationTime = (float) fmod(m_animationTime, m_animationDuration);
@@ -430,31 +430,3 @@ void CalMixer::setAnimationTime(float animationTime)
 {
 	m_animationTime=animationTime;
 }
-
-/*****************************************************************************/
-/** Set the time factor.
-  * 
-  * This function sets the time factor of the mixer instance.
-  * this time factor affect only sync animation
-  *
-  *****************************************************************************/
-
-
-void CalMixer::setTimeFactor(float timeFactor)
-{
-    m_timeFactor = timeFactor;
-}
-
-/*****************************************************************************/
-/** Get the time factor.
-  * 
-  * This function return the time factor of the mixer instance.
-  *
-  *****************************************************************************/
-
-float CalMixer::getTimeFactor()
-{
-    return m_timeFactor;
-}
-
-//****************************************************************************//
