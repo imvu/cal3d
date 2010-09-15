@@ -149,8 +149,13 @@ public:
   bool stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
   bool addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
   bool removeManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
+  bool setManualAnimationOn( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, bool );
+  bool setManualAnimationTime( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float seconds );
+  bool setManualAnimationWeight( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float );
+  bool setManualAnimationScale( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p );
+  bool setManualAnimationRampValue( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, float p );
+  bool setManualAnimationCompositionFunction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalAnimation::CompositionFunction p );
   bool setManualAnimationAttributes( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalMixerManualAnimationAttributes const & p );
-
   bool addBoneAdjustment( int boneId, CalMixerBoneAdjustment const & );
   bool removeBoneAdjustment( int boneId );
   void removeAllBoneAdjustments();
@@ -158,6 +163,10 @@ public:
 public: // private:
   CalAnimation* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   CalAnimation* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+  void setManualAnimationCompositionFunction(CalAnimation*, CalAnimation::CompositionFunction p);
+  void setManualAnimationRampValue(CalAnimation*, float p);
+  void setManualAnimationScale(CalAnimation*, float p);
+  void setManualAnimationWeight(CalAnimation*, float p);
   void applyBoneAdjustments(CalSkeleton* skeleton);
 
 public:
