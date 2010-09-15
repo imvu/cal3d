@@ -26,14 +26,11 @@ public:
 
   void calculateState();
   void clearState();
-  CalBone* getBone(int boneId);
-  //CalCoreSkeleton* getCoreSkeleton();
-  std::vector<CalBone>& getVectorBone();
   void lockState();
 
+  std::vector<CalBone> bones;
   SSEArray<BoneTransform> boneTransforms;
 
 private:
   boost::shared_ptr<CalCoreSkeleton> m_pCoreSkeleton;
-  std::vector<CalBone> m_vectorBone;
 };

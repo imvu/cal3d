@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/error.h"
 #include "cal3d/bone.h"
 #include "cal3d/coremesh.h"
@@ -53,8 +49,8 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
   // "replacement" animation attenuates the weights of the subsequent animations by
   // the inverse of its rampValue, so that when a replacement animation ramps up to
   // full, all lesser priority animations automatically ramp down to zero.
-  float rampedWeight = unrampedWeight * rampValue;
-  float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
+  const float rampedWeight = unrampedWeight * rampValue;
+  const float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
 
   // It appears that quaternion::blend() only works with blend factors of 0-1, so
   // I'll clamp the scale to that range.
@@ -189,15 +185,15 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   else
   {
     // get the parent bone
-    CalBone *pParent = skeleton->getBone(parentId);
+    CalBone& pParent = skeleton->bones[parentId];
 
     // transform relative state with the absolute state of the parent
     m_translationAbsolute = m_translation;
-    m_translationAbsolute *= pParent->getRotationAbsolute();
-    m_translationAbsolute += pParent->getTranslationAbsolute();
+    m_translationAbsolute *= pParent.getRotationAbsolute();
+    m_translationAbsolute += pParent.getTranslationAbsolute();
 
     m_rotationAbsolute = m_rotation;
-    m_rotationAbsolute *= pParent->getRotationAbsolute();
+    m_rotationAbsolute *= pParent.getRotationAbsolute();
   }
 
   // calculate the bone space transformation
@@ -313,8 +309,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
   std::vector<int>::const_iterator iteratorChildId;
   for(iteratorChildId = m_coreBone.getListChildId().begin(); iteratorChildId != m_coreBone.getListChildId().end(); ++iteratorChildId )
   {
-    CalBone * bo = skeleton->getBone(*iteratorChildId);
-    bo->calculateState(skeleton, *iteratorChildId);
+    CalBone& bo = skeleton->bones[*iteratorChildId];
+    bo.calculateState(skeleton, *iteratorChildId);
   }
 }
 
@@ -334,28 +330,12 @@ void CalBone::clearState()
   m_meshScaleAbsolute.set( 1, 1, 1 );
 }
 
-/*****************************************************************************/
-/** Sets the current rotation.
-  *
-  * This function sets the current relative rotation of the bone instance.
-  * Caveat: For this change to appear, calculateState() must be called 
-  * afterwards.
-  *****************************************************************************/
-
 void CalBone::setRotation(const CalQuaternion& rotation)
 {
   m_rotation = rotation;
   m_accumulatedWeightAbsolute = 1.0f;
   m_accumulatedWeight = 1.0f ;
 }
-
- /*****************************************************************************/
-/** Returns the current rotation.
-  *
-  * This function returns the current relative rotation of the bone instance.
-  *
-  * @return The relative rotation to the parent as quaternion.
-  *****************************************************************************/
 
 const CalQuaternion& CalBone::getRotation()
 {

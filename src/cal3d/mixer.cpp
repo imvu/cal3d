@@ -272,9 +272,9 @@ void CalMixer::updateAnimation(float deltaTime)
 
 
 void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
-  std::vector<CalBone>& vectorBone = pSkeleton->getVectorBone();
-  unsigned int i;
-  for( i = 0; i < m_numBoneAdjustments; i++ ) {
+  std::vector<CalBone>& vectorBone = pSkeleton->bones;
+
+  for (unsigned i = 0; i < m_numBoneAdjustments; i++) {
     CalMixerBoneAdjustmentAndBoneId * ba = & m_boneAdjustmentAndBoneIdArray[ i ];
     CalBone * bo = &vectorBone[ ba->boneId_ ];
     const CalCoreBone& cbo = bo->getCoreBone();
@@ -289,10 +289,13 @@ void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
       float rampValue = ba->boneAdjustment_.rampValue_;
       static bool const replace = true;
       static float const unrampedWeight = 1.0f;
-      bo->blendState( unrampedWeight, 
+      bo->blendState(
+        unrampedWeight, 
         adjustedLocalPos,
         adjustedLocalOri, 
-        scale, replace, rampValue );
+        scale,
+        replace,
+        rampValue);
     }
   }
 }
@@ -335,8 +338,7 @@ CalMixer::removeBoneAdjustment( int boneId )
 void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
   pSkeleton->clearState();
 
-  // get the bone vector of the skeleton
-  std::vector<CalBone>& vectorBone = pSkeleton->getVectorBone();
+  std::vector<CalBone>& vectorBone = pSkeleton->bones;
 
   // The bone adjustments are "replace" so they have to go first, giving them
   // highest priority and full influence.  Subsequent animations affecting the same bones, 
@@ -346,25 +348,18 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
   // loop through all animation actions
   std::list<CalAnimation *>::iterator itaa;
   for( itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++ ) {
-
-    // get the core animation instance
-    CalAnimation * aa = * itaa;
+    CalAnimation* aa = *itaa;
     
     const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
-    
-    // get the list of core tracks of above core animation
     CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
     
-    // loop through all core tracks of the core animation
     CalCoreAnimation::TrackList::iterator itct;
-    for( itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++ ) {
-      
-      // get the appropriate bone of the track
+    for (itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++) {
       CalCoreTrack* ct = itct->get();
-      if( ct->coreBoneId >= int(vectorBone.size()) ) {
+      if (ct->coreBoneId >= int(vectorBone.size())) {
         continue;
       }
-      CalBone * pBone = &vectorBone[ct->coreBoneId];
+      CalBone* pBone = &vectorBone[ct->coreBoneId];
       
       // get the current translation and rotation
       CalVector translation;

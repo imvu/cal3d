@@ -12,6 +12,8 @@
 #include "config.h"
 #endif
 
+#include <algorithm>
+#include <utility>
 #include "cal3d/skeleton.h"
 #include "cal3d/error.h"
 #include "cal3d/bone.h"
@@ -27,10 +29,10 @@ CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton
   std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
 
   size_t boneCount = vectorCoreBone.size();
-  m_vectorBone.reserve(boneCount);
+  bones.reserve(boneCount);
 
   for(size_t boneId = 0; boneId < boneCount; ++boneId) {
-    m_vectorBone.push_back(CalBone(vectorCoreBone[boneId].get()));
+    bones.push_back(CalBone(vectorCoreBone[boneId].get()));
   }
 
   boneTransforms.resize(boneCount);
@@ -51,72 +53,15 @@ void CalSkeleton::calculateState()
   std::vector<int>::const_iterator iteratorRootBoneId;
   for(iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId)
   {
-    m_vectorBone[*iteratorRootBoneId].calculateState(this, *iteratorRootBoneId);
+    bones[*iteratorRootBoneId].calculateState(this, *iteratorRootBoneId);
   }
 }
 
- /*****************************************************************************/
-/** Clears the state of the skeleton instance.
-  *
-  * This function clears the state of the skeleton instance by recursively
-  * clearing the states of its bones.
-  *****************************************************************************/
-
-void CalSkeleton::clearState()
-{
-  // clear all bone states of the skeleton
-  std::vector<CalBone>::iterator iteratorBone;
-  for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
-  {
-    (*iteratorBone).clearState();
-  }
+void CalSkeleton::clearState() {
+  std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::clearState));
 }
 
- /*****************************************************************************/
-/** Provides access to a bone.
-  *
-  * This function returns the bone with the given ID.
-  *
-  * @param boneId The ID of the bone that should be returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the bone
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
-CalBone *CalSkeleton::getBone(int boneId)
-{
-  return &m_vectorBone[boneId];
-}
-
- /*****************************************************************************/
-/** Returns the bone vector.
-  *
-  * This function returns the vector that contains all bones of the skeleton
-  * instance.
-  *
-  * @return A reference to the bone vector.
-  *****************************************************************************/
-
-std::vector<CalBone>& CalSkeleton::getVectorBone()
-{
-  return m_vectorBone;
-}
-
- /*****************************************************************************/
-/** Locks the state of the skeleton instance.
-  *
-  * This function locks the state of the skeleton instance by recursively
-  * locking the states of its bones.
-  *****************************************************************************/
-
-void CalSkeleton::lockState()
-{
-  // lock all bone states of the skeleton
-  std::vector<CalBone>::iterator iteratorBone;
-  for(iteratorBone = m_vectorBone.begin(); iteratorBone != m_vectorBone.end(); ++iteratorBone)
-  {
-    iteratorBone->lockState();
-  }
+void CalSkeleton::lockState() {
+  std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::lockState));
 }
 
