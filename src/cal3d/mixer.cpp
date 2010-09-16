@@ -56,22 +56,6 @@ CalAnimation* CalMixer::animationActionFromCoreAnimationId(const boost::shared_p
 
 
  /*****************************************************************************/
-/** Is action playing?
-  *
-  * Actions turn off automatically so you might need to know if one is playing.
-  *
-  * @param id The ID of the core animation.
-  *
-  * @return One of the following values:
-  *         \li \b true if playing
-  *         \li \b false if not
-  *****************************************************************************/
-bool CalMixer::actionOn(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
-  return animationActionFromCoreAnimationId( coreAnimation ) ? true : false;
-}
-
-
- /*****************************************************************************/
 /** Add a manual animation instance.
   *
   * Add a manual animation instance for this core animation if one
@@ -197,35 +181,7 @@ CalMixer::setManualAnimationAttributes(const boost::shared_ptr<CalCoreAnimation>
 }
 
 
-
- /*****************************************************************************/
-/** Stop the action.
-  *
-  * Turn off an action.
-  *
-  * @param id The ID of the core animation.
-  *
-  * @return One of the following values:
-  *         \li \b true was playing (now stopped)
-  *         \li \b false if already not playing
-  *****************************************************************************/
-bool
-CalMixer::stopAction( const boost::shared_ptr<CalCoreAnimation>& coreAnimation )
-{
-  CalAnimation * aa = animationActionFromCoreAnimationId( coreAnimation );
-  if( !aa ) return false;
-  m_listAnimationAction.remove( aa );  
-  delete aa;
-  return true;
-}
-
-
-
 CalMixer::CalMixer() {
-  // set the animation time/duration values to default
-  m_animationTime = 0.0f;
-  m_animationDuration = 0.0f;
-  timeFactor = 1.0f;
   m_numBoneAdjustments = 0;
 }
 
@@ -237,39 +193,6 @@ CalAnimation * CalMixer::newAnimationAction(const boost::shared_ptr<CalCoreAnima
   m_listAnimationAction.push_front(pAnimationAction);
   return pAnimationAction;
 }
-
-
-
- /*****************************************************************************/
-/** Updates all active animations.
-  *
-  * This function updates all active non-manual animations of the mixer instance for a
-  * given amount of time.  If you only use manual animations, you don't need
-  * to call this function.
-  *
-  * @param deltaTime The elapsed time in seconds since the last update.
-  *****************************************************************************/
-
-void CalMixer::updateAnimation(float deltaTime)
-{
-  // update the current animation time
-  if(m_animationDuration == 0.0f)
-  {
-    m_animationTime = 0.0f;
-  }
-  else
-  {
-    m_animationTime += deltaTime * timeFactor;
-    if(m_animationTime >= m_animationDuration)
-    {
-      m_animationTime = (float) fmod(m_animationTime, m_animationDuration);
-    }
-	if (m_animationTime < 0)
-      m_animationTime += m_animationDuration;
-
-  }
-}
-
 
 void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
   std::vector<CalBone>& vectorBone = pSkeleton->bones;
@@ -382,46 +305,4 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
 
   // let the skeleton calculate its final state
   pSkeleton->calculateState();
-}
-
-/*****************************************************************************/
-/** Returns the animation time.
-  *
-  * This function returns the animation time of the mixer instance.
-  *
-  * @return The animation time in seconds.
-  *****************************************************************************/
-
-
-float CalMixer::getAnimationTime()
-{
-	return m_animationTime;
-}
-
-/*****************************************************************************/
-/** Returns the animation duration.
-  *
-  * This function returns the animation duration of the mixer instance.
-  *
-  * @return The animation duration in seconds.
-  *****************************************************************************/
-
-
-float CalMixer::getAnimationDuration()
-{
-	return m_animationDuration;
-}
-
-
-/*****************************************************************************/
-/** Sets the animation time.
-  *
-  * This function sets the animation time of the mixer instance.
-  *
-  *****************************************************************************/
-
-
-void CalMixer::setAnimationTime(float animationTime)
-{
-	m_animationTime=animationTime;
 }
