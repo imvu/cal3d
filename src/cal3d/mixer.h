@@ -68,90 +68,25 @@ struct CalMixerBoneAdjustmentAndBoneId {
 #define CalMixerBoneAdjustmentsMax ( 20 ) // Arbitrary.
 
 
-/*****************************************************************************/
-/** 
- * CalAbstractMixer defines the API that CalModel relies on for
- * blending and scheduling animations. A third party mixer must
- * implement this API in order to register itself with the
- * CalModel::setAbstractMixer method. The default mixer (CalMixer) is
- * an example of such implementation.
- *
- * cal3d expects a mixer to handle two tasks : scheduling and
- * blending. Scheduling refers to everything related to time such
- * as when an animation must run or when it must stop. Blending
- * defines how concurrent animations influence each other: for 
- * instance walking and waving.
- *
- * If CalMixer proves to be insufficient for the applications needs,
- * an alternate mixer can be implemented and used without notifying
- * cal3d in any way. It is not mandatory to subclass
- * CalAbstractMixer. However, when chosing this path, one must also
- * avoid using the CalModel::update method because it would use the
- * default mixer instantiated by the CalModel::create method with
- * undesirable side effects. In addition libraries based on cal3d
- * (think NebulaDevice or OpenSceneGraph adapters) are not aware of
- * these constraints and will keep calling the CalModel::update method of
- * CalModel regardless.
- *
- * Subclassing CalAbstractMixer when implementing an alternate mixer
- * therefore provides a better integration with cal3d and libraries
- * that rely on CalModel. However, an additional effort is required in
- * order to achieve compatibility with libraries or applications that
- * rely on the CalMixer API (i.e. that use methods such as blendCycle
- * or executeAction).  The CalMixer API is not meant to be generic and
- * there is no reason to define an abstract class that specifies
- * it. For historical reasons and because CalMixer is the default
- * mixer, some applications and libraries (think Soya or CrystalSpace)
- * depend on it. If they want to switch to a scheduler with extended
- * capabilities it might be painfull for them to learn a completely
- * different API. A scheduler with the ambition to obsolete CalMixer
- * should therefore provide an API compatible with it to ease the
- * migration process.
- *
- * Short summary, if you want to write a new mixer:
- *
- * 1) An external mixer: ignore CalAbstractMixer and implement a mixer
- * of your own. Avoid calling CalModel::update and any library or
- * application that will call it behind your back. Avoid libraries and
- * applications that rely on the default mixer CalMixer, as returned
- * by CalModel::getMixer.
- *
- * 2) A mixer registered in cal3d : subclass CalAbstractMixer,
- * register it with CalModel::setAbstractMixer.  Avoid libraries and
- * applications that rely on the default mixer CalMixer, as returned
- * by CalModel::getMixer. CalModel::getMixer will return a null
- * pointer if CalModel::setAbstractMixer was called to set
- * a mixer that is not an instance of CalMixer.
- *
- * 3) A CalMixer replacement : same as 2) and provide a subclass of
- * your own mixer that implements the CalMixer API so that existing
- * applications can switch to it by calling CalModel::getAbstractMixer
- * instead of CalModel::getMixer. The existing code using the CalMixer
- * methods will keep working and the developper will be able to 
- * switch to a new API when convenient.
- *
- *****************************************************************************/
-
 class CAL3D_API CalMixer : public Cal::Object
 {
 public:
   CalMixer();
-  ~CalMixer();
+
+  boost::shared_ptr<CalAnimation> addManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+  void removeManualAnimation(const boost::shared_ptr<CalAnimation>& coreAnimation);
+  void setManualAnimationAttributes(const boost::shared_ptr<CalAnimation>& coreAnimation, CalMixerManualAnimationAttributes const& p);
 
   void updateSkeleton(CalSkeleton* skeleton);
-  bool addManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
-  bool removeManualAnimation( const boost::shared_ptr<CalCoreAnimation>& coreAnimation );
-  bool setManualAnimationAttributes( const boost::shared_ptr<CalCoreAnimation>& coreAnimation, CalMixerManualAnimationAttributes const & p );
 
   bool addBoneAdjustment( int boneId, CalMixerBoneAdjustment const & );
   bool removeBoneAdjustment( int boneId );
   void removeAllBoneAdjustments();
 
-  CalAnimation* animationActionFromCoreAnimationId(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
-  CalAnimation* newAnimationAction(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
   void applyBoneAdjustments(CalSkeleton* skeleton);
 
-  std::list<CalAnimation*> m_listAnimationAction;
+private:
+  std::list< boost::shared_ptr<CalAnimation> > m_listAnimationAction;
   unsigned int m_numBoneAdjustments;
   CalMixerBoneAdjustmentAndBoneId m_boneAdjustmentAndBoneIdArray[ CalMixerBoneAdjustmentsMax ];
 };
