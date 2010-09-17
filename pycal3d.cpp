@@ -1,6 +1,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+#include <cal3d/coreanimation.h>
 #include <cal3d/coreanimatedmorph.h>
 #include <cal3d/corebone.h>
 #include <cal3d/corematerial.h>
@@ -119,6 +120,9 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreMesh, boost::shared_ptr<CalCoreMesh> >("CoreMesh")
         .def_readwrite("submeshes", &CalCoreMesh::m_vectorCoreSubmesh)
+        ;
+
+    class_<CalCoreAnimation, boost::shared_ptr<CalCoreAnimation> >("CoreAnimation")
         ;
 
     class_<CalCoreAnimatedMorph, boost::shared_ptr<CalCoreAnimatedMorph> >("CoreAnimatedMorph")
