@@ -1,6 +1,8 @@
 #include "TestPrologue.h"
 #include <iostream>
+#include <fstream>
 #include <sstream>
+#include <limits>
 #include <cal3d/buffersource.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/corekeyframe.h>
@@ -36,6 +38,113 @@ std::string getTempFileName() {
     return result;
 }
 #endif
+
+inline int getIntFromBuf(char *pbuf)
+{
+    return *reinterpret_cast<int*>(pbuf);
+}
+inline float *getFloatVecFromBuf(char* pbuf)
+{
+    return reinterpret_cast<float*>(pbuf);
+}
+
+
+const char * goodMeshData =
+"<HEADER MAGIC=\"XMF\" VERSION=\"919\" />"
+"<MESH NUMSUBMESH=\"1\">"
+"    <SUBMESH NUMVERTICES=\"3\" NUMFACES=\"1\" NUMLODSTEPS=\"0\" NUMSPRINGS=\"0\" NUMMORPHS=\"0\" NUMTEXCOORDS=\"1\" MATERIAL=\"1\">"
+"        <VERTEX NUMINFLUENCES=\"3\" ID=\"0\">"
+"            <POS>5759.05 -1176.88 -0.00023478</POS>"
+"            <NORM>1.27676e-008 2.40249e-008 -1</NORM>"
+"            <COLOR>0 0 0</COLOR>"
+"            <TEXCOORD>0.99311 0.00973237</TEXCOORD>"
+"            <INFLUENCE ID=\"0\">1</INFLUENCE>"
+"            <INFLUENCE ID=\"1\">0.5</INFLUENCE>"
+"            <INFLUENCE ID=\"37\">0.25</INFLUENCE>"
+"        </VERTEX>"
+"        <VERTEX NUMINFLUENCES=\"0\" ID=\"1\">"
+"            <POS>-5759.05 -1176.88 -0.000413365</POS>"
+"            <NORM>1.55047e-008 -2.86491e-008 -1</NORM>"
+"            <COLOR>0 0 0</COLOR>"
+"            <TEXCOORD>0.99311 0.982444</TEXCOORD>"
+"        </VERTEX>"
+"        <VERTEX NUMINFLUENCES=\"0\" ID=\"2\">"
+"            <POS>-5759.05 -3274.86 -0.000507484</POS>"
+"            <NORM>1.11221e-008 6.89228e-008 -1</NORM>"
+"            <COLOR>0 0 0</COLOR>"
+"            <TEXCOORD>0.79062 0.982444</TEXCOORD>"
+"        </VERTEX>"
+"        <FACE VERTEXID=\"0 1 2\" />"
+"    </SUBMESH>"
+"</MESH>"
+;
+
+TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
+  shared_ptr<CalCoreMesh> goodMesh(CalLoader::loadCoreMeshFromBuffer(goodMeshData, strlen(goodMeshData)));
+  std::string fn = getTempFileName();
+  CalCoreSubmeshPtr subMesh( goodMesh->getCoreSubmesh(0));
+  CalSaver::saveCoreMesh(fn.c_str(), goodMesh.get());
+
+
+  std::ifstream is(fn.c_str(), std::ios_base::binary);
+  is.seekg(0, std::ios_base::end);
+  std::istream::pos_type pos = is.tellg();
+  is.seekg(0, std::ios_base::beg);
+  char *pbuf = new char[pos];
+  is.read( pbuf, pos ); 
+  is.close();
+  
+  char * pCurBuf = pbuf;
+  float *tempFloatVec=NULL;
+  int tempInt=0;
+  pCurBuf = pbuf + sizeof(int); //magic num
+  int version = getIntFromBuf( pCurBuf);
+  pCurBuf += sizeof(int); //version
+  tempInt = getIntFromBuf( pCurBuf);
+  pCurBuf += sizeof(int); //submesh count
+  bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
+  bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
+  tempInt =  getIntFromBuf(pCurBuf);
+  pCurBuf += sizeof(int); //coreMaterialThreadId
+  int vertexCount = getIntFromBuf(pCurBuf);
+  pCurBuf += sizeof(int);//vertexCount
+  tempInt =getIntFromBuf(pCurBuf);
+  pCurBuf += sizeof(int);//faceCount 
+  tempInt =getIntFromBuf(pCurBuf);
+  pCurBuf += sizeof(int);//lodCount
+  tempInt =getIntFromBuf(pCurBuf);
+  pCurBuf += sizeof(int); //springCount
+  int texCoordinateCount =getIntFromBuf(pCurBuf);
+  pCurBuf += sizeof(int);//textureCoordinateCount  
+  if( hasMorphTargetsInMorphFiles ) {
+    tempInt =getIntFromBuf(pCurBuf);
+    pCurBuf += sizeof(int);
+  }
+  if( vertexCount > 0){
+      tempFloatVec = getFloatVecFromBuf(pCurBuf);
+      pCurBuf += sizeof(float) * 3;//pos
+      tempFloatVec = getFloatVecFromBuf(pCurBuf);
+      pCurBuf += sizeof(float) * 3;//normal
+      if(  hasVertexColors ) {
+          tempFloatVec = getFloatVecFromBuf(pCurBuf);
+          pCurBuf += sizeof(float) * 3;
+      }
+      tempInt = getIntFromBuf(pCurBuf);
+      pCurBuf += sizeof(int); //collapseId
+      tempInt = getIntFromBuf(pCurBuf);
+      pCurBuf += sizeof(int); //faceCollapseCount
+      size_t texCoordOffset = texCoordinateCount * sizeof(float) *2;
+      tempFloatVec = getFloatVecFromBuf(pCurBuf);
+      pCurBuf += texCoordOffset;    
+      tempInt =getIntFromBuf(pCurBuf);  
+      //put in a value which is sure to cause an exception due to vector allocation
+      int tempNewInfluenceCount =  std::numeric_limits<int>::max();
+      *reinterpret_cast<int*>(pCurBuf) = tempNewInfluenceCount;
+  }
+  //load the buffer back in 
+  //should not crash
+  shared_ptr<CalCoreMesh> badMesh(CalLoader::loadCoreMeshFromBuffer(pbuf, pos));
+}
 
 const char* animationText =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
