@@ -66,6 +66,16 @@ float const CalLoader::keyframePosRangeSmall = ( 1 << ( CalLoader::keyframeBitsP
 
 
 
+template<typename T>
+void allocateVectorWhereSizeIsGuarded(size_t n, std::vector<T> &o_ret, int lineNumMacroVal){
+    if( n > o_ret.max_size())
+    {
+        CalError calerr;
+        calerr.setLastError(CalError::FILE_PARSER_FAILED, __FILE__, lineNumMacroVal);
+        throw calerr;
+    }
+    o_ret.resize(n);
+}
 
 bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec )
 {
@@ -221,14 +231,21 @@ CalCoreMaterial *CalLoader::loadCoreMaterialFromBuffer(const void* inputBuffer, 
 CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len)
 {
    //Create a new buffer data source and pass it on
-   CalBufferSource bufferSrc(inputBuffer, len);
-   CalCoreMesh * result = loadCoreMesh(bufferSrc);
-   if( result ) {
-     return result;
-   } else {
-       std::string nullTerm((const char*)inputBuffer, len);
-     return loadXmlCoreMesh(nullTerm.c_str());
-   }
+    CalCoreMesh * result = NULL;
+    try {
+        CalBufferSource bufferSrc(inputBuffer, len);
+        result = loadCoreMesh(bufferSrc);
+        if( result ) {
+            return result;
+        } else {
+            std::string nullTerm((const char*)inputBuffer, len);
+            return loadXmlCoreMesh(nullTerm.c_str());
+        }
+    } catch (CalError &calerr){
+        calerr;
+        
+    }
+    return result;
 }
 
 CalCoreSkeleton *CalLoader::loadCoreSkeletonFromBuffer(const void* inputBuffer, unsigned int len)
@@ -1238,7 +1255,8 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       return 0;
     }
 
-    std::vector<CalCoreSubmesh::Influence> influences(influenceCount);
+    std::vector<CalCoreSubmesh::Influence> influences(1);
+    allocateVectorWhereSizeIsGuarded( influenceCount, influences, __LINE__);
 
     for(int influenceId = 0; influenceId < influenceCount; ++influenceId)
     {
