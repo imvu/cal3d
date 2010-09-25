@@ -277,7 +277,10 @@ void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
   const CalCoreKeyframe& pCoreKeyframeBefore = *iteratorCoreKeyframeBefore;
   const CalCoreKeyframe& pCoreKeyframeAfter  = *iteratorCoreKeyframeAfter;
 
-  float blendFactor = (time - pCoreKeyframeBefore.time) / (pCoreKeyframeAfter.time - pCoreKeyframeBefore.time);
+  float blendFactor = 0.0;
+  if (pCoreKeyframeAfter.time != pCoreKeyframeBefore.time){
+      blendFactor = (time - pCoreKeyframeBefore.time) / (pCoreKeyframeAfter.time - pCoreKeyframeBefore.time);
+  }
 
   translation = pCoreKeyframeBefore.translation;
   translation.blend(blendFactor, pCoreKeyframeAfter.translation);

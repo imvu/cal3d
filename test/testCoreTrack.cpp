@@ -34,3 +34,15 @@ TEST_F(TrackFixture, getState_blends_keyframes) {
     track.getState(2, t, q);
     CHECK_EQUAL(CalVector(6, 6, 6), t);
 }
+
+TEST_F(TrackFixture, getState_with_two_keyframes_at_same_time) {
+    CalCoreTrack::KeyframeList keyframes;
+    keyframes.push_back(CalCoreKeyframe(0, CalVector(2, 2, 2), CalQuaternion()));
+    keyframes.push_back(CalCoreKeyframe(1, CalVector(4, 4, 4), CalQuaternion()));
+    keyframes.push_back(CalCoreKeyframe(1, CalVector(6, 6, 6), CalQuaternion()));
+    CalCoreTrack track(0, keyframes);
+
+    track.getState(1.5, t, q);
+    CHECK_EQUAL(CalQuaternion(), q);
+    CHECK_EQUAL(CalVector(4, 4, 4), t);
+}
