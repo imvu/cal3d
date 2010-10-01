@@ -81,69 +81,68 @@ const char * goodMeshData =
 
 TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
   shared_ptr<CalCoreMesh> goodMesh(CalLoader::loadCoreMeshFromBuffer(goodMeshData, strlen(goodMeshData)));
-  std::string fn = getTempFileName();
-  CalCoreSubmeshPtr subMesh( goodMesh->getCoreSubmesh(0));
-  CalSaver::saveCoreMesh(fn.c_str(), goodMesh.get());
+  CalCoreSubmeshPtr subMesh(goodMesh->getCoreSubmesh(0));
+  std::ostringstream ssm;
+  bool bRet = true;
+  bRet = CalSaver::saveCoreMesh(ssm, "", goodMesh.get());
+  CHECK_EQUAL(bRet, true);
+  char *pBuf = new char[ssm.str().length()];
+  memcpy(pBuf, ssm.str().c_str(), ssm.str().length());
 
-
-  std::ifstream is(fn.c_str(), std::ios_base::binary);
-  is.seekg(0, std::ios_base::end);
-  std::istream::pos_type pos = is.tellg();
-  is.seekg(0, std::ios_base::beg);
-  char *pbuf = new char[pos];
-  is.read( pbuf, pos ); 
-  is.close();
-  
-  char * pCurBuf = pbuf;
+  char * pCurPosInBuf = pBuf; 
   float *tempFloatVec=NULL;
   int tempInt=0;
-  pCurBuf = pbuf + sizeof(int); //magic num
-  int version = getIntFromBuf( pCurBuf);
-  pCurBuf += sizeof(int); //version
-  tempInt = getIntFromBuf( pCurBuf);
-  pCurBuf += sizeof(int); //submesh count
+  pCurPosInBuf = pBuf + sizeof(int); //magic num
+  int version = getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int); //version
+  tempInt = getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int); //submesh count
   bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
   bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
-  tempInt =  getIntFromBuf(pCurBuf);
-  pCurBuf += sizeof(int); //coreMaterialThreadId
-  int vertexCount = getIntFromBuf(pCurBuf);
-  pCurBuf += sizeof(int);//vertexCount
-  tempInt =getIntFromBuf(pCurBuf);
-  pCurBuf += sizeof(int);//faceCount 
-  tempInt =getIntFromBuf(pCurBuf);
-  pCurBuf += sizeof(int);//lodCount
-  tempInt =getIntFromBuf(pCurBuf);
-  pCurBuf += sizeof(int); //springCount
-  int texCoordinateCount =getIntFromBuf(pCurBuf);
-  pCurBuf += sizeof(int);//textureCoordinateCount  
+  tempInt =  getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int); //coreMaterialThreadId
+  int vertexCount = getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int);//vertexCount
+  tempInt =getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int);//faceCount 
+  tempInt =getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int);//lodCount
+  tempInt =getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int); //springCount
+  int texCoordinateCount =getIntFromBuf(pCurPosInBuf);
+  pCurPosInBuf += sizeof(int);//textureCoordinateCount  
   if( hasMorphTargetsInMorphFiles ) {
-    tempInt =getIntFromBuf(pCurBuf);
-    pCurBuf += sizeof(int);
+    tempInt =getIntFromBuf(pCurPosInBuf);
+    pCurPosInBuf += sizeof(int);
   }
   if( vertexCount > 0){
-      tempFloatVec = getFloatVecFromBuf(pCurBuf);
-      pCurBuf += sizeof(float) * 3;//pos
-      tempFloatVec = getFloatVecFromBuf(pCurBuf);
-      pCurBuf += sizeof(float) * 3;//normal
+      tempFloatVec = getFloatVecFromBuf(pCurPosInBuf);
+      pCurPosInBuf += sizeof(float) * 3;//pos
+      tempFloatVec = getFloatVecFromBuf(pCurPosInBuf);
+      pCurPosInBuf += sizeof(float) * 3;//normal
       if(  hasVertexColors ) {
-          tempFloatVec = getFloatVecFromBuf(pCurBuf);
-          pCurBuf += sizeof(float) * 3;
+          tempFloatVec = getFloatVecFromBuf(pCurPosInBuf);
+          pCurPosInBuf += sizeof(float) * 3;
       }
-      tempInt = getIntFromBuf(pCurBuf);
-      pCurBuf += sizeof(int); //collapseId
-      tempInt = getIntFromBuf(pCurBuf);
-      pCurBuf += sizeof(int); //faceCollapseCount
+      tempInt = getIntFromBuf(pCurPosInBuf);
+      pCurPosInBuf += sizeof(int); //collapseId
+      tempInt = getIntFromBuf(pCurPosInBuf);
+      pCurPosInBuf += sizeof(int); //faceCollapseCount
       size_t texCoordOffset = texCoordinateCount * sizeof(float) *2;
-      tempFloatVec = getFloatVecFromBuf(pCurBuf);
-      pCurBuf += texCoordOffset;    
-      tempInt =getIntFromBuf(pCurBuf);  
+      tempFloatVec = getFloatVecFromBuf(pCurPosInBuf);
+      pCurPosInBuf += texCoordOffset;    
+      tempInt =getIntFromBuf(pCurPosInBuf);  
       //put in a value which is sure to cause an exception due to vector allocation
       int tempNewInfluenceCount =  std::numeric_limits<int>::max();
-      *reinterpret_cast<int*>(pCurBuf) = tempNewInfluenceCount;
+      *reinterpret_cast<int*>(pCurPosInBuf) = tempNewInfluenceCount;
   }
   //load the buffer back in 
   //should not crash
-  shared_ptr<CalCoreMesh> badMesh(CalLoader::loadCoreMeshFromBuffer(pbuf, pos));
+  shared_ptr<CalCoreMesh> badMesh(CalLoader::loadCoreMeshFromBuffer(pBuf, ssm.str().length()));
+  CalCoreMesh *pMesh = badMesh.get();
+
+  CHECK(!pMesh);
+  delete [] pBuf;
 }
 
 const char* animationText =

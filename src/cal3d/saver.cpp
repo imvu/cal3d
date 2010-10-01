@@ -531,18 +531,27 @@ bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMe
     CalError::setLastError(CalError::FILE_CREATION_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
+  bool bRet = saveCoreMesh(file, strFilename, pCoreMesh);
+  // explicitly close the file
+  file.close();
+
+  return bRet;
+}
+
+
+bool CalSaver::saveCoreMesh(std::ostream& os, const std::string &optionalFilename, CalCoreMesh *pCoreMesh){
 
   // write magic tag
-  if(!CalPlatform::writeBytes(file, &Cal::MESH_FILE_MAGIC, sizeof(Cal::MESH_FILE_MAGIC)))
+  if(!CalPlatform::writeBytes(os, &Cal::MESH_FILE_MAGIC, sizeof(Cal::MESH_FILE_MAGIC)))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
     return false;
   }
 
   // write version info
-  if(!CalPlatform::writeInteger(file, Cal::CURRENT_FILE_VERSION))
+  if(!CalPlatform::writeInteger(os, Cal::CURRENT_FILE_VERSION))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
     return false;
   }
 
@@ -550,9 +559,9 @@ bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMe
   CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
 
   // write the number of submeshes
-  if(!CalPlatform::writeInteger(file, vectorCoreSubmesh.size()))
+  if(!CalPlatform::writeInteger(os, vectorCoreSubmesh.size()))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
     return false;
   }
 
@@ -561,18 +570,13 @@ bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMe
   for(submeshId = 0; submeshId < (int)vectorCoreSubmesh.size(); ++submeshId)
   {
     // write the core submesh
-      if(!saveCoreSubmesh(file, strFilename, vectorCoreSubmesh[submeshId].get()))
+      if(!saveCoreSubmesh(os, optionalFilename, vectorCoreSubmesh[submeshId].get()))
     {
       return false;
     }
-  }
-
-  // explicitly close the file
-  file.close();
-
+  }   
   return true;
 }
-
  /*****************************************************************************/
 /** Saves a core skeleton instance.
   *
@@ -654,7 +658,7 @@ bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton 
   * This function saves a core submesh instance to a file stream.
   *
   * @param file The file stream to save the core submesh instance to.
-  * @param strFilename The name of the file stream.
+  * @param optionalFilename The name of the file stream.
   * @param pCoreSubmesh A pointer to the core submesh instance that should be
   *                     saved.
   *
@@ -663,18 +667,18 @@ bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton 
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilename, CalCoreSubmesh *pCoreSubmesh)
+bool CalSaver::saveCoreSubmesh(std::ostream& os, const std::string& optionalFilename, CalCoreSubmesh *pCoreSubmesh)
 {
-  if(!file)
+  if(!os)
   {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, optionalFilename);
     return false;
   }
 
   // write the core material thread id
-  if(!CalPlatform::writeInteger(file, pCoreSubmesh->getCoreMaterialThreadId()))
+  if(!CalPlatform::writeInteger(os, pCoreSubmesh->getCoreMaterialThreadId()))
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
     return false;
   }
 
@@ -685,25 +689,25 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
   const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
 
   // write the number of vertices, faces, level-of-details and springs
-  CalPlatform::writeInteger(file, vectorVertex.size());
-  CalPlatform::writeInteger(file, vectorFace.size());
-  CalPlatform::writeInteger(file, pCoreSubmesh->getLodCount());
-  CalPlatform::writeInteger(file, 0); // spring count
+  CalPlatform::writeInteger(os, vectorVertex.size());
+  CalPlatform::writeInteger(os, vectorFace.size());
+  CalPlatform::writeInteger(os, pCoreSubmesh->getLodCount());
+  CalPlatform::writeInteger(os, 0); // spring count
 
   // get the texture coordinate vector vector
   const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
   // write the number of texture coordinates per vertex
-  CalPlatform::writeInteger(file, vectorvectorTextureCoordinate.size());
+  CalPlatform::writeInteger(os, vectorvectorTextureCoordinate.size());
 
   // write the number of morph targets
   int morphCount = pCoreSubmesh->getCoreSubMorphTargetCount();
-  CalPlatform::writeInteger(file, morphCount);
+  CalPlatform::writeInteger(os, morphCount);
   
   // check if an error happend
-  if(!file)
+  if(!os)
   {
-    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+    CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
     return false;
   }
 
@@ -715,24 +719,24 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
 
     // write the vertex data
-    CalPlatform::writeFloat(file, vertex.position.x);
-    CalPlatform::writeFloat(file, vertex.position.y);
-    CalPlatform::writeFloat(file, vertex.position.z);
-    CalPlatform::writeFloat(file, vertex.normal.x);
-    CalPlatform::writeFloat(file, vertex.normal.y);
-    CalPlatform::writeFloat(file, vertex.normal.z);
+    CalPlatform::writeFloat(os, vertex.position.x);
+    CalPlatform::writeFloat(os, vertex.position.y);
+    CalPlatform::writeFloat(os, vertex.position.z);
+    CalPlatform::writeFloat(os, vertex.normal.x);
+    CalPlatform::writeFloat(os, vertex.normal.y);
+    CalPlatform::writeFloat(os, vertex.normal.z);
     if (pCoreSubmesh->hasNonWhiteVertexColors()) {
         CalVector vc(CalVectorFromColor(vertexColors[vertexId]));
-        CalPlatform::writeFloat(file, vc.x);
-        CalPlatform::writeFloat(file, vc.y);
-        CalPlatform::writeFloat(file, vc.z);
+        CalPlatform::writeFloat(os, vc.x);
+        CalPlatform::writeFloat(os, vc.y);
+        CalPlatform::writeFloat(os, vc.z);
     } else {
-        CalPlatform::writeFloat(file, 1);
-        CalPlatform::writeFloat(file, 1);
-        CalPlatform::writeFloat(file, 1);
+        CalPlatform::writeFloat(os, 1);
+        CalPlatform::writeFloat(os, 1);
+        CalPlatform::writeFloat(os, 1);
     }
-    CalPlatform::writeInteger(file, ld.collapseId);
-    CalPlatform::writeInteger(file, ld.faceCollapseCount);
+    CalPlatform::writeInteger(os, ld.collapseId);
+    CalPlatform::writeInteger(os, ld.faceCollapseCount);
 
     // write all texture coordinates of this vertex
     int textureCoordinateId;
@@ -741,21 +745,21 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
       const CalCoreSubmesh::TextureCoordinate& textureCoordinate = vectorvectorTextureCoordinate[textureCoordinateId][vertexId];
 
       // write the influence data
-      CalPlatform::writeFloat(file, textureCoordinate.u);
-      CalPlatform::writeFloat(file, textureCoordinate.v);
+      CalPlatform::writeFloat(os, textureCoordinate.u);
+      CalPlatform::writeFloat(os, textureCoordinate.v);
 
       // check if an error happend
-      if(!file)
+      if(!os)
       {
-        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
         return false;
       }
     }
 
     // write the number of influences
-    if(!CalPlatform::writeInteger(file, influenceRange.influenceEnd - influenceRange.influenceStart))
+    if(!CalPlatform::writeInteger(os, influenceRange.influenceEnd - influenceRange.influenceStart))
     {
-      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
       return false;
     }
 
@@ -765,13 +769,13 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
       const CalCoreSubmesh::Influence& influence = pCoreSubmesh->getInfluences()[influenceId];
 
       // write the influence data
-      CalPlatform::writeInteger(file, influence.boneId);
-      CalPlatform::writeFloat(file, influence.weight);
+      CalPlatform::writeInteger(os, influence.boneId);
+      CalPlatform::writeFloat(os, influence.weight);
 
       // check if an error happend
-      if(!file)
+      if(!os)
       {
-        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
         return false;
       }
     }
@@ -782,7 +786,7 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
 
   for( int morphId = 0; morphId < morphCount; morphId++ ) {
     boost::shared_ptr<CalCoreSubMorphTarget> morphTarget = vectorMorphs[morphId];
-    CalPlatform::writeString(file, morphTarget->name());
+    CalPlatform::writeString(os, morphTarget->name());
     int morphVertCount = 0;
 
     for(int blendId = 0; blendId < morphTarget->getBlendVertexCount(); ++blendId)
@@ -821,20 +825,20 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
       }
 
       morphVertCount++;
-      CalPlatform::writeInteger(file, blendId);
-      CalPlatform::writeFloat(file, bv->position.x);
-      CalPlatform::writeFloat(file, bv->position.y);
-      CalPlatform::writeFloat(file, bv->position.z);
-      CalPlatform::writeFloat(file, bv->normal.x);
-      CalPlatform::writeFloat(file, bv->normal.y);
-      CalPlatform::writeFloat(file, bv->normal.z);
+      CalPlatform::writeInteger(os, blendId);
+      CalPlatform::writeFloat(os, bv->position.x);
+      CalPlatform::writeFloat(os, bv->position.y);
+      CalPlatform::writeFloat(os, bv->position.z);
+      CalPlatform::writeFloat(os, bv->normal.x);
+      CalPlatform::writeFloat(os, bv->normal.y);
+      CalPlatform::writeFloat(os, bv->normal.z);
       for( tcI = 0; tcI < textureCoords.size(); tcI++ ) {
         CalCoreSubmesh::TextureCoordinate const & tc1 = textureCoords[tcI];
-        CalPlatform::writeFloat(file, tc1.u);
-        CalPlatform::writeFloat(file, tc1.v);
+        CalPlatform::writeFloat(os, tc1.u);
+        CalPlatform::writeFloat(os, tc1.v);
       }
     }
-    CalPlatform::writeInteger(file, (int)vectorVertex.size()+1);
+    CalPlatform::writeInteger(os, (int)vectorVertex.size()+1);
 
   }
 
@@ -845,14 +849,14 @@ bool CalSaver::saveCoreSubmesh(std::ofstream& file, const std::string& strFilena
     const CalCoreSubmesh::Face& face = vectorFace[faceId];
 
     // write the face data
-    CalPlatform::writeInteger(file, face.vertexId[0]);
-    CalPlatform::writeInteger(file, face.vertexId[1]);
-    CalPlatform::writeInteger(file, face.vertexId[2]);
+    CalPlatform::writeInteger(os, face.vertexId[0]);
+    CalPlatform::writeInteger(os, face.vertexId[1]);
+    CalPlatform::writeInteger(os, face.vertexId[2]);
 
     // check if an error happend
-    if(!file)
+    if(!os)
     {
-      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
+      CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, optionalFilename);
       return false;
     }
   }

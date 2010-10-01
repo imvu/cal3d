@@ -241,9 +241,7 @@ CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned
             std::string nullTerm((const char*)inputBuffer, len);
             return loadXmlCoreMesh(nullTerm.c_str());
         }
-    } catch (CalError &calerr){
-        calerr;
-        
+    } catch (const CalError& ){        
     }
     return result;
 }
@@ -1255,8 +1253,8 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
       return 0;
     }
 
-    std::vector<CalCoreSubmesh::Influence> influences(1);
-    allocateVectorWhereSizeIsGuarded( influenceCount, influences, __LINE__);
+    std::vector<CalCoreSubmesh::Influence> influences;
+    allocateVectorWhereSizeIsGuarded(influenceCount, influences, __LINE__);
 
     for(int influenceId = 0; influenceId < influenceCount; ++influenceId)
     {
