@@ -13,6 +13,7 @@
 #endif
 
 #include <iostream>
+#include <string.h>
 #include "cal3d/platform.h"
 #include "cal3d/datasource.h"
 

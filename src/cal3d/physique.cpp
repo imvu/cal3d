@@ -206,6 +206,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
   }
 }
 
+#ifndef IMVU_NO_ASM_BLOCKS
 #define R_SHUFFLE_D(o0, o1, o2, o3) ((o3 & 3) << 6 | (o2 & 3) << 4 | (o1 & 3) << 2 | (o0 & 3))
 
 void CalPhysique::calculateVerticesAndNormals_SSE(
@@ -359,6 +360,7 @@ doneWeight:
 done:
   }
 }
+#endif
 
 void automaticallyDetectSkinRoutine(
   const BoneTransform* boneTransforms,
@@ -376,7 +378,12 @@ void automaticallyDetectSkinRoutine(
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertices
 ) {
+#ifdef IMVU_NO_ASM_BLOCKS
+    optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
+#else
     unsigned features = 0;
+    int out[4];
+    __cpuid(out, 1);
     /* For some reason, on OSX, we need to pop and push EBX to prevent
      * byproducts from striking ventilation machinery.
      * -- andy 7 April 2010
@@ -400,7 +407,7 @@ void automaticallyDetectSkinRoutine(
     } else {
         optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_x87;
     }
-
+#endif
     return optimizedSkinRoutine(boneTransforms, vertexCount, vertices, influences, output_vertices);
 }
 

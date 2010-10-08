@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include <stdio.h>
 #include "cal3d/coremesh.h"
 #include "cal3d/error.h"
 #include "cal3d/coresubmesh.h"

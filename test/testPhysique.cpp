@@ -32,12 +32,18 @@ FIXTURE(skin_SSE_intrinsics) {
     skin = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
   }
 };
+
+#ifdef IMVU_NO_ASM_BLOCKS
+FIXTURE_EXTENDS(skin_SSE, skin_SSE_intrinsics) {
+};
+#else
 FIXTURE(skin_SSE) {
   CalPhysique::SkinRoutine skin;
   SETUP(skin_SSE) {
     skin = CalPhysique::calculateVerticesAndNormals_SSE;
   }
 };
+#endif
 
 #define APPLY_SKIN_FIXTURES(test)         \
   APPLY_TEST_F(skin_x87, test)            \
