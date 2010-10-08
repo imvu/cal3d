@@ -382,8 +382,6 @@ void automaticallyDetectSkinRoutine(
     optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
 #else
     unsigned features = 0;
-    int out[4];
-    __cpuid(out, 1);
     /* For some reason, on OSX, we need to pop and push EBX to prevent
      * byproducts from striking ventilation machinery.
      * -- andy 7 April 2010
