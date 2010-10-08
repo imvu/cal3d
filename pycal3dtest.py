@@ -67,7 +67,7 @@ class Test(imvu.test.TestCase):
         self.assertEqual(self.cal3d_.cal3dTypeForPath(path), "CoreSkeleton")
 
     def test_winding_is_not_changed_in_meshes(self):
-        test_mesh = os.path.join(imvu.fs.getSourceDirectory(), 'Source', 'test_data', 'fuzhuangdian.xmf')
+        test_mesh = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'fuzhuangdian.xmf')
         data = file(test_mesh, 'rb').read()
         self.hereAndBackAgain(data, 'CoreMesh')
         

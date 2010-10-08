@@ -1,16 +1,15 @@
-import imvu
 import logging
+import ctypes
+import os.path
+import pprint
+import copy
+import cPickle as pickle
 logger = logging.getLogger('imvu.' + __name__)
 
 import imvu.test
 import imvu.imvuctypes
-import ctypes
-import os.path
 import imvu.fs
 import cal3d.CalInspector
-import pprint
-import copy
-import cPickle as pickle
 
 import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
@@ -42,7 +41,7 @@ class Cal3dTransformTest(imvu.test.TestCase):
         self.cal3d = imvu.imvuctypes.imvudll('cal3d')
         #self.cal3d.CalSubmesh_SetMorphTargetWeight.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_float]
 
-        test_data_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test_data"))
+        test_data_dir = os.path.join(imvu.fs.getSourceDirectory(), 'TestData')
         self.testDataFs = imvu.fs.FileSystem(test_data_dir)
         
         self.__tempFiles = []

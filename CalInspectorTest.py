@@ -12,7 +12,7 @@ import imvu.cfl
 
 class CalInspectorTest(imvu.test.TestCase):
     def setUp(self):
-        self.cfl = imvu.cfl.CFL(imvu.fs.getSourceFileSystem(), 'Source/test_data/product191.cfl')
+        self.cfl = imvu.cfl.CFL(imvu.fs.getSourceFileSystem(), 'TestData/product191.cfl')
 
     def test_getMaterialMaps(self):
         entryname = 'Male03_Anime01_eyebrows02_alpha.xrf'
