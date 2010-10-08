@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include <string.h>
 #include "cal3d/coresubmorphtarget.h"
 
 CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& name)

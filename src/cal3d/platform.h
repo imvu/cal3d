@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+#include <stdlib.h>
 
 #if !defined(_WIN32) || defined(__MINGW32__)
 #define stricmp strcasecmp
@@ -79,7 +80,7 @@ typedef unsigned long long cal3d_uint64;
 
 
 // Allocations objects that are 16-byte aligned
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__MINGW32__)
 template<typename T>
 struct SSEAllocator {
     typedef const T* const_pointer;
