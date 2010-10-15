@@ -64,7 +64,7 @@ exporter_win32_sources = Split('''
     SpringSystemPage.cpp
 ''')
 
-if 'exp' not in env.get('MSVS_VERSION', '').lower():
+if 0 and 'exp' not in env.get('MSVS_VERSION', '').lower():
     maxVersion = re.findall("[0-9]+", env['IMVU_BUILDDIR_NAME'])[0]
     if not maxVersion:
       raise Exception("You must target a specific version of 3ds Max")
