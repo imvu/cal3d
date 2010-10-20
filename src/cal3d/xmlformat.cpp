@@ -704,10 +704,12 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
     }
 
     pCoreAnimation->duration = duration;
+    int iTrackNum=0;
     for (
         TiXmlElement* track = animation->FirstChildElement();
         track;
-        track = track->NextSiblingElement()
+        track = track->NextSiblingElement(),
+            ++iTrackNum
     ) {
         if(!track || _stricmp(track->Value(),"TRACK")!=0)
         {
@@ -716,6 +718,17 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         }
 
         int coreBoneId = atoi(track->Attribute("BONEID"));
+
+        CalCoreBone * cb = NULL; 
+        if( skel ) {
+            cb = skel->getCoreBone( coreBoneId );
+            if (!cb) {
+                std::stringstream buf;
+                buf << "loadXmlCoreAnimation: track: " << iTrackNum << " refers to a bone (" << coreBoneId << ") that does not exist";
+                continue;
+            }
+        }
+
         CalCoreTrack::KeyframeList keyframes;
 
         const char * trstr = track->Attribute("TRANSLATIONREQUIRED");
@@ -778,13 +791,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             TiXmlElement * rotation = translation;
             float tx, ty, tz;
             SetTranslationInvalid( & tx, & ty, & tz );
-            if( skel ) {
-                CalCoreBone * cb = skel->getCoreBone( coreBoneId );
-                if (!cb) {
-                    std::stringstream buf;
-                    buf << "loadXmlCoreAnimation: keyframe refers to a bone (" << coreBoneId << ") that does not exist";
-                    throw std::runtime_error(buf.str().c_str());
-                }
+            if(cb){
                 CalVector const & cbtrans = cb->getTranslation();
                 tx = cbtrans.x;
                 ty = cbtrans.y;

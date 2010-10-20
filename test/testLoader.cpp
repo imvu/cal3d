@@ -9,6 +9,8 @@
 #include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
 #include <cal3d/coretrack.h>
+#include <cal3d/coreskeleton.h>
+#include <cal3d/corebone.h>
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
 #include <cal3d/streamops.h>
@@ -319,6 +321,113 @@ TEST(load_animation_with_mismatched_counts) {
   CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.rotation);
   CHECK_EQUAL(CalVector(1, 2, 3), k2.translation);
 }
+
+
+const char *simple_two_bone_skeleton=
+"<HEADER MAGIC=\"XSF\" VERSION=\"919\" />"
+"<SKELETON NUMBONES=\"2\" SCENEAMBIENTCOLOR=\"0.5 0.5 0.5\">"
+"    <BONE NAME=\"AttachmentRoot\" NUMCHILDS=\"1\" ID=\"0\">"
+"        <TRANSLATION>0.346893 -12.6875 772.958</TRANSLATION>"
+"        <ROTATION>0.706778 -0.0217732 0.706766 0.0217552</ROTATION>"
+"        <LOCALTRANSLATION>-772.275 34.8962 -0.333774</LOCALTRANSLATION>"
+"        <LOCALROTATION>0.706778 -0.0217732 0.706766 -0.0217552</LOCALROTATION>"
+"        <PARENTID>-1</PARENTID>"
+"        <CHILDID>1</CHILDID>"
+"    </BONE>"
+"    <BONE NAME=\"AttachmentNode\" NUMCHILDS=\"0\" ID=\"1\">"
+"        <TRANSLATION>0.0930318 1.64391e-006 -4.76993e-008</TRANSLATION>"
+"        <ROTATION>-4.40272e-008 -1.67311e-007 4.27578e-008 1</ROTATION>"
+"        <LOCALTRANSLATION>-772.368 34.8961 -0.334036</LOCALTRANSLATION>"
+"        <LOCALROTATION>0.706778 -0.0217731 0.706766 -0.0217552</LOCALROTATION>"
+"        <PARENTID>0</PARENTID>"
+"    </BONE>"
+"</SKELETON>"
+;
+
+TEST(simple_two_bone_skeleton) {
+  float tol=0.001f;
+  boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadXmlCoreSkeleton(simple_two_bone_skeleton));
+  CHECK(skel);
+  CHECK_EQUAL(skel->getNumCoreBones(), 2);
+  CalVector sceneAmbientClr;
+  skel->getSceneAmbientColor(sceneAmbientClr);
+  CHECK_EQUAL(CalVector(0.5f, 0.5f, 0.5f), sceneAmbientClr);
+  CalCoreBone* rootBone = skel->getCoreBone(0);
+  CHECK(rootBone);
+  const std::string rootBoneName = rootBone->getName();
+  CHECK_EQUAL(rootBoneName.c_str(), "AttachmentRoot");
+  const std::vector<int>& childrenOfRootBone = rootBone->getListChildId();
+  CHECK_EQUAL(childrenOfRootBone.size(), 1);
+  int parentIdOfRootBone = rootBone->getParentId();
+  CHECK_EQUAL(parentIdOfRootBone, -1);
+  const CalQuaternion& rot = rootBone->getRotation();
+  CHECK_CLOSE(rot.x, 0.706778, tol);
+  CHECK_CLOSE(rot.y, -0.0217732, tol);
+  CHECK_CLOSE(rot.z, 0.706766, tol);
+  CHECK_CLOSE(rot.w, 0.0217552, tol);
+  const CalQuaternion& absRot = rootBone->getRotationAbsolute();  
+  CHECK_CLOSE(absRot.x, 0.706778, tol);
+  CHECK_CLOSE(absRot.y, -0.0217732, tol);
+  CHECK_CLOSE(absRot.z, 0.706766, tol);
+  CHECK_CLOSE(absRot.w, 0.0217552, tol);
+  const CalQuaternion& boneSpaceRot = rootBone->getRotationBoneSpace();   
+  CHECK_CLOSE(boneSpaceRot.x, 0.706778, tol);
+  CHECK_CLOSE(boneSpaceRot.y, -0.0217732, tol);
+  CHECK_CLOSE(boneSpaceRot.z, 0.706766, tol);
+  CHECK_CLOSE(boneSpaceRot.w, -0.0217552, tol);
+  const CalVector& trans = rootBone->getTranslation();
+  CHECK_CLOSE(trans.x, 0.346893, tol);
+  CHECK_CLOSE(trans.y, -12.6875, tol);
+  CHECK_CLOSE(trans.z, 772.958, tol);
+  const CalVector& absTrans = rootBone->getTranslationAbsolute();  
+  CHECK_CLOSE(absTrans.x, 0.346893, tol);
+  CHECK_CLOSE(absTrans.y, -12.6875, tol);
+  CHECK_CLOSE(absTrans.z, 772.958, tol);
+  const CalVector& boneSpaceTrans = rootBone->getTranslationBoneSpace();  
+  CHECK_CLOSE(boneSpaceTrans.x, -772.275, tol);
+  CHECK_CLOSE(boneSpaceTrans.y, 34.8962, tol);
+  CHECK_CLOSE(boneSpaceTrans.z, -0.333774, tol);
+  CalCoreBone * child = skel->getCoreBone(childrenOfRootBone[0]);
+  int parentIdOfChildBone = child->getParentId();
+  CHECK_EQUAL(parentIdOfChildBone, 0);
+}
+
+const char *one_bone_skeleton=
+"<HEADER MAGIC=\"XSF\" VERSION=\"919\" />"
+"<SKELETON NUMBONES=\"2\" SCENEAMBIENTCOLOR=\"1 1 1\">"
+"    <BONE NAME=\"AttachmentRoot\" NUMCHILDS=\"1\" ID=\"0\">"
+"        <TRANSLATION>0.346893 -12.6875 772.958</TRANSLATION>"
+"        <ROTATION>0.706778 -0.0217732 0.706766 0.0217552</ROTATION>"
+"        <LOCALTRANSLATION>-772.275 34.8962 -0.333774</LOCALTRANSLATION>"
+"        <LOCALROTATION>0.706778 -0.0217732 0.706766 -0.0217552</LOCALROTATION>"
+"        <PARENTID>-1</PARENTID>"
+"    </BONE>"
+"</SKELETON>"
+;
+
+
+const char* animation_for_a_nonexistent_bone =
+"<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
+"<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
+"    <TRACK BONEID=\"2\" TRANSLATIONREQUIRED=\"0\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
+"        <KEYFRAME TIME=\"0\">\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"        <KEYFRAME TIME=\"40\">\n"
+"            <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>\n"
+"        </KEYFRAME>\n"
+"    </TRACK>\n"
+"</ANIMATION>\n"
+;
+
+TEST(load_animation_for_non_existent_bone) {
+  boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadXmlCoreSkeleton(one_bone_skeleton));
+  CHECK(skel);
+  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_for_a_nonexistent_bone, skel.get());
+  CHECK(anim);
+  CHECK_EQUAL(anim->tracks.size(), 0);
+}
+
 
 const size_t hmmmLength = 4730;
 unsigned char hmmmAnimation[] = {
