@@ -1,3 +1,4 @@
+//#include <intrin.h>
 #include "TestPrologue.h"
 #include <cal3d/renderer.h>
 #include <cal3d/bone.h>
@@ -25,29 +26,16 @@ FIXTURE(skin_x87) {
     skin = CalPhysique::calculateVerticesAndNormals_x87;
   }
 };
-
-#ifndef IMVU_NO_INTRINSICS
 FIXTURE(skin_SSE_intrinsics) {
   CalPhysique::SkinRoutine skin;
   SETUP(skin_SSE_intrinsics) {
     skin = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
   }
 };
-#endif
-
 
 #ifdef IMVU_NO_ASM_BLOCKS
-#ifdef IMVU_NO_INTRINSICS
-FIXTURE(skin_SSE) {
-  CalPhysique::SkinRoutine skin;
-  SETUP(skin_SSE) {
-    skin = CalPhysique::calculateVerticesAndNormals_x87;
-  }
-};
-#else
 FIXTURE_EXTENDS(skin_SSE, skin_SSE_intrinsics) {
 };
-#endif
 #else
 FIXTURE(skin_SSE) {
   CalPhysique::SkinRoutine skin;
@@ -57,16 +45,10 @@ FIXTURE(skin_SSE) {
 };
 #endif
 
-#if defined(IMVU_NO_INTRINSICS)
-#define APPLY_SKIN_FIXTURES(test)         \
-  APPLY_TEST_F(skin_x87, test)            \
-  APPLY_TEST_F(skin_SSE, test)
-#else
 #define APPLY_SKIN_FIXTURES(test)         \
   APPLY_TEST_F(skin_x87, test)            \
   APPLY_TEST_F(skin_SSE_intrinsics, test) \
   APPLY_TEST_F(skin_SSE, test)
-#endif
 
 ABSTRACT_TEST(single_identity_bone) {
   BoneTransform bt[] = {
