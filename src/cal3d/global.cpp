@@ -9,30 +9,3 @@ void* allocate_aligned_data(size_t size) {
 }
 
 
-namespace Cal {
-    void* CAL3D_CDECL Object::operator new(size_t count) {
-        return ::operator new(count);
-    }
-    void* CAL3D_CDECL Object::operator new(size_t count, const std::nothrow_t&) throw() {
-        return ::operator new(count, std::nothrow);
-    }
-    void CAL3D_CDECL Object::operator delete(void* object) {
-        return ::operator delete(object);
-    }
-    void CAL3D_CDECL Object::operator delete(void* object, const std::nothrow_t&) throw() {
-        return ::operator delete(object, std::nothrow);
-    }
-
-    void* CAL3D_CDECL Object::operator new[](size_t count) {
-        return ::operator new[](count);
-    }
-    void* CAL3D_CDECL Object::operator new[](size_t count, const std::nothrow_t&) throw() {
-        return ::operator new[](count, std::nothrow);
-    }
-    void CAL3D_CDECL Object::operator delete[](void* object) {
-        return ::operator delete[](object);
-    }
-    void CAL3D_CDECL Object::operator delete[](void* object, const std::nothrow_t&) throw() {
-        return ::operator delete[](object, std::nothrow);
-    }
-}
