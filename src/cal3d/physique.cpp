@@ -13,7 +13,9 @@
 #endif
 
 #include <assert.h>
+#ifndef IMVU_NO_INTRINSICS
 #include <xmmintrin.h>
+#endif
 #include <boost/static_assert.hpp>
 #include "cal3d/error.h"
 #include "cal3d/physique.h"
@@ -120,6 +122,8 @@ void CalPhysique::calculateVerticesAndNormals_x87(
   }
 }
 
+
+#ifndef IMVU_NO_INTRINSICS
 void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
   const BoneTransform* boneTransforms,
   int vertexCount,
@@ -205,6 +209,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
     output_vertex += 2;
   }
 }
+#endif
 
 #ifndef IMVU_NO_ASM_BLOCKS
 #define R_SHUFFLE_D(o0, o1, o2, o3) ((o3 & 3) << 6 | (o2 & 3) << 4 | (o1 & 3) << 2 | (o0 & 3))
@@ -378,8 +383,13 @@ void automaticallyDetectSkinRoutine(
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertices
 ) {
+
 #ifdef IMVU_NO_ASM_BLOCKS
+#ifdef IMVU_NO_INTRINSICS
+    optimizedSkinRoutine =  CalPhysique::calculateVerticesAndNormals_x87;
+#else
     optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
+#endif
 #else
     unsigned features = 0;
     /* For some reason, on OSX, we need to pop and push EBX to prevent
