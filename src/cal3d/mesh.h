@@ -16,7 +16,7 @@
 class CalCoreMesh;
 class CalSubmesh;
 
-class CAL3D_API CalMesh : public Cal::Object
+class CAL3D_API CalMesh
 {
 public:
   typedef std::vector<boost::shared_ptr<CalSubmesh> > SubmeshVector;

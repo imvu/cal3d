@@ -14,7 +14,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/coresubmesh.h"
 
-class CAL3D_API CalCoreSubMorphTarget : public Cal::Object
+class CAL3D_API CalCoreSubMorphTarget
 {
 public:
   /// The core sub morph target BlendVertex.

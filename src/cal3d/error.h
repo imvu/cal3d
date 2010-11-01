@@ -13,7 +13,7 @@
 #include <string>
 #include "cal3d/global.h"
 
-class CAL3D_API CalError : public Cal::Object
+class CAL3D_API CalError
 {
 // misc
 public:

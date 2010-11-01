@@ -3,7 +3,7 @@
 #include "cal3d/vector.h"
 
 CAL3D_ALIGN_HEAD(16)
-struct CalBase4 : public Cal::Object
+struct CalBase4
 {
   float x, y, z, w;
 

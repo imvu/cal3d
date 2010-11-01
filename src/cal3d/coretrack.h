@@ -20,7 +20,7 @@ class CalCoreBone;
 class CalCoreSkeleton;
 typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 
-class CAL3D_API CalCoreTrack : public Cal::Object {
+class CAL3D_API CalCoreTrack {
 public:
   typedef std::vector<CalCoreKeyframe> KeyframeList;
 

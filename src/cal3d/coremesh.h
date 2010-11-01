@@ -15,7 +15,7 @@
 
 typedef boost::shared_ptr<class CalCoreSubmesh> CalCoreSubmeshPtr;
 
-class CAL3D_API CalCoreMesh : public Cal::Object
+class CAL3D_API CalCoreMesh
 {
 public:
   typedef std::vector<CalCoreSubmeshPtr> CalCoreSubmeshVector;

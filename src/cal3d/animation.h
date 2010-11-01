@@ -5,7 +5,7 @@
 
 class CalCoreAnimation;
 
-class CAL3D_API CalAnimation : public Cal::Object
+class CAL3D_API CalAnimation
 {
 public:
   enum CompositionFunction {

@@ -16,7 +16,7 @@
 
 class CalQuaternion;
 
-class CAL3D_API CalMatrix : public Cal::Object
+class CAL3D_API CalMatrix
 {
 public:
   float dxdx,dydx,dzdx;

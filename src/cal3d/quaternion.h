@@ -13,7 +13,7 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
-class CAL3D_API CalQuaternion : public Cal::Object
+class CAL3D_API CalQuaternion
 {
 	// member variables
 public:

@@ -71,14 +71,11 @@ private:
 
 namespace Cal {
 
-  struct CAL3D_API Object {
-  };
-
-  struct UserData : public Cal::Object {
+  struct UserData {
     virtual ~UserData() {}
   };
 
-  struct CAL3D_API UserDataHolder : public Cal::Object {
+  struct CAL3D_API UserDataHolder {
   public:
     UserDataHolder() 
     : m_userData(0)

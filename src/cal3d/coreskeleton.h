@@ -19,7 +19,7 @@
 
 class CalCoreBone;
 
-class CAL3D_API CalCoreSkeleton : public Cal::Object
+class CAL3D_API CalCoreSkeleton
 {
 public:
   int addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone);

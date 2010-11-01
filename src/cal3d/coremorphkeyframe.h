@@ -14,7 +14,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-class CAL3D_API CalCoreMorphKeyframe : public Cal::Object
+class CAL3D_API CalCoreMorphKeyframe
 {
 protected:
   float m_time;

@@ -20,7 +20,7 @@ class CalSkeleton;
 class CalMixer;
 class CalMesh;
 
-class CAL3D_API CalModel : public Cal::Object
+class CAL3D_API CalModel
 {
 public: 
   CalModel(const boost::shared_ptr<CalCoreSkeleton>& pCoreModel);

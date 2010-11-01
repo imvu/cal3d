@@ -386,7 +386,7 @@ void automaticallyDetectSkinRoutine(
 
 #ifdef IMVU_NO_ASM_BLOCKS
 #ifdef IMVU_NO_INTRINSICS
-    optimizedSkinRoutine =  CalPhysique::calculateVerticesAndNormals_x87;
+    optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_x87;
 #else
     optimizedSkinRoutine = CalPhysique::calculateVerticesAndNormals_SSE_intrinsics;
 #endif

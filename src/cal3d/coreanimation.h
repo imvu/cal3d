@@ -17,7 +17,7 @@
 typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 class CalCoreSkeleton;
 
-class CAL3D_API CalCoreAnimation : public Cal::Object
+class CAL3D_API CalCoreAnimation
 {
 public:
   size_t sizeInBytes() const;

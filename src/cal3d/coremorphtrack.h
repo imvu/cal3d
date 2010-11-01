@@ -17,7 +17,7 @@
 
 class CalCoreMorphKeyframe;
 
-class CAL3D_API CalCoreMorphTrack : public Cal::Object
+class CAL3D_API CalCoreMorphTrack
 {
 protected:
   std::string m_morphName;
