@@ -704,12 +704,10 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
     }
 
     pCoreAnimation->duration = duration;
-    int iTrackNum=0;
     for (
         TiXmlElement* track = animation->FirstChildElement();
         track;
-        track = track->NextSiblingElement(),
-            ++iTrackNum
+        track = track->NextSiblingElement()
     ) {
         if(!track || _stricmp(track->Value(),"TRACK")!=0)
         {
@@ -723,8 +721,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         if( skel ) {
             cb = skel->getCoreBone( coreBoneId );
             if (!cb) {
-                std::stringstream buf;
-                buf << "loadXmlCoreAnimation: track: " << iTrackNum << " refers to a bone (" << coreBoneId << ") that does not exist";
                 continue;
             }
         }
