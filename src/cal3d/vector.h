@@ -125,37 +125,30 @@ public:
 
 };
 
-static inline CalVector operator+(const CalVector& v, const CalVector& u)
-{
-  return CalVector(v.x + u.x, v.y + u.y, v.z + u.z);
+static inline CalVector operator+(const CalVector& v, const CalVector& u) {
+    return CalVector(v.x + u.x, v.y + u.y, v.z + u.z);
 }
 
-static inline CalVector operator-(const CalVector& v, const CalVector& u)
-{
-	return CalVector(v.x - u.x, v.y - u.y, v.z - u.z);
+static inline CalVector operator-(const CalVector& v, const CalVector& u) {
+    return CalVector(v.x - u.x, v.y - u.y, v.z - u.z);
 }
 
-static inline CalVector operator*(const CalVector& v, const float d)
-{
-	return CalVector(v.x * d, v.y * d, v.z * d);
+static inline CalVector operator*(const CalVector& v, const float d) {
+    return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
-static inline CalVector operator*(const float d, const CalVector& v)
-{
-	return CalVector(v.x * d, v.y * d, v.z * d);
+static inline CalVector operator*(const float d, const CalVector& v) {
+    return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
-static inline CalVector operator/(const CalVector& v, const float d)
-{
-	return CalVector(v.x / d, v.y / d, v.z / d);
+static inline CalVector operator/(const CalVector& v, const float d) {
+    return CalVector(v.x / d, v.y / d, v.z / d);
 }
 
-static inline float operator*(const CalVector& v, const CalVector& u)
-{
-	return v.x * u.x + v.y * u.y + v.z * u.z;
+static inline float operator*(const CalVector& v, const CalVector& u) {
+    return v.x * u.x + v.y * u.y + v.z * u.z;
 }  
 
-static inline CalVector operator%(const CalVector& v, const CalVector& u)
-{
-	return CalVector(v.y * u.z - v.z * u.y, v.z * u.x - v.x * u.z, v.x * u.y - v.y * u.x);
+static inline CalVector operator%(const CalVector& v, const CalVector& u) {
+    return CalVector(v.y * u.z - v.z * u.y, v.z * u.x - v.x * u.z, v.x * u.y - v.y * u.x);
 }
