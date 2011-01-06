@@ -95,7 +95,7 @@ TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired
 CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
 {
 
-  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
     return loadXmlCoreMesh(strFilename);
 
   // open the file
@@ -124,7 +124,7 @@ CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
 CalCoreSkeleton *CalLoader::loadCoreSkeleton(const std::string& strFilename)
 {
 
-  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
     return loadXmlCoreSkeletonFromFile(strFilename);
 
   // open the file

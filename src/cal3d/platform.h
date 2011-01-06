@@ -13,8 +13,16 @@
 #include <memory>
 #include <stdlib.h>
 
-#if !defined(_WIN32) || defined(__MINGW32__)
-inline int stricmp(const char* s1, const char* s2) {
+#if defined(_WIN32) && !defined(__MINGW32__)
+inline int cal3d_stricmp(const char* s1, const char* s2) {
+  assert(s1);
+  assert(s2);
+  return _stricmp(s1, s2);
+}
+#else
+inline int cal3d_stricmp(const char* s1, const char* s2) {
+  assert(s1);
+  assert(s2);
   return strcasecmp(s1, s2);
 }
 #endif
@@ -51,7 +59,6 @@ typedef unsigned __int64 cal3d_uint64;
 #  define CAL3D_ALIGN_TAIL(X) __attribute__((aligned (X)))
 #  define CAL3D_ALIGNED_MALLOC(c, a) malloc(c)
 #  define CAL3D_ALIGNED_FREE free
-#  define _stricmp stricmp
 
 typedef long long cal3d_int64;
 typedef unsigned long long cal3d_uint64;

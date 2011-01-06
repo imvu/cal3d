@@ -7,6 +7,7 @@ import weakref
 import imvu.test
 import imvu.fs
 from cal3d import pycal3d
+import cal3d
 
 class Test(imvu.test.TestCase):
     def setUp(self):
@@ -70,7 +71,12 @@ class Test(imvu.test.TestCase):
         test_mesh = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'fuzhuangdian.xmf')
         data = file(test_mesh, 'rb').read()
         self.hereAndBackAgain(data, 'CoreMesh')
-        
+
+    def test_morph_loader_does_not_crash(self):
+        anim1 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'AnimationCEO3K.xaf')
+        anim2 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'SkeletalAnimation.xaf')
+        cal3d.loadCoreAnimatedMorphFromBuffer(anim1)
+        cal3d.loadCoreAnimatedMorphFromBuffer(anim2)
 
 
 skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />

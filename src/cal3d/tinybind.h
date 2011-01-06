@@ -244,7 +244,7 @@ public:
   
     virtual bool fromXml( TiXmlElement const & elem, T * thisPtr)
     {
-        if( !_stricmp(elem.Value(), IMemberHolder<T>::tag()) ) {
+        if( !cal3d_stricmp(elem.Value(), IMemberHolder<T>::tag()) ) {
             MT mv;
             TiXmlBinding<MT> const * binding = GetTiXmlBinding( mv,  Identity<MT>()  );
             if( binding->fromXml(elem, &mv, IMemberHolder<T>::params()) ) {

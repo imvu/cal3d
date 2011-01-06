@@ -26,13 +26,13 @@ CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& name)
   char const * dot = strrchr( s2, '.' );
   if( dot ) {
     dot++;
-    if( _stricmp( dot, "exclusive" ) == 0 ) {
+    if( cal3d_stricmp( dot, "exclusive" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeExclusive;
-    } else if( _stricmp( dot, "additive" ) == 0 ) {
+    } else if( cal3d_stricmp( dot, "additive" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeAdditive;
-    } else if( _stricmp( dot, "clamped" ) == 0 ) {
+    } else if( cal3d_stricmp( dot, "clamped" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeClamped;
-    } else if( _stricmp( dot, "average" ) == 0 ) {
+    } else if( cal3d_stricmp( dot, "average" ) == 0 ) {
       m_morphTargetType = CalMorphTargetTypeAverage;
     }
   }

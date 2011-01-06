@@ -56,7 +56,7 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
 {
   if (
       strFilename.size() >= 3 &&
-      _stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION)==0
+      cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION)==0
   ) {
     return saveXmlCoreAnimation(strFilename, pCoreAnimation);
   }
@@ -148,7 +148,7 @@ bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnim
 
 bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph)
 {
-  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),
+  if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),
       Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)==0)
   {
     return saveXmlCoreAnimatedMorph(strFilename, pCoreAnimatedMorph); 
@@ -418,7 +418,7 @@ bool CalSaver::saveCoreMorphKeyframe(std::ofstream& file, const std::string& str
 
 bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial *pCoreMaterial)
 {
-  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MATERIAL_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MATERIAL_XMLFILE_EXTENSION)==0)
     return saveXmlCoreMaterial(strFilename, pCoreMaterial); 
 
   // open the file
@@ -526,7 +526,7 @@ bool CalSaver::saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCo
 
 bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMesh)
 {
-  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
     return saveXmlCoreMesh(strFilename, pCoreMesh);
 
   // open the file
@@ -600,7 +600,7 @@ bool CalSaver::saveCoreMesh(std::ostream& os, const std::string &optionalFilenam
 
 bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton *pCoreSkeleton)
 {
-  if(strFilename.size()>= 3 && _stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
+  if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
     return saveXmlCoreSkeleton(strFilename, pCoreSkeleton); 
 
   // open the file

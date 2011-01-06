@@ -483,11 +483,6 @@ unsigned char hmmmAnimation[] = {
 
 BOOST_STATIC_ASSERT(sizeof(hmmmAnimation) == hmmmLength);
 
-// hack around precision issues
-//inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
-//    return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
-//}
-
 TEST(load_hmmm) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimationFromBuffer(hmmmAnimation, hmmmLength, 0);
     CHECK_EQUAL(anim->tracks.size(), 70);
@@ -580,8 +575,21 @@ const char* invalid_morph =
 "            <ROTATION>0 0 0 1</ROTATION>"
 "        </KEYFRAME>"
 "    </TRACK>"
+"</ANIMATION>"
+;
+
+const char* header_only = 
+"<HEADER MAGIC=\"XPF\" VERSION=\"919\" />"
+;
+
+const char* header_only_without_magic = 
+"<HEADER MAGIC=\"XPF\" VERSION=\"919\" />"
+"<ANIMATION>"
+"</ANIMATION>"
 ;
 
 TEST(morph_loader_doesnt_crash_on_invalid_data) {
   CHECK(!CalLoader::loadXmlCoreAnimatedMorph(invalid_morph));
+  CHECK(!CalLoader::loadXmlCoreAnimatedMorph(header_only));
+  CHECK(CalLoader::loadXmlCoreAnimatedMorph(header_only_without_magic));
 }

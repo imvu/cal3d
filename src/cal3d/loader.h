@@ -93,7 +93,7 @@ public:
   static CalCoreAnimationPtr loadXmlCoreAnimation(TiXmlDocument & doc, CalCoreSkeleton* skel);
 
   static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const std::string& strFilename);
-  static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const void *);
+  static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const char*);
   static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(TiXmlDocument & doc);
 
   static CalCoreSkeleton *loadXmlCoreSkeletonFromFile(const std::string& strFilename);
