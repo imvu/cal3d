@@ -30,3 +30,9 @@ public:
   CalVector translation;
   CalQuaternion rotation;
 };
+
+inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
+  return close(lhs.time, rhs.time) &&
+    lhs.translation == rhs.translation &&
+    lhs.rotation == rhs.rotation;
+}

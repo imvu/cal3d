@@ -17,27 +17,25 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-size_t sizeInBytes(const CalCoreTrackPtr& t) {
-    return sizeof(CalCoreTrackPtr) + t->sizeInBytes();
+size_t sizeInBytes(const CalCoreTrack& t) {
+    return t.sizeInBytes();
 }
 
 size_t CalCoreAnimation::sizeInBytes() const {
   return sizeof(*this) + ::sizeInBytes(tracks);
 }
 
-
-CalCoreTrackPtr CalCoreAnimation::getCoreTrack(int coreBoneId)
-{
-  // loop through all core track
-  TrackList::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
-  {
-    CalCoreTrackPtr& pCoreTrack = *iteratorCoreTrack;
-    if (pCoreTrack->coreBoneId == coreBoneId) {
-        return pCoreTrack;
+const CalCoreTrack* CalCoreAnimation::getCoreTrack(int coreBoneId) const {
+  for (
+    TrackList::const_iterator iteratorCoreTrack = tracks.begin();
+    iteratorCoreTrack != tracks.end();
+    ++iteratorCoreTrack
+  ) {
+    if (iteratorCoreTrack->coreBoneId == coreBoneId) {
+      return &*iteratorCoreTrack;
     }
   }
 
   // no match found
-  return CalCoreTrackPtr();
+  return 0;
 }

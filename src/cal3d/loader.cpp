@@ -328,7 +328,7 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCore
     }
 
     // add the core track to the core animation instance
-    pCoreAnimation->tracks.push_back(pCoreTrack);
+    pCoreAnimation->tracks.push_back(*pCoreTrack);
   }
 
   return pCoreAnimation;

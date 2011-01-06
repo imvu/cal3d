@@ -24,8 +24,9 @@ class CAL3D_API CalCoreTrack {
 public:
   typedef std::vector<CalCoreKeyframe> KeyframeList;
 
-  const int coreBoneId; 
-  const KeyframeList keyframes;
+  // would be const, except store a std::vector of these
+  int coreBoneId; 
+  KeyframeList keyframes;
 
   CalCoreTrack(int coreBoneId, const KeyframeList& keyframes);
 
@@ -33,9 +34,9 @@ public:
 
   void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
 
-  bool getTranslationRequired() { return m_translationRequired; }
+  bool getTranslationRequired() const { return m_translationRequired; }
   void setTranslationRequired( bool p ) { m_translationRequired = p; }
-  bool getTranslationIsDynamic() { return m_translationIsDynamic; }
+  bool getTranslationIsDynamic() const { return m_translationIsDynamic; }
   void setTranslationIsDynamic( bool p ) { m_translationIsDynamic = p; }
 
   CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
@@ -51,3 +52,8 @@ private:
   bool m_translationIsDynamic;
 };
 typedef boost::shared_ptr<CalCoreTrack> CalCoreTrackPtr;
+
+inline bool operator==(const CalCoreTrack& lhs, const CalCoreTrack& rhs) {
+  return lhs.coreBoneId == rhs.coreBoneId &&
+    lhs.keyframes == rhs.keyframes;
+}

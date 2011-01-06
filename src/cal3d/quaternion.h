@@ -210,8 +210,8 @@ static inline CalQuaternion shortestArc( const CalVector& from, const CalVector&
 }
 
 inline bool operator==(const CalQuaternion& lhs, const CalQuaternion& rhs) {
-    return lhs.x == rhs.x
-        && lhs.y == rhs.y
-        && lhs.z == rhs.z
-        && lhs.w == rhs.w;
+  return close(lhs.x, rhs.x)
+    && close(lhs.y, rhs.y)
+    && close(lhs.z, rhs.z)
+    && close(lhs.w, rhs.w);
 }

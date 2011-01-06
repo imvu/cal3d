@@ -54,9 +54,12 @@
 
 bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation)
 {
-  if (strFilename.size() >= 3 &&
-      _stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION)==0)
-    return saveXmlCoreAnimation(strFilename, pCoreAnimation); 
+  if (
+      strFilename.size() >= 3 &&
+      _stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION)==0
+  ) {
+    return saveXmlCoreAnimation(strFilename, pCoreAnimation);
+  }
 
   // open the file
   std::ofstream file;
@@ -66,6 +69,12 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
     CalError::setLastError(CalError::FILE_CREATION_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
+
+  return saveCoreAnimation(file, pCoreAnimation);
+}
+
+bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnimation) {
+  const char* strFilename = ""; // do we care?
 
   // write magic tag
   if(!CalPlatform::writeBytes(file, &Cal::ANIMATION_FILE_MAGIC, sizeof(Cal::ANIMATION_FILE_MAGIC)))
@@ -112,14 +121,11 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
     // save core track
-    if(!saveCoreTrack(file, strFilename, iteratorCoreTrack->get()))
+    if(!saveCoreTrack(file, strFilename, &*iteratorCoreTrack))
     {
       return false;
     }
   }
-
-  // explicitly close the file
-  file.close();
 
   return true;
 }
@@ -318,7 +324,7 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
 
 bool 
 CalSaver::saveCoreKeyframe(
-    std::ofstream& file,
+    std::ostream& file,
     const std::string& strFilename,
     const CalCoreKeyframe *pCoreKeyframe
 ) {
@@ -878,7 +884,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, const std::string& optionalFile
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack)
+bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack)
 {
   if(!file)
   {
@@ -1131,14 +1137,14 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
   CalCoreAnimation::TrackList::iterator iteratorCoreTrack;
   for(iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack)
   {
-    CalCoreTrack* pCoreTrack = iteratorCoreTrack->get();
+    const CalCoreTrack* pCoreTrack = &*iteratorCoreTrack;
 
     TiXmlElement track("TRACK");
     track.SetAttribute("BONEID",pCoreTrack->coreBoneId);
 
     // Always save out the TRANSLATIONREQUIRED flag in XML, and save the translations iff the flag is true.
     bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
-// translationIsDynamic = true;
+
     track.SetAttribute("TRANSLATIONREQUIRED", ( pCoreTrack->getTranslationRequired() ? 1 : 0 ) );
     track.SetAttribute("TRANSLATIONISDYNAMIC", ( translationIsDynamic ? 1 : 0 ) );
     track.SetAttribute("HIGHRANGEREQUIRED", 1);  

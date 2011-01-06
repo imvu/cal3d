@@ -167,8 +167,8 @@ TEST(LoadSimpleXmlAnimation) {
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
-  CalCoreTrack* track1 = anim->tracks[0].get();
-  CalCoreTrack* track2 = anim->getCoreTrack(/*boneid*/ 0).get();
+  const CalCoreTrack* track1 = &anim->tracks[0];
+  const CalCoreTrack* track2 = anim->getCoreTrack(/*boneid*/ 0);
   CHECK(track1);
   CHECK_EQUAL(track1, track2);
 
@@ -203,7 +203,7 @@ TEST(sorts_keyframes_upon_load) {
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
-  CalCoreTrack* track = anim->tracks[0].get();
+  CalCoreTrack* track = &anim->tracks[0];
   CHECK_EQUAL(track->keyframes.size(), 2);
 
   const CalCoreKeyframe& k1 = track->keyframes[0];
@@ -236,7 +236,7 @@ TEST(load_animation_with_translation) {
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
-  CalCoreTrack* track = anim->tracks[0].get();
+  CalCoreTrack* track = &anim->tracks[0];
   CHECK_EQUAL(track->keyframes.size(), 2);
 
   const CalCoreKeyframe& k1 = track->keyframes[0];
@@ -272,7 +272,7 @@ TEST(load_animation_with_static_translations) {
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
-  CalCoreTrack* track = anim->tracks[0].get();
+  CalCoreTrack* track = &anim->tracks[0];
   CHECK_EQUAL(track->keyframes.size(), 2);
 
   const CalCoreKeyframe& k1 = track->keyframes[0];
@@ -308,7 +308,7 @@ TEST(load_animation_with_mismatched_counts) {
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
 
-  CalCoreTrack* track = anim->tracks[0].get();
+  CalCoreTrack* track = &anim->tracks[0];
   CHECK_EQUAL(track->keyframes.size(), 2);
 
   const CalCoreKeyframe& k1 = track->keyframes[0];
@@ -484,9 +484,9 @@ unsigned char hmmmAnimation[] = {
 BOOST_STATIC_ASSERT(sizeof(hmmmAnimation) == hmmmLength);
 
 // hack around precision issues
-inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
-    return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
-}
+//inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
+//    return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
+//}
 
 TEST(load_hmmm) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimationFromBuffer(hmmmAnimation, hmmmLength, 0);
@@ -509,7 +509,7 @@ TEST(load_hmmm) {
         CalCoreKeyframe(3.66667f, CalVector(1e+010,1e+010,1e+010), CalQuaternion(-0.0107474f,-0.0312653f,-0.147533f,0.988504f)),
     };
 
-    CalCoreTrackPtr track2 = anim->tracks[2];
+    CalCoreTrack* track2 = &anim->tracks[2];
     CHECK_EQUAL(14, track2->keyframes.size());
     for (size_t i = 0; i < 14; ++i) {
         CHECK_EQUAL(expected[i], track2->keyframes[i]);
@@ -552,25 +552,36 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
 }
 
 TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
-    disable_test();
-    #if 0
-    CalCoreAnimation* anim1 = CalLoader::loadXmlCoreAnimation(animationText, 0);
+    CalCoreAnimationPtr anim1 = CalLoader::loadXmlCoreAnimation(animationText, 0);
     CHECK(anim1);
 
     std::stringstream buf1;
-    CalSaver::saveXmlCoreAnimation(buf1, anim1);
+    CalSaver::saveXmlCoreAnimation(buf1, anim1.get());
 
-    const char* path = tmpnam(NULL);
-    CalSaver::saveCoreAnimation(path, anim1);
+    std::stringstream output;
+    CalSaver::saveCoreAnimation(output, anim1.get());
 
-    CalCoreAnimation* anim2 = CalLoader::loadCoreAnimation(path, 0);
+    CalCoreAnimationPtr anim2 = CalLoader::loadCoreAnimation(output, 0);
     CHECK(anim2);
 
-    unlink(path);
+    CHECK_EQUAL(*anim1, *anim2);
+}
 
-    std::stringstream buf2;
-    CalSaver::saveXmlCoreAnimation(buf2, anim2);
+const char* invalid_morph = 
+"<HEADER MAGIC=\"XAF\" VERSION=\"919\" />"
+"<ANIMATION NUMTRACKS=\"85\" DURATION=\"4.8571429\">"
+"    <TRACK BONEID=\"1\" NUMKEYFRAMES=\"2\">"
+"        <KEYFRAME TIME=\"0\">"
+"            <TRANSLATION>0 0 663.894</TRANSLATION>"
+"            <ROTATION>0 0 0 1</ROTATION>"
+"        </KEYFRAME>"
+"        <KEYFRAME TIME=\"4.8571429\">"
+"            <TRANSLATION>0 0 663.894</TRANSLATION>"
+"            <ROTATION>0 0 0 1</ROTATION>"
+"        </KEYFRAME>"
+"    </TRACK>"
+;
 
-    CHECK_EQUAL_STR(buf1.str().c_str(), buf2.str().c_str());
-    #endif
+TEST(morph_loader_doesnt_crash_on_invalid_data) {
+  CHECK(!CalLoader::loadXmlCoreAnimatedMorph(invalid_morph));
 }

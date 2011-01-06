@@ -187,16 +187,15 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
     
     CalCoreAnimation::TrackList::iterator itct;
     for (itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++) {
-      CalCoreTrack* ct = itct->get();
-      if (ct->coreBoneId >= int(vectorBone.size())) {
+      if (itct->coreBoneId >= int(vectorBone.size())) {
         continue;
       }
-      CalBone* pBone = &vectorBone[ct->coreBoneId];
+      CalBone* pBone = &vectorBone[itct->coreBoneId];
       
       // get the current translation and rotation
       CalVector translation;
       CalQuaternion rotation;
-      ct->getState(aa->time, translation, rotation);
+      itct->getState(aa->time, translation, rotation);
       
       // Replace and CrossFade both blend with the replace function.
       bool replace = aa->compositionFunction != CalAnimation::CompositionFunctionAverage;

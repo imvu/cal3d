@@ -11,19 +11,21 @@
 #pragma once
 
 #include <list>
-#include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
-
-typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
-class CalCoreSkeleton;
+#include "cal3d/coretrack.h"
 
 class CAL3D_API CalCoreAnimation
 {
 public:
   size_t sizeInBytes() const;
-  CalCoreTrackPtr getCoreTrack(int coreBoneId);
+  const CalCoreTrack* getCoreTrack(int coreBoneId) const;
 
   float duration;
-  typedef std::vector<CalCoreTrackPtr> TrackList;
+  typedef std::vector<CalCoreTrack> TrackList;
   TrackList tracks;
 };
+
+inline bool operator==(const CalCoreAnimation& lhs, const CalCoreAnimation& rhs) {
+  return lhs.duration == rhs.duration &&
+    lhs.tracks == rhs.tracks;
+}

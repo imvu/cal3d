@@ -30,6 +30,7 @@ class CAL3D_API CalSaver
 {
 public:
   static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation);
+  static bool saveCoreAnimation(std::ostream& stream, CalCoreAnimation* coreAnimation);
   static bool saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph);
   static bool saveCoreMaterial(const std::string& strFilename, CalCoreMaterial *pCoreMaterial);
   static bool saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCoreMaterial);
@@ -47,9 +48,9 @@ public:
 
 private:
   static bool saveCoreBones(std::ofstream& file, const std::string& strFilename, CalCoreBone *pCoreBone);
-  static bool saveCoreKeyframe(std::ofstream& file, const std::string& strFilename, const CalCoreKeyframe *pCoreKeyframe);
+  static bool saveCoreKeyframe(std::ostream& file, const std::string& strFilename, const CalCoreKeyframe *pCoreKeyframe);
   static bool saveCoreSubmesh(std::ostream& file, const std::string& optionalFilename, CalCoreSubmesh *pCoreSubmesh);
-  static bool saveCoreTrack(std::ofstream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack);
+  static bool saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack);
   static bool saveCoreMorphKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreMorphKeyframe *pCoreMorphKeyframe);
   static bool saveCoreMorphTrack(std::ofstream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack);
 

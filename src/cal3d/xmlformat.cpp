@@ -856,9 +856,10 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
             keyframes.push_back(pCoreKeyframe);
         }
         CalCoreTrackPtr pCoreTrack(new CalCoreTrack(coreBoneId, keyframes));
+        printf("translationRequired when loading: %d\n", translationRequired);
         pCoreTrack->setTranslationRequired( translationRequired );
         pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
-        pCoreAnimation->tracks.push_back(pCoreTrack);   
+        pCoreAnimation->tracks.push_back(*pCoreTrack);
     }
 
     // explicitly close the file

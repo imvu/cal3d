@@ -83,21 +83,21 @@ public:
 
   inline bool operator==(const CalVector& v) const
   {
-	  return ((x == v.x) && (y == v.y) && (z == v.z));
+    return (close(x, v.x) && close(y, v.y) && close(z, v.z));
   }
 
   inline void blend(float d, const CalVector& v)
   {
-	  x += d * (v.x - x);
-	  y += d * (v.y - y);
-	  z += d * (v.z - z);
+    x += d * (v.x - x);
+    y += d * (v.y - y);
+    z += d * (v.z - z);
   }
 
   inline void clear() 
   {
-	  x=0.0f;
-	  y=0.0f;
-	  z=0.0f;		  
+    x=0.0f;
+    y=0.0f;
+    z=0.0f;		  
   }
 
   inline float lengthSquared() const
@@ -118,9 +118,9 @@ public:
   
   void set(float vx, float vy, float vz)
   {
-	  x = vx;
-	  y = vy;
-	  z = vz;
+    x = vx;
+    y = vy;
+    z = vz;
   }
 
 };

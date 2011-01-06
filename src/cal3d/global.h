@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <math.h>
 #include <boost/noncopyable.hpp>
 #include <string>
 #include <vector>
@@ -20,6 +21,11 @@
 
 typedef unsigned short CalIndex;
 
+const float EPSILON = 1e-5;
+
+inline bool close(float a, float b) {
+  return fabs(a - b) < EPSILON;
+}
 
 void* allocate_aligned_data(size_t size);
 
