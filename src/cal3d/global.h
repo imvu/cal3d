@@ -21,7 +21,7 @@
 
 typedef unsigned short CalIndex;
 
-const float EPSILON = 1e-5;
+const float EPSILON = 1e-5f;
 
 inline bool close(float a, float b) {
   return fabs(a - b) < EPSILON;
