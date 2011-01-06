@@ -1143,9 +1143,9 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
     track.SetAttribute("BONEID",pCoreTrack->coreBoneId);
 
     // Always save out the TRANSLATIONREQUIRED flag in XML, and save the translations iff the flag is true.
-    bool translationIsDynamic = pCoreTrack->getTranslationIsDynamic();
+    bool translationIsDynamic = pCoreTrack->translationIsDynamic;
 
-    track.SetAttribute("TRANSLATIONREQUIRED", ( pCoreTrack->getTranslationRequired() ? 1 : 0 ) );
+    track.SetAttribute("TRANSLATIONREQUIRED", ( pCoreTrack->translationRequired ? 1 : 0 ) );
     track.SetAttribute("TRANSLATIONISDYNAMIC", ( translationIsDynamic ? 1 : 0 ) );
     track.SetAttribute("HIGHRANGEREQUIRED", 1);  
     track.SetAttribute("NUMKEYFRAMES",pCoreTrack->keyframes.size());
@@ -1161,7 +1161,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
             str << pCoreKeyframe.time;          
       keyframe.SetAttribute("TIME",str.str());
       
-      if( pCoreTrack->getTranslationRequired() ) {
+      if( pCoreTrack->translationRequired ) {
 
         // If translation required but not dynamic and i != 0, then I won't write the translation.
         if( translationIsDynamic || i == 0 ) {

@@ -1497,8 +1497,8 @@ CalCoreTrack* CalLoader::loadCoreTrack(
   }
 
   CalCoreTrack* pCoreTrack = new CalCoreTrack(coreBoneId, keyframes);
-  pCoreTrack->setTranslationRequired( translationRequired );
-  pCoreTrack->setTranslationIsDynamic( translationIsDynamic );
+  pCoreTrack->translationRequired = translationRequired;
+  pCoreTrack->translationIsDynamic = translationIsDynamic;
   return pCoreTrack;
 }
 

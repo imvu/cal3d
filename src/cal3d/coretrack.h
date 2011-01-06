@@ -28,16 +28,14 @@ public:
   int coreBoneId; 
   KeyframeList keyframes;
 
+  bool translationRequired;
+  bool translationIsDynamic;
+
   CalCoreTrack(int coreBoneId, const KeyframeList& keyframes);
 
   size_t sizeInBytes() const;
 
   void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
-
-  bool getTranslationRequired() const { return m_translationRequired; }
-  void setTranslationRequired( bool p ) { m_translationRequired = p; }
-  bool getTranslationIsDynamic() const { return m_translationIsDynamic; }
-  void setTranslationIsDynamic( bool p ) { m_translationIsDynamic = p; }
 
   CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
   void translationCompressibility(
@@ -47,9 +45,6 @@ public:
 
 private:
   KeyframeList::const_iterator getUpperBound(float time) const;
-
-  bool m_translationRequired;
-  bool m_translationIsDynamic;
 };
 typedef boost::shared_ptr<CalCoreTrack> CalCoreTrackPtr;
 

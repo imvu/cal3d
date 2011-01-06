@@ -172,8 +172,8 @@ TEST(LoadSimpleXmlAnimation) {
   CHECK(track1);
   CHECK_EQUAL(track1, track2);
 
-  CHECK_EQUAL(track1->getTranslationRequired(), false);
-  CHECK_EQUAL(track1->getTranslationIsDynamic(), false);
+  CHECK_EQUAL(track1->translationRequired, false);
+  CHECK_EQUAL(track1->translationIsDynamic, false);
   CHECK_EQUAL(track1->keyframes.size(), 2);
 
   std::ostringstream ss;

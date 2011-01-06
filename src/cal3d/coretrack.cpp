@@ -32,8 +32,8 @@ CalCoreTrack::CalCoreTrack(int coreBone, const KeyframeList& kf)
 : coreBoneId(coreBone)
 , keyframes(sorted(kf))
 {
-  m_translationRequired = true;
-  m_translationIsDynamic = true;
+  translationRequired = true;
+  translationIsDynamic = true;
 }
 
 size_t sizeInBytes(const CalCoreKeyframe&) {
@@ -202,10 +202,10 @@ CalCoreTrackPtr CalCoreTrack::compress(
 
   // Update the flag saying whether the translation, which I have loaded, is actually required.
   // If translation is not required, I can't do any better than that so I leave it alone.
-  if( skelOrNull && m_translationRequired ) {
+  if( skelOrNull && translationRequired ) {
     result->translationCompressibility( 
-      &result->m_translationRequired, 
-      &result->m_translationIsDynamic, 
+      &result->translationRequired, 
+      &result->translationIsDynamic, 
       translationTolerance, CalLoader::keyframePosRangeSmall, skelOrNull );
   }
 
