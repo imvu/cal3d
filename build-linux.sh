@@ -3,8 +3,6 @@ cd "`dirname \"$0\"`"
 
 SOURCES="
     src/cal3d/animation.cpp
-    src/cal3d/animation_action.cpp
-    src/cal3d/animation_cycle.cpp
     src/cal3d/bone.cpp
     src/cal3d/buffersource.cpp
     src/cal3d/calxmlbindings.cpp

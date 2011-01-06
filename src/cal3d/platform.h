@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <assert.h>
 #include <memory>
 #include <stdlib.h>
 
@@ -20,6 +21,9 @@ inline int cal3d_stricmp(const char* s1, const char* s2) {
   return _stricmp(s1, s2);
 }
 #else
+#ifndef __APPLE__
+#include <strings.h>
+#endif
 inline int cal3d_stricmp(const char* s1, const char* s2) {
   assert(s1);
   assert(s2);
