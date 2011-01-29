@@ -13,6 +13,7 @@
 #endif
 
 #include <fstream>
+#include <stdexcept>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
 #include "cal3d/vector.h"
@@ -68,13 +69,17 @@ float const CalLoader::keyframePosRangeSmall = ( 1 << ( CalLoader::keyframeBitsP
 
 template<typename T>
 void allocateVectorWhereSizeIsGuarded(size_t n, std::vector<T> &o_ret, int lineNumMacroVal){
-    if( n > o_ret.max_size())
-    {
+    try {
+        o_ret.resize(n);
+    } catch (std::bad_alloc &) {
         CalError calerr;
-        calerr.setLastError(CalError::FILE_PARSER_FAILED, __FILE__, lineNumMacroVal);
+        calerr.setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, lineNumMacroVal);
+        throw calerr;
+    } catch (std::length_error &) {
+        CalError calerr;
+        calerr.setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, lineNumMacroVal);
         throw calerr;
     }
-    o_ret.resize(n);
 }
 
 bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec )
@@ -230,7 +235,7 @@ CalCoreMaterial *CalLoader::loadCoreMaterialFromBuffer(const void* inputBuffer, 
 
 CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len)
 {
-   //Create a new buffer data source and pass it on
+    //Create a new buffer data source and pass it on
     CalCoreMesh * result = NULL;
     try {
         CalBufferSource bufferSrc(inputBuffer, len);
