@@ -16,16 +16,6 @@ class Test(imvu.test.TestCase):
     def testSkel(self):
         self.hereAndBackAgain(origData=skeleton1, calCoreType="CoreSkeleton")
 
-    # TODO: fix this test (probably needs new data)
-    def testSkelAnimation(self):
-        self.disable_test()
-        self.hereAndBackAgain(origData=animation1, calCoreType="CoreAnimation")
-
-    # TODO: fix this test (probably needs new data)
-    def testSkelAnimation2(self):
-        self.disable_test()
-        self.hereAndBackAgain(origData=animation2, calCoreType="CoreAnimation")
-
     def testMaterial(self):
         self.hereAndBackAgain(origData=material1, calCoreType="CoreMaterial")
 
