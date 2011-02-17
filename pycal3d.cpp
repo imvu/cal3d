@@ -66,6 +66,10 @@ tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) 
     );
 }
 
+std::string getCoreBoneName(boost::shared_ptr<CalCoreBone> bone) {
+    return bone->getName();
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -74,7 +78,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 {
     class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone", no_init)
         .def(init<std::string>())
-        .add_property("name", &CalCoreBone::name)
+        .add_property("name", &getCoreBoneName)
         ;
     class_< std::vector<boost::shared_ptr<CalCoreBone> > >("BoneVector")
         .def(vector_indexing_suite< std::vector<boost::shared_ptr<CalCoreBone> > >())

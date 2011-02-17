@@ -570,7 +570,13 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         }
         parentId = atoi(parentid->Value());
 
-        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(strName, parentId));
+        // allocate a new core bone instance
+        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(strName));
+
+        // set the parent of the bone
+        pCoreBone->setParentId(parentId);
+
+        // set all attributes of the bone
 
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, rw);
@@ -580,8 +586,8 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         pCoreBone->setTranslationBoneSpace(CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace));
         pCoreBone->setRotationBoneSpace(CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace));
 
-        pCoreBone->lightType = lightType;
-        pCoreBone->lightColor = lightColor;
+        pCoreBone->setLightType( lightType );
+        pCoreBone->setLightColor( lightColor );
 
         TiXmlElement* child;
         for( child = parent->NextSiblingElement();child;child = child->NextSiblingElement() )

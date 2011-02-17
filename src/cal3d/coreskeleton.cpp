@@ -16,16 +16,22 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-int CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone) {
+int CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone)
+{
+  // get next bone id
   int boneId = coreBones.size();
+
   coreBones.push_back(pCoreBone);
 
-  if(pCoreBone->parentId == -1)
+  // if necessary, add the core bone to the root bone list
+  if(pCoreBone->getParentId() == -1)
   {
     rootBoneIds.push_back(boneId);
   }
 
-  mapCoreBoneName(boneId, pCoreBone->name);
+  // add a reference from the bone's name to its id
+  mapCoreBoneName( boneId, pCoreBone->getName() );
+
   return boneId;
 }
 

@@ -24,6 +24,7 @@ public:
     int addCoreBone(const CalCoreBonePtr& pCoreBone);
     void calculateState();
     CalCoreBone* getCoreBone(const std::string& strName);
+    int getCoreBoneId(const std::string& strName);
     void scale(float factor);
 
     std::vector<CalCoreBonePtr> coreBones;
@@ -31,7 +32,6 @@ public:
     CalVector sceneAmbientColor;
 
 private:
-    int getCoreBoneId(const std::string& strName);
     bool mapCoreBoneName(int coreBoneId, const std::string& strName);
     std::map<std::string, int> m_mapCoreBoneNames;
 };
