@@ -12,10 +12,6 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/error.h"
 #include "cal3d/corebone.h"
 #include "cal3d/coreskeleton.h"
@@ -29,20 +25,6 @@ CalCoreBone::CalCoreBone(const std::string& name)
 {
 }
 
-
- /*****************************************************************************/
-/** Adds a child ID.
-  *
-  * This function adds a core bone ID to the child ID list of the core bone
-  * instance.
-  *
-  * @param childId The ID of the core bone ID that shoud be added to the child
-  *                ID list.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
 bool CalCoreBone::addChildId(int childId)
 {
