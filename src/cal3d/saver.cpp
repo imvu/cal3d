@@ -627,27 +627,21 @@ bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton 
   }
 
   // write the number of bones
-  if(!CalPlatform::writeInteger(file, pCoreSkeleton->getVectorCoreBone().size()))
+  if(!CalPlatform::writeInteger(file, pCoreSkeleton->coreBones.size()))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
 
   // write the sceneambient
-  CalVector sceneColor;
-  pCoreSkeleton->getSceneAmbientColor(sceneColor);
+  CalVector sceneColor = pCoreSkeleton->sceneAmbientColor;
   CalPlatform::writeFloat(file, sceneColor.x);
   CalPlatform::writeFloat(file, sceneColor.y);
   CalPlatform::writeFloat(file, sceneColor.z);
 
   
-  // write all core bones
-  int boneId;
-  for(boneId = 0; boneId < (int)pCoreSkeleton->getVectorCoreBone().size(); ++boneId)
-  {
-    // write the core bone
-    if(!saveCoreBones(file, strFilename, pCoreSkeleton->getCoreBone(boneId)))
-    {
+  for(size_t boneId = 0; boneId < pCoreSkeleton->coreBones.size(); ++boneId) {
+    if(!saveCoreBones(file, strFilename, pCoreSkeleton->coreBones[boneId].get())) {
       return false;
     }
   }
@@ -980,18 +974,17 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
   doc.InsertEndChild(header);
 
   TiXmlElement skeleton("SKELETON");
-  skeleton.SetAttribute("NUMBONES",pCoreSkeleton->getVectorCoreBone().size());
+  skeleton.SetAttribute("NUMBONES",pCoreSkeleton->coreBones.size());
 
-  CalVector sceneColor;
-  pCoreSkeleton->getSceneAmbientColor(sceneColor);
+  CalVector sceneColor = pCoreSkeleton->sceneAmbientColor;
   str << sceneColor.x << " " << sceneColor.y << " " << sceneColor.z;
   skeleton.SetAttribute("SCENEAMBIENTCOLOR", str.str());
 
 
   int boneId;
-  for(boneId = 0; boneId < (int)pCoreSkeleton->getVectorCoreBone().size(); ++boneId)
+  for(boneId = 0; boneId < (int)pCoreSkeleton->coreBones.size(); ++boneId)
   {
-    CalCoreBone* pCoreBone=pCoreSkeleton->getCoreBone(boneId);
+    CalCoreBone* pCoreBone=pCoreSkeleton->coreBones[boneId].get();
 
     TiXmlElement bone("BONE");    
     bone.SetAttribute("ID",boneId);

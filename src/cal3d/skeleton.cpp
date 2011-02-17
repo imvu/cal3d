@@ -26,7 +26,7 @@ CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton
   assert(pCoreSkeleton);
 
   // clone the skeleton structure of the core skeleton
-  std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
+  std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->coreBones;
 
   size_t boneCount = vectorCoreBone.size();
   bones.reserve(boneCount);
@@ -38,17 +38,10 @@ CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton
   boneTransforms.resize(boneCount);
 }
 
- /*****************************************************************************/
-/** Calculates the state of the skeleton instance.
-  *
-  * This function calculates the state of the skeleton instance by recursively
-  * calculating the states of its bones.
-  *****************************************************************************/
-
 void CalSkeleton::calculateState()
 {
   // calculate all bone states of the skeleton
-  const std::vector<int>& listRootCoreBoneId = m_pCoreSkeleton->getListRootCoreBoneId();
+  const std::vector<int>& listRootCoreBoneId = m_pCoreSkeleton->rootBoneIds;
 
   std::vector<int>::const_iterator iteratorRootBoneId;
   for(iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId)

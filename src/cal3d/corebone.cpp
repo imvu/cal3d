@@ -69,7 +69,7 @@ void CalCoreBone::calculateState(CalCoreSkeleton* skeleton)
   else
   {
     // get the parent bone
-    CalCoreBone *pParent = skeleton->getCoreBone(m_parentId);
+    CalCoreBone *pParent = skeleton->coreBones[m_parentId].get();
 
     // transform relative state with the absolute state of the parent
     m_translationAbsolute = m_translation;
@@ -84,7 +84,7 @@ void CalCoreBone::calculateState(CalCoreSkeleton* skeleton)
   std::vector<int>::iterator iteratorChildId;
   for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId)
   {
-    skeleton->getCoreBone(*iteratorChildId)->calculateState(skeleton);
+    skeleton->coreBones[*iteratorChildId]->calculateState(skeleton);
   }
 }
 
@@ -166,18 +166,16 @@ void CalCoreBone::setTranslationBoneSpace(const CalVector& translation)
   *****************************************************************************/
 
 
-void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton)
-{
-	m_translation*=factor;
-	m_translationAbsolute*=factor;
-	m_translationBoneSpace*=factor;
+void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
+    m_translation *= factor;
+    m_translationAbsolute *= factor;
+    m_translationBoneSpace *= factor;
 	
-	// calculate all child bones
-	std::vector<int>::const_iterator iteratorChildId;
-	for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId)
-	{
-		skeleton->getCoreBone(*iteratorChildId)->scale(factor, skeleton);
-	}
+    // calculate all child bones
+    std::vector<int>::const_iterator iteratorChildId;
+    for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId) {
+        skeleton->coreBones[*iteratorChildId]->scale(factor, skeleton);
+    }
 }
 
 

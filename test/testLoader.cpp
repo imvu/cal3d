@@ -348,11 +348,10 @@ TEST(simple_two_bone_skeleton) {
   float tol=0.001f;
   boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadXmlCoreSkeleton(simple_two_bone_skeleton));
   CHECK(skel);
-  CHECK_EQUAL(skel->getNumCoreBones(), 2);
-  CalVector sceneAmbientClr;
-  skel->getSceneAmbientColor(sceneAmbientClr);
+  CHECK_EQUAL(skel->coreBones.size(), 2);
+  CalVector sceneAmbientClr = skel->sceneAmbientColor;
   CHECK_EQUAL(CalVector(0.5f, 0.5f, 0.5f), sceneAmbientClr);
-  CalCoreBone* rootBone = skel->getCoreBone(0);
+  CalCoreBone* rootBone = skel->coreBones[0].get();
   CHECK(rootBone);
   const std::string rootBoneName = rootBone->getName();
   CHECK_EQUAL(rootBoneName.c_str(), "AttachmentRoot");
@@ -387,7 +386,7 @@ TEST(simple_two_bone_skeleton) {
   CHECK_CLOSE(boneSpaceTrans.x, -772.275, tol);
   CHECK_CLOSE(boneSpaceTrans.y, 34.8962, tol);
   CHECK_CLOSE(boneSpaceTrans.z, -0.333774, tol);
-  CalCoreBone * child = skel->getCoreBone(childrenOfRootBone[0]);
+  CalCoreBone * child = skel->coreBones[childrenOfRootBone[0]].get();
   int parentIdOfChildBone = child->getParentId();
   CHECK_EQUAL(parentIdOfChildBone, 0);
 }

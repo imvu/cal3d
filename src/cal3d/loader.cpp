@@ -644,7 +644,7 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
   if( hasNodeLights ) {
     CalVector sceneColor;
     CalVectorFromDataSrc( dataSrc, &sceneColor );
-    pCoreSkeleton->setSceneAmbientColor(sceneColor);
+    pCoreSkeleton->sceneAmbientColor = sceneColor;
   }
   
   // load all core bones
@@ -660,10 +660,6 @@ CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
 
     // add the core bone to the core skeleton instance
     pCoreSkeleton->addCoreBone(pCoreBone);
-
-    // add a core skeleton mapping of the bone's name for quick reference later
-    pCoreSkeleton->mapCoreBoneName(boneId, pCoreBone->getName());
-
   }
 
   // calculate state of the core skeleton
@@ -1470,7 +1466,9 @@ CalCoreTrack* CalLoader::loadCoreTrack(
 
   CalCoreBone * cb = NULL;
   if( skel ) {
-    cb = skel->getCoreBone( coreBoneId );
+    if (coreBoneId < skel->coreBones.size()) {
+      cb = skel->coreBones[coreBoneId].get();
+    }
   }
 
 

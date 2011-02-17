@@ -391,7 +391,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     if( attrStr ) {
         CalVector sceneColor;
         ReadTripleFloat( attrStr, &sceneColor.x, &sceneColor.y, &sceneColor.z );
-        pCoreSkeleton->setSceneAmbientColor( sceneColor );
+        pCoreSkeleton->sceneAmbientColor = sceneColor;
     }
 
     TiXmlElement* bone;
@@ -719,10 +719,10 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
 
         CalCoreBone * cb = NULL; 
         if( skel ) {
-            cb = skel->getCoreBone( coreBoneId );
-            if (!cb) {
+            if (coreBoneId >= skel->coreBones.size()) {
                 continue;
             }
+            cb = skel->coreBones[coreBoneId].get();
         }
 
         CalCoreTrack::KeyframeList keyframes;

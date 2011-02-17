@@ -224,7 +224,7 @@ void CalCoreTrack::translationCompressibility(
   * transRequiredResult = false;
   * transDynamicResult = false;
   int numFrames = keyframes.size();
-  CalCoreBone * cb = skel->getCoreBone( coreBoneId );
+  CalCoreBone * cb = skel->coreBones[coreBoneId].get();
   const CalVector & cbtrans = cb->getTranslation();
   CalVector trans0;
   float t2 = threshold * threshold;

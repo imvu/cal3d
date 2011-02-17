@@ -58,8 +58,7 @@ bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animat
 }
 
 tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) {
-    CalVector sceneAmbient;
-    skel->getSceneAmbientColor(sceneAmbient);
+    CalVector sceneAmbient = skel->sceneAmbientColor;
     return make_tuple(
         sceneAmbient.x,
         sceneAmbient.y,
@@ -88,7 +87,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor)
-        .add_property("bones", &CalCoreSkeleton::m_vectorCoreBone)
+        .add_property("bones", &CalCoreSkeleton::coreBones)
         ;
 
     {
