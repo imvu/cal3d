@@ -747,10 +747,7 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
   }
 
   // allocate a new core bone instance
-  CalCoreBone *pCoreBone = new CalCoreBone(strName);
-
-  // set the parent of the bone
-  pCoreBone->setParentId(parentId);
+  CalCoreBone *pCoreBone = new CalCoreBone(strName, parentId);
 
   // set all attributes of the bone
   pCoreBone->setTranslation(trans);
@@ -758,8 +755,8 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
   pCoreBone->setTranslationBoneSpace(CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace));
   pCoreBone->setRotationBoneSpace(rotbs);
   if( hasNodeLights ) {
-    pCoreBone->setLightType( (CalLightType)lightType );
-    pCoreBone->setLightColor( lightColor );
+    pCoreBone->lightType = (CalLightType)lightType;
+    pCoreBone->lightColor = lightColor;
   }
 
   // read the number of children

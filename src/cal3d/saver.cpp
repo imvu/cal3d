@@ -235,7 +235,7 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
   }
 
   // write the name of the bone
-  if(!CalPlatform::writeString(file, pCoreBone->getName()))
+  if(!CalPlatform::writeString(file, pCoreBone->name))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
@@ -268,16 +268,15 @@ bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename
   CalPlatform::writeFloat(file, rotationBoneSpace[3]);
 
   // write the parent bone id
-  if(!CalPlatform::writeInteger(file, pCoreBone->getParentId()))
+  if(!CalPlatform::writeInteger(file, pCoreBone->parentId))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
 
   // write lighting data
-  CalPlatform::writeInteger(file, pCoreBone->getLightType());
-  CalVector c;
-  pCoreBone->getLightColor( c );
+  CalPlatform::writeInteger(file, pCoreBone->lightType);
+  CalVector c = pCoreBone->lightColor;
   CalPlatform::writeFloat(file, c.x);
   CalPlatform::writeFloat(file, c.y);
   CalPlatform::writeFloat(file, c.z);
@@ -988,13 +987,12 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
     TiXmlElement bone("BONE");    
     bone.SetAttribute("ID",boneId);
-    bone.SetAttribute("NAME",pCoreBone->getName());
+    bone.SetAttribute("NAME",pCoreBone->name);
     bone.SetAttribute("NUMCHILDS",pCoreBone->getListChildId().size());
           if( pCoreBone->hasLightingData() ) {
-            bone.SetAttribute("LIGHTTYPE",pCoreBone->getLightType());
+            bone.SetAttribute("LIGHTTYPE",pCoreBone->lightType);
             str.str("");
-            CalVector c;
-            pCoreBone->getLightColor( c );
+            CalVector c = pCoreBone->lightColor;
             str << c.x << " " << c.y << " " << c.z;
             bone.SetAttribute("LIGHTCOLOR",str.str());
           }
@@ -1059,10 +1057,10 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
     TiXmlElement parent("PARENTID");
     str.str("");
-      str << pCoreBone->getParentId();
+    str << pCoreBone->parentId;
     TiXmlText parentid(str.str());
     parent.InsertEndChild(parentid);
-      bone.InsertEndChild(parent);
+    bone.InsertEndChild(parent);
 
 
     // get children list
