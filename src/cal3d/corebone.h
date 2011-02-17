@@ -27,23 +27,19 @@ enum CalLightType {
 };
 
 
-class CAL3D_API CalCoreBone
-{
+class CAL3D_API CalCoreBone {
 public:
-  CalCoreBone(const std::string& name);
+  CalCoreBone(const std::string& name, int parentId = -1);
 
   bool addChildId(int childId);
   void calculateState(CalCoreSkeleton* skeleton);
   const std::vector<int>& getListChildId() const { return m_listChildId; }
-  const std::string& getName() const { return m_strName; }
-  int getParentId() const { return m_parentId; }
   const CalQuaternion& getRotation() const { return m_rotation; }
   const CalQuaternion& getRotationAbsolute() const { return m_rotationAbsolute; }
   const CalQuaternion& getRotationBoneSpace() const { return m_rotationBoneSpace; }
   const CalVector& getTranslation() const { return m_translation; }
   const CalVector& getTranslationAbsolute() const { return m_translationAbsolute; }
   const CalVector& getTranslationBoneSpace() const { return m_translationBoneSpace; }
-  void setParentId(int parentId);
   void setRotation(const CalQuaternion& rotation);
   void setRotationBoneSpace(const CalQuaternion& rotation);
   void setTranslation(const CalVector& translation);
@@ -52,14 +48,14 @@ public:
   void scale(float factor, CalCoreSkeleton* skeleton);
 
   bool hasLightingData();
-  void getLightColor( CalVector & );
-  void setLightColor( CalVector const & );
-  CalLightType  getLightType();
-  void setLightType( CalLightType );
+
+  const int parentId;
+  const std::string name;
+
+  CalVector lightColor;
+  CalLightType lightType;
 
 private:
-  std::string m_strName;
-  int m_parentId;
   std::vector<int> m_listChildId;
   CalVector m_translation;
   CalQuaternion m_rotation;
@@ -67,7 +63,4 @@ private:
   CalQuaternion m_rotationAbsolute;
   CalVector m_translationBoneSpace;
   CalQuaternion m_rotationBoneSpace;
-
-  CalVector m_lightColor;
-  CalLightType m_lightType;
 };

@@ -353,11 +353,11 @@ TEST(simple_two_bone_skeleton) {
   CHECK_EQUAL(CalVector(0.5f, 0.5f, 0.5f), sceneAmbientClr);
   CalCoreBone* rootBone = skel->coreBones[0].get();
   CHECK(rootBone);
-  const std::string rootBoneName = rootBone->getName();
+  const std::string rootBoneName = rootBone->name;
   CHECK_EQUAL(rootBoneName.c_str(), "AttachmentRoot");
   const std::vector<int>& childrenOfRootBone = rootBone->getListChildId();
   CHECK_EQUAL(childrenOfRootBone.size(), 1);
-  int parentIdOfRootBone = rootBone->getParentId();
+  int parentIdOfRootBone = rootBone->parentId;
   CHECK_EQUAL(parentIdOfRootBone, -1);
   const CalQuaternion& rot = rootBone->getRotation();
   CHECK_CLOSE(rot.x, 0.706778, tol);
@@ -387,7 +387,7 @@ TEST(simple_two_bone_skeleton) {
   CHECK_CLOSE(boneSpaceTrans.y, 34.8962, tol);
   CHECK_CLOSE(boneSpaceTrans.z, -0.333774, tol);
   CalCoreBone * child = skel->coreBones[childrenOfRootBone[0]].get();
-  int parentIdOfChildBone = child->getParentId();
+  int parentIdOfChildBone = child->parentId;
   CHECK_EQUAL(parentIdOfChildBone, 0);
 }
 

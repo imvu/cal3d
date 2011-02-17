@@ -173,9 +173,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex)
     m_rotation = m_coreBone.getRotation();
   }
 
-  // get parent bone id
-  int parentId = m_coreBone.getParentId();
-
+  int parentId = m_coreBone.parentId;
   if(parentId == -1)
   {
     // no parent, this means absolute state == relative state
