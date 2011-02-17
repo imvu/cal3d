@@ -77,7 +77,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("name", &CalCoreBone::name)
         ;
     class_< std::vector<boost::shared_ptr<CalCoreBone> > >("BoneVector")
-        .def(vector_indexing_suite< std::vector<boost::shared_ptr<CalCoreBone> > >())
+        .def(vector_indexing_suite< std::vector<boost::shared_ptr<CalCoreBone> >, true >())
         ;
 
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
