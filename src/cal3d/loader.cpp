@@ -452,21 +452,21 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
   }
 
   // get the ambient color of the core material
-  CalCoreMaterial::Color ambientColor;
+  unsigned char ambientColor[4];
   if( !dataSrc.readBytes(&ambientColor, sizeof(ambientColor)) ) {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
     return NULL;
   }
 
   // get the diffuse color of the core material
-  CalCoreMaterial::Color diffuseColor;
+  unsigned char diffuseColor[4];
   if( !dataSrc.readBytes(&diffuseColor, sizeof(diffuseColor)) ) {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
     return NULL;
   }
 
   // get the specular color of the core material
-  CalCoreMaterial::Color specularColor;
+  unsigned char specularColor[4];
   if( !dataSrc.readBytes(&specularColor, sizeof(specularColor)) ) {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
     return NULL;

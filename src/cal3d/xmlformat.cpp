@@ -1502,7 +1502,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
         return 0;
     }
 
-    CalCoreMaterial::Color ambientColor; 
     node = ambient->FirstChild();
     if(!node)
     {
@@ -1522,10 +1521,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
 
     str << ambientdata->Value();
     str >> r >> g >> b >> a;
-    ambientColor.red = (unsigned char)r;
-    ambientColor.green = (unsigned char)g;
-    ambientColor.blue = (unsigned char)b;
-    ambientColor.alpha = (unsigned char)a; 
 
     TiXmlElement* diffuse = ambient->NextSiblingElement();
     if(!diffuse || cal3d_stricmp(diffuse->Value(),"DIFFUSE")!=0)
@@ -1535,7 +1530,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
         return 0;
     }
 
-    CalCoreMaterial::Color diffuseColor; 
     node = diffuse->FirstChild();
     if(!node)
     {
@@ -1553,10 +1547,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     str.clear();
     str << diffusedata->Value();
     str >> r >> g >> b >> a;
-    diffuseColor.red = (unsigned char)r;
-    diffuseColor.green = (unsigned char)g;
-    diffuseColor.blue = (unsigned char)b;
-    diffuseColor.alpha = (unsigned char)a;
 
 
     TiXmlElement* specular = diffuse->NextSiblingElement();
@@ -1567,7 +1557,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
         return 0;
     }
 
-    CalCoreMaterial::Color specularColor; 
     node = specular->FirstChild();
     if(!node)
     {
@@ -1585,10 +1574,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     str.clear();
     str << speculardata->Value();
     str >> r >> g >> b >> a;
-    specularColor.red = (unsigned char)r;
-    specularColor.green = (unsigned char)g;
-    specularColor.blue = (unsigned char)b;
-    specularColor.alpha = (unsigned char)a;
 
 
     TiXmlElement* shininess = specular->NextSiblingElement();

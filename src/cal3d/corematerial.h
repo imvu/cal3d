@@ -15,13 +15,6 @@
 
 class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder {
 public:
-  struct Color {
-    unsigned char red;
-    unsigned char green;
-    unsigned char blue;
-    unsigned char alpha;
-  };
-
   struct Map {
     std::string filename;
     std::string type;

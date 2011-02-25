@@ -459,17 +459,15 @@ bool CalSaver::saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCo
     return false;
   }
 
-  CalCoreMaterial::Color ambientColor = {0, 0, 0, 0};
+  unsigned char ambientColor[4] = {0, 0, 0, 0};
   CalPlatform::writeBytes(file, &ambientColor, sizeof(ambientColor));
 
-  CalCoreMaterial::Color diffusetColor = {0, 0, 0, 0};
+  unsigned char diffusetColor[4] = {0, 0, 0, 0};
   CalPlatform::writeBytes(file, &diffusetColor, sizeof(diffusetColor));
 
-  // write the specular color
-  CalCoreMaterial::Color specularColor = {0, 0, 0, 0};
+  unsigned char specularColor[4] = {0, 0, 0, 0};
   CalPlatform::writeBytes(file, &specularColor, sizeof(specularColor));
 
-  // write the shininess factor
   CalPlatform::writeFloat(file, 0.0f);
 
   // check if an error happend
@@ -1605,14 +1603,11 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
   
   TiXmlElement ambient("AMBIENT");
 
-  CalCoreMaterial::Color ambientColor = {0, 0, 0, 0};
-
-
   str.str("");
-  str << (int)ambientColor.red << " " 
-    << (int)ambientColor.green << " "
-    << (int)ambientColor.blue << " "
-    << (int)ambientColor.alpha;
+  str << 0 << " " 
+    << 0 << " "
+    << 0 << " "
+    << 0;
   
   TiXmlText ambientdata(str.str());
   
@@ -1622,13 +1617,11 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
 
   TiXmlElement diffuse("DIFFUSE");
 
-  CalCoreMaterial::Color diffuseColor = {0, 0, 0, 0};
-  
   str.str("");
-  str << (int)diffuseColor.red << " " 
-    << (int)diffuseColor.green << " "
-    << (int)diffuseColor.blue << " "
-    << (int)diffuseColor.alpha;
+  str << 0 << " " 
+    << 0 << " "
+    << 0 << " "
+    << 0;
   
   TiXmlText diffusedata(str.str());
 
@@ -1638,13 +1631,11 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
 
   TiXmlElement specular("SPECULAR");
 
-  CalCoreMaterial::Color specularColor = {0, 0, 0, 0};
-
   str.str("");
-  str << (int)specularColor.red << " " 
-    << (int)specularColor.green << " "
-    << (int)specularColor.blue << " "
-    << (int)specularColor.alpha;
+  str << 0 << " " 
+    << 0 << " "
+    << 0 << " "
+    << 0;
   
   TiXmlText speculardata(str.str());
 
