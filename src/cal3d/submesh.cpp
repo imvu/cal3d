@@ -27,26 +27,26 @@ BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 static float const ReplacementAttenuationNull = 100.0; // Any number not between zero and one.
 
 CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
-  : m_pCoreSubmesh(pCoreSubmesh)
+  : coreSubmesh(pCoreSubmesh)
 {
   assert(pCoreSubmesh);
 
   // reserve memory for the face vector
-  m_vectorFace.resize(m_pCoreSubmesh->getFaceCount());
+  m_vectorFace.resize(coreSubmesh->getFaceCount());
 
   // set the initial lod level
   setLodLevel(1.0f);
 
   //Setting the morph target weights
-  m_vectorMorphTargetWeight.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
-  m_vectorAccumulatedWeight.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
-  m_vectorReplacementAttenuation.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());  
+  m_vectorMorphTargetWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
+  m_vectorAccumulatedWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
+  m_vectorReplacementAttenuation.resize(coreSubmesh->getCoreSubMorphTargetCount());  
 
   // Array is indexed by group, and there can't be more groups than there are morph targets.
-  m_vectorSubMorphTargetGroupAttenuator.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());
-  m_vectorSubMorphTargetGroupAttenuation.resize(m_pCoreSubmesh->getCoreSubMorphTargetCount());  
+  m_vectorSubMorphTargetGroupAttenuator.resize(coreSubmesh->getCoreSubMorphTargetCount());
+  m_vectorSubMorphTargetGroupAttenuation.resize(coreSubmesh->getCoreSubMorphTargetCount());  
 
-  for(int morphTargetId = 0; morphTargetId<m_pCoreSubmesh->getCoreSubMorphTargetCount();++morphTargetId)
+  for(int morphTargetId = 0; morphTargetId<coreSubmesh->getCoreSubMorphTargetCount();++morphTargetId)
   {
     m_vectorSubMorphTargetGroupAttenuator[ morphTargetId ] = -1; // No attenuator by default.
     m_vectorSubMorphTargetGroupAttenuation[ morphTargetId ] = 0.0f; // No attenuation by default.
@@ -72,17 +72,17 @@ void CalSubmesh::setLodLevel(float lodLevel)
 
   // get the lod count of the core submesh
   int lodCount;
-  lodCount = m_pCoreSubmesh->getLodCount();
+  lodCount = coreSubmesh->getLodCount();
 
   // calculate the target lod count
   lodCount = (int)((1.0f - lodLevel) * lodCount);
 
   // calculate the new number of vertices
-  m_vertexCount = m_pCoreSubmesh->getVertexCount() - lodCount;
+  m_vertexCount = coreSubmesh->getVertexCount() - lodCount;
 
-  const std::vector<CalCoreSubmesh::Face>& vectorFace = m_pCoreSubmesh->getVectorFace();
-  const CalCoreSubmesh::VectorVertex& vectorVertex = m_pCoreSubmesh->getVectorVertex();
-  std::vector<CalCoreSubmesh::LodData>& lodData = m_pCoreSubmesh->getLodData();
+  const std::vector<CalCoreSubmesh::Face>& vectorFace = coreSubmesh->getVectorFace();
+  const CalCoreSubmesh::VectorVertex& vectorVertex = coreSubmesh->getVectorVertex();
+  std::vector<CalCoreSubmesh::LodData>& lodData = coreSubmesh->getLodData();
 
   // calculate the new number of faces
   m_faceCount = vectorFace.size();
@@ -160,7 +160,7 @@ void CalSubmesh::getMorphIdAndWeightArray(
 void CalSubmesh::setMorphTargetWeight(std::string const & morphName,float weight)
 {
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
-    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
       m_vectorMorphTargetWeight[i] = weight;
       return;
@@ -197,7 +197,7 @@ CalSubmesh::clearMorphTargetState( std::string const & morphName )
 {
   // TODO: this is very inefficient. we should probably use a map instead
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
-    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
       m_vectorMorphTargetWeight[i] = 0.0f;
       m_vectorAccumulatedWeight[ i ] = 0.0f;
@@ -250,7 +250,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
 {
   int size = m_vectorMorphTargetWeight.size();
   for(int i = 0; i < size; i++) {
-    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget( i );
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget( i );
     if( target->name() == morphName ) {
       CalMorphTargetType mtype = target->morphTargetType();
       switch( mtype ) {
@@ -278,7 +278,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
       case CalMorphTargetTypeAverage:
         {
 
-          unsigned int subMorphTargetGroupIndex = m_pCoreSubmesh->subMorphTargetGroupIndex( i );
+          unsigned int subMorphTargetGroupIndex = coreSubmesh->subMorphTargetGroupIndex( i );
           float attenuatedWeight = unrampedWeight * rampValue;
 
           // If morph target is not in a group, then the group exclusivity doesn't apply.
@@ -376,7 +376,7 @@ CalSubmesh::blendMorphTargetScale( std::string const & morphName,
 bool CalSubmesh::getMorphTargetWeight(std::string const & morphName, float * weightOut) const
 {
   for( size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++ ) {
-    const boost::shared_ptr<CalCoreSubMorphTarget>& target = m_pCoreSubmesh->getCoreSubMorphTarget(i);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
     if( target->name() == morphName ) {
       *weightOut = m_vectorMorphTargetWeight[i];
       return true;

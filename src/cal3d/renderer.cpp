@@ -28,7 +28,7 @@
 int CalRenderer::getMapCount(const CalSubmesh* submesh)
 {
   // get the core material
-  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
+  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->material;
   if(!pCoreMaterial) return 0;
 
   return pCoreMaterial->maps.size();
@@ -37,13 +37,13 @@ int CalRenderer::getMapCount(const CalSubmesh* submesh)
 Cal::UserData* CalRenderer::getMaterialUserData(const CalSubmesh* submesh)
 {
   // get the core material
-  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
+  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->material;
   if(!pCoreMaterial) return 0;
   return pCoreMaterial->getUserData();
 }
 
 bool CalRenderer::textureCoordinatesForMapValid(const CalSubmesh* submesh, int mapId) {
-  const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
+  const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->coreSubmesh->getVectorVectorTextureCoordinate();
   if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size())) {
     return false;
   }

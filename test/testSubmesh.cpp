@@ -176,7 +176,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();
-    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate()[0];
+    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->coreSubmesh->getVectorVectorTextureCoordinate()[0];
     CHECK_EQUAL(0, texCoords.size());
 }
 

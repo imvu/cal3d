@@ -15,7 +15,7 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
-class CalCoreMaterial;
+typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
 // Structure used to return an array of the morphs that have non-zero weights.
 struct MorphIdAndWeight {
@@ -28,19 +28,13 @@ class CAL3D_API CalSubmesh : public Cal::UserDataHolder
 public:
   typedef CalCoreSubmesh::Face Face;
 
-  CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh);
-  const boost::shared_ptr<CalCoreSubmesh>& getCoreSubmesh() const {
-    return m_pCoreSubmesh;
-  }
+  const CalCoreSubmeshPtr coreSubmesh;
+  CalCoreMaterialPtr material;
+
+  CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
 
   const std::vector<Face>& getVectorFace() const {
     return m_vectorFace;
-  }
-  const boost::shared_ptr<CalCoreMaterial>& getMaterial() const {
-    return m_material;
-  }
-  void setMaterial(const boost::shared_ptr<CalCoreMaterial>& material) {
-    m_material = material;
   }
 
   std::vector<CalVector>& getVectorNormal() {
@@ -82,7 +76,6 @@ public:
   void setSubMorphTargetGroupAttenuationArray( unsigned int len, float const * attenuationArray );
 
 private:
-  boost::shared_ptr<CalCoreSubmesh> m_pCoreSubmesh;
   std::vector<float> m_vectorMorphTargetWeight;
   std::vector<float> m_vectorAccumulatedWeight;
   std::vector<float> m_vectorReplacementAttenuation;
@@ -93,5 +86,4 @@ private:
   std::vector<float> m_vectorSubMorphTargetGroupAttenuation;  
   int m_vertexCount;
   int m_faceCount;
-  boost::shared_ptr<CalCoreMaterial> m_material;
 };
