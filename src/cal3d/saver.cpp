@@ -459,7 +459,7 @@ bool CalSaver::saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCo
     return false;
   }
 
-  CalCoreMaterial::Color ambientColor = pCoreMaterial->ambientColor;
+  CalCoreMaterial::Color ambientColor = {0, 0, 0, 0};//pCoreMaterial->ambientColor;
   CalPlatform::writeBytes(file, &ambientColor, sizeof(ambientColor));
 
   CalCoreMaterial::Color diffusetColor = pCoreMaterial->diffuseColor;
@@ -1605,7 +1605,7 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
   
   TiXmlElement ambient("AMBIENT");
 
-  CalCoreMaterial::Color ambientColor = pCoreMaterial->ambientColor;
+  CalCoreMaterial::Color ambientColor = {0, 0, 0, 0};
 
 
   str.str("");
@@ -1683,4 +1683,3 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
   return true;
 
 }
-//****************************************************************************//

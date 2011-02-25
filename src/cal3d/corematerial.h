@@ -31,7 +31,6 @@ public:
     }
   };
 
-  Color ambientColor;
   Color diffuseColor;
   std::vector<Map> maps;
 
