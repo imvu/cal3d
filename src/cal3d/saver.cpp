@@ -466,7 +466,7 @@ bool CalSaver::saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCo
   CalPlatform::writeBytes(file, &diffusetColor, sizeof(diffusetColor));
 
   // write the specular color
-  CalCoreMaterial::Color specularColor = pCoreMaterial->specularColor;
+  CalCoreMaterial::Color specularColor = {0, 0, 0, 0};
   CalPlatform::writeBytes(file, &specularColor, sizeof(specularColor));
 
   // write the shininess factor
@@ -1638,7 +1638,7 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
 
   TiXmlElement specular("SPECULAR");
 
-  CalCoreMaterial::Color specularColor = pCoreMaterial->specularColor;
+  CalCoreMaterial::Color specularColor = {0, 0, 0, 0};
 
   str.str("");
   str << (int)specularColor.red << " " 

@@ -1619,7 +1619,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     // set the colors and the shininess
     pCoreMaterial->ambientColor = ambientColor;
     pCoreMaterial->diffuseColor = diffuseColor;
-    pCoreMaterial->specularColor = specularColor;
 
     std::vector<std::string> MatFileName;
     std::vector<std::string> MatTypes;

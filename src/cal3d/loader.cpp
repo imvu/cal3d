@@ -487,7 +487,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
   // set the colors and the shininess
   pCoreMaterial->ambientColor = ambientColor;
   pCoreMaterial->diffuseColor = diffuseColor;
-  pCoreMaterial->specularColor = specularColor;
 
   // read the number of maps
   int mapCount;

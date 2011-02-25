@@ -42,42 +42,7 @@ Cal::UserData* CalRenderer::getMaterialUserData(const CalSubmesh* submesh)
   return pCoreMaterial->getUserData();
 }
 
-void CalRenderer::getSpecularColor(const CalSubmesh* submesh, unsigned char *pColorBuffer)
-{
-  // get the core material
-  const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->getMaterial();
-  if(pCoreMaterial == 0)
-  {
-    // write default values to the color buffer
-    pColorBuffer[0] = 255;
-    pColorBuffer[1] = 255;
-    pColorBuffer[2] = 255;
-    pColorBuffer[3] = 0;
-
-    return;
-  }
-
-  // get the specular color of the material
-  CalCoreMaterial::Color& color = pCoreMaterial->specularColor;
-
-  // write it to the color buffer
-  pColorBuffer[0] = color.red;
-  pColorBuffer[1] = color.green;
-  pColorBuffer[2] = color.blue;
-  pColorBuffer[3] = color.alpha;
-}
-
- /*****************************************************************************/
-/** Returns true if texture coordinates exist for the given map.
-  *
-  *
-  * @param mapId The ID of the map to test for texture coordinate data.
-  *
-  * @return true if texture coordinates for the given map are valid.
-  *****************************************************************************/
-bool 
-CalRenderer::textureCoordinatesForMapValid(const CalSubmesh* submesh, int mapId )
-{
+bool CalRenderer::textureCoordinatesForMapValid(const CalSubmesh* submesh, int mapId) {
   const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = submesh->getCoreSubmesh()->getVectorVectorTextureCoordinate();
   if((mapId < 0) || (mapId >= (int)vectorvectorTextureCoordinate.size())) {
     return false;
