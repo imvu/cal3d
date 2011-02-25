@@ -31,7 +31,6 @@ public:
     }
   };
 
-  Color diffuseColor;
   std::vector<Map> maps;
 
   bool getTwoSided() const { return maps.size() > 1; } // Should come from check box.

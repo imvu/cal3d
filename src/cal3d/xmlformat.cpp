@@ -1616,8 +1616,6 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
     }
     fshininess = (float)atof(shininessdata->Value());
 
-    pCoreMaterial->diffuseColor = diffuseColor;
-
     std::vector<std::string> MatFileName;
     std::vector<std::string> MatTypes;
 

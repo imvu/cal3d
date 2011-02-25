@@ -484,8 +484,6 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
     return 0;
   }
 
-  pCoreMaterial->diffuseColor = diffuseColor;
-
   // read the number of maps
   int mapCount;
   if(!dataSrc.readInteger(mapCount) || (mapCount < 0))
