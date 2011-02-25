@@ -470,7 +470,7 @@ bool CalSaver::saveCoreMaterialToStream(std::ostream& file, CalCoreMaterial *pCo
   CalPlatform::writeBytes(file, &specularColor, sizeof(specularColor));
 
   // write the shininess factor
-  CalPlatform::writeFloat(file, pCoreMaterial->shininess);
+  CalPlatform::writeFloat(file, 0.0f);//pCoreMaterial->shininess);
 
   // check if an error happend
   if(!file)
@@ -1654,7 +1654,7 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
   TiXmlElement shininess("SHININESS");
 
   str.str("");
-  str << pCoreMaterial->shininess;    
+  str << 0.0f;//pCoreMaterial->shininess;    
 
   TiXmlText shininessdata(str.str());
 

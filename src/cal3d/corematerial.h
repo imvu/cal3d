@@ -34,7 +34,6 @@ public:
   Color ambientColor;
   Color diffuseColor;
   Color specularColor;
-  float shininess;
   std::vector<Map> maps;
 
   bool getTwoSided() const { return maps.size() > 1; } // Should come from check box.
