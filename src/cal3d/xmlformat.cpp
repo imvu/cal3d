@@ -359,6 +359,11 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
         return 0;
     }  
 
+    if (!isHeaderWellFormed(header)) {
+        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
+        return false;
+    }
+
     if(cal3d_stricmp(header->Attribute("MAGIC"),Cal::SKELETON_XMLFILE_EXTENSION)!=0)
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
@@ -665,6 +670,10 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
         return null;
     }
 
+    if (!isHeaderWellFormed(header)) {
+        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
+        return null;
+    }
 
     if(cal3d_stricmp(header->Attribute("MAGIC"),Cal::ANIMATION_XMLFILE_EXTENSION)!=0)
     {
@@ -868,22 +877,22 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
     std::string strFilename = "";
 
     TiXmlElement*header = doc.FirstChildElement();
-
-    CalHeader headerData;
-    if( !header || !BindFromXml( *header, &headerData ) ) {
+    if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-
-    if(cal3d_stricmp(headerData.magic,Cal::ANIMATEDMORPH_XMLFILE_EXTENSION)!=0)
-    {
+    if (!isHeaderWellFormed(header)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
-    }    
+    }
 
-    if(headerData.version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION )
-    {
+    if (cal3d_stricmp(header->Attribute("MAGIC"), Cal::ANIMATEDMORPH_XMLFILE_EXTENSION) != 0) {
+        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
+        return null;
+    }
+
+    if (atoi(header->Attribute("VERSION")) < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
     }
@@ -965,6 +974,10 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
         return 0;
     }
 
+    if (!isHeaderWellFormed(header)) {
+        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
+        return 0;
+    }
 
     if(cal3d_stricmp(header->Attribute("MAGIC"),Cal::MESH_XMLFILE_EXTENSION)!=0)
     {
@@ -1465,6 +1478,10 @@ CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
         return 0;
     }
 
+    if (!isHeaderWellFormed(header)) {
+        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
+        return 0;
+    }
 
     if(cal3d_stricmp(header->Attribute("MAGIC"),Cal::MATERIAL_XMLFILE_EXTENSION)!=0)
     {

@@ -36,10 +36,6 @@ class Cal3d:
         return self.__convert(calCoreType=calCoreType, data=data, extension=extension)
 
     def getFormat(self, data):
-        # kill this once we fix a bug in load*FromBuffer that explodes on invalid XML (may already be fixed)
-        if '<HEADER' in data and not data.startswith('<HEADER'):
-            return None
-
         for calCoreType in self.typeToBinaryExtensionMap_.keys():
             loaderFunc = getattr(cal3d, "load"+calCoreType+"FromBuffer")
             if not loaderFunc:

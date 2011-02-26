@@ -97,6 +97,10 @@ TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired
 }
 
 
+bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
+    return header->Attribute("MAGIC") && header->Attribute("VERSION");
+}
+
 CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
 {
 

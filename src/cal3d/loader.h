@@ -51,6 +51,8 @@ public:
   static float const keyframePosRangeSmall;
   static unsigned int const keyframePosBytesSmall;
 
+  static bool isHeaderWellFormed(const TiXmlElement* header);
+
   static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(const std::string& strFilename);
   static CalCoreMaterial *loadCoreMaterial(const std::string& strFilename);
   static CalCoreMesh *loadCoreMesh(const std::string& strFilename);
