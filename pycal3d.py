@@ -35,6 +35,31 @@ class Cal3d:
         extension = self.typeToXmlExtensionMap_[calCoreType]
         return self.__convert(calCoreType=calCoreType, data=data, extension=extension)
 
+    def getFormat(self, data):
+        # kill this once we fix a bug in load*FromBuffer that explodes on invalid XML (may already be fixed)
+        if '<HEADER' in data and not data.startswith('<HEADER'):
+            return None
+
+        for calCoreType in self.typeToBinaryExtensionMap_.keys():
+            # kill this once we making a binding for loadCoreAnimationFromBuffer. has a diff signature...
+            if calCoreType == 'CoreAnimation':
+                continue
+
+            loaderFunc = getattr(cal3d, "load"+calCoreType+"FromBuffer")
+            if not loaderFunc:
+                raise "could not find Loader for calCoreType %s" % calCoreType
+
+            obj = loaderFunc(data)
+            if obj:
+                if data.startswith('<HEADER'):
+                    binary_flag = 'XML' # not really, two root document elements, but that's another story ;_;
+                else:
+                    binary_flag = 'Binary'
+
+                return '%s,%s' % (calCoreType, binary_flag)
+
+        return None
+
     def __convert(self, calCoreType, data, extension):
         loaderFunc = getattr(cal3d, "load"+calCoreType+"FromBuffer")
         saverFunc = getattr(cal3d, "save"+calCoreType)
