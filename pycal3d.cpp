@@ -14,6 +14,12 @@
 
 using namespace boost::python;
 
+boost::shared_ptr<CalCoreAnimation> loadCoreAnimationFromBuffer(const std::string& buffer) {
+    return boost::shared_ptr<CalCoreAnimation>(
+        CalLoader::loadCoreAnimationFromBuffer(buffer.data(), buffer.size(), NULL)
+    );
+}
+
 boost::shared_ptr<CalCoreSkeleton> loadCoreSkeletonFromBuffer(const std::string& buffer) {
     return boost::shared_ptr<CalCoreSkeleton>(
         CalLoader::loadCoreSkeletonFromBuffer(buffer.data(), buffer.size())
@@ -122,6 +128,8 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreAnimatedMorph, boost::shared_ptr<CalCoreAnimatedMorph> >("CoreAnimatedMorph")
         ;
+
+    def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
 
     def("loadCoreSkeletonFromBuffer", &loadCoreSkeletonFromBuffer);
     def("saveCoreSkeleton", &saveCoreSkeleton);

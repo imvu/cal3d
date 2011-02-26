@@ -41,10 +41,6 @@ class Cal3d:
             return None
 
         for calCoreType in self.typeToBinaryExtensionMap_.keys():
-            # kill this once we making a binding for loadCoreAnimationFromBuffer. has a diff signature...
-            if calCoreType == 'CoreAnimation':
-                continue
-
             loaderFunc = getattr(cal3d, "load"+calCoreType+"FromBuffer")
             if not loaderFunc:
                 raise "could not find Loader for calCoreType %s" % calCoreType

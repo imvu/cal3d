@@ -70,8 +70,10 @@ class Test(imvu.test.TestCase):
 
     def test_get_format(self):
         self.assertEqual('CoreSkeleton,XML', self.cal3d_.getFormat(skeleton1))
-        self.assertEqual(None, self.cal3d_.getFormat(animation1)) # working on this one
         self.assertEqual('CoreMesh,XML', self.cal3d_.getFormat(mesh1))
+        self.assertEqual('CoreAnimation,XML', self.cal3d_.getFormat(animation1))
+        self.assertEqual('CoreAnimation,XML', self.cal3d_.getFormat(animation2))
+        self.assertEqual('CoreMaterial,XML', self.cal3d_.getFormat(material1))
         self.assertEqual('CoreAnimatedMorph,XML', self.cal3d_.getFormat(animmorph1))
 
     def test_get_format_invalid_xml(self):
