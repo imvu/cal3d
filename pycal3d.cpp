@@ -20,6 +20,10 @@ boost::shared_ptr<CalCoreAnimation> loadCoreAnimationFromBuffer(const std::strin
     );
 }
 
+bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, const std::string& path) {
+    return CalSaver::saveCoreAnimation(path, animation.get());
+}
+
 boost::shared_ptr<CalCoreSkeleton> loadCoreSkeletonFromBuffer(const std::string& buffer) {
     return boost::shared_ptr<CalCoreSkeleton>(
         CalLoader::loadCoreSkeletonFromBuffer(buffer.data(), buffer.size())
@@ -130,6 +134,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
+    def("saveCoreAnimation", &saveCoreAnimation);
 
     def("loadCoreSkeletonFromBuffer", &loadCoreSkeletonFromBuffer);
     def("saveCoreSkeleton", &saveCoreSkeleton);
