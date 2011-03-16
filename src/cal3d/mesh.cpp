@@ -36,3 +36,14 @@ CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
     m_vectorSubmesh.push_back(boost::shared_ptr<CalSubmesh>(new CalSubmesh(vectorCoreSubmesh[submeshId])));
   }
 }
+
+
+void CalMesh::setLodLevel(float lodLevel)
+{
+  // change lod level of every submesh
+  for(size_t submeshId = 0; submeshId < submeshes.size(); ++submeshId)
+  {
+    // set the lod level in the submesh
+    submeshes[submeshId]->setLodLevel(lodLevel);
+  }
+}
