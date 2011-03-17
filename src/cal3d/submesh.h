@@ -49,7 +49,9 @@ public:
   int getVertexCount() const {
     return m_vertexCount;
   }
+private:
   void setLodLevel(float lodLevel);
+public:
   std::vector<float>& getVectorWeight();
   float getMorphTargetWeight(int blendId) const;
   void setMorphTargetWeight(std::string const & morphName,float weight);
