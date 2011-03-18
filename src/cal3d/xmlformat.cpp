@@ -913,7 +913,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
     }
 
     // check for a valid duration
-    if(pCoreAnimatedMorph->getDuration() <= 0.0f)
+    if(pCoreAnimatedMorph->duration <= 0.0f)
     {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
         return null;

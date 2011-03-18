@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include <algorithm>
 #include "cal3d/coremorphtrack.h"
 #include "cal3d/error.h"
 #include "cal3d/coremorphkeyframe.h"

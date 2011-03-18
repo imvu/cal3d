@@ -383,7 +383,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
   }
 
   // set the duration in the core animatedMorph instance
-  pCoreAnimatedMorph->setDuration(duration);
+  pCoreAnimatedMorph->duration = duration;
 
   // read the number of tracks
   int trackCount;

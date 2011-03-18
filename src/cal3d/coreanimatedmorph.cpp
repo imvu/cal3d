@@ -25,40 +25,15 @@ size_t sizeInBytes(const CalCoreMorphTrack& t) {
 size_t CalCoreAnimatedMorph::sizeInBytes() const {
     size_t r = sizeof(*this);
     r += ::sizeInBytes(m_listCoreTrack);
-    r += ::sizeInBytes(m_tracksToDelete);
     return r;
 }
 
-bool CalCoreAnimatedMorph::addCoreTrack(CalCoreMorphTrack *pCoreTrack)
-{
+void CalCoreAnimatedMorph::addCoreTrack(CalCoreMorphTrack *pCoreTrack) {
   m_listCoreTrack.push_back(*pCoreTrack);
-  m_tracksToDelete.push_back(pCoreTrack);
-  return true;
+  delete pCoreTrack;
 }
 
-CalCoreAnimatedMorph::~CalCoreAnimatedMorph()
-{
-  // destroy all core tracks
-  while(!m_listCoreTrack.empty())
-  {
-    CalCoreMorphTrack *pCoreTrack;
-    pCoreTrack = &m_listCoreTrack.front();
-    m_listCoreTrack.pop_front();
-
-    //delete pCoreTrack;
-  }
-
-  while(!m_tracksToDelete.empty()) {
-    CalCoreMorphTrack* pCoreTrack = m_tracksToDelete.front();
-    m_tracksToDelete.pop_front();
-    delete pCoreTrack;
-  }
-
-}
-
-void
-CalCoreAnimatedMorph::removeZeroScaleTracks()
-{
+void CalCoreAnimatedMorph::removeZeroScaleTracks() {
   std::list<CalCoreMorphTrack> & p = m_listCoreTrack;
   bool changed = true;
   while( changed ) {
@@ -89,19 +64,6 @@ CalCoreAnimatedMorph::removeZeroScaleTracks()
 
 
 
- /*****************************************************************************/
-/** Provides access to a core track.
-  *
-  * This function returns the core track for a given bone ID.
-  *
-  * @param coreBoneId The core bone ID of the core track that should be
-  *                   returned.
-  *
-  * @return One of the following values:
-  *         \li a pointer to the core track
-  *         \li \b 0 if an error happend
-  *****************************************************************************/
-
 CalCoreMorphTrack *CalCoreAnimatedMorph::getCoreTrack(std::string const & name)
 {
   // loop through all core track
@@ -120,57 +82,12 @@ CalCoreMorphTrack *CalCoreAnimatedMorph::getCoreTrack(std::string const & name)
   return 0;
 }
 
- /*****************************************************************************/
-/** Returns the duration.
-  *
-  * This function returns the duration of the core animatedMorph instance.
-  *
-  * @return The duration in seconds.
-  *****************************************************************************/
-
-float CalCoreAnimatedMorph::getDuration() const
-{
-  return m_duration;
-}
-
- /*****************************************************************************/
-/** Returns the core track list.
-  *
-  * This function returns the list that contains all core tracks of the core
-  * animatedMorph instance.
-  *
-  * @return A reference to the core track list.
-  *****************************************************************************/
-
 std::list<CalCoreMorphTrack>& CalCoreAnimatedMorph::getListCoreTrack()
 {
   return m_listCoreTrack;
 }
 
- /*****************************************************************************/
-/** Sets the duration.
-  *
-  * This function sets the duration of the core animatedMorph instance.
-  *
-  * @param duration The duration in seconds that should be set.
-  *****************************************************************************/
-
-void CalCoreAnimatedMorph::setDuration(float duration)
-{
-  m_duration = duration;
-}
-
- /*****************************************************************************/
-/** Scale the core animatedMorph.
-  *
-  * This function rescale all the skeleton data that are in the core animatedMorph instance
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
-void CalCoreAnimatedMorph::scale(float factor)
-{
+void CalCoreAnimatedMorph::scale(float factor) {
   // loop through all core track
   std::list<CalCoreMorphTrack>::iterator iteratorCoreTrack;
   for(iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack)
@@ -178,7 +95,3 @@ void CalCoreAnimatedMorph::scale(float factor)
       (*iteratorCoreTrack).scale(factor);
   }
 }
-
-
-
-//****************************************************************************//

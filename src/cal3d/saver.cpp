@@ -179,7 +179,7 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
   }
 
   // write the duration of the core animatedMorph
-  if(!CalPlatform::writeFloat(file, pCoreAnimatedMorph->getDuration()))
+  if(!CalPlatform::writeFloat(file, pCoreAnimatedMorph->duration))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
@@ -1222,7 +1222,7 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
   doc.InsertEndChild(header);
 
   str.str("");
-  str << pCoreAnimatedMorph->getDuration(); 
+  str << pCoreAnimatedMorph->duration; 
   animation.SetAttribute("DURATION",str.str());
   
   // get core track list
