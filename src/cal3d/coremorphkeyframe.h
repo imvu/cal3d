@@ -10,25 +10,13 @@
 
 #pragma once
 
-#include "cal3d/global.h"
-#include "cal3d/vector.h"
-#include "cal3d/quaternion.h"
-
-class CAL3D_API CalCoreMorphKeyframe
-{
-protected:
-  float m_time;
-  float m_weight;
-
+class CalCoreMorphKeyframe {
 public:
-  CalCoreMorphKeyframe();
-  virtual ~CalCoreMorphKeyframe();
+    float time;
+    float weight;
 
-  bool create();
-  void destroy();
-  float getTime() const;
-  void setTime(float time);
-
-  float getWeight() const;
-  void setWeight(float);
+    CalCoreMorphKeyframe() {
+        time = 0;
+        weight = 0;
+    }
 };

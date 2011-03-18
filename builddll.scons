@@ -13,7 +13,6 @@ sources = Split('''
     coreanimation.cpp
     corebone.cpp
     coremesh.cpp
-    coremorphkeyframe.cpp
     coremorphtrack.cpp
     coreskeleton.cpp
     coresubmesh.cpp

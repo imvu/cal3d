@@ -35,7 +35,7 @@ public:
 
   size_t size() const;
 
-  bool getState(float time, float & weightOut);
+  float getState(float time);
 
   std::string getMorphNameTiXmlOnly() { return m_morphName; } // slow function to satisfy the Xml Bindings interface
   const std::string& getMorphName() { return m_morphName; }

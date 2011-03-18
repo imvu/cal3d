@@ -42,7 +42,7 @@ bool CalCoreMorphTrack::addCoreMorphKeyframe(CalCoreMorphKeyframe *pCoreMorphKey
   m_keyframes.push_back(*pCoreMorphKeyframe);
   m_keyframesToDelete.push_back(pCoreMorphKeyframe);
   int idx = m_keyframes.size() - 1;
-  while (idx > 0 && m_keyframes[idx].getTime() < m_keyframes[idx - 1].getTime()) {
+  while (idx > 0 && m_keyframes[idx].time < m_keyframes[idx - 1].time) {
     std::swap(m_keyframes[idx], m_keyframes[idx - 1]);
     --idx;
   }
@@ -74,16 +74,7 @@ bool CalCoreMorphTrack::create()
 
 void CalCoreMorphTrack::destroy()
 {
-  // destroy all core keyframes
-  unsigned i;
-  for (i = 0; i < m_keyframes.size(); ++i)
-  {
-    m_keyframes[i].destroy();
-    //delete m_keyframes[i];
-  }
-  m_keyframes.clear();
-
-  for (i = 0; i < m_keyframesToDelete.size(); ++i)
+  for (size_t i = 0; i < m_keyframesToDelete.size(); ++i)
   {
     delete m_keyframesToDelete[i];
   }
@@ -92,22 +83,7 @@ void CalCoreMorphTrack::destroy()
   m_morphName = "";
 }
 
- /*****************************************************************************/
-/** Returns a specified state.
-  *
-  * This function returns the state 
-  * for the specified time and duration.
-  *
-  * @param time The time in seconds at which the state should be returned.
-  * @param weight outparam
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalCoreMorphTrack::getState(float time, float & weight)
-{
+float CalCoreMorphTrack::getState(float time) {
   std::vector<CalCoreMorphKeyframe>::iterator iteratorCoreMorphKeyframeBefore;
   std::vector<CalCoreMorphKeyframe>::iterator iteratorCoreMorphKeyframeAfter;
 
@@ -119,18 +95,14 @@ bool CalCoreMorphTrack::getState(float time, float & weight)
   {
     // return the last keyframe state
     --iteratorCoreMorphKeyframeAfter;
-    weight = (*iteratorCoreMorphKeyframeAfter).getWeight();
-
-    return true;
+    return (*iteratorCoreMorphKeyframeAfter).weight;
   }
 
   // check if the time is before the first keyframe
   if(iteratorCoreMorphKeyframeAfter == m_keyframes.begin())
   {
     // return the first keyframe state
-    weight = (*iteratorCoreMorphKeyframeAfter).getWeight();
-
-    return true;
+    return iteratorCoreMorphKeyframeAfter->weight;
   }
 
   // get the keyframe before the requested one
@@ -138,21 +110,17 @@ bool CalCoreMorphTrack::getState(float time, float & weight)
   --iteratorCoreMorphKeyframeBefore;
 
   // get the two keyframe pointers
-  CalCoreMorphKeyframe *pCoreMorphKeyframeBefore;
-  pCoreMorphKeyframeBefore = &(*iteratorCoreMorphKeyframeBefore);
-  CalCoreMorphKeyframe *pCoreMorphKeyframeAfter;
-  pCoreMorphKeyframeAfter = &(*iteratorCoreMorphKeyframeAfter);
+  CalCoreMorphKeyframe* pCoreMorphKeyframeBefore = &(*iteratorCoreMorphKeyframeBefore);
+  CalCoreMorphKeyframe* pCoreMorphKeyframeAfter = &(*iteratorCoreMorphKeyframeAfter);
 
   // calculate the blending factor between the two keyframe states
-  float blendFactor;
-  blendFactor = (time - pCoreMorphKeyframeBefore->getTime()) / (pCoreMorphKeyframeAfter->getTime() - pCoreMorphKeyframeBefore->getTime());
+  float blendFactor = (time - pCoreMorphKeyframeBefore->time) / (pCoreMorphKeyframeAfter->time - pCoreMorphKeyframeBefore->time);
 
   // blend between the two keyframes
-  weight = pCoreMorphKeyframeBefore->getWeight();
-  float otherWeight = pCoreMorphKeyframeAfter->getWeight();
-  weight += blendFactor * (otherWeight-weight);
-
-  return true;
+  float weight = pCoreMorphKeyframeBefore->weight;
+  float otherWeight = pCoreMorphKeyframeAfter->weight;
+  weight += blendFactor * (otherWeight - weight);
+  return weight;
 }
 
 std::vector<CalCoreMorphKeyframe>::iterator CalCoreMorphTrack::getUpperBound(float time)
@@ -165,7 +133,7 @@ std::vector<CalCoreMorphKeyframe>::iterator CalCoreMorphTrack::getUpperBound(flo
   {
       int middle = (lowerBound+upperBound)/2;
 
-      if(time >= m_keyframes[middle].getTime())
+      if(time >= m_keyframes[middle].time)
       {
           lowerBound=middle;
       }
@@ -218,26 +186,11 @@ CalCoreMorphKeyframe* CalCoreMorphTrack::getCoreMorphKeyframe(int idx)
   return &(m_keyframes[idx]);
 }
 
- /*****************************************************************************/
-/** Scale the core track.
-  *
-  * This function rescale all the data that are in the core track instance.
-  *
-  * @param factor A float with the scale factor
-  *
-  *****************************************************************************/
-
-
-void CalCoreMorphTrack::scale(float factor)
-{
-    int keyframeId;
-    for(keyframeId = 0; keyframeId < m_keyframes.size(); keyframeId++)
+void CalCoreMorphTrack::scale(float factor) {
+    for(size_t keyframeId = 0; keyframeId < m_keyframes.size(); keyframeId++)
     {
-        float weight = m_keyframes[keyframeId].getWeight();
-        weight*=factor;
-        m_keyframes[keyframeId].setWeight(weight);
+        m_keyframes[keyframeId].weight *= factor;
     }
-
 }
 
 std::vector<CalCoreMorphKeyframe> &
@@ -245,7 +198,3 @@ CalCoreMorphTrack::getVectorCoreMorphKeyframes()
 {
   return m_keyframes;
 }
-
-
-
-//****************************************************************************//

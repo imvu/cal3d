@@ -62,10 +62,8 @@ GetTiXmlBinding( CalCoreMorphKeyframe const &,  IdentityBase  )
 {
   static MemberTiXmlBinding<CalCoreMorphKeyframe> binding;
   if( binding.empty() ) {
-    binding.AddMember( "TIME", MemberAttribute(&CalCoreMorphKeyframe::getTime,
-        &CalCoreMorphKeyframe::setTime) );
-    binding.AddMember( "WEIGHT", Member(&CalCoreMorphKeyframe::getWeight,
-        &CalCoreMorphKeyframe::setWeight) );
+    binding.AddMember("TIME", MemberAttribute(&CalCoreMorphKeyframe::time));
+    binding.AddMember("WEIGHT", MemberAttribute(&CalCoreMorphKeyframe::weight));
   }
   return &binding;
 }

@@ -384,11 +384,8 @@ bool CalSaver::saveCoreMorphKeyframe(std::ofstream& file, const std::string& str
     return false;
   }
 
-  // write the time of the morphKeyframe
-  CalPlatform::writeFloat(file, pCoreMorphKeyframe->getTime());
-
-  // write the weight
-  CalPlatform::writeFloat(file, pCoreMorphKeyframe->getWeight());
+  CalPlatform::writeFloat(file, pCoreMorphKeyframe->time);
+  CalPlatform::writeFloat(file, pCoreMorphKeyframe->weight);
 
   // check if an error happend
   if(!file)
@@ -1251,11 +1248,11 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
       TiXmlElement keyframe("KEYFRAME");
 
       str.str("");
-      str << pCoreMorphKeyframe->getTime();         
+      str << pCoreMorphKeyframe->time;         
       keyframe.SetAttribute("TIME",str.str());
       
       TiXmlElement weight("WEIGHT");
-      float w = pCoreMorphKeyframe->getWeight();
+      float w = pCoreMorphKeyframe->weight;
 
       str.str("");
       str << w;

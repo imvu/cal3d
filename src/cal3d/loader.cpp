@@ -1098,16 +1098,9 @@ CalCoreMorphKeyframe *CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc)
     return 0;
   }
 
-  // create the core morphKeyframe instance
-  if(!pCoreMorphKeyframe->create())
-  {
-    delete pCoreMorphKeyframe;
-    return 0;
-  }
-
   // set all attributes of the morphKeyframe
-  pCoreMorphKeyframe->setTime(time);
-  pCoreMorphKeyframe->setWeight(weight);
+  pCoreMorphKeyframe->time = time;
+  pCoreMorphKeyframe->weight = weight;
 
   return pCoreMorphKeyframe;
 }

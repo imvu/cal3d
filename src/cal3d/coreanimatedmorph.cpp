@@ -73,7 +73,7 @@ CalCoreAnimatedMorph::removeZeroScaleTracks()
       
       bool nonZeroScaleTrack = false;
       for(size_t keyframeId = 0; keyframeId < morphNameList.size(); keyframeId++) {
-        float weight = morphNameList[keyframeId].getWeight();
+        float weight = morphNameList[keyframeId].weight;
         if( weight != 0.0f ) {
           nonZeroScaleTrack = true;
           break;
