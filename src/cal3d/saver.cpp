@@ -186,7 +186,7 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
   }
 
   // get core track list
-  std::list<CalCoreMorphTrack>& listCoreMorphTrack = pCoreAnimatedMorph->getListCoreTrack();
+  std::vector<CalCoreMorphTrack>& listCoreMorphTrack = pCoreAnimatedMorph->tracks;
 
   // write the number of tracks
   if(!CalPlatform::writeInteger(file, listCoreMorphTrack.size()))
@@ -195,7 +195,7 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
     return 0;
   }
 
-  std::list<CalCoreMorphTrack>::iterator iteratorCoreMorphTrack;
+  std::vector<CalCoreMorphTrack>::iterator iteratorCoreMorphTrack;
   for(iteratorCoreMorphTrack = listCoreMorphTrack.begin(); iteratorCoreMorphTrack != listCoreMorphTrack.end(); ++iteratorCoreMorphTrack)
   {
     // save coreMorph track
@@ -921,14 +921,14 @@ bool CalSaver::saveCoreMorphTrack(std::ofstream& file, const std::string& strFil
   }
 
   // read the number of keyframes
-  if(!CalPlatform::writeInteger(file, pCoreMorphTrack->getCoreMorphKeyframeCount()))
+  if(!CalPlatform::writeInteger(file, pCoreMorphTrack->keyframes.size()))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
 
   // save all core keyframes
-  for(int i = 0; i < pCoreMorphTrack->getCoreMorphKeyframeCount(); ++i)
+  for(int i = 0; i < pCoreMorphTrack->keyframes.size(); ++i)
   {
     // save the core keyframe
     if(!saveCoreMorphKeyframe(file, strFilename, &pCoreMorphTrack->keyframes[i]))
@@ -1226,11 +1226,11 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
   animation.SetAttribute("DURATION",str.str());
   
   // get core track list
-  std::list<CalCoreMorphTrack>& listCoreMorphTrack = pCoreAnimatedMorph->getListCoreTrack();
+  std::vector<CalCoreMorphTrack>& listCoreMorphTrack = pCoreAnimatedMorph->tracks;
 
   animation.SetAttribute("NUMTRACKS",listCoreMorphTrack.size());
   
-  std::list<CalCoreMorphTrack>::iterator iteratorCoreMorphTrack;
+  std::vector<CalCoreMorphTrack>::iterator iteratorCoreMorphTrack;
   for(iteratorCoreMorphTrack = listCoreMorphTrack.begin(); iteratorCoreMorphTrack != listCoreMorphTrack.end(); ++iteratorCoreMorphTrack)
   {
     CalCoreMorphTrack *pCoreMorphTrack=&(*iteratorCoreMorphTrack);
@@ -1238,10 +1238,10 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
     TiXmlElement track("TRACK");
     track.SetAttribute("MORPHNAME",pCoreMorphTrack->morphName);
     
-    track.SetAttribute("NUMKEYFRAMES",pCoreMorphTrack->getCoreMorphKeyframeCount());
+    track.SetAttribute("NUMKEYFRAMES",pCoreMorphTrack->keyframes.size());
 
     // save all core keyframes
-    for (int i = 0; i < pCoreMorphTrack->getCoreMorphKeyframeCount(); ++i)
+    for (int i = 0; i < pCoreMorphTrack->keyframes.size(); ++i)
     {
       CalCoreMorphKeyframe pCoreMorphKeyframe= pCoreMorphTrack->keyframes[i];
 

@@ -24,10 +24,6 @@ public:
 
     float getState(float time);
 
-    unsigned getCoreMorphKeyframeCount() {
-        return keyframes.size();
-    }
-  
     void addCoreMorphKeyframe(CalCoreMorphKeyframe pCoreKeyframe);
     void scale(float factor);
 

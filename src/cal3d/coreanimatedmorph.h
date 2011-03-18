@@ -20,20 +20,17 @@ class CalCoreMorphTrack;
 class CAL3D_API CalCoreAnimatedMorph {
 public:
     float duration;
+    std::vector<CalCoreMorphTrack> tracks;
 
     CalCoreAnimatedMorph()
         : duration(0.0f)
     {}
 
-    void addCoreTrack(CalCoreMorphTrack *pCoreTrack);
-    CalCoreMorphTrack* getCoreTrack(std::string const & trackId);
-    std::list<CalCoreMorphTrack>& getListCoreTrack();
+    CalCoreMorphTrack* getCoreTrack(const std::string& trackId);
+
     void scale(float factor);
     void removeZeroScaleTracks();
 
     size_t sizeInBytes() const;
-
-private:
-    std::list<CalCoreMorphTrack> m_listCoreTrack;
 };
 typedef boost::shared_ptr<CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;

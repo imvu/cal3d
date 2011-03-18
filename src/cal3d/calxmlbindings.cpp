@@ -36,7 +36,7 @@ GetTiXmlBinding( CalCoreAnimatedMorph const &,  IdentityBase  )
   static MemberTiXmlBinding<CalCoreAnimatedMorph> binding;
   if( binding.empty() ) {
     binding.AddMember("DURATION", MemberAttribute(&CalCoreAnimatedMorph::duration));
-    binding.AddMember("TRACK", MemberPeer(&CalCoreAnimatedMorph::getListCoreTrack));
+    binding.AddMember("TRACK", MemberPeer(&CalCoreAnimatedMorph::tracks));
   }
   return &binding;
 }
@@ -47,7 +47,6 @@ GetTiXmlBinding( CalCoreMorphTrack const &,  IdentityBase  )
   static MemberTiXmlBinding<CalCoreMorphTrack> binding;
   if( binding.empty() ) {
     binding.AddMember("MORPHNAME", MemberAttribute(&CalCoreMorphTrack::morphName));
-    binding.AddMember("NUMKEYFRAMES", MemberAttribute(&CalCoreMorphTrack::getCoreMorphKeyframeCount));
     binding.AddMember("KEYFRAME", MemberPeer(&CalCoreMorphTrack::keyframes));
   }
   return &binding;

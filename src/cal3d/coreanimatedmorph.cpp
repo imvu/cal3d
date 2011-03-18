@@ -24,21 +24,16 @@ size_t sizeInBytes(const CalCoreMorphTrack& t) {
 
 size_t CalCoreAnimatedMorph::sizeInBytes() const {
     size_t r = sizeof(*this);
-    r += ::sizeInBytes(m_listCoreTrack);
+    r += ::sizeInBytes(tracks);
     return r;
 }
 
-void CalCoreAnimatedMorph::addCoreTrack(CalCoreMorphTrack *pCoreTrack) {
-  m_listCoreTrack.push_back(*pCoreTrack);
-  delete pCoreTrack;
-}
-
 void CalCoreAnimatedMorph::removeZeroScaleTracks() {
-  std::list<CalCoreMorphTrack> & p = m_listCoreTrack;
+  std::vector<CalCoreMorphTrack> & p = tracks;
   bool changed = true;
   while( changed ) {
     changed = false;
-    std::list<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+    std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
     for(iteratorCoreTrack = p.begin(); iteratorCoreTrack != p.end(); ++iteratorCoreTrack) {
       // get the core bone
       CalCoreMorphTrack *pCoreTrack;
@@ -67,31 +62,22 @@ void CalCoreAnimatedMorph::removeZeroScaleTracks() {
 CalCoreMorphTrack *CalCoreAnimatedMorph::getCoreTrack(std::string const & name)
 {
   // loop through all core track
-  std::list<CalCoreMorphTrack>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack)
+  std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
   {
-    // get the core bone
-    CalCoreMorphTrack *pCoreTrack;
-    pCoreTrack = &(*iteratorCoreTrack);
-
     // check if we found the matching core bone
-    if(pCoreTrack->morphName == name) return pCoreTrack;
+    if(iteratorCoreTrack->morphName == name) return &(*iteratorCoreTrack);
   }
 
   // no match found
   return 0;
 }
 
-std::list<CalCoreMorphTrack>& CalCoreAnimatedMorph::getListCoreTrack()
-{
-  return m_listCoreTrack;
-}
-
 void CalCoreAnimatedMorph::scale(float factor) {
   // loop through all core track
-  std::list<CalCoreMorphTrack>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = m_listCoreTrack.begin(); iteratorCoreTrack != m_listCoreTrack.end(); ++iteratorCoreTrack)
+  std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
   {
-      (*iteratorCoreTrack).scale(factor);
+      iteratorCoreTrack->scale(factor);
   }
 }

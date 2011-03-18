@@ -406,7 +406,8 @@ CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
     }
 
     // add the core track to the core animatedMorph instance
-    pCoreAnimatedMorph->addCoreTrack(pCoreTrack);
+    pCoreAnimatedMorph->tracks.push_back(*pCoreTrack);
+    delete pCoreTrack;
   }
 
   return pCoreAnimatedMorph;
