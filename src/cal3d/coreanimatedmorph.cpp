@@ -43,7 +43,6 @@ CalCoreAnimatedMorph::~CalCoreAnimatedMorph()
   {
     CalCoreMorphTrack *pCoreTrack;
     pCoreTrack = &m_listCoreTrack.front();
-    pCoreTrack->destroy();
     m_listCoreTrack.pop_front();
 
     //delete pCoreTrack;
@@ -69,7 +68,7 @@ CalCoreAnimatedMorph::removeZeroScaleTracks()
       // get the core bone
       CalCoreMorphTrack *pCoreTrack;
       pCoreTrack = &(*iteratorCoreTrack);
-      std::vector<CalCoreMorphKeyframe> & morphNameList = pCoreTrack->getVectorCoreMorphKeyframes();
+      std::vector<CalCoreMorphKeyframe> & morphNameList = pCoreTrack->keyframes;
       
       bool nonZeroScaleTrack = false;
       for(size_t keyframeId = 0; keyframeId < morphNameList.size(); keyframeId++) {
@@ -80,7 +79,6 @@ CalCoreAnimatedMorph::removeZeroScaleTracks()
         }
       }
       if( !nonZeroScaleTrack ) {
-        pCoreTrack->destroy();
         p.erase( iteratorCoreTrack );
         changed = true;
         break;
@@ -115,7 +113,7 @@ CalCoreMorphTrack *CalCoreAnimatedMorph::getCoreTrack(std::string const & name)
     pCoreTrack = &(*iteratorCoreTrack);
 
     // check if we found the matching core bone
-    if(pCoreTrack->getMorphName() == name) return pCoreTrack;
+    if(pCoreTrack->morphName == name) return pCoreTrack;
   }
 
   // no match found

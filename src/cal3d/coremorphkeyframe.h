@@ -20,3 +20,7 @@ public:
         weight = 0;
     }
 };
+
+inline bool operator<(CalCoreMorphKeyframe lhs, CalCoreMorphKeyframe rhs) {
+    return lhs.time < rhs.time;
+}

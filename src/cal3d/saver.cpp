@@ -914,7 +914,7 @@ bool CalSaver::saveCoreMorphTrack(std::ofstream& file, const std::string& strFil
   }
 
   // write the morph name
-  if(!CalPlatform::writeString(file, pCoreMorphTrack->getMorphName()))
+  if(!CalPlatform::writeString(file, pCoreMorphTrack->morphName))
   {
     CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
     return false;
@@ -931,7 +931,7 @@ bool CalSaver::saveCoreMorphTrack(std::ofstream& file, const std::string& strFil
   for(int i = 0; i < pCoreMorphTrack->getCoreMorphKeyframeCount(); ++i)
   {
     // save the core keyframe
-    if(!saveCoreMorphKeyframe(file, strFilename, pCoreMorphTrack->getCoreMorphKeyframe(i)))
+    if(!saveCoreMorphKeyframe(file, strFilename, &pCoreMorphTrack->keyframes[i]))
     {
       return false;
     }
@@ -1236,23 +1236,23 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
     CalCoreMorphTrack *pCoreMorphTrack=&(*iteratorCoreMorphTrack);
 
     TiXmlElement track("TRACK");
-    track.SetAttribute("MORPHNAME",pCoreMorphTrack->getMorphName());
+    track.SetAttribute("MORPHNAME",pCoreMorphTrack->morphName);
     
     track.SetAttribute("NUMKEYFRAMES",pCoreMorphTrack->getCoreMorphKeyframeCount());
 
     // save all core keyframes
     for (int i = 0; i < pCoreMorphTrack->getCoreMorphKeyframeCount(); ++i)
     {
-      CalCoreMorphKeyframe *pCoreMorphKeyframe=pCoreMorphTrack->getCoreMorphKeyframe(i);
+      CalCoreMorphKeyframe pCoreMorphKeyframe= pCoreMorphTrack->keyframes[i];
 
       TiXmlElement keyframe("KEYFRAME");
 
       str.str("");
-      str << pCoreMorphKeyframe->time;         
+      str << pCoreMorphKeyframe.time;         
       keyframe.SetAttribute("TIME",str.str());
       
       TiXmlElement weight("WEIGHT");
-      float w = pCoreMorphKeyframe->weight;
+      float w = pCoreMorphKeyframe.weight;
 
       str.str("");
       str << w;

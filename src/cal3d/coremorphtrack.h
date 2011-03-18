@@ -11,46 +11,26 @@
 #pragma once
 
 #include "cal3d/global.h"
-#include "cal3d/vector.h"
-#include "cal3d/quaternion.h"
 #include "cal3d/coremorphkeyframe.h"
 
 class CalCoreMorphKeyframe;
 
-class CAL3D_API CalCoreMorphTrack
-{
-protected:
-  std::string m_morphName;
-
-  /// List of keyframes, always sorted by time.
-  std::vector<CalCoreMorphKeyframe> m_keyframes;
-  std::vector<CalCoreMorphKeyframe*> m_keyframesToDelete;
-
+class CAL3D_API CalCoreMorphTrack {
 public:
-  CalCoreMorphTrack();
-  virtual ~CalCoreMorphTrack();
+    std::string morphName;
+    std::vector<CalCoreMorphKeyframe> keyframes;
 
-  bool create();
-  void destroy();
+    size_t size() const;
 
-  size_t size() const;
+    float getState(float time);
 
-  float getState(float time);
-
-  std::string getMorphNameTiXmlOnly() { return m_morphName; } // slow function to satisfy the Xml Bindings interface
-  const std::string& getMorphName() { return m_morphName; }
-  void setMorphName(std::string name);
+    unsigned getCoreMorphKeyframeCount() {
+        return keyframes.size();
+    }
   
-  int getCoreMorphKeyframeCount();
-  void reserve(int);
-  
-  CalCoreMorphKeyframe* getCoreMorphKeyframe(int idx);
-
-  bool addCoreMorphKeyframe(CalCoreMorphKeyframe *pCoreKeyframe);
-
-  std::vector<CalCoreMorphKeyframe> & getVectorCoreMorphKeyframes();
-  void scale(float factor);
+    void addCoreMorphKeyframe(CalCoreMorphKeyframe pCoreKeyframe);
+    void scale(float factor);
 
 private:
-  std::vector<CalCoreMorphKeyframe>::iterator getUpperBound(float time);
+    std::vector<CalCoreMorphKeyframe>::iterator getUpperBound(float time);
 };

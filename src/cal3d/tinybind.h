@@ -350,7 +350,7 @@ IMemberHolder<T> * Member(
 
 // BEGIN ATTRIBUTE MAKERS
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute(  MT T::*mp )
+IMemberHolder<T>* MemberAttribute(  MT T::*mp )
 {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberPtrHolder<T, MT> MemberValuePolicy;
@@ -360,23 +360,19 @@ IMemberHolder<T> * MemberAttribute(  MT T::*mp )
     return &mph->xmlPolicy_;
 }
 
-#if 0
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute(MT T::*mp, size_t len)
-{
+IMemberHolder<T>* MemberAttribute(MT (T::*getter)()) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
-    typedef MemberArrayHolder<T, MT> MemberValuePolicy;
+    typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
     MH_Type * mph = new MH_Type();
-    mph->mvPolicy_.memberPtr_ = mp;
-    mph->mvPolicy_.len = len;
+    mph->mvPolicy_.getter_ = getter;
+    mph->mvPolicy_.setter_ = 0;
     return &mph->xmlPolicy_;
 }
-#endif
 
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute(  MT (T::*getter)(), void (T::*setter)(MT) )
-{
+IMemberHolder<T> * MemberAttribute(  MT (T::*getter)(), void (T::*setter)(MT) ) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
@@ -387,8 +383,7 @@ IMemberHolder<T> * MemberAttribute(  MT (T::*getter)(), void (T::*setter)(MT) )
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute(  MT (T::*getter)() const, void (T::*setter)(MT) )
-{
+IMemberHolder<T> * MemberAttribute(  MT (T::*getter)() const, void (T::*setter)(MT) ) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;

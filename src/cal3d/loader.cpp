@@ -1531,15 +1531,8 @@ CalCoreMorphTrack *CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc)
     return 0;
   }
 
-  // create the core morphTrack instance
-  if(!pCoreMorphTrack->create())
-  {
-    delete pCoreMorphTrack;
-    return 0;
-  }
-
   // link the core morphTrack to the appropriate morph name
-  pCoreMorphTrack->setMorphName(morphName);
+  pCoreMorphTrack->morphName = morphName;
 
   // read the number of keyframes
   int keyframeCount;
@@ -1558,13 +1551,13 @@ CalCoreMorphTrack *CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc)
     pCoreKeyframe = loadCoreMorphKeyframe(dataSrc);
     if(pCoreKeyframe == 0)
     {
-      pCoreMorphTrack->destroy();
       delete pCoreMorphTrack;
       return 0;
     }
 
     // add the core keyframe to the core morphTrack instance
-    pCoreMorphTrack->addCoreMorphKeyframe(pCoreKeyframe);
+    pCoreMorphTrack->keyframes.push_back(*pCoreKeyframe);
+    delete pCoreKeyframe;
   }
 
   return pCoreMorphTrack;
