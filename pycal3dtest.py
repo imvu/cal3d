@@ -3,7 +3,6 @@ import os
 import sys
 import tempfile
 import weakref
-
 import imvu.test
 import imvu.fs
 from cal3d import pycal3d
@@ -61,6 +60,21 @@ class Test(imvu.test.TestCase):
         test_mesh = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'fuzhuangdian.xmf')
         data = file(test_mesh, 'rb').read()
         self.hereAndBackAgain(data, 'CoreMesh')
+            
+    def test_inadequate_but_not_wrong_XML_is_patched_up(self):
+        test_morph = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
+        origData = file(test_morph, 'rb').read()
+        
+        data = self.cal3d_.convertToBinary('CoreAnimatedMorph', data=origData)
+
+        dataWithoutWhitespace = re.sub("\s+", "", origData)
+        dataRevertedToXML = self.cal3d_.convertToXml('CoreAnimatedMorph', data=data)
+        dataRevertedToXMLWithoutWhitespace = re.sub("POSDIFF=\".+\"", "", dataRevertedToXML)
+        dataRevertedToXMLWithoutWhitespace = re.sub("\s+", "", dataRevertedToXMLWithoutWhitespace)
+        self.assertNotEqual(dataWithoutWhitespace, dataRevertedToXMLWithoutWhitespace)
+        
+        data2 = self.cal3d_.convertToBinary('CoreAnimatedMorph', dataRevertedToXML)
+        self.assertEqual(repr(data), repr(data2))
 
     def test_morph_loader_does_not_crash(self):
         anim1 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'AnimationCEO3K.xaf')

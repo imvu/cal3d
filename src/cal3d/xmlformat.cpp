@@ -912,6 +912,17 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
         return null;
     }
 
+    // patch up XML that isn't actually invalid, but gets rejected by our validation
+    std::list<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+    for(int i = 0; i < pCoreAnimatedMorph->tracks.size(); ++i) {
+        if (pCoreAnimatedMorph->tracks[i].keyframes.size() == 0) {
+            CalCoreMorphKeyframe frame;
+            frame.weight = 0.0f;
+            frame.time = 0.0f;
+            pCoreAnimatedMorph->tracks[i].keyframes.push_back(frame);
+        }
+    }
+
     // check for a valid duration
     if(pCoreAnimatedMorph->duration <= 0.0f)
     {
