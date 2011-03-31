@@ -61,30 +61,25 @@ class Test(imvu.test.TestCase):
         data = file(test_mesh, 'rb').read()
         self.hereAndBackAgain(data, 'CoreMesh')
             
-    def test_inadequate_but_not_wrong_XML_is_patched_up(self):
-        test_morph = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
-        origData = file(test_morph, 'rb').read()
-        
-        data = self.cal3d_.convertToBinary('CoreAnimatedMorph', data=origData)
-
-        dataWithoutWhitespace = re.sub("\s+", "", origData)
-        dataRevertedToXML = self.cal3d_.convertToXml('CoreAnimatedMorph', data=data)
-        dataRevertedToXMLWithoutWhitespace = re.sub("POSDIFF=\".+\"", "", dataRevertedToXML)
-        dataRevertedToXMLWithoutWhitespace = re.sub("\s+", "", dataRevertedToXMLWithoutWhitespace)
-        self.assertNotEqual(dataWithoutWhitespace, dataRevertedToXMLWithoutWhitespace)
-        
-        data2 = self.cal3d_.convertToBinary('CoreAnimatedMorph', dataRevertedToXML)
-        self.assertEqual(repr(data), repr(data2))
-
     def test_morph_loader_does_not_crash(self):
         anim1 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'AnimationCEO3K.xaf')
         anim2 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'SkeletalAnimation.xaf')
-        cal3d.loadCoreAnimatedMorphFromBuffer(file(anim1, 'rb').read())
-        cal3d.loadCoreAnimatedMorphFromBuffer(file(anim2, 'rb').read())
+        self.assertIs(None, cal3d.loadCoreAnimatedMorphFromBuffer(file(anim1, 'rb').read()))
+        self.assertIs(None, cal3d.loadCoreAnimatedMorphFromBuffer(file(anim2, 'rb').read()))
 
-    def test_morph_loader_reads_weights(self):
+    def test_xml_morph_loader_reads_weights(self):
         anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
         morph = cal3d.loadCoreAnimatedMorphFromBuffer(file(anim, 'rb').read())
+        self.assertGbHello2(morph)
+
+    def test_binary_morph_loader_reads_weights(self):
+        anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
+        morph = cal3d.loadCoreAnimatedMorphFromBuffer(file(anim, 'rb').read())
+        binaryData = cal3d.saveCoreAnimatedMorphToBuffer(morph)
+        morph = cal3d.loadCoreAnimatedMorphFromBuffer(binaryData)
+        self.assertGbHello2(morph)
+
+    def assertGbHello2(self, morph):
         self.assertEqual(1, morph.duration)
         self.assertEqual(12, len(morph.tracks))
 
@@ -97,6 +92,8 @@ class Test(imvu.test.TestCase):
         self.assertEqual(0.033333301544189453, track.keyframes[1].time)
         self.assertEqual(0, track.keyframes[1].weight)
 
+        # test_leftArmUp_has_weights
+
         [leftArmUp] = [t for t in morph.tracks if t.name == 'lfarmup.exclusive']
 
         self.assertEqual(0, leftArmUp.keyframes[0].time)
@@ -105,6 +102,17 @@ class Test(imvu.test.TestCase):
         self.assertEqual(0.033333301544189453, leftArmUp.keyframes[1].time)
         self.assertEqual(0.59440302848815918, leftArmUp.keyframes[1].weight)
 
+        # test_empty_tracks_can_load:
+        
+        lastTrack = morph.tracks[-1]
+
+        self.assertEqual("eyeseyes.exclusive", lastTrack.name)
+        self.assertEqual([], [(k.time, k.weight) for k in lastTrack.keyframes])
+
+        # test_removeZeroScaleTracks_does_what_it_says:
+        
+        morph.removeZeroScaleTracks()
+        self.assertEqual(1, len(morph.tracks))
 
     def test_get_format(self):
         self.assertEqual('CoreSkeleton,XML', self.cal3d_.getFormat(skeleton1))

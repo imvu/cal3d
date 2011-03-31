@@ -131,21 +131,6 @@ bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnim
 }
 
 
- /*****************************************************************************/
-/** Saves a core animated morph
-  *
-  * This function saves a core animation instance to a file.
-  *
-  * @param strFilename The name of the file to save the core animation instance
-  *                    to.
-  * @param pCoreAnimation A pointer to the core animation instance that should
-  *                       be saved.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
 bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph)
 {
   if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),
@@ -163,6 +148,12 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
     CalError::setLastError(CalError::FILE_CREATION_FAILED, __FILE__, __LINE__, strFilename);
     return false;
   }
+
+  return saveCoreAnimatedMorph(file, pCoreAnimatedMorph);
+}
+
+bool CalSaver::saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* pCoreAnimatedMorph) {
+  const char* strFilename = "";
 
   // write magic tag
   if(!CalPlatform::writeBytes(file, &Cal::ANIMATEDMORPH_FILE_MAGIC, sizeof(Cal::ANIMATEDMORPH_FILE_MAGIC)))
@@ -205,11 +196,7 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
     }
   }
 
-  // explicitly close the file
-  file.close();
-
   return true;
-
 }
 
  /*****************************************************************************/
@@ -226,7 +213,7 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreBones(std::ofstream& file, const std::string& strFilename, CalCoreBone *pCoreBone)
+bool CalSaver::saveCoreBones(std::ostream& file, const std::string& strFilename, CalCoreBone *pCoreBone)
 {
   if(!file)
   {
@@ -376,7 +363,7 @@ CalSaver::saveCoreKeyframe(
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreMorphKeyframe(std::ofstream& file, const std::string& strFilename, CalCoreMorphKeyframe *pCoreMorphKeyframe)
+bool CalSaver::saveCoreMorphKeyframe(std::ostream& file, const std::string& strFilename, CalCoreMorphKeyframe *pCoreMorphKeyframe)
 {
   if(!file)
   {
@@ -905,7 +892,7 @@ bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename,
   return true;
 }
 
-bool CalSaver::saveCoreMorphTrack(std::ofstream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack)
+bool CalSaver::saveCoreMorphTrack(std::ostream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack)
 {
   if(!file)
   {

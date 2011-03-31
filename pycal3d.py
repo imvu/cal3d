@@ -61,7 +61,6 @@ class Cal3d:
             raise Exception("could not find Saver for calCoreType %s" % calCoreType)
         object = loaderFunc(data)
         if not object:
-            cal3d_dll.CalError_PrintLastError()
             raise Exception("could not load data (len %s) for calCoreType %s" % (len(data), calCoreType))
         path = "%s.%s" % (tempfile.mktemp(), extension)
         try:

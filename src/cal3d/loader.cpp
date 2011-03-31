@@ -1524,32 +1524,24 @@ CalCoreMorphTrack *CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc)
   }
 
   // allocate a new core morphTrack instance
-  CalCoreMorphTrack *pCoreMorphTrack;
-  pCoreMorphTrack = new CalCoreMorphTrack();
-  if(pCoreMorphTrack == 0)
-  {
-    CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-    return 0;
-  }
+  CalCoreMorphTrack *pCoreMorphTrack = new CalCoreMorphTrack;
 
   // link the core morphTrack to the appropriate morph name
   pCoreMorphTrack->morphName = morphName;
 
   // read the number of keyframes
   int keyframeCount;
-  if(!dataSrc.readInteger(keyframeCount) || (keyframeCount <= 0))
+  if(!dataSrc.readInteger(keyframeCount) || (keyframeCount < 0))
   {
     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
     return 0;
   }
 
   // load all core keyframes
-  int keyframeId;
-  for(keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
+  for(int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
   {
     // load the core keyframe
-    CalCoreMorphKeyframe *pCoreKeyframe;
-    pCoreKeyframe = loadCoreMorphKeyframe(dataSrc);
+    CalCoreMorphKeyframe* pCoreKeyframe = loadCoreMorphKeyframe(dataSrc);
     if(pCoreKeyframe == 0)
     {
       delete pCoreMorphTrack;

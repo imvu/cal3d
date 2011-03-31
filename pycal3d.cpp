@@ -67,6 +67,12 @@ bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animat
     return CalSaver::saveCoreAnimatedMorph(path, animatedMorph.get());
 }
 
+std::string saveCoreAnimatedMorphToBuffer(const boost::shared_ptr<CalCoreAnimatedMorph>& animatedMorph) {
+    std::ostringstream os;
+    CalSaver::saveCoreAnimatedMorph(os, animatedMorph.get());
+    return os.str();
+}
+
 tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) {
     CalVector sceneAmbient = skel->sceneAmbientColor;
     return make_tuple(
@@ -167,6 +173,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     class_<CalCoreAnimatedMorph, boost::shared_ptr<CalCoreAnimatedMorph> >("CoreAnimatedMorph")
+        .def("removeZeroScaleTracks", &CalCoreAnimatedMorph::removeZeroScaleTracks)
         .def_readonly("duration", &CalCoreAnimatedMorph::duration)
         .add_property("tracks", &getTracks)
         ;
@@ -185,6 +192,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     def("saveCoreMesh", &saveCoreMesh);
 
     def("loadCoreAnimatedMorphFromBuffer", &loadCoreAnimatedMorphFromBuffer);
+    def("saveCoreAnimatedMorphToBuffer", &saveCoreAnimatedMorphToBuffer);
     def("saveCoreAnimatedMorph", &saveCoreAnimatedMorph);
 
     def("getLastErrorText", &CalError::getLastErrorText);
