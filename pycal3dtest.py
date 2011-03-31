@@ -79,8 +79,32 @@ class Test(imvu.test.TestCase):
     def test_morph_loader_does_not_crash(self):
         anim1 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'AnimationCEO3K.xaf')
         anim2 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'SkeletalAnimation.xaf')
-        cal3d.loadCoreAnimatedMorphFromBuffer(anim1)
-        cal3d.loadCoreAnimatedMorphFromBuffer(anim2)
+        cal3d.loadCoreAnimatedMorphFromBuffer(file(anim1, 'rb').read())
+        cal3d.loadCoreAnimatedMorphFromBuffer(file(anim2, 'rb').read())
+
+    def test_morph_loader_reads_weights(self):
+        anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
+        morph = cal3d.loadCoreAnimatedMorphFromBuffer(file(anim, 'rb').read())
+        self.assertEqual(1, morph.duration)
+        self.assertEqual(12, len(morph.tracks))
+
+        track = morph.tracks[0]
+        self.assertEqual('mouthopen.exclusive', track.name)
+        
+        self.assertEqual(0, track.keyframes[0].time)
+        self.assertEqual(0, track.keyframes[0].weight)
+
+        self.assertEqual(0.033333301544189453, track.keyframes[1].time)
+        self.assertEqual(0, track.keyframes[1].weight)
+
+        [leftArmUp] = [t for t in morph.tracks if t.name == 'lfarmup.exclusive']
+
+        self.assertEqual(0, leftArmUp.keyframes[0].time)
+        self.assertEqual(0.57999998331069946, leftArmUp.keyframes[0].weight)
+
+        self.assertEqual(0.033333301544189453, leftArmUp.keyframes[1].time)
+        self.assertEqual(0.59440302848815918, leftArmUp.keyframes[1].weight)
+
 
     def test_get_format(self):
         self.assertEqual('CoreSkeleton,XML', self.cal3d_.getFormat(skeleton1))

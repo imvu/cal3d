@@ -76,6 +76,32 @@ tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) 
     );
 }
 
+list getKeyframes(const CalCoreMorphTrack* t) {
+    list rv;
+    const std::vector<CalCoreMorphKeyframe>& keyframes = t->keyframes;
+    for (
+        std::vector<CalCoreMorphKeyframe>::const_iterator i = keyframes.begin();
+        i != keyframes.end();
+        ++i
+    ) {
+        rv.append(*i);
+    }
+    return rv;
+}
+
+list getTracks(const CalCoreAnimatedMorph* m) {
+    list rv;
+    const std::vector<CalCoreMorphTrack>& tracks = m->tracks;
+    for (
+        std::vector<CalCoreMorphTrack>::const_iterator i = tracks.begin();
+        i != tracks.end();
+        ++i
+    ) {
+        rv.append(*i);
+    }
+    return rv;
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -130,7 +156,19 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreAnimation, boost::shared_ptr<CalCoreAnimation> >("CoreAnimation")
         ;
 
+    class_<CalCoreMorphKeyframe>("CoreMorphKeyframe")
+        .add_property("time", &CalCoreMorphKeyframe::time)
+        .add_property("weight", &CalCoreMorphKeyframe::weight)
+        ;
+
+    class_<CalCoreMorphTrack, boost::shared_ptr<CalCoreMorphTrack> >("CoreMorphTrack")
+        .def_readonly("name", &CalCoreMorphTrack::morphName)
+        .add_property("keyframes", &getKeyframes)
+        ;
+
     class_<CalCoreAnimatedMorph, boost::shared_ptr<CalCoreAnimatedMorph> >("CoreAnimatedMorph")
+        .def_readonly("duration", &CalCoreAnimatedMorph::duration)
+        .add_property("tracks", &getTracks)
         ;
 
     def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
