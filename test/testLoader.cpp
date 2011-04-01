@@ -71,7 +71,7 @@ TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
   CalCoreSubmeshPtr subMesh(goodMesh->getCoreSubmesh(0));
   std::ostringstream ssm;
   bool bRet = true;
-  bRet = CalSaver::saveCoreMesh(ssm, "", goodMesh.get());
+  bRet = CalSaver::saveCoreMesh(ssm, goodMesh.get());
   CHECK_EQUAL(bRet, true);
   char *pBuf = new char[ssm.str().length()];
   memcpy(pBuf, ssm.str().c_str(), ssm.str().length());
@@ -527,7 +527,7 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     cm.addCoreSubmesh(sm);
 
     std::ostringstream os;
-    CalSaver::saveCoreMesh(os, "", &cm);
+    CalSaver::saveCoreMesh(os, &cm);
 
     std::string str = os.str();
     CalBufferSource cbs(str.data(), str.size());

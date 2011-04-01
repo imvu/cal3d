@@ -41,9 +41,6 @@ CalCoreMaterialPtr loadCoreMaterialFromBuffer(const std::string& buffer) {
 bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const std::string& path) {
     return CalSaver::saveCoreMaterial(path, material.get());
 }
-std::string saveCoreMaterialToString(const boost::shared_ptr<CalCoreMaterial>& material) {
-    return CalSaver::saveCoreMaterialToString(material.get());
-}
 
 CalCoreMeshPtr loadCoreMeshFromBuffer(const std::string& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
@@ -61,12 +58,6 @@ CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const std::string& buffe
 
 bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animatedMorph, const std::string& path) {
     return CalSaver::saveCoreAnimatedMorph(path, animatedMorph.get());
-}
-
-std::string saveCoreAnimatedMorphToBuffer(const boost::shared_ptr<CalCoreAnimatedMorph>& animatedMorph) {
-    std::ostringstream os;
-    CalSaver::saveCoreAnimatedMorph(os, animatedMorph.get());
-    return os.str();
 }
 
 tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) {
@@ -176,20 +167,23 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
     def("saveCoreAnimation", &saveCoreAnimation);
+    def("saveCoreAnimationToBuffer", &CalSaver::saveCoreAnimationToBuffer);
 
     def("loadCoreSkeletonFromBuffer", &loadCoreSkeletonFromBuffer);
     def("saveCoreSkeleton", &saveCoreSkeleton);
+    def("saveCoreSkeletonToBuffer", &CalSaver::saveCoreSkeletonToBuffer);
 
     def("loadCoreMaterialFromBuffer", &loadCoreMaterialFromBuffer);
     def("saveCoreMaterial", &saveCoreMaterial);
-    def("saveCoreMaterialToString", &saveCoreMaterialToString);
+    def("saveCoreMaterialToBuffer", &CalSaver::saveCoreMaterialToBuffer);
 
     def("loadCoreMeshFromBuffer", &loadCoreMeshFromBuffer);
     def("saveCoreMesh", &saveCoreMesh);
+    def("saveCoreMeshToBuffer", &CalSaver::saveCoreMeshToBuffer);
 
     def("loadCoreAnimatedMorphFromBuffer", &loadCoreAnimatedMorphFromBuffer);
-    def("saveCoreAnimatedMorphToBuffer", &saveCoreAnimatedMorphToBuffer);
     def("saveCoreAnimatedMorph", &saveCoreAnimatedMorph);
+    def("saveCoreAnimatedMorphToBuffer", &CalSaver::saveCoreAnimatedMorphToBuffer);
 
     def("getLastErrorText", &CalError::getLastErrorText);
 }
