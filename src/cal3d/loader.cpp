@@ -98,175 +98,76 @@ bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
 }
 
-CalCoreMesh *CalLoader::loadCoreMesh(const std::string& strFilename)
-{
-
-    if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::MESH_XMLFILE_EXTENSION)==0)
-        return loadXmlCoreMesh(strFilename);
-
-    // open the file
-    std::ifstream file;
-    file.open(strFilename.c_str(), std::ios::in | std::ios::binary);
-
-    // make sure it opened properly
-    if(!file)
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
-    }
-
-    //make a new stream data source and use it to load the mesh
-    CalStreamSource streamSrc( file );
-  
-    CalCoreMesh* coremesh = loadCoreMesh( streamSrc );
-
-    //close the file
-    file.close();
-
-    return coremesh;
-
-}
-
-CalCoreSkeleton *CalLoader::loadCoreSkeleton(const std::string& strFilename)
-{
-
-    if(strFilename.size()>= 3 && cal3d_stricmp(strFilename.substr(strFilename.size()-3,3).c_str(),Cal::SKELETON_XMLFILE_EXTENSION)==0)
-        return loadXmlCoreSkeletonFromFile(strFilename);
-
-    // open the file
-    std::ifstream file;
-    file.open(strFilename.c_str(), std::ios::in | std::ios::binary);
-
-    //make sure it opened properly
-    if(!file)
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
-    }
-
-    //make a new stream data source and use it to load the skeleton
-    CalStreamSource streamSrc( file );
-  
-    CalCoreSkeleton* coreskeleton = loadCoreSkeleton( streamSrc );
-
-    //close the file
-    file.close();
-
-    return coreskeleton;
-
-}
-
-
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel)
-{
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel) {
     CalStreamSource streamSrc(inputStream);
-    return loadCoreAnimation(streamSrc, skel);
+    return loadBinaryCoreAnimation(streamSrc, skel);
 }
 
-CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(std::istream& inputStream)
-{
+CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(std::istream& inputStream) {
     CalStreamSource streamSrc(inputStream);
-    return loadCoreAnimatedMorph(streamSrc);
+    return loadBinaryCoreAnimatedMorph(streamSrc);
 }
 
 
-CalCoreMaterial *CalLoader::loadCoreMaterial(std::istream& inputStream)
-{
+CalCoreMaterial *CalLoader::loadCoreMaterial(std::istream& inputStream) {
     CalStreamSource streamSrc(inputStream);
-    return loadCoreMaterial(streamSrc);
+    return loadBinaryCoreMaterial(streamSrc);
 }
 
-CalCoreMesh *CalLoader::loadCoreMesh(std::istream& inputStream)
-{
+CalCoreMesh *CalLoader::loadCoreMesh(std::istream& inputStream) {
     CalStreamSource streamSrc(inputStream);
-    return loadCoreMesh(streamSrc);
+    return loadBinaryCoreMesh(streamSrc);
 }
 
-CalCoreSkeleton *CalLoader::loadCoreSkeleton(std::istream& inputStream)
-{
-    //Create a new istream data source and pass it on
+CalCoreSkeleton *CalLoader::loadCoreSkeleton(std::istream& inputStream) {
     CalStreamSource streamSrc(inputStream);
-    return loadCoreSkeleton(streamSrc);
+    return loadBinaryCoreSkeleton(streamSrc);
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel)
-{
-    // Create a new buffer data source and pass it on
-    CalBufferSource bufferSrc(inputBuffer, len);
-    CalCoreAnimationPtr result = loadCoreAnimation(bufferSrc,skel);
-    if( result ) {
-        return result;
-    } else {
-        if (CalError::getLastErrorCode() == CalError::INVALID_FILE_FORMAT) {
-            // Assumes inputBuffer is zero-terminated, which may not be the case.
-            std::string nullTerm((const char*)inputBuffer, len);
-            return loadXmlCoreAnimation(nullTerm.c_str(), skel);
-        } else {
-            return CalCoreAnimationPtr();
-        }
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton *skel) {
+    if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc, skel)) {
+        return anim;
     }
+    std::string data((const char*)inputSrc.data(), inputSrc.size());
+    return loadXmlCoreAnimation(data.c_str(), skel);
 }
 
-CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len )
-{
-    //Create a new buffer data source and pass it on
-    CalBufferSource bufferSrc(inputBuffer, len);
-    CalCoreAnimatedMorphPtr result = loadCoreAnimatedMorph(bufferSrc);
-    if( result ) {
-        return result;
-    } else {
-        std::string nullTerm((const char*)inputBuffer, len);
-        return loadXmlCoreAnimatedMorph(nullTerm.c_str());
-    }
-
-}
-
-CalCoreMaterial *CalLoader::loadCoreMaterialFromBuffer(const void* inputBuffer, unsigned int len)
-{
-    //Create a new buffer data source and pass it on
-    CalBufferSource bufferSrc(inputBuffer, len);
-    CalCoreMaterial * result = loadCoreMaterial(bufferSrc);
-    if( result ) {
-        return result;
-    } else {
-        std::string nullTerm((const char*)inputBuffer, len);
-        return loadXmlCoreMaterial(nullTerm.c_str());
-    }
-}
-
-CalCoreMesh *CalLoader::loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len)
-{
-    //Create a new buffer data source and pass it on
-    CalCoreMesh * result = NULL;
+template<typename RV>
+RV tryBothLoaders(
+    CalBufferSource& inputSource,
+    RV (*binaryLoader)(CalDataSource&),
+    RV (*xmlLoader)(const char*)
+) {
     try {
-        CalBufferSource bufferSrc(inputBuffer, len);
-        result = loadCoreMesh(bufferSrc);
-        if( result ) {
-            return result;
-        } else {
-            std::string nullTerm((const char*)inputBuffer, len);
-            return loadXmlCoreMesh(nullTerm.c_str());
+        if (RV anim = binaryLoader(inputSource)) {
+            return anim;
         }
-    } catch (const CalError& ){        
+        // make a copy to null-terminate :(
+        std::string data((const char*)inputSource.data(), inputSource.size());
+        return xmlLoader(data.c_str());
     }
-    return result;
-}
-
-CalCoreSkeleton *CalLoader::loadCoreSkeletonFromBuffer(const void* inputBuffer, unsigned int len)
-{
-    //Create a new buffer data source and pass it on
-    CalBufferSource bufferSrc(inputBuffer, len);
-    CalCoreSkeleton * result = loadCoreSkeleton(bufferSrc);
-    if( result ) {
-        return result;
-    } else {
-        std::string nullTerm((const char*)inputBuffer, len);
-        return loadXmlCoreSkeleton(nullTerm.c_str());
+    catch (const CalError&) {
+        return RV();
     }
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton *skel)
-{
+CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalBufferSource& inputSrc) {
+    return tryBothLoaders(inputSrc, &loadBinaryCoreAnimatedMorph, &loadXmlCoreAnimatedMorph);
+}
+
+CalCoreMaterial* CalLoader::loadCoreMaterial(CalBufferSource& inputSrc) {
+    return tryBothLoaders(inputSrc, &loadBinaryCoreMaterial, &loadXmlCoreMaterial);
+}
+
+CalCoreMesh* CalLoader::loadCoreMesh(CalBufferSource& inputSrc) {
+    return tryBothLoaders(inputSrc, &loadBinaryCoreMesh, &loadXmlCoreMesh);
+}
+
+CalCoreSkeleton* CalLoader::loadCoreSkeleton(CalBufferSource& inputSrc) {
+    return tryBothLoaders(inputSrc, &loadBinaryCoreSkeleton, &loadXmlCoreSkeleton);
+}
+
+CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton *skel) {
     const CalCoreAnimationPtr null;
 
     // check if this is a valid file
@@ -342,7 +243,7 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalDataSource& dataSrc, CalCore
 
 
 
-CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
+CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& dataSrc)
 {
     const CalCoreAnimatedMorphPtr null;
 
@@ -423,7 +324,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
+CalCoreMaterial *CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc)
 {
 
     // check if this is a valid file
@@ -532,7 +433,7 @@ CalCoreMaterial *CalLoader::loadCoreMaterial(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMesh *CalLoader::loadCoreMesh(CalDataSource& dataSrc)
+CalCoreMesh *CalLoader::loadBinaryCoreMesh(CalDataSource& dataSrc)
 {
 
     // check if this is a valid file
@@ -599,7 +500,7 @@ CalCoreMesh *CalLoader::loadCoreMesh(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSkeleton *CalLoader::loadCoreSkeleton(CalDataSource& dataSrc)
+CalCoreSkeleton *CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc)
 {
 
     // check if this is a valid file

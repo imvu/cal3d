@@ -12,7 +12,6 @@
 
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
-#include <iosfwd>
 
 /**
  * CalBufferSource class.
@@ -33,11 +32,17 @@ public:
   virtual bool readInteger(int& value);
   virtual bool readString(std::string& strValue);
 
+  const void* data() const {
+    return mInputBuffer;
+  }
+  size_t size() const {
+    return mLength;
+  }
+
 private:
   const void* mInputBuffer;
   size_t mOffset;
   size_t mLength;
-
 
   CalBufferSource(); //Can't use this
 };

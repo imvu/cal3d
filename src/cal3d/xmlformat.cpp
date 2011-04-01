@@ -160,134 +160,54 @@ static inline void ReadQuadFloat( char const * buffer, float * f1, float * f2, f
 #endif
 }
 
-/*****************************************************************************/
-/** Loads a core skeleton instance from a XML file.
-*
-* This function loads a core skeleton instance from a XML file.
-*
-* @param strFilename The name of the file to load the core skeleton instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core skeleton
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-CalCoreSkeleton *CalLoader::loadXmlCoreSkeletonFromFile(const std::string& strFilename)
-{ 
-
-    std::stringstream str;
-    TiXmlDocument doc(strFilename);
-    if(!doc.LoadFile())
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
-    }
-
-    return loadXmlCoreSkeleton(doc);
-}
-
-/*****************************************************************************/
-/** Loads a core skeleton instance from a XML file.
-*
-* This function loads a core skeleton instance from a XML file.
-*
-* @param strFilename The name of the file to load the core skeleton instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core skeleton
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(const void *dataSrc)
+CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(const char *dataSrc)
 { 
 
     TiXmlDocument doc;
 
 
-    doc.Parse(static_cast<const char*>(dataSrc));
+    doc.Parse(dataSrc);
     if(doc.Error())
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
-    return loadXmlCoreSkeleton(doc);
+    return loadXmlCoreSkeletonDoc(doc);
 }
 
-
-/*****************************************************************************/
-/** Loads a core Mesh instance from a XML file.
-*
-* This function loads a core Mesh instance from a XML file.
-*
-* @param strFilename The name of the file to load the core Mesh instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core Mesh
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-CalCoreMesh *CalLoader::loadXmlCoreMesh(const void *dataSrc)
+CalCoreMesh *CalLoader::loadXmlCoreMesh(const char *dataSrc)
 { 
 
     TiXmlDocument doc;
     doc.Clear();
 
 
-    doc.Parse(static_cast<const char*>(dataSrc));
+    doc.Parse(dataSrc);
     if(doc.Error())
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
-    return loadXmlCoreMesh(doc);
+    return loadXmlCoreMeshDoc(doc);
 }
 
-/******************************  ***********************************************/
-/** Loads a core Material instance from a XML file.
-*
-* This function loads a core Material instance from a XML file.
-*
-* @param strFilename The name of the file to load the core Material instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core Material
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-CalCoreMaterial *CalLoader::loadXmlCoreMaterial(const void *dataSrc)
+CalCoreMaterial *CalLoader::loadXmlCoreMaterial(const char *dataSrc)
 { 
 
     TiXmlDocument doc;
 
 
-    doc.Parse(static_cast<char const *>(dataSrc));
+    doc.Parse(dataSrc);
     if(doc.Error())
     {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
-    return loadXmlCoreMaterial(doc);
+    return loadXmlCoreMaterialDoc(doc);
 }
-
-/*****************************************************************************/
-/** Loads a core animation instance from a XML file.
-*
-* This function loads a core animation instance from a XML file.
-*
-* @param strFilename The name of the file to load the core animation instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core animation
-*         \li \b 0 if an error happened
-*****************************************************************************/
 
 CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCoreSkeleton *skel)
 { 
@@ -301,22 +221,9 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCore
         return CalCoreAnimationPtr();
     }
 
-    return loadXmlCoreAnimation(doc, skel);
+    return loadXmlCoreAnimationDoc(doc, skel);
 }
 
-
-/*****************************************************************************/
-/** Loads a core animatedMorph instance from a XML file.
-*
-* This function loads a core animatedMorph instance from a XML file.
-*
-* @param strFilename The name of the file to load the core animatedMorph instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core animatedMorph
-*         \li \b 0 if an error happened
-*****************************************************************************/
 
 CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const char* dataSrc)
 { 
@@ -330,22 +237,10 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const char* dataSrc)
         return CalCoreAnimatedMorphPtr();
     }
 
-    return loadXmlCoreAnimatedMorph(doc);
+    return loadXmlCoreAnimatedMorphDoc(doc);
 }
 
-/*****************************************************************************/
-/** Loads a core skeleton instance from a XML file.
-*
-* This function loads a core skeleton instance from a XML file.
-*
-* @param strFilename The name of the file to load the core skeleton instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core skeleton
-*         \li \b 0 if an error happened
-*****************************************************************************/
-CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
+CalCoreSkeleton *CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument & doc)
 { 
     std::stringstream str;
 
@@ -630,30 +525,7 @@ CalCoreSkeleton *CalLoader::loadXmlCoreSkeleton(TiXmlDocument & doc)
     return pCoreSkeleton;
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton *skel)
-{
-    TiXmlDocument doc(strFilename);
-    if(!doc.LoadFile())
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return CalCoreAnimationPtr();
-    }
-    return loadXmlCoreAnimation(doc, skel);
-}
-
-CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(const std::string& strFilename)
-{
-    std::stringstream str;
-    TiXmlDocument doc(strFilename);
-    if(!doc.LoadFile())
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return CalCoreAnimatedMorphPtr();
-    }
-    return loadXmlCoreAnimatedMorph(doc);
-}
-
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreSkeleton *skel)
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument &doc, CalCoreSkeleton *skel)
 {
     const CalCoreAnimationPtr null;
     std::stringstream str;
@@ -870,7 +742,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(TiXmlDocument &doc, CalCoreS
     return pCoreAnimation;
 }
 
-CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
+CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorphDoc(TiXmlDocument &doc)
 {
     const CalCoreAnimatedMorphPtr null;
 
@@ -937,31 +809,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorph(TiXmlDocument &doc)
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreMesh *CalLoader::loadXmlCoreMesh(const std::string& strFilename)
-{
-
-    TiXmlDocument doc(strFilename);
-    if(!doc.LoadFile())
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
-    }
-    return loadXmlCoreMesh(doc);
-}
-
-/*****************************************************************************/
-/** Loads a core mesh instance from a Xml file.
-*
-* This function loads a core mesh instance from a Xml file.
-*
-* @param strFilename The name of the file to load the core mesh instance from.
-*
-* @return One of the following values:
-*         \li a pointer to the core mesh
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
+CalCoreMesh *CalLoader::loadXmlCoreMeshDoc(TiXmlDocument & doc)
 {
     std::string strFilename = "";
 
@@ -1420,7 +1268,6 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 }
 
 
-
 /*****************************************************************************/
 /** Loads a core material instance from a XML file.
 *
@@ -1435,34 +1282,7 @@ CalCoreMesh *CalLoader::loadXmlCoreMesh(TiXmlDocument & doc)
 *****************************************************************************/
 
 
-CalCoreMaterial *CalLoader::loadXmlCoreMaterial(const std::string& strFilename)
-{
-    std::stringstream str;
-    TiXmlDocument doc(strFilename);
-    if(!doc.LoadFile())
-    {
-        CalError::setLastError(CalError::FILE_NOT_FOUND, __FILE__, __LINE__, strFilename);
-        return 0;
-    }
-    return loadXmlCoreMaterial(doc);
-
-}
-
-/*****************************************************************************/
-/** Loads a core material instance from a XML file.
-*
-* This function loads a core material instance from a XML file.
-*
-* @param strFilename The name of the file to load the core material instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core material
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-
-CalCoreMaterial *CalLoader::loadXmlCoreMaterial(TiXmlDocument & doc)
+CalCoreMaterial *CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument & doc)
 {
     std::stringstream str;
 

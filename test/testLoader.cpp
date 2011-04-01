@@ -51,7 +51,7 @@ inline float *getFloatVecFromBuf(char* pbuf)
 }
 
 
-const char * goodMeshData =
+const char goodMeshData[] =
 "<HEADER MAGIC=\"XMF\" VERSION=\"919\" />"
 "<MESH NUMSUBMESH=\"1\">"
 "    <SUBMESH NUMVERTICES=\"3\" NUMFACES=\"1\" NUMLODSTEPS=\"0\" NUMSPRINGS=\"0\" NUMMORPHS=\"0\" NUMTEXCOORDS=\"1\" MATERIAL=\"1\">"
@@ -81,8 +81,19 @@ const char * goodMeshData =
 "</MESH>"
 ;
 
+template<unsigned Length>
+CalBufferSource fromString(const char (&p)[Length]) {
+  return CalBufferSource(p, Length);
+}
+
+template<unsigned Length>
+CalBufferSource fromString(const unsigned char (&p)[Length]) {
+  return CalBufferSource(p, Length);
+}
+
 TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
-  shared_ptr<CalCoreMesh> goodMesh(CalLoader::loadCoreMeshFromBuffer(goodMeshData, strlen(goodMeshData)));
+  CalBufferSource cbs(fromString(goodMeshData));
+  CalCoreMeshPtr goodMesh(CalLoader::loadCoreMesh(cbs));
   CalCoreSubmeshPtr subMesh(goodMesh->getCoreSubmesh(0));
   std::ostringstream ssm;
   bool bRet = true;
@@ -140,14 +151,15 @@ TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
   }
   //load the buffer back in 
   //should not crash
-  shared_ptr<CalCoreMesh> badMesh(CalLoader::loadCoreMeshFromBuffer(pBuf, ssm.str().length()));
+  CalBufferSource cbs2(pBuf, ssm.str().length());
+  shared_ptr<CalCoreMesh> badMesh(CalLoader::loadCoreMesh(cbs2));
   CalCoreMesh *pMesh = badMesh.get();
 
   CHECK(!pMesh);
   delete [] pBuf;
 }
 
-const char* animationText =
+const char animationText[] =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
 "<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
 "    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"0\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
@@ -162,7 +174,8 @@ const char* animationText =
 ;
 
 TEST(LoadSimpleXmlAnimation) {
-  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animationText, 0);
+  CalBufferSource cbs(fromString(animationText));
+  CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
   CHECK(anim);
   CHECK_EQUAL(anim->tracks.size(), 1);
   CHECK_EQUAL(anim->duration, 40);
@@ -182,7 +195,7 @@ TEST(LoadSimpleXmlAnimation) {
   CHECK_EQUAL(ss.str(), animationText);
 }
 
-const char* animation_with_out_of_order_keyframes =
+const char animation_with_out_of_order_keyframes[] =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
 "<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
 "    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"0\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
@@ -197,7 +210,8 @@ const char* animation_with_out_of_order_keyframes =
 ;
 
 TEST(sorts_keyframes_upon_load) {
-  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_out_of_order_keyframes, 0);
+  CalBufferSource cbs(fromString(animation_with_out_of_order_keyframes));
+  CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
   CHECK(anim);
 
   CHECK_EQUAL(anim->tracks.size(), 1);
@@ -213,7 +227,7 @@ TEST(sorts_keyframes_upon_load) {
   CHECK_EQUAL(40.0f, k2.time);
 }
 
-const char* animation_with_translations =
+const char animation_with_translations[] =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
 "<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
 "    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"1\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
@@ -230,7 +244,8 @@ const char* animation_with_translations =
 ;
 
 TEST(load_animation_with_translation) {
-  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_translations, 0);
+  CalBufferSource cbs(fromString(animation_with_translations));
+  CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
   CHECK(anim);
 
   CHECK_EQUAL(anim->tracks.size(), 1);
@@ -250,7 +265,7 @@ TEST(load_animation_with_translation) {
   CHECK_EQUAL(CalVector(4, 5, 6), k2.translation);
 }
 
-const char* animation_with_static_translations =
+const char animation_with_static_translations[] =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
 "<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
 "    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"1\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
@@ -266,7 +281,8 @@ const char* animation_with_static_translations =
 ;
 
 TEST(load_animation_with_static_translations) {
-  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_static_translations, 0);
+  CalBufferSource cbs(fromString(animation_with_static_translations));
+  CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
   CHECK(anim);
 
   CHECK_EQUAL(anim->tracks.size(), 1);
@@ -286,7 +302,7 @@ TEST(load_animation_with_static_translations) {
   CHECK_EQUAL(CalVector(1, 2, 3), k2.translation);
 }
 
-const char* animation_with_mismatched_track_and_keyframe_count=
+const char animation_with_mismatched_track_and_keyframe_count[] =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
 "<ANIMATION NUMTRACKS=\"2\" DURATION=\"40\">\n"
 "    <TRACK BONEID=\"0\" TRANSLATIONREQUIRED=\"1\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"3\">\n"
@@ -302,7 +318,8 @@ const char* animation_with_mismatched_track_and_keyframe_count=
 ;
 
 TEST(load_animation_with_mismatched_counts) {
-  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_with_mismatched_track_and_keyframe_count, 0);
+  CalBufferSource cbs(fromString(animation_with_mismatched_track_and_keyframe_count));
+  CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
   CHECK(anim);
 
   CHECK_EQUAL(anim->tracks.size(), 1);
@@ -323,7 +340,7 @@ TEST(load_animation_with_mismatched_counts) {
 }
 
 
-const char *simple_two_bone_skeleton=
+const char simple_two_bone_skeleton[] =
 "<HEADER MAGIC=\"XSF\" VERSION=\"919\" />"
 "<SKELETON NUMBONES=\"2\" SCENEAMBIENTCOLOR=\"0.5 0.5 0.5\">"
 "    <BONE NAME=\"AttachmentRoot\" NUMCHILDS=\"1\" ID=\"0\">"
@@ -346,7 +363,8 @@ const char *simple_two_bone_skeleton=
 
 TEST(simple_two_bone_skeleton) {
   float tol=0.001f;
-  boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadXmlCoreSkeleton(simple_two_bone_skeleton));
+  CalBufferSource cbs(fromString(simple_two_bone_skeleton));
+  boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadCoreSkeleton(cbs));
   CHECK(skel);
   CHECK_EQUAL(skel->coreBones.size(), 2);
   CalVector sceneAmbientClr = skel->sceneAmbientColor;
@@ -391,7 +409,7 @@ TEST(simple_two_bone_skeleton) {
   CHECK_EQUAL(parentIdOfChildBone, 0);
 }
 
-const char *one_bone_skeleton=
+const char one_bone_skeleton[] =
 "<HEADER MAGIC=\"XSF\" VERSION=\"919\" />"
 "<SKELETON NUMBONES=\"2\" SCENEAMBIENTCOLOR=\"1 1 1\">"
 "    <BONE NAME=\"AttachmentRoot\" NUMCHILDS=\"1\" ID=\"0\">"
@@ -405,7 +423,7 @@ const char *one_bone_skeleton=
 ;
 
 
-const char* animation_for_a_nonexistent_bone =
+const char animation_for_a_nonexistent_bone[] =
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
 "<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"
 "    <TRACK BONEID=\"2\" TRANSLATIONREQUIRED=\"0\" TRANSLATIONISDYNAMIC=\"0\" HIGHRANGEREQUIRED=\"1\" NUMKEYFRAMES=\"2\">\n"
@@ -420,9 +438,12 @@ const char* animation_for_a_nonexistent_bone =
 ;
 
 TEST(load_animation_for_non_existent_bone) {
-  boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadXmlCoreSkeleton(one_bone_skeleton));
+  CalBufferSource cbs(fromString(one_bone_skeleton));
+  boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadCoreSkeleton(cbs));
   CHECK(skel);
-  CalCoreAnimationPtr anim = CalLoader::loadXmlCoreAnimation(animation_for_a_nonexistent_bone, skel.get());
+
+  CalBufferSource cbs2(fromString(animation_for_a_nonexistent_bone));
+  CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs2, skel.get());
   CHECK(anim);
   CHECK_EQUAL(anim->tracks.size(), 0);
 }
@@ -483,7 +504,8 @@ unsigned char hmmmAnimation[] = {
 BOOST_STATIC_ASSERT(sizeof(hmmmAnimation) == hmmmLength);
 
 TEST(load_hmmm) {
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimationFromBuffer(hmmmAnimation, hmmmLength, 0);
+    CalBufferSource cbs(fromString(hmmmAnimation));
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK_EQUAL(anim->tracks.size(), 70);
 
     CalCoreKeyframe expected[14] = {
@@ -533,7 +555,9 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     std::string fn = getTempFileName();
     CalSaver::saveCoreMesh(fn.c_str(), &cm);
 
-    CalCoreMesh* loaded = CalLoader::loadCoreMesh(fn);
+    std::ifstream is(fn);
+    CalCoreMesh* loaded = CalLoader::loadCoreMesh(is);
+    is.close();
     CHECK(loaded);
     CHECK_EQUAL(1, cm.getCoreSubmeshCount());
     CHECK_EQUAL(1, loaded->getCoreSubmeshCount());
@@ -546,7 +570,8 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
 }
 
 TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
-    CalCoreAnimationPtr anim1 = CalLoader::loadXmlCoreAnimation(animationText, 0);
+    CalBufferSource cbs(fromString(animationText));
+    CalCoreAnimationPtr anim1 = CalLoader::loadCoreAnimation(cbs, 0);
     CHECK(anim1);
 
     std::stringstream buf1;
@@ -561,7 +586,7 @@ TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CHECK_EQUAL(*anim1, *anim2);
 }
 
-const char* invalid_morph = 
+const char invalid_morph[] = 
 "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />"
 "<ANIMATION NUMTRACKS=\"85\" DURATION=\"4.8571429\">"
 "    <TRACK BONEID=\"1\" NUMKEYFRAMES=\"2\">"
@@ -577,19 +602,23 @@ const char* invalid_morph =
 "</ANIMATION>"
 ;
 
-const char* header_only = 
+const char header_only[] = 
 "<HEADER MAGIC=\"XPF\" VERSION=\"919\" />"
 ;
 
-const char* header_only_without_magic = 
+const char header_only_without_magic[] = 
 "<HEADER MAGIC=\"XPF\" VERSION=\"919\" />"
 "<ANIMATION>"
 "</ANIMATION>"
 ;
 
 TEST(morph_loader_doesnt_crash_on_invalid_data) {
-  CHECK(!CalLoader::loadXmlCoreAnimatedMorph(invalid_morph));
-  CHECK(!CalLoader::loadXmlCoreAnimatedMorph(header_only));
+  CalBufferSource cbs1(fromString(invalid_morph));
+  CHECK(!CalLoader::loadCoreAnimatedMorph(cbs1));
+
+  CalBufferSource cbs2(fromString(header_only));
+  CHECK(!CalLoader::loadCoreAnimatedMorph(cbs2));
+
   // passes on mac, fails on windows...  weird.
-  //CHECK(CalLoader::loadXmlCoreAnimatedMorph(header_only_without_magic));
+  //CHECK(CalLoader::loadCoreAnimatedMorph(header_only_without_magic));
 }

@@ -34,3 +34,4 @@ public:
 
   CalCoreSubmeshVector m_vectorCoreSubmesh;
 };
+typedef boost::shared_ptr<CalCoreMesh> CalCoreMeshPtr;

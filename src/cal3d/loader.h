@@ -31,6 +31,7 @@ class CalCoreSubmesh;
 class CalCoreMaterial;
 class CalVector;
 class CalQuaternion;
+class CalBufferSource;
 
 bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec );
 
@@ -51,50 +52,42 @@ public:
     static float const keyframePosRangeSmall;
     static unsigned int const keyframePosBytesSmall;
 
-    static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(const std::string& strFilename);
-    static CalCoreMaterial *loadCoreMaterial(const std::string& strFilename);
-    static CalCoreMesh *loadCoreMesh(const std::string& strFilename);
-    static CalCoreSkeleton *loadCoreSkeleton(const std::string& strFilename);
-
-    static CalCoreAnimationPtr loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel);
+    // kill these:
+    static CalCoreAnimationPtr loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel = 0);
     static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(std::istream& inputStream);
     static CalCoreMaterial *loadCoreMaterial(std::istream& inputStream);
     static CalCoreMesh *loadCoreMesh(std::istream& inputStream);
     static CalCoreSkeleton *loadCoreSkeleton(std::istream& inputStream);
+    // done killing
 
-    static CalCoreAnimationPtr loadCoreAnimationFromBuffer(const void* inputBuffer, unsigned int len, CalCoreSkeleton *skel);
-    static CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const void* inputBuffer, unsigned int len);
-    static CalCoreMaterial* loadCoreMaterialFromBuffer(const void* inputBuffer, unsigned int len);
-    static CalCoreMesh *loadCoreMeshFromBuffer(const void* inputBuffer, unsigned int len);
-    static CalCoreSkeleton *loadCoreSkeletonFromBuffer(const void* inputBuffer, unsigned int len);
-
-    static CalCoreAnimationPtr loadCoreAnimation(CalDataSource& inputSrc, CalCoreSkeleton *skel);
-    static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(CalDataSource& inputSrc);
-    static CalCoreMaterial *loadCoreMaterial(CalDataSource& inputSrc);
-    static CalCoreMesh *loadCoreMesh(CalDataSource& inputSrc);
-    static CalCoreSkeleton *loadCoreSkeleton(CalDataSource& inputSrc);
-
-    static CalCoreAnimationPtr loadXmlCoreAnimation(const std::string& strFilename, CalCoreSkeleton* skel);
-    static CalCoreAnimationPtr loadXmlCoreAnimation(const char*, CalCoreSkeleton* skel);
-    static CalCoreAnimationPtr loadXmlCoreAnimation(TiXmlDocument & doc, CalCoreSkeleton* skel);
-
-    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const std::string& strFilename);
-    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const char*);
-    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(TiXmlDocument & doc);
-
-    static CalCoreSkeleton *loadXmlCoreSkeletonFromFile(const std::string& strFilename);
-    static CalCoreSkeleton *loadXmlCoreSkeleton(const void *);
-    static CalCoreSkeleton *loadXmlCoreSkeleton(TiXmlDocument & doc);
-
-    static CalCoreMesh *loadXmlCoreMesh(const std::string& strFilename);
-    static CalCoreMesh *loadXmlCoreMesh(const void *);
-    static CalCoreMesh *loadXmlCoreMesh(TiXmlDocument & doc);
-
-    static CalCoreMaterial *loadXmlCoreMaterial(const std::string& strFilename);
-    static CalCoreMaterial *loadXmlCoreMaterial(const void *);
-    static CalCoreMaterial *loadXmlCoreMaterial(TiXmlDocument & doc);
+    static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton *skel = 0);
+    static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(CalBufferSource& inputSrc);
+    static CalCoreMaterial *loadCoreMaterial(CalBufferSource& inputSrc);
+    static CalCoreMesh *loadCoreMesh(CalBufferSource& inputSrc);
+    static CalCoreSkeleton *loadCoreSkeleton(CalBufferSource& inputSrc);
 
 private:
+    static CalCoreAnimationPtr loadBinaryCoreAnimation(CalDataSource& inputSrc, CalCoreSkeleton *skel = 0);
+    static CalCoreAnimatedMorphPtr loadBinaryCoreAnimatedMorph(CalDataSource& inputSrc);
+    static CalCoreMaterial *loadBinaryCoreMaterial(CalDataSource& inputSrc);
+    static CalCoreMesh *loadBinaryCoreMesh(CalDataSource& inputSrc);
+    static CalCoreSkeleton *loadBinaryCoreSkeleton(CalDataSource& inputSrc);
+
+    static CalCoreAnimationPtr loadXmlCoreAnimation(const char*, CalCoreSkeleton* skel);
+    static CalCoreAnimationPtr loadXmlCoreAnimationDoc(TiXmlDocument & doc, CalCoreSkeleton* skel);
+
+    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const char*);
+    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorphDoc(TiXmlDocument & doc);
+
+    static CalCoreSkeleton *loadXmlCoreSkeleton(const char*);
+    static CalCoreSkeleton *loadXmlCoreSkeletonDoc(TiXmlDocument & doc);
+
+    static CalCoreMesh *loadXmlCoreMesh(const char*);
+    static CalCoreMesh *loadXmlCoreMeshDoc(TiXmlDocument & doc);
+
+    static CalCoreMaterial *loadXmlCoreMaterial(const char*);
+    static CalCoreMaterial *loadXmlCoreMaterialDoc(TiXmlDocument & doc);
+
     static bool isHeaderWellFormed(const TiXmlElement* header);
 
     static CalCoreBone *loadCoreBones(CalDataSource& dataSrc, int version);

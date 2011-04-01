@@ -16,14 +16,6 @@
 #include "cal3d/buffersource.h"
 #include "cal3d/error.h"
 
- /*****************************************************************************/
-/** Constructs a buffer source instance from an existing memory buffer.
-  *
-  * This function is the only constructor of the buffer source.
-  *
-  * @param inputBuffer The input buffer to read from
-  *****************************************************************************/
-
 CalBufferSource::CalBufferSource(const void* inputBuffer, size_t length)
   : mInputBuffer(inputBuffer)
   , mOffset(0)
@@ -33,29 +25,10 @@ CalBufferSource::CalBufferSource(const void* inputBuffer, size_t length)
 }
 
 
-
- /*****************************************************************************/
-/** Sets the error code and message related to a memory buffer source.
-  *
-  *****************************************************************************/
-
 void CalBufferSource::setError() const
 {
    CalError::setLastError(CalError::NULL_BUFFER, __FILE__, __LINE__);
 }
-
- /*****************************************************************************/
-/** Reads a number of bytes.
-  *
-  * This function reads a given number of bytes from this data source.
-  *
-  * @param pBuffer A pointer to the buffer where the bytes are stored into.
-  * @param length The number of bytes that should be read.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
 bool CalBufferSource::readBytes(void* pBuffer, int length)
 {
@@ -69,18 +42,6 @@ bool CalBufferSource::readBytes(void* pBuffer, int length)
    return result;
 }
 
- /*****************************************************************************/
-/** Reads a float.
-  *
-  * This function reads a float from this data source.
-  *
-  * @param value A reference to the float into which the data is read.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
 bool CalBufferSource::readFloat(float& value)
 {
    //Check that the buffer is usable
@@ -93,18 +54,6 @@ bool CalBufferSource::readFloat(float& value)
    return result;
 }
 
- /*****************************************************************************/
-/** Reads an integer.
-  *
-  * This function reads an integer from this data source.
-  *
-  * @param value A reference to the integer into which the data is read.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
 bool CalBufferSource::readInteger(int& value)
 {
    //Check that the buffer is usable
@@ -116,18 +65,6 @@ bool CalBufferSource::readInteger(int& value)
 
    return result;
 }
-
- /*****************************************************************************/
-/** Reads a string.
-  *
-  * This function reads a string from this data source.
-  *
-  * @param value A reference to the string into which the data is read.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
 
 bool CalBufferSource::readString(std::string& strValue)
 {

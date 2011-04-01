@@ -35,3 +35,5 @@ private:
     bool mapCoreBoneName(int coreBoneId, const std::string& strName);
     std::map<std::string, int> m_mapCoreBoneNames;
 };
+
+typedef boost::shared_ptr<CalCoreSkeleton> CalCoreSkeletonPtr;

@@ -1,6 +1,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+#include <cal3d/buffersource.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/coreanimatedmorph.h>
 #include <cal3d/corebone.h>
@@ -14,30 +15,27 @@
 
 using namespace boost::python;
 
-boost::shared_ptr<CalCoreAnimation> loadCoreAnimationFromBuffer(const std::string& buffer) {
-    return boost::shared_ptr<CalCoreAnimation>(
-        CalLoader::loadCoreAnimationFromBuffer(buffer.data(), buffer.size(), NULL)
-    );
+CalCoreAnimationPtr loadCoreAnimationFromBuffer(const std::string& buffer) {
+    CalBufferSource cbs(buffer.data(), buffer.size());
+    return CalCoreAnimationPtr(CalLoader::loadCoreAnimation(cbs));
 }
 
 bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, const std::string& path) {
     return CalSaver::saveCoreAnimation(path, animation.get());
 }
 
-boost::shared_ptr<CalCoreSkeleton> loadCoreSkeletonFromBuffer(const std::string& buffer) {
-    return boost::shared_ptr<CalCoreSkeleton>(
-        CalLoader::loadCoreSkeletonFromBuffer(buffer.data(), buffer.size())
-    );
+CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const std::string& buffer) {
+    CalBufferSource cbs(buffer.data(), buffer.size());
+    return CalCoreSkeletonPtr(CalLoader::loadCoreSkeleton(cbs));
 }
 
 bool saveCoreSkeleton(const boost::shared_ptr<CalCoreSkeleton>& skeleton, const std::string& path) {
     return CalSaver::saveCoreSkeleton(path, skeleton.get());
 }
 
-boost::shared_ptr<CalCoreMaterial> loadCoreMaterialFromBuffer(const std::string& buffer) {
-    return boost::shared_ptr<CalCoreMaterial>(
-        CalLoader::loadCoreMaterialFromBuffer(buffer.data(), buffer.size())
-    );
+CalCoreMaterialPtr loadCoreMaterialFromBuffer(const std::string& buffer) {
+    CalBufferSource cbs(buffer.data(), buffer.size());
+    return CalCoreMaterialPtr(CalLoader::loadCoreMaterial(cbs));
 }
 
 bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const std::string& path) {
@@ -47,20 +45,18 @@ std::string saveCoreMaterialToString(const boost::shared_ptr<CalCoreMaterial>& m
     return CalSaver::saveCoreMaterialToString(material.get());
 }
 
-boost::shared_ptr<CalCoreMesh> loadCoreMeshFromBuffer(const std::string& buffer) {
-    return boost::shared_ptr<CalCoreMesh>(
-        CalLoader::loadCoreMeshFromBuffer(buffer.data(), buffer.size())
-    );
+CalCoreMeshPtr loadCoreMeshFromBuffer(const std::string& buffer) {
+    CalBufferSource cbs(buffer.data(), buffer.size());
+    return CalCoreMeshPtr(CalLoader::loadCoreMesh(cbs));
 }
 
 bool saveCoreMesh(const boost::shared_ptr<CalCoreMesh>& mesh, const std::string& path) {
     return CalSaver::saveCoreMesh(path, mesh.get());
 }
 
-boost::shared_ptr<CalCoreAnimatedMorph> loadCoreAnimatedMorphFromBuffer(const std::string& buffer) {
-    return boost::shared_ptr<CalCoreAnimatedMorph>(
-        CalLoader::loadCoreAnimatedMorphFromBuffer(buffer.data(), buffer.size())
-    );
+CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const std::string& buffer) {
+    CalBufferSource cbs(buffer.data(), buffer.size());
+    return CalCoreAnimatedMorphPtr(CalLoader::loadCoreAnimatedMorph(cbs));
 }
 
 bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animatedMorph, const std::string& path) {
