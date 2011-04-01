@@ -65,6 +65,8 @@ pyd_env = env.Clone(tools=[boost, boost_python, python, cal3d])
 pyd_env['SHLIBPREFIX'] = ''
 if sys.platform == 'win32':
     pyd_env['SHLIBSUFFIX'] = '.pyd'
+else:
+    pyd_env['SHLIBSUFFIX'] = '.so'
 
 imvu_shared_library(
     pyd_env,
