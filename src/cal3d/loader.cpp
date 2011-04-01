@@ -31,7 +31,6 @@
 #include "cal3d/coresubmorphtarget.h"
 #include "cal3d/corematerial.h"
 #include "cal3d/tinyxml.h"
-#include "cal3d/streamsource.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"
@@ -96,32 +95,6 @@ TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired
 
 bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
-}
-
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel) {
-    CalStreamSource streamSrc(inputStream);
-    return loadBinaryCoreAnimation(streamSrc, skel);
-}
-
-CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(std::istream& inputStream) {
-    CalStreamSource streamSrc(inputStream);
-    return loadBinaryCoreAnimatedMorph(streamSrc);
-}
-
-
-CalCoreMaterial *CalLoader::loadCoreMaterial(std::istream& inputStream) {
-    CalStreamSource streamSrc(inputStream);
-    return loadBinaryCoreMaterial(streamSrc);
-}
-
-CalCoreMesh *CalLoader::loadCoreMesh(std::istream& inputStream) {
-    CalStreamSource streamSrc(inputStream);
-    return loadBinaryCoreMesh(streamSrc);
-}
-
-CalCoreSkeleton *CalLoader::loadCoreSkeleton(std::istream& inputStream) {
-    CalStreamSource streamSrc(inputStream);
-    return loadBinaryCoreSkeleton(streamSrc);
 }
 
 CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton *skel) {

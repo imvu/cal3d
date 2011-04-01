@@ -1,12 +1,12 @@
 //****************************************************************************//
-  // loader.h                                                                   //
-  // Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
-  //****************************************************************************//
-    // This library is free software; you can redistribute it and/or modify it    //
-    // under the terms of the GNU Lesser General Public License as published by   //
-    // the Free Software Foundation; either version 2.1 of the License, or (at    //
-    // your option) any later version.                                            //
-    //****************************************************************************//
+// loader.h                                                                   //
+// Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
+//****************************************************************************//
+// This library is free software; you can redistribute it and/or modify it    //
+// under the terms of the GNU Lesser General Public License as published by   //
+// the Free Software Foundation; either version 2.1 of the License, or (at    //
+// your option) any later version.                                            //
+//****************************************************************************//
 
 #pragma once
 
@@ -18,7 +18,7 @@
 #include "cal3d/datasource.h"
 #include "cal3d/tinyxml.h"
 
-    class CalCoreSkeleton;
+class CalCoreSkeleton;
 class CalCoreBone;
 typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
 typedef boost::shared_ptr<class CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;
@@ -51,14 +51,6 @@ public:
     static unsigned int const keyframeBitsPerPosPaddingSmall;
     static float const keyframePosRangeSmall;
     static unsigned int const keyframePosBytesSmall;
-
-    // kill these:
-    static CalCoreAnimationPtr loadCoreAnimation(std::istream& inputStream, CalCoreSkeleton *skel = 0);
-    static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(std::istream& inputStream);
-    static CalCoreMaterial *loadCoreMaterial(std::istream& inputStream);
-    static CalCoreMesh *loadCoreMesh(std::istream& inputStream);
-    static CalCoreSkeleton *loadCoreSkeleton(std::istream& inputStream);
-    // done killing
 
     static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton *skel = 0);
     static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(CalBufferSource& inputSrc);

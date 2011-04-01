@@ -32,7 +32,6 @@ env.Library('cal3d', Split("""
     saver.cpp
     skeleton.cpp
     springsystem.cpp
-    streamsource.cpp
     submesh.cpp
     tinystr.cpp
     tinyxml.cpp

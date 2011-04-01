@@ -31,7 +31,6 @@ sources = Split('''
     renderer.cpp
     saver.cpp
     skeleton.cpp
-    streamsource.cpp
     submesh.cpp
     tinybind.cpp
     tinystr.cpp

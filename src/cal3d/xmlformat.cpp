@@ -17,7 +17,6 @@
 #include "cal3d/coresubmorphtarget.h"
 #include "cal3d/corematerial.h"
 #include "cal3d/tinyxml.h"
-#include "cal3d/streamsource.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"

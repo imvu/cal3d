@@ -15,32 +15,6 @@
 #include <cal3d/saver.h>
 #include <cal3d/streamops.h>
 
-#if defined(_MSC_VER)
-
-#include <windows.h>
-std::string getTempFileName() {
-    char path[MAX_PATH];
-    GetTempPathA(MAX_PATH, path);
-
-    char fn[MAX_PATH];
-    GetTempFileNameA(path, "", 0, fn);
-
-    return fn;
-}
-
-#define unlink _unlink
-
-#else
-
-std::string getTempFileName() {
-    char path[512];
-    sprintf(path, "/tmp/imvu_cal3d_temp_cfl_XXXXXX");
-    char* result = mktemp(path);
-    assert(result);
-    return result;
-}
-#endif
-
 inline int getIntFromBuf(char *pbuf)
 {
     return *reinterpret_cast<int*>(pbuf);
@@ -552,12 +526,12 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalCoreMesh cm;
     cm.addCoreSubmesh(sm);
 
-    std::string fn = getTempFileName();
-    CalSaver::saveCoreMesh(fn.c_str(), &cm);
+    std::ostringstream os;
+    CalSaver::saveCoreMesh(os, "", &cm);
 
-    std::ifstream is(fn);
-    CalCoreMesh* loaded = CalLoader::loadCoreMesh(is);
-    is.close();
+    std::string str = os.str();
+    CalBufferSource cbs(str.data(), str.size());
+    CalCoreMesh* loaded = CalLoader::loadCoreMesh(cbs);
     CHECK(loaded);
     CHECK_EQUAL(1, cm.getCoreSubmeshCount());
     CHECK_EQUAL(1, loaded->getCoreSubmeshCount());
@@ -565,13 +539,12 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
                 loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());
 
-    unlink(fn.c_str());
     delete loaded;
 }
 
 TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CalBufferSource cbs(fromString(animationText));
-    CalCoreAnimationPtr anim1 = CalLoader::loadCoreAnimation(cbs, 0);
+    CalCoreAnimationPtr anim1 = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim1);
 
     std::stringstream buf1;
@@ -580,7 +553,9 @@ TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     std::stringstream output;
     CalSaver::saveCoreAnimation(output, anim1.get());
 
-    CalCoreAnimationPtr anim2 = CalLoader::loadCoreAnimation(output, 0);
+    std::string str = output.str();
+    CalBufferSource cbs2(str.data(), str.size());
+    CalCoreAnimationPtr anim2 = CalLoader::loadCoreAnimation(cbs2);
     CHECK(anim2);
 
     CHECK_EQUAL(*anim1, *anim2);
