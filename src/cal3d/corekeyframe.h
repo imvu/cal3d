@@ -16,23 +16,23 @@
 
 class CalCoreKeyframe {
 public:
-  CalCoreKeyframe() {
-    time = 0.0f;
-  }
+    CalCoreKeyframe() {
+        time = 0.0f;
+    }
 
-  CalCoreKeyframe(float t, const CalVector& tr, const CalQuaternion& ro)
-      : time(t)
-      , translation(tr)
-      , rotation(ro)
-  {}
+    CalCoreKeyframe(float t, const CalVector& tr, const CalQuaternion& ro)
+        : time(t)
+        , translation(tr)
+        , rotation(ro)
+    {}
 
-  float time;
-  CalVector translation;
-  CalQuaternion rotation;
+    float time;
+    CalVector translation;
+    CalQuaternion rotation;
 };
 
 inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
-  return close(lhs.time, rhs.time) &&
-    lhs.translation == rhs.translation &&
-    lhs.rotation == rhs.rotation;
+    return close(lhs.time, rhs.time) &&
+           lhs.translation == rhs.translation &&
+           lhs.rotation == rhs.rotation;
 }

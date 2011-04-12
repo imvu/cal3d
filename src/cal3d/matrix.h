@@ -16,143 +16,141 @@
 
 class CalQuaternion;
 
-class CAL3D_API CalMatrix
-{
+class CAL3D_API CalMatrix {
 public:
-  float dxdx,dydx,dzdx;
-  float dxdy,dydy,dzdy;
-  float dxdz,dydz,dzdz;
+    float dxdx, dydx, dzdx;
+    float dxdy, dydy, dzdy;
+    float dxdz, dydz, dzdz;
 
-  inline CalMatrix()
-    : dxdx(0.0), dydx(0.0), dzdx(0.0)
-    , dxdy(0.0), dydy(0.0), dzdy(0.0)
-    , dxdz(0.0), dydz(0.0), dzdz(0.0)
-  {
-  }
+    inline CalMatrix()
+        : dxdx(0.0), dydx(0.0), dzdx(0.0)
+        , dxdy(0.0), dydy(0.0), dzdy(0.0)
+        , dxdz(0.0), dydz(0.0), dzdz(0.0) {
+    }
 
-  CalMatrix(const CalQuaternion &q);
+    CalMatrix(const CalQuaternion& q);
 
-  inline CalMatrix(float weight, const CalMatrix &m)
-  {
-    dxdx = m.dxdx*weight;
-    dxdy = m.dxdy*weight;
-    dxdz = m.dxdz*weight;
-    dydx = m.dydx*weight;
-    dydy = m.dydy*weight;
-    dydz = m.dydz*weight;
-    dzdx = m.dzdx*weight;
-    dzdy = m.dzdy*weight;
-    dzdz = m.dzdz*weight;
-  }
+    inline CalMatrix(float weight, const CalMatrix& m) {
+        dxdx = m.dxdx * weight;
+        dxdy = m.dxdy * weight;
+        dxdz = m.dxdz * weight;
+        dydx = m.dydx * weight;
+        dydy = m.dydy * weight;
+        dydz = m.dydz * weight;
+        dzdx = m.dzdx * weight;
+        dzdy = m.dzdy * weight;
+        dzdz = m.dzdz * weight;
+    }
 
-  void operator=(const CalQuaternion& q);
+    void operator=(const CalQuaternion& q);
 
-  inline void operator=(const CalMatrix& m)
-  {
-    dxdx=m.dxdx; dxdy=m.dxdy; dxdz=m.dxdz;
-    dydx=m.dydx; dydy=m.dydy; dydz=m.dydz;
-    dzdx=m.dzdx; dzdy=m.dzdy; dzdz=m.dzdz;
-  }
-  inline void operator *= (const CalMatrix &m)
-  {
-    float ndxdx=m.dxdx*dxdx+m.dxdy*dydx+m.dxdz*dzdx;
-    float ndydx=m.dydx*dxdx+m.dydy*dydx+m.dydz*dzdx;
-    float ndzdx=m.dzdx*dxdx+m.dzdy*dydx+m.dzdz*dzdx;
+    inline void operator=(const CalMatrix& m) {
+        dxdx = m.dxdx;
+        dxdy = m.dxdy;
+        dxdz = m.dxdz;
+        dydx = m.dydx;
+        dydy = m.dydy;
+        dydz = m.dydz;
+        dzdx = m.dzdx;
+        dzdy = m.dzdy;
+        dzdz = m.dzdz;
+    }
+    inline void operator *= (const CalMatrix& m) {
+        float ndxdx = m.dxdx * dxdx + m.dxdy * dydx + m.dxdz * dzdx;
+        float ndydx = m.dydx * dxdx + m.dydy * dydx + m.dydz * dzdx;
+        float ndzdx = m.dzdx * dxdx + m.dzdy * dydx + m.dzdz * dzdx;
 
-    float ndxdy=m.dxdx*dxdy+m.dxdy*dydy+m.dxdz*dzdy;
-    float ndydy=m.dydx*dxdy+m.dydy*dydy+m.dydz*dzdy;
-    float ndzdy=m.dzdx*dxdy+m.dzdy*dydy+m.dzdz*dzdy;
+        float ndxdy = m.dxdx * dxdy + m.dxdy * dydy + m.dxdz * dzdy;
+        float ndydy = m.dydx * dxdy + m.dydy * dydy + m.dydz * dzdy;
+        float ndzdy = m.dzdx * dxdy + m.dzdy * dydy + m.dzdz * dzdy;
 
-    float ndxdz=m.dxdx*dxdz+m.dxdy*dydz+m.dxdz*dzdz;
-    float ndydz=m.dydx*dxdz+m.dydy*dydz+m.dydz*dzdz;
-    float ndzdz=m.dzdx*dxdz+m.dzdy*dydz+m.dzdz*dzdz;
+        float ndxdz = m.dxdx * dxdz + m.dxdy * dydz + m.dxdz * dzdz;
+        float ndydz = m.dydx * dxdz + m.dydy * dydz + m.dydz * dzdz;
+        float ndzdz = m.dzdx * dxdz + m.dzdy * dydz + m.dzdz * dzdz;
 
-    dxdx=ndxdx;
-    dydx=ndydx;
-    dzdx=ndzdx;
-    dxdy=ndxdy;
-    dydy=ndydy;
-    dzdy=ndzdy;
-    dxdz=ndxdz;
-    dydz=ndydz;
-    dzdz=ndzdz;
-  }
+        dxdx = ndxdx;
+        dydx = ndydx;
+        dzdx = ndzdx;
+        dxdy = ndxdy;
+        dydy = ndydy;
+        dzdy = ndzdy;
+        dxdz = ndxdz;
+        dydz = ndydz;
+        dzdz = ndzdz;
+    }
 
-  inline void operator *= (float factor)
-  {
-    dxdx *= factor;
-    dydx *= factor;
-    dzdx *= factor;
-    dxdy *= factor;
-    dydy *= factor;
-    dzdy *= factor;
-    dxdz *= factor;
-    dydz *= factor;
-    dzdz *= factor;
-  }
-  inline void blend(float factor, const CalMatrix& m)
-  {
-    dxdx += m.dxdx*factor;
-    dydx += m.dydx*factor;
-    dzdx += m.dzdx*factor;
-    dxdy += m.dxdy*factor;
-    dydy += m.dydy*factor;
-    dzdy += m.dzdy*factor;
-    dxdz += m.dxdz*factor;
-    dydz += m.dydz*factor;
-    dzdz += m.dzdz*factor;
-  }
+    inline void operator *= (float factor) {
+        dxdx *= factor;
+        dydx *= factor;
+        dzdx *= factor;
+        dxdy *= factor;
+        dydy *= factor;
+        dzdy *= factor;
+        dxdz *= factor;
+        dydz *= factor;
+        dzdz *= factor;
+    }
+    inline void blend(float factor, const CalMatrix& m) {
+        dxdx += m.dxdx * factor;
+        dydx += m.dydx * factor;
+        dzdx += m.dzdx * factor;
+        dxdy += m.dxdy * factor;
+        dydy += m.dydy * factor;
+        dzdy += m.dzdy * factor;
+        dxdz += m.dxdz * factor;
+        dydz += m.dydz * factor;
+        dzdz += m.dzdz * factor;
+    }
 
-  inline float det()
-  {
-    return dxdx * (dydy*dzdz-dydz*dzdy)
-      -dxdy* ( dydx*dzdz-dzdx*dydz)
-      +dxdz* (dydx*dzdy-dzdx*dydy);
-  }
+    inline float det() {
+        return dxdx * (dydy * dzdz - dydz * dzdy)
+               - dxdy * (dydx * dzdz - dzdx * dydz)
+               + dxdz * (dydx * dzdy - dzdx * dydy);
+    }
 };
 
 CAL3D_FORCEINLINE void transform(CalVector& v, const CalMatrix& m) {
-  float ox = v.x;
-  float oy = v.y;
-  float oz = v.z;
-  v.x = m.dxdx*ox + m.dxdy*oy + m.dxdz*oz;
-  v.y = m.dydx*ox + m.dydy*oy + m.dydz*oz;
-  v.z = m.dzdx*ox + m.dzdy*oy + m.dzdz*oz;
+    float ox = v.x;
+    float oy = v.y;
+    float oz = v.z;
+    v.x = m.dxdx * ox + m.dxdy * oy + m.dxdz * oz;
+    v.y = m.dydx * ox + m.dydy * oy + m.dydz * oz;
+    v.z = m.dzdx * ox + m.dzdy * oy + m.dzdz * oz;
 }
 
 CAL3D_FORCEINLINE void transform(
-  CalVector& v,
-  const CalVector4& colx,
-  const CalVector4& coly,
-  const CalVector4& colz
+    CalVector& v,
+    const CalVector4& colx,
+    const CalVector4& coly,
+    const CalVector4& colz
 ) {
-  float ox = v.x;
-  float oy = v.y;
-  float oz = v.z;
-  v.x = colx.x*ox + colx.y*oy + colx.z*oz;
-  v.y = coly.x*ox + coly.y*oy + coly.z*oz;
-  v.z = colz.x*ox + colz.y*oy + colz.z*oz;
+    float ox = v.x;
+    float oy = v.y;
+    float oz = v.z;
+    v.x = colx.x * ox + colx.y * oy + colx.z * oz;
+    v.y = coly.x * ox + coly.y * oy + coly.z * oz;
+    v.z = colz.x * ox + colz.y * oy + colz.z * oz;
 }
 
 inline void extractColumns(
-  const CalMatrix& m,
-  CalVector4& colx,
-  CalVector4& coly,
-  CalVector4& colz
+    const CalMatrix& m,
+    CalVector4& colx,
+    CalVector4& coly,
+    CalVector4& colz
 ) {
-  colx.setAsVector(CalVector(m.dxdx, m.dxdy, m.dxdz));
-  coly.setAsVector(CalVector(m.dydx, m.dydy, m.dydz));
-  colz.setAsVector(CalVector(m.dzdx, m.dzdy, m.dzdz));
+    colx.setAsVector(CalVector(m.dxdx, m.dxdy, m.dxdz));
+    coly.setAsVector(CalVector(m.dydx, m.dydy, m.dydz));
+    colz.setAsVector(CalVector(m.dzdx, m.dzdy, m.dzdz));
 }
 
 inline void extractRows(
-  const CalMatrix& m,
-  const CalVector& translation,
-  CalVector4& rowx,
-  CalVector4& rowy,
-  CalVector4& rowz
+    const CalMatrix& m,
+    const CalVector& translation,
+    CalVector4& rowx,
+    CalVector4& rowy,
+    CalVector4& rowz
 ) {
-  rowx.set(m.dxdx, m.dxdy, m.dxdz, translation.x);
-  rowy.set(m.dydx, m.dydy, m.dydz, translation.y);
-  rowz.set(m.dzdx, m.dzdy, m.dzdz, translation.z);
+    rowx.set(m.dxdx, m.dxdy, m.dxdz, translation.x);
+    rowy.set(m.dydx, m.dydy, m.dydz, translation.y);
+    rowz.set(m.dzdx, m.dzdy, m.dzdz, translation.z);
 }

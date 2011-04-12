@@ -13,54 +13,52 @@
 #include <string>
 #include "cal3d/global.h"
 
-class CAL3D_API CalError
-{
+class CAL3D_API CalError {
 // misc
 public:
-  enum Code
-  {
-    OK = 0,
-    INTERNAL,
-    INVALID_HANDLE,
-    MEMORY_ALLOCATION_FAILED,
-    FILE_NOT_FOUND,
-    INVALID_FILE_FORMAT,
-    FILE_PARSER_FAILED,
-    INDEX_BUILD_FAILED,
-    NO_PARSER_DOCUMENT,
-    INVALID_ANIMATION_DURATION,
-    BONE_NOT_FOUND,
-    INVALID_ATTRIBUTE_VALUE,
-    INVALID_KEYFRAME_COUNT,
-    INVALID_ANIMATION_TYPE,
-    FILE_CREATION_FAILED,
-    FILE_WRITING_FAILED,
-    INCOMPATIBLE_FILE_VERSION,
-    NO_MESH_IN_MODEL,
-    BAD_DATA_SOURCE,
-    NULL_BUFFER,
-    INVALID_MIXER_TYPE,
-    MAX_ERROR_CODE
-  };
+    enum Code {
+        OK = 0,
+        INTERNAL,
+        INVALID_HANDLE,
+        MEMORY_ALLOCATION_FAILED,
+        FILE_NOT_FOUND,
+        INVALID_FILE_FORMAT,
+        FILE_PARSER_FAILED,
+        INDEX_BUILD_FAILED,
+        NO_PARSER_DOCUMENT,
+        INVALID_ANIMATION_DURATION,
+        BONE_NOT_FOUND,
+        INVALID_ATTRIBUTE_VALUE,
+        INVALID_KEYFRAME_COUNT,
+        INVALID_ANIMATION_TYPE,
+        FILE_CREATION_FAILED,
+        FILE_WRITING_FAILED,
+        INCOMPATIBLE_FILE_VERSION,
+        NO_MESH_IN_MODEL,
+        BAD_DATA_SOURCE,
+        NULL_BUFFER,
+        INVALID_MIXER_TYPE,
+        MAX_ERROR_CODE
+    };
 
 // member variables
 protected:
-  static Code m_lastErrorCode;
-  static std::string m_strLastErrorFile;
-  static int m_lastErrorLine;
-  static std::string m_strLastErrorText;
+    static Code m_lastErrorCode;
+    static std::string m_strLastErrorFile;
+    static int m_lastErrorLine;
+    static std::string m_strLastErrorText;
 
-// member functions	
+// member functions
 public:
-  static Code getLastErrorCode();
-  static char const * getLastErrorDescription();
-  static char const * getLastErrorFile();
-  static char const * getLastErrorText();
+    static Code getLastErrorCode();
+    static char const* getLastErrorDescription();
+    static char const* getLastErrorFile();
+    static char const* getLastErrorText();
 
-  static const char* getLastErrorDescriptionInternal();
-  static const std::string& getLastErrorFileInternal();
-  static const std::string& getLastErrorTextInternal();
-  static int getLastErrorLine();
-  static void printLastError();
-  static void setLastError(Code code, const std::string& strFile, int line, const std::string& strText = "");
+    static const char* getLastErrorDescriptionInternal();
+    static const std::string& getLastErrorFileInternal();
+    static const std::string& getLastErrorTextInternal();
+    static int getLastErrorLine();
+    static void printLastError();
+    static void setLastError(Code code, const std::string& strFile, int line, const std::string& strText = "");
 };

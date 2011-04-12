@@ -1,12 +1,12 @@
 //****************************************************************************//
-  // loader.cpp                                                                 //
-  // Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
-  //****************************************************************************//
-    // This library is free software; you can redistribute it and/or modify it    //
-    // under the terms of the GNU Lesser General Public License as published by   //
-    // the Free Software Foundation; either version 2.1 of the License, or (at    //
-    // your option) any later version.                                            //
-    //****************************************************************************//
+// loader.cpp                                                                 //
+// Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
+//****************************************************************************//
+// This library is free software; you can redistribute it and/or modify it    //
+// under the terms of the GNU Lesser General Public License as published by   //
+// the Free Software Foundation; either version 2.1 of the License, or (at    //
+// your option) any later version.                                            //
+//****************************************************************************//
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,12 +35,12 @@
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"
 
-// Quat format: 
+// Quat format:
 //
-//  axis selection (2), 
-//  asign (1), afixed (n), 
-//  bsign (1), bfixed (n), 
-//  csign (1), cfixed (n), 
+//  axis selection (2),
+//  asign (1), afixed (n),
+//  bsign (1), bfixed (n),
+//  csign (1), cfixed (n),
 //  time (in 1/30th second steps)
 unsigned int const CalLoader::keyframeBitsPerOriComponent = 11;
 unsigned int const CalLoader::keyframeBitsPerTime = 10;
@@ -54,42 +54,40 @@ unsigned int const CalLoader::keyframeBitsPerTime = 10;
 unsigned int const CalLoader::keyframeBitsPerUnsignedPosComponent = 25;
 unsigned int const CalLoader::keyframeBitsPerPosPadding = 2;
 unsigned int const CalLoader::keyframePosBytes = 10;
-float const CalLoader::keyframePosRange = ( 1 << ( CalLoader::keyframeBitsPerUnsignedPosComponent - 2 ) ); // In units.
+float const CalLoader::keyframePosRange = (1 << (CalLoader::keyframeBitsPerUnsignedPosComponent - 2));     // In units.
 
 unsigned int const CalLoader::keyframeBitsPerUnsignedPosComponentSmall = 9;
 unsigned int const CalLoader::keyframeBitsPerPosPaddingSmall = 2;
 unsigned int const CalLoader::keyframePosBytesSmall = 4;
-float const CalLoader::keyframePosRangeSmall = ( 1 << ( CalLoader::keyframeBitsPerUnsignedPosComponentSmall - 2 ) );
+float const CalLoader::keyframePosRangeSmall = (1 << (CalLoader::keyframeBitsPerUnsignedPosComponentSmall - 2));
 
 
 
 template<typename T>
-void allocateVectorWhereSizeIsGuarded(size_t n, std::vector<T> &o_ret, int lineNumMacroVal){
+void allocateVectorWhereSizeIsGuarded(size_t n, std::vector<T> &o_ret, int lineNumMacroVal) {
     try {
         o_ret.resize(n);
-    } catch (std::bad_alloc &) {
+    } catch (std::bad_alloc&) {
         CalError calerr;
         calerr.setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, lineNumMacroVal);
         throw calerr;
-    } catch (std::length_error &) {
+    } catch (std::length_error&) {
         CalError calerr;
         calerr.setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, lineNumMacroVal);
         throw calerr;
     }
 }
 
-bool CAL3D_API CalVectorFromDataSrc( CalDataSource & dataSrc, CalVector * calVec )
-{
+bool CAL3D_API CalVectorFromDataSrc(CalDataSource& dataSrc, CalVector* calVec) {
     return dataSrc.readFloat(calVec->x) &&
-        dataSrc.readFloat(calVec->y) &&
-        dataSrc.readFloat(calVec->z);
+           dataSrc.readFloat(calVec->y) &&
+           dataSrc.readFloat(calVec->z);
 }
 
 
 bool
-TranslationWritten( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool translationIsDynamic )
-{
-    return ( translationRequired && ( !lastCoreKeyframe || translationIsDynamic ) );
+TranslationWritten(CalCoreKeyframe* lastCoreKeyframe, bool translationRequired, bool translationIsDynamic) {
+    return (translationRequired && (!lastCoreKeyframe || translationIsDynamic));
 }
 
 
@@ -97,7 +95,7 @@ bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton *skel) {
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton* skel) {
     if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc, skel)) {
         return anim;
     }
@@ -108,8 +106,8 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalC
 template<typename RV>
 RV tryBothLoaders(
     CalBufferSource& inputSource,
-    RV (*binaryLoader)(CalDataSource&),
-    RV (*xmlLoader)(const char*)
+    RV(*binaryLoader)(CalDataSource&),
+    RV(*xmlLoader)(const char*)
 ) {
     try {
         if (RV anim = binaryLoader(inputSource)) {
@@ -118,8 +116,7 @@ RV tryBothLoaders(
         // make a copy to null-terminate :(
         std::string data((const char*)inputSource.data(), inputSource.size());
         return xmlLoader(data.c_str());
-    }
-    catch (const CalError&) {
+    } catch (const CalError&) {
         return RV();
     }
 }
@@ -140,21 +137,19 @@ CalCoreSkeleton* CalLoader::loadCoreSkeleton(CalBufferSource& inputSrc) {
     return tryBothLoaders(inputSrc, &loadBinaryCoreSkeleton, &loadXmlCoreSkeleton);
 }
 
-CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton *skel) {
+CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton* skel) {
     const CalCoreAnimationPtr null;
 
     // check if this is a valid file
     char magic[4];
-    if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATION_FILE_MAGIC, 4) != 0))
-    {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATION_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
-    {
+    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
@@ -174,14 +169,12 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, C
     CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
 
     float duration;
-    if(!dataSrc.readFloat(duration))
-    {
+    if (!dataSrc.readFloat(duration)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
-    if(duration <= 0.0f)
-    {
+    if (duration <= 0.0f) {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__);
         return null;
     }
@@ -191,19 +184,16 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, C
 
     // read the number of tracks
     int trackCount;
-    if(!dataSrc.readInteger(trackCount) || (trackCount <= 0))
-    {
+    if (!dataSrc.readInteger(trackCount) || (trackCount <= 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // load all core bones
-    for(int trackId = 0; trackId < trackCount; ++trackId)
-    {
+    for (int trackId = 0; trackId < trackCount; ++trackId) {
         // load the core track
-        CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc,skel, version, useAnimationCompression));
-        if(!pCoreTrack)
-        {
+        CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc, skel, version, useAnimationCompression));
+        if (!pCoreTrack) {
             return null;
         }
 
@@ -216,21 +206,18 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, C
 
 
 
-CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& dataSrc)
-{
+CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& dataSrc) {
     const CalCoreAnimatedMorphPtr null;
 
     char magic[4];
-    if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATEDMORPH_FILE_MAGIC, 4) != 0))
-    {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATEDMORPH_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
-    {
+    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
@@ -240,15 +227,13 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& da
 
     // get the duration of the core animatedMorph
     float duration;
-    if(!dataSrc.readFloat(duration))
-    {
+    if (!dataSrc.readFloat(duration)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check for a valid duration
-    if(duration <= 0.0f)
-    {
+    if (duration <= 0.0f) {
         CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__);
         return null;
     }
@@ -258,21 +243,18 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& da
 
     // read the number of tracks
     int trackCount;
-    if(!dataSrc.readInteger(trackCount) || (trackCount <= 0))
-    {
+    if (!dataSrc.readInteger(trackCount) || (trackCount <= 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // load all core bones
     int trackId;
-    for(trackId = 0; trackId < trackCount; ++trackId)
-    {
+    for (trackId = 0; trackId < trackCount; ++trackId) {
         // load the core track
-        CalCoreMorphTrack *pCoreTrack;
+        CalCoreMorphTrack* pCoreTrack;
         pCoreTrack = loadCoreMorphTrack(dataSrc);
-        if(pCoreTrack == 0)
-        {
+        if (pCoreTrack == 0) {
             return null;
         }
 
@@ -297,53 +279,49 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& da
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMaterial *CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc)
-{
+CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
-    if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::MATERIAL_FILE_MAGIC, 4) != 0))
-    {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::MATERIAL_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // check if the version is compatible with the library
     int version;
-    if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
-    {
+    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return 0;
     }
 
     bool hasMaterialTypes = (version >= Cal::FIRST_FILE_VERSION_WITH_MATERIAL_TYPES);
-  
+
     // allocate a new core material instance
-    CalCoreMaterial *pCoreMaterial;
+    CalCoreMaterial* pCoreMaterial;
     pCoreMaterial = new CalCoreMaterial();
-    if(pCoreMaterial == 0)
-    {
+    if (pCoreMaterial == 0) {
         CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
         return 0;
     }
 
     // get the ambient color of the core material
     unsigned char ambientColor[4];
-    if( !dataSrc.readBytes(&ambientColor, sizeof(ambientColor)) ) {
+    if (!dataSrc.readBytes(&ambientColor, sizeof(ambientColor))) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return NULL;
     }
 
     // get the diffuse color of the core material
     unsigned char diffuseColor[4];
-    if( !dataSrc.readBytes(&diffuseColor, sizeof(diffuseColor)) ) {
+    if (!dataSrc.readBytes(&diffuseColor, sizeof(diffuseColor))) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return NULL;
     }
 
     // get the specular color of the core material
     unsigned char specularColor[4];
-    if( !dataSrc.readBytes(&specularColor, sizeof(specularColor)) ) {
+    if (!dataSrc.readBytes(&specularColor, sizeof(specularColor))) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return NULL;
     }
@@ -353,8 +331,7 @@ CalCoreMaterial *CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc)
     dataSrc.readFloat(shininess);
 
     // check if an error happened
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         delete pCoreMaterial;
         return 0;
@@ -362,27 +339,24 @@ CalCoreMaterial *CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc)
 
     // read the number of maps
     int mapCount;
-    if(!dataSrc.readInteger(mapCount) || (mapCount < 0))
-    {
+    if (!dataSrc.readInteger(mapCount) || (mapCount < 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // load all maps
-    for(int mapId = 0; mapId < mapCount; ++mapId)
-    {
+    for (int mapId = 0; mapId < mapCount; ++mapId) {
         CalCoreMaterial::Map map;
 
         dataSrc.readString(map.filename);
 
-        if( hasMaterialTypes ) {
+        if (hasMaterialTypes) {
             dataSrc.readString(map.type);
         } else {
             map.type = "";
         }
-    
-        if(!dataSrc.ok())
-        {
+
+        if (!dataSrc.ok()) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             delete pCoreMaterial;
             return 0;
@@ -406,50 +380,43 @@ CalCoreMaterial *CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMesh *CalLoader::loadBinaryCoreMesh(CalDataSource& dataSrc)
-{
+CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalDataSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
-    if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::MESH_FILE_MAGIC, 4) != 0))
-    {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::MESH_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // check if the version is compatible with the library
     int version;
-    if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
-    {
+    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return 0;
     }
 
     // get the number of submeshes
     int submeshCount;
-    if(!dataSrc.readInteger(submeshCount))
-    {
+    if (!dataSrc.readInteger(submeshCount)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // allocate a new core mesh instance
-    CalCoreMesh *pCoreMesh;
+    CalCoreMesh* pCoreMesh;
     pCoreMesh = new CalCoreMesh();
-    if(pCoreMesh == 0)
-    {
+    if (pCoreMesh == 0) {
         CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
         return 0;
     }
 
     // load all core submeshes
     int submeshId;
-    for(submeshId = 0; submeshId < submeshCount; ++submeshId)
-    {
+    for (submeshId = 0; submeshId < submeshCount; ++submeshId) {
         // load the core submesh
         boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(loadCoreSubmesh(dataSrc, version));
-        if(!pCoreSubmesh)
-        {
+        if (!pCoreSubmesh) {
             delete pCoreMesh;
             return 0;
         }
@@ -473,57 +440,50 @@ CalCoreMesh *CalLoader::loadBinaryCoreMesh(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSkeleton *CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc)
-{
+CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
-    if(!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::SKELETON_FILE_MAGIC, 4) != 0))
-    {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::SKELETON_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // check if the version is compatible with the library
     int version;
-    if(!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION))
-    {
+    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return 0;
     }
 
     bool hasNodeLights = (version >= Cal::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
-  
+
     // read the number of bones
     int boneCount;
-    if(!dataSrc.readInteger(boneCount) || (boneCount <= 0))
-    {
+    if (!dataSrc.readInteger(boneCount) || (boneCount <= 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // allocate a new core skeleton instance
-    CalCoreSkeleton *pCoreSkeleton = new CalCoreSkeleton();
-    if(pCoreSkeleton == 0)
-    {
+    CalCoreSkeleton* pCoreSkeleton = new CalCoreSkeleton();
+    if (pCoreSkeleton == 0) {
         CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
         return 0;
     }
 
     // load the scene ambient
-    if( hasNodeLights ) {
+    if (hasNodeLights) {
         CalVector sceneColor;
-        CalVectorFromDataSrc( dataSrc, &sceneColor );
+        CalVectorFromDataSrc(dataSrc, &sceneColor);
         pCoreSkeleton->sceneAmbientColor = sceneColor;
     }
-  
+
     // load all core bones
-    for(int boneId = 0; boneId < boneCount; ++boneId)
-    {
+    for (int boneId = 0; boneId < boneCount; ++boneId) {
         // load the core bone
         boost::shared_ptr<CalCoreBone> pCoreBone(loadCoreBones(dataSrc, version));
-        if(!pCoreBone)
-        {
+        if (!pCoreBone) {
             delete pCoreSkeleton;
             return 0;
         }
@@ -552,12 +512,10 @@ CalCoreSkeleton *CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
-{
+CalCoreBone* CalLoader::loadCoreBones(CalDataSource& dataSrc, int version) {
     bool hasNodeLights = (version >= Cal::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
 
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
@@ -599,51 +557,47 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
     // get the lgith type and light color
     int lightType = LIGHT_TYPE_NONE;
     CalVector lightColor;
-    if(hasNodeLights){
+    if (hasNodeLights) {
         dataSrc.readInteger(lightType);
         CalVectorFromDataSrc(dataSrc, &lightColor);
     }
 
-  
-    CalQuaternion rot(rx,ry,rz,rw);
+
+    CalQuaternion rot(rx, ry, rz, rw);
     CalQuaternion rotbs(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
-    CalVector trans(tx,ty,tz);
+    CalVector trans(tx, ty, tz);
 
     // check if an error happened
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
 
     // allocate a new core bone instance
-    CalCoreBone *pCoreBone = new CalCoreBone(strName, parentId);
+    CalCoreBone* pCoreBone = new CalCoreBone(strName, parentId);
 
     // set all attributes of the bone
     pCoreBone->setTranslation(trans);
     pCoreBone->setRotation(rot);
     pCoreBone->setTranslationBoneSpace(CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace));
     pCoreBone->setRotationBoneSpace(rotbs);
-    if( hasNodeLights ) {
+    if (hasNodeLights) {
         pCoreBone->lightType = (CalLightType)lightType;
         pCoreBone->lightColor = lightColor;
     }
 
     // read the number of children
     int childCount;
-    if(!dataSrc.readInteger(childCount) || (childCount < 0))
-    {
+    if (!dataSrc.readInteger(childCount) || (childCount < 0)) {
         delete pCoreBone;
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // load all children ids
-    for(; childCount > 0; childCount--)
-    {
+    for (; childCount > 0; childCount--) {
         int childId;
-        if(!dataSrc.readInteger(childId) || (childId < 0))
-        {
+        if (!dataSrc.readInteger(childId) || (childId < 0)) {
             delete pCoreBone;
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return 0;
@@ -659,20 +613,17 @@ CalCoreBone *CalLoader::loadCoreBones(CalDataSource& dataSrc, int version)
 
 
 bool
-CalLoader::usesAnimationCompression( int version )
-{
+CalLoader::usesAnimationCompression(int version) {
     return (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION);
 }
 
 
-CalCoreKeyframe *CalLoader::loadCoreKeyframe(
-    CalDataSource& dataSrc, CalCoreBone * coreboneOrNull, int version, 
-    CalCoreKeyframe * prevCoreKeyframe,
+CalCoreKeyframe* CalLoader::loadCoreKeyframe(
+    CalDataSource& dataSrc, CalCoreBone* coreboneOrNull, int version,
+    CalCoreKeyframe* prevCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-    bool useAnimationCompression)
-{
-    if(!dataSrc.ok())
-    {
+    bool useAnimationCompression) {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
@@ -680,21 +631,21 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
     float time;
     float tx, ty, tz;
     float rx, ry, rz, rw;
-    if( useAnimationCompression ) {
-        unsigned int bytesRequired = compressedKeyframeRequiredBytes( prevCoreKeyframe, translationRequired, highRangeRequired, translationIsDynamic );
-        assert( bytesRequired < 100 );
+    if (useAnimationCompression) {
+        unsigned int bytesRequired = compressedKeyframeRequiredBytes(prevCoreKeyframe, translationRequired, highRangeRequired, translationIsDynamic);
+        assert(bytesRequired < 100);
         unsigned char buf[ 100 ];
-        if( !dataSrc.readBytes( buf, bytesRequired ) ) {
+        if (!dataSrc.readBytes(buf, bytesRequired)) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return NULL;
         }
         CalVector vec;
         CalQuaternion quat;
         unsigned int bytesRead = readCompressedKeyframe(
-            buf, coreboneOrNull, 
-            & vec, & quat, & time, prevCoreKeyframe,
-            translationRequired, highRangeRequired, translationIsDynamic);
-        if( bytesRead != bytesRequired ) {
+                                     buf, coreboneOrNull,
+                                     & vec, & quat, & time, prevCoreKeyframe,
+                                     translationRequired, highRangeRequired, translationIsDynamic);
+        if (bytesRead != bytesRequired) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return NULL;
         }
@@ -705,16 +656,16 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
         ry = quat.y;
         rz = quat.z;
         rw = quat.w;
-        if(version < Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION6 ) {
-            if(version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION4 ) {
-                if( version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION5 ) {
-                    if( TranslationWritten( prevCoreKeyframe, translationRequired, translationIsDynamic ) ) {
+        if (version < Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION6) {
+            if (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION4) {
+                if (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION5) {
+                    if (TranslationWritten(prevCoreKeyframe, translationRequired, translationIsDynamic)) {
                         dataSrc.readFloat(tx);
                         dataSrc.readFloat(ty);
                         dataSrc.readFloat(tz);
                     }
                 }
-        
+
                 // get the rotation of the bone
                 dataSrc.readFloat(rx);
                 dataSrc.readFloat(ry);
@@ -724,7 +675,7 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
         }
     } else {
         dataSrc.readFloat(time);
-    
+
         // get the translation of the bone
         dataSrc.readFloat(tx);
         dataSrc.readFloat(ty);
@@ -736,27 +687,25 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
             ty = tv.y;
             tz = tv.z;
         }
-    
+
         // get the rotation of the bone
         dataSrc.readFloat(rx);
         dataSrc.readFloat(ry);
         dataSrc.readFloat(rz);
         dataSrc.readFloat(rw);
-    }  
+    }
 
 
     // check if an error happened
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
 
     // allocate a new core keyframe instance
-    CalCoreKeyframe *pCoreKeyframe;
+    CalCoreKeyframe* pCoreKeyframe;
     pCoreKeyframe = new CalCoreKeyframe();
-    if(pCoreKeyframe == 0)
-    {
+    if (pCoreKeyframe == 0) {
         CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
         return 0;
     }
@@ -772,17 +721,16 @@ CalCoreKeyframe *CalLoader::loadCoreKeyframe(
 
 // Return the number of bytes required by the compressed binary format of a keyframe with these attributes.
 unsigned int
-CalLoader::compressedKeyframeRequiredBytes( CalCoreKeyframe * lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic )
-{
+CalLoader::compressedKeyframeRequiredBytes(CalCoreKeyframe* lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic) {
     unsigned int bytes = 0;
-    if( translationRequired ) {
-    
+    if (translationRequired) {
+
         // If I am not the first keyframe in the track, and the translations are not dynamic (meaning
         // they are the same for all the keyframes in the track, though different from the skeleton), then
         // just use the translation from the last keyframe.
-        if( lastCoreKeyframe && !translationIsDynamic ) {
+        if (lastCoreKeyframe && !translationIsDynamic) {
         } else {
-            if( highRangeRequired ) {
+            if (highRangeRequired) {
                 bytes += keyframePosBytes;
             } else {
                 bytes += keyframePosBytesSmall;
@@ -798,33 +746,29 @@ CalLoader::compressedKeyframeRequiredBytes( CalCoreKeyframe * lastCoreKeyframe, 
 static float const InvalidCoord = 1e10;
 
 void
-SetTranslationInvalid( float * xResult, float * yResult, float * zResult )
-{
+SetTranslationInvalid(float* xResult, float* yResult, float* zResult) {
     * xResult = InvalidCoord;
     * yResult = InvalidCoord;
     * zResult = InvalidCoord;
 }
 
 void
-SetTranslationInvalid( CalVector * result )
-{
-    result->set( InvalidCoord, InvalidCoord, InvalidCoord );
+SetTranslationInvalid(CalVector* result) {
+    result->set(InvalidCoord, InvalidCoord, InvalidCoord);
 }
 
 bool
-TranslationInvalid(float x, float y, float z)
-{
+TranslationInvalid(float x, float y, float z) {
     return x == InvalidCoord
-        && y == InvalidCoord
-        && z == InvalidCoord;
+           && y == InvalidCoord
+           && z == InvalidCoord;
 }
 
 bool
-TranslationInvalid( CalVector const & result )
-{
+TranslationInvalid(CalVector const& result) {
     return result.x == InvalidCoord
-        && result.y == InvalidCoord
-        && result.z == InvalidCoord;
+           && result.y == InvalidCoord
+           && result.z == InvalidCoord;
 }
 
 
@@ -832,94 +776,105 @@ TranslationInvalid( CalVector const & result )
 // Returns number of byts read.
 unsigned int
 CalLoader::readCompressedKeyframe(
-    unsigned char * buf, CalCoreBone * coreboneOrNull, 
-    CalVector * vecResult, CalQuaternion * quatResult, float * timeResult,
-    CalCoreKeyframe * lastCoreKeyframe,
-    bool translationRequired, bool highRangeRequired, bool translationIsDynamic)
-{
-    unsigned char * bufStart = buf;
-  
+    unsigned char* buf, CalCoreBone* coreboneOrNull,
+    CalVector* vecResult, CalQuaternion* quatResult, float* timeResult,
+    CalCoreKeyframe* lastCoreKeyframe,
+    bool translationRequired, bool highRangeRequired, bool translationIsDynamic) {
+    unsigned char* bufStart = buf;
+
     // Read in the translation or get it from the skeleton or zero it out as a last resort.
-    if( translationRequired ) {
-    
+    if (translationRequired) {
+
         // If I am not the first keyframe in the track, and the translations are not dynamic (meaning
         // they are the same for all the keyframes in the track, though different from the skeleton), then
         // just use the translation from the last keyframe.
-        if( lastCoreKeyframe && !translationIsDynamic ) {
+        if (lastCoreKeyframe && !translationIsDynamic) {
             * vecResult = lastCoreKeyframe->translation;
         } else {
             unsigned int data;
             float tx, ty, tz;
-            if( highRangeRequired ) {
-                BitReader br( buf );
-        
+            if (highRangeRequired) {
+                BitReader br(buf);
+
                 // Read x.
-                br.read( & data, keyframeBitsPerUnsignedPosComponent );
-                tx = FixedPointToFloatZeroToOne( data, keyframeBitsPerUnsignedPosComponent ) * keyframePosRange;
-                br.read( & data, 1 );
-                if( data ) tx = - tx;
-        
+                br.read(& data, keyframeBitsPerUnsignedPosComponent);
+                tx = FixedPointToFloatZeroToOne(data, keyframeBitsPerUnsignedPosComponent) * keyframePosRange;
+                br.read(& data, 1);
+                if (data) {
+                    tx = - tx;
+                }
+
                 // Read y.
-                br.read( & data, keyframeBitsPerUnsignedPosComponent );
-                ty = FixedPointToFloatZeroToOne( data, keyframeBitsPerUnsignedPosComponent ) * keyframePosRange;
-                br.read( & data, 1 );
-                if( data ) ty = - ty;
-        
+                br.read(& data, keyframeBitsPerUnsignedPosComponent);
+                ty = FixedPointToFloatZeroToOne(data, keyframeBitsPerUnsignedPosComponent) * keyframePosRange;
+                br.read(& data, 1);
+                if (data) {
+                    ty = - ty;
+                }
+
                 // Read z.
-                br.read( & data, keyframeBitsPerUnsignedPosComponent );
-                tz = FixedPointToFloatZeroToOne( data, keyframeBitsPerUnsignedPosComponent ) * keyframePosRange;
-                br.read( & data, 1 );
-                if( data ) tz = - tz;
-        
+                br.read(& data, keyframeBitsPerUnsignedPosComponent);
+                tz = FixedPointToFloatZeroToOne(data, keyframeBitsPerUnsignedPosComponent) * keyframePosRange;
+                br.read(& data, 1);
+                if (data) {
+                    tz = - tz;
+                }
+
                 // Now even it off to n bytes.
-                br.read( & data, keyframeBitsPerPosPadding );
-                assert( br.bytesRead() == keyframePosBytes );
+                br.read(& data, keyframeBitsPerPosPadding);
+                assert(br.bytesRead() == keyframePosBytes);
                 buf += keyframePosBytes;
             } else {
-                BitReader br( buf );
-        
+                BitReader br(buf);
+
                 // Read x.
-                br.read( & data, keyframeBitsPerUnsignedPosComponentSmall );
-                tx = FixedPointToFloatZeroToOne( data, keyframeBitsPerUnsignedPosComponentSmall ) * keyframePosRangeSmall;
-                br.read( & data, 1 );
-                if( data ) tx = - tx;
-        
+                br.read(& data, keyframeBitsPerUnsignedPosComponentSmall);
+                tx = FixedPointToFloatZeroToOne(data, keyframeBitsPerUnsignedPosComponentSmall) * keyframePosRangeSmall;
+                br.read(& data, 1);
+                if (data) {
+                    tx = - tx;
+                }
+
                 // Read y.
-                br.read( & data, keyframeBitsPerUnsignedPosComponentSmall );
-                ty = FixedPointToFloatZeroToOne( data, keyframeBitsPerUnsignedPosComponentSmall ) * keyframePosRangeSmall;
-                br.read( & data, 1 );
-                if( data ) ty = - ty;
-        
+                br.read(& data, keyframeBitsPerUnsignedPosComponentSmall);
+                ty = FixedPointToFloatZeroToOne(data, keyframeBitsPerUnsignedPosComponentSmall) * keyframePosRangeSmall;
+                br.read(& data, 1);
+                if (data) {
+                    ty = - ty;
+                }
+
                 // Read z.
-                br.read( & data, keyframeBitsPerUnsignedPosComponentSmall );
-                tz = FixedPointToFloatZeroToOne( data, keyframeBitsPerUnsignedPosComponentSmall ) * keyframePosRangeSmall;
-                br.read( & data, 1 );
-                if( data ) tz = - tz;
-        
+                br.read(& data, keyframeBitsPerUnsignedPosComponentSmall);
+                tz = FixedPointToFloatZeroToOne(data, keyframeBitsPerUnsignedPosComponentSmall) * keyframePosRangeSmall;
+                br.read(& data, 1);
+                if (data) {
+                    tz = - tz;
+                }
+
                 // Now even it off to n bytes.
-                br.read( & data, keyframeBitsPerPosPaddingSmall );
-                assert( br.bytesRead() == keyframePosBytesSmall );
+                br.read(& data, keyframeBitsPerPosPaddingSmall);
+                assert(br.bytesRead() == keyframePosBytesSmall);
                 buf += keyframePosBytesSmall;
             }
-            vecResult->set( tx, ty, tz );
+            vecResult->set(tx, ty, tz);
         }
     } else {
-        SetTranslationInvalid( vecResult );
-        if( coreboneOrNull ) {
+        SetTranslationInvalid(vecResult);
+        if (coreboneOrNull) {
             *vecResult = coreboneOrNull->getTranslation();
         }
     }
-  
+
     // Read in the quat and time.
     float quat[ 4 ];
     unsigned int steps;
-    unsigned int bytesRead = ReadQuatAndExtra( buf, quat, & steps, keyframeBitsPerOriComponent, keyframeBitsPerTime );
+    unsigned int bytesRead = ReadQuatAndExtra(buf, quat, & steps, keyframeBitsPerOriComponent, keyframeBitsPerTime);
     buf += 6;
 
     (void)bytesRead;
-    assert( bytesRead == 6 );
+    assert(bytesRead == 6);
 
-    quatResult->set( quat[ 0 ], quat[ 1 ], quat[ 2 ], quat[ 3 ] );
+    quatResult->set(quat[ 0 ], quat[ 1 ], quat[ 2 ], quat[ 3 ]);
     * timeResult = steps / 30.0f;
     return buf - bufStart;
 }
@@ -938,10 +893,8 @@ CalLoader::readCompressedKeyframe(
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMorphKeyframe *CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc)
-{
-    if(!dataSrc.ok())
-    {
+CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
@@ -955,17 +908,15 @@ CalCoreMorphKeyframe *CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc)
     dataSrc.readFloat(weight);
 
     // check if an error happened
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
 
     // allocate a new core morphKeyframe instance
-    CalCoreMorphKeyframe *pCoreMorphKeyframe;
+    CalCoreMorphKeyframe* pCoreMorphKeyframe;
     pCoreMorphKeyframe = new CalCoreMorphKeyframe();
-    if(pCoreMorphKeyframe == 0)
-    {
+    if (pCoreMorphKeyframe == 0) {
         CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
         return 0;
     }
@@ -990,10 +941,8 @@ CalCoreMorphKeyframe *CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc)
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
-{
-    if(!dataSrc.ok())
-    {
+CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
@@ -1023,13 +972,12 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     dataSrc.readInteger(textureCoordinateCount);
 
     int morphCount = 0;
-    if( hasMorphTargetsInMorphFiles ) {
+    if (hasMorphTargetsInMorphFiles) {
         dataSrc.readInteger(morphCount);
     }
 
     // check if an error happened
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
@@ -1044,10 +992,9 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
     pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
     // load all vertices and their influences
-    pCoreSubmesh->setHasNonWhiteVertexColors( false );
+    pCoreSubmesh->setHasNonWhiteVertexColors(false);
     int vertexId;
-    for(vertexId = 0; vertexId < vertexCount; ++vertexId)
-    {
+    for (vertexId = 0; vertexId < vertexCount; ++vertexId) {
         CalCoreSubmesh::Vertex vertex;
         CalCoreSubmesh::LodData lodData;
         CalColor32 vertexColor;
@@ -1060,15 +1007,15 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         dataSrc.readFloat(vertex.normal.y);
         dataSrc.readFloat(vertex.normal.z);
         vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
-        if( hasVertexColors ) {
+        if (hasVertexColors) {
             CalVector vc;
             dataSrc.readFloat(vc.x);
             dataSrc.readFloat(vc.y);
             dataSrc.readFloat(vc.z);
-            if( vc.x != 1.0f
-                || vc.y != 1.0f
-                || vc.z != 1.0f ) {
-                pCoreSubmesh->setHasNonWhiteVertexColors( true );
+            if (vc.x != 1.0f
+                    || vc.y != 1.0f
+                    || vc.z != 1.0f) {
+                pCoreSubmesh->setHasNonWhiteVertexColors(true);
             }
             vertexColor = CalMakeColor(vc);
         }
@@ -1076,8 +1023,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         dataSrc.readInteger(lodData.faceCollapseCount);
 
         // check if an error happened
-        if(!dataSrc.ok())
-        {
+        if (!dataSrc.ok()) {
             dataSrc.setError();
             delete pCoreSubmesh;
             return 0;
@@ -1085,8 +1031,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
         // load all texture coordinates of the vertex
         int textureCoordinateId;
-        for(textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
-        {
+        for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
             CalCoreSubmesh::TextureCoordinate textureCoordinate;
 
             // load data of the influence
@@ -1094,8 +1039,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
             dataSrc.readFloat(textureCoordinate.v);
 
             // check if an error happened
-            if(!dataSrc.ok())
-            {
+            if (!dataSrc.ok()) {
                 dataSrc.setError();
                 delete pCoreSubmesh;
                 return 0;
@@ -1107,8 +1051,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
         // get the number of influences
         int influenceCount;
-        if(!dataSrc.readInteger(influenceCount) || (influenceCount < 0))
-        {
+        if (!dataSrc.readInteger(influenceCount) || (influenceCount < 0)) {
             dataSrc.setError();
             delete pCoreSubmesh;
             return 0;
@@ -1117,13 +1060,11 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         std::vector<CalCoreSubmesh::Influence> influences;
         allocateVectorWhereSizeIsGuarded(influenceCount, influences, __LINE__);
 
-        for(int influenceId = 0; influenceId < influenceCount; ++influenceId)
-        {
+        for (int influenceId = 0; influenceId < influenceCount; ++influenceId) {
             dataSrc.readInteger(influences[influenceId].boneId),
-                dataSrc.readFloat(influences[influenceId].weight);
+                                dataSrc.readFloat(influences[influenceId].weight);
 
-            if(!dataSrc.ok())
-            {
+            if (!dataSrc.ok()) {
                 dataSrc.setError();
                 delete pCoreSubmesh;
                 return 0;
@@ -1134,15 +1075,13 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         pCoreSubmesh->addVertex(vertex, vertexColor, lodData, influences);
 
         // load the physical property of the vertex if there are springs in the core submesh
-        if(springCount > 0)
-        {
+        if (springCount > 0) {
             float f;
             // load data of the physical property
             dataSrc.readFloat(f);
 
             // check if an error happened
-            if(!dataSrc.ok())
-            {
+            if (!dataSrc.ok()) {
                 dataSrc.setError();
                 delete pCoreSubmesh;
                 return 0;
@@ -1152,8 +1091,7 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
     // load all springs
     int springId;
-    for(springId = 0; springId < springCount; ++springId)
-    {
+    for (springId = 0; springId < springCount; ++springId) {
         int i;
         float f;
 
@@ -1164,15 +1102,14 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         dataSrc.readFloat(f);
 
         // check if an error happened
-        if(!dataSrc.ok())
-        {
+        if (!dataSrc.ok()) {
             dataSrc.setError();
             delete pCoreSubmesh;
             return 0;
         }
     }
 
-    for( int morphId = 0; morphId < morphCount; morphId++ ) {
+    for (int morphId = 0; morphId < morphCount; morphId++) {
         std::string morphName;
         dataSrc.readString(morphName);
 
@@ -1181,34 +1118,32 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
         int blendVertId;
         dataSrc.readInteger(blendVertId);
-    
-        for( int blendVertI = 0; blendVertI < vertexCount; blendVertI++ )
-        {
+
+        for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
             CalCoreSubMorphTarget::BlendVertex Vertex;
             Vertex.textureCoords.clear();
             Vertex.textureCoords.reserve(textureCoordinateCount);
 
             bool copyOrig;
 
-            if( blendVertI < blendVertId ) {
+            if (blendVertI < blendVertId) {
                 copyOrig = true;
             } else {
                 copyOrig = false;
             }
-      
-            if( !copyOrig ) {
+
+            if (!copyOrig) {
                 CalVectorFromDataSrc(dataSrc, &Vertex.position);
                 CalVectorFromDataSrc(dataSrc, &Vertex.normal);
                 int textureCoordinateId;
-                for(textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId)
-                {
+                for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
                     CalCoreSubmesh::TextureCoordinate textureCoordinate;
                     dataSrc.readFloat(textureCoordinate.u);
                     dataSrc.readFloat(textureCoordinate.v);
 
                     Vertex.textureCoords.push_back(textureCoordinate);
                 }
-                if( ! dataSrc.ok() ) {
+                if (! dataSrc.ok()) {
                     delete pCoreSubmesh;
                     dataSrc.setError();
                     return false;
@@ -1216,41 +1151,37 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
                 morphTarget->setBlendVertex(blendVertI, Vertex);
                 dataSrc.readInteger(blendVertId);
-            } 
+            }
         }
         pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
     }
-    
+
     // load all faces
     int faceId;
     bool flipModel = false;
-    for(faceId = 0; faceId < faceCount; ++faceId)
-    {
+    for (faceId = 0; faceId < faceCount; ++faceId) {
         CalCoreSubmesh::Face face;
 
         // load data of the face
 
-	int tmp[4];
-	dataSrc.readInteger(tmp[0]);
-	dataSrc.readInteger(tmp[1]);
-	dataSrc.readInteger(tmp[2]);
+        int tmp[4];
+        dataSrc.readInteger(tmp[0]);
+        dataSrc.readInteger(tmp[1]);
+        dataSrc.readInteger(tmp[2]);
 
-	if(sizeof(CalIndex)==2)
-	{
-            if(tmp[0]>65535 || tmp[1]>65535 || tmp[2]>65535)
-            {			
+        if (sizeof(CalIndex) == 2) {
+            if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
                 delete pCoreSubmesh;
                 return 0;
             }
-	}
-	face.vertexId[0]=tmp[0];
-	face.vertexId[1]=tmp[1];
-	face.vertexId[2]=tmp[2];
-	
+        }
+        face.vertexId[0] = tmp[0];
+        face.vertexId[1] = tmp[1];
+        face.vertexId[2] = tmp[2];
+
         // check if an error happened
-        if(!dataSrc.ok())
-        {
+        if (!dataSrc.ok()) {
             dataSrc.setError();
             delete pCoreSubmesh;
             return 0;
@@ -1259,8 +1190,8 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
         // flip if needed
         if (flipModel) {
             tmp[3] = face.vertexId[1];
-            face.vertexId[1]=face.vertexId[2];
-            face.vertexId[2]=tmp[3];
+            face.vertexId[1] = face.vertexId[2];
+            face.vertexId[2] = tmp[3];
         }
 
         // set face in the core submesh instance
@@ -1272,12 +1203,11 @@ CalCoreSubmesh *CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version)
 
 CalCoreTrack* CalLoader::loadCoreTrack(
     CalDataSource& dataSrc,
-    CalCoreSkeleton *skel,
+    CalCoreSkeleton* skel,
     int version,
     bool useAnimationCompression
 ) {
-    if(!dataSrc.ok())
-    {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
@@ -1292,31 +1222,30 @@ CalCoreTrack* CalLoader::loadCoreTrack(
 
     // If this file version supports animation compression, then I store the boneId in 15 bits,
     // and use the 16th bit to record if translation is required.
-    if( useAnimationCompression ) {
-        if( !dataSrc.readBytes( buf, 4 ) ) {
+    if (useAnimationCompression) {
+        if (!dataSrc.readBytes(buf, 4)) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return NULL;
         }
-    
+
         // Stored low byte first.  Top 3 bits of coreBoneId are compression flags.
-        coreBoneId = buf[ 0 ] + ( unsigned int ) ( buf[ 1 ] & 0x1f ) * 256;
-        translationRequired = ( buf[ 1 ] & 0x80 ) ? true : false;
-        highRangeRequired = ( buf[ 1 ] & 0x40 ) ? true : false;
-        translationIsDynamic = ( buf[ 1 ] & 0x20 ) ? true : false;
-        keyframeCount = buf[ 2 ] + ( unsigned int ) buf[ 3 ] * 256;
+        coreBoneId = buf[ 0 ] + (unsigned int)(buf[ 1 ] & 0x1f) * 256;
+        translationRequired = (buf[ 1 ] & 0x80) ? true : false;
+        highRangeRequired = (buf[ 1 ] & 0x40) ? true : false;
+        translationIsDynamic = (buf[ 1 ] & 0x20) ? true : false;
+        keyframeCount = buf[ 2 ] + (unsigned int) buf[ 3 ] * 256;
         //if( keyframeCount > keyframeTimeMax ) {
         //  CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         //  return NULL;
         //}
     } else {
-        if(!dataSrc.readInteger(coreBoneId) || (coreBoneId < 0)) {
+        if (!dataSrc.readInteger(coreBoneId) || (coreBoneId < 0)) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return 0;
         }
 
         // Read the number of keyframes.
-        if(!dataSrc.readInteger(keyframeCount) || (keyframeCount <= 0))
-        {
+        if (!dataSrc.readInteger(keyframeCount) || (keyframeCount <= 0)) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return 0;
         }
@@ -1324,8 +1253,8 @@ CalCoreTrack* CalLoader::loadCoreTrack(
 
     CalCoreTrack::KeyframeList keyframes;
 
-    CalCoreBone * cb = NULL;
-    if( skel ) {
+    CalCoreBone* cb = NULL;
+    if (skel) {
         if (coreBoneId < skel->coreBones.size()) {
             cb = skel->coreBones[coreBoneId].get();
         }
@@ -1335,20 +1264,18 @@ CalCoreTrack* CalLoader::loadCoreTrack(
     // load all core keyframes
     bool hasLastKeyframe = false;
     CalCoreKeyframe lastCoreKeyframe;
-    for(int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
-    {
+    for (int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId) {
         // load the core keyframe
-        CalCoreKeyframe *pCoreKeyframe = loadCoreKeyframe(
-            dataSrc,
-            cb,
-            version,
-            (hasLastKeyframe ? &lastCoreKeyframe : 0),
-            translationRequired,
-            highRangeRequired,
-            translationIsDynamic,
-            useAnimationCompression);
-        if(pCoreKeyframe == 0)
-        {
+        CalCoreKeyframe* pCoreKeyframe = loadCoreKeyframe(
+                                             dataSrc,
+                                             cb,
+                                             version,
+                                             (hasLastKeyframe ? &lastCoreKeyframe : 0),
+                                             translationRequired,
+                                             highRangeRequired,
+                                             translationIsDynamic,
+                                             useAnimationCompression);
+        if (pCoreKeyframe == 0) {
             return 0;
         }
         // add the core keyframe to the core track instance
@@ -1378,43 +1305,37 @@ CalCoreTrack* CalLoader::loadCoreTrack(
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMorphTrack *CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc)
-{
-    if(!dataSrc.ok())
-    {
+CalCoreMorphTrack* CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc) {
+    if (!dataSrc.ok()) {
         dataSrc.setError();
         return 0;
     }
 
     // read the morph name
     std::string morphName;
-    if(!dataSrc.readString(morphName))
-    {
+    if (!dataSrc.readString(morphName)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // allocate a new core morphTrack instance
-    CalCoreMorphTrack *pCoreMorphTrack = new CalCoreMorphTrack;
+    CalCoreMorphTrack* pCoreMorphTrack = new CalCoreMorphTrack;
 
     // link the core morphTrack to the appropriate morph name
     pCoreMorphTrack->morphName = morphName;
 
     // read the number of keyframes
     int keyframeCount;
-    if(!dataSrc.readInteger(keyframeCount) || (keyframeCount < 0))
-    {
+    if (!dataSrc.readInteger(keyframeCount) || (keyframeCount < 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
     // load all core keyframes
-    for(int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId)
-    {
+    for (int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId) {
         // load the core keyframe
         CalCoreMorphKeyframe* pCoreKeyframe = loadCoreMorphKeyframe(dataSrc);
-        if(pCoreKeyframe == 0)
-        {
+        if (pCoreKeyframe == 0) {
             delete pCoreMorphTrack;
             return 0;
         }

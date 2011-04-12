@@ -16,18 +16,18 @@
 
 #if defined(_WIN32) && !defined(__MINGW32__)
 inline int cal3d_stricmp(const char* s1, const char* s2) {
-  assert(s1);
-  assert(s2);
-  return _stricmp(s1, s2);
+    assert(s1);
+    assert(s2);
+    return _stricmp(s1, s2);
 }
 #else
 #ifndef __APPLE__
 #include <strings.h>
 #endif
 inline int cal3d_stricmp(const char* s1, const char* s2) {
-  assert(s1);
-  assert(s2);
-  return strcasecmp(s1, s2);
+    assert(s1);
+    assert(s2);
+    return strcasecmp(s1, s2);
 }
 #endif
 
@@ -109,8 +109,12 @@ struct SSEAllocator {
     template<typename U> SSEAllocator(const SSEAllocator<U>&) {}
     ~SSEAllocator() {}
 
-    pointer address(reference r) const { return &r; }
-    const_pointer address(const_reference r) const { return &r; }
+    pointer address(reference r) const {
+        return &r;
+    }
+    const_pointer address(const_reference r) const {
+        return &r;
+    }
 
     pointer allocate(size_type count) {
         return reinterpret_cast<pointer>(_aligned_malloc(count * sizeof(T), 16));

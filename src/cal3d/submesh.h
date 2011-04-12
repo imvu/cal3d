@@ -19,73 +19,72 @@ typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
 // Structure used to return an array of the morphs that have non-zero weights.
 struct MorphIdAndWeight {
-  int morphId_;
-  float weight_;
+    int morphId_;
+    float weight_;
 };
 
-class CAL3D_API CalSubmesh : public Cal::UserDataHolder
-{
+class CAL3D_API CalSubmesh : public Cal::UserDataHolder {
 public:
-  typedef CalCoreSubmesh::Face Face;
+    typedef CalCoreSubmesh::Face Face;
 
-  const CalCoreSubmeshPtr coreSubmesh;
-  CalCoreMaterialPtr material;
+    const CalCoreSubmeshPtr coreSubmesh;
+    CalCoreMaterialPtr material;
 
-  CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
+    CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
 
-  const std::vector<Face>& getVectorFace() const {
-    return m_vectorFace;
-  }
+    const std::vector<Face>& getVectorFace() const {
+        return m_vectorFace;
+    }
 
-  std::vector<CalVector>& getVectorNormal() {
-    return m_vectorNormal;
-  }
-  int getFaceCount() const {
-    return m_faceCount;
-  }
-  std::vector<CalVector>& getVectorVertex() {
-    return m_vectorVertex;
-  }
-  int getVertexCount() const {
-    return m_vertexCount;
-  }
+    std::vector<CalVector>& getVectorNormal() {
+        return m_vectorNormal;
+    }
+    int getFaceCount() const {
+        return m_faceCount;
+    }
+    std::vector<CalVector>& getVectorVertex() {
+        return m_vectorVertex;
+    }
+    int getVertexCount() const {
+        return m_vertexCount;
+    }
 private:
-  void setLodLevel(float lodLevel);
+    void setLodLevel(float lodLevel);
 public:
-  std::vector<float>& getVectorWeight();
-  float getMorphTargetWeight(int blendId) const;
-  void setMorphTargetWeight(std::string const & morphName,float weight);
-  bool getMorphTargetWeight(std::string const & morphName, float * weightOut) const;
-  void getMorphIdAndWeightArray(
-    MorphIdAndWeight * arrayResult, 
-    unsigned int * numMiawsResult, 
-    unsigned int maxMiaws) const;
-  float getBaseWeight() const;
-  int getMorphTargetWeightCount() const {
-    return m_vectorMorphTargetWeight.size();
-  }
-  const std::vector<float>& getVectorMorphTargetWeight() {
-    return m_vectorMorphTargetWeight;
-  }
-  void clearMorphTargetScales();
-  void clearMorphTargetState( std::string const & morphName );
-  void blendMorphTargetScale( std::string const & morphName, 
-    float scale, 
-    float unrampedWeight, 
-    float rampValue,
-    bool replace );
-  void setSubMorphTargetGroupAttenuatorArray( unsigned int len, int const * morphTargetIdArray );
-  void setSubMorphTargetGroupAttenuationArray( unsigned int len, float const * attenuationArray );
+    std::vector<float>& getVectorWeight();
+    float getMorphTargetWeight(int blendId) const;
+    void setMorphTargetWeight(std::string const& morphName, float weight);
+    bool getMorphTargetWeight(std::string const& morphName, float* weightOut) const;
+    void getMorphIdAndWeightArray(
+        MorphIdAndWeight* arrayResult,
+        unsigned int* numMiawsResult,
+        unsigned int maxMiaws) const;
+    float getBaseWeight() const;
+    int getMorphTargetWeightCount() const {
+        return m_vectorMorphTargetWeight.size();
+    }
+    const std::vector<float>& getVectorMorphTargetWeight() {
+        return m_vectorMorphTargetWeight;
+    }
+    void clearMorphTargetScales();
+    void clearMorphTargetState(std::string const& morphName);
+    void blendMorphTargetScale(std::string const& morphName,
+                               float scale,
+                               float unrampedWeight,
+                               float rampValue,
+                               bool replace);
+    void setSubMorphTargetGroupAttenuatorArray(unsigned int len, int const* morphTargetIdArray);
+    void setSubMorphTargetGroupAttenuationArray(unsigned int len, float const* attenuationArray);
 
 private:
-  std::vector<float> m_vectorMorphTargetWeight;
-  std::vector<float> m_vectorAccumulatedWeight;
-  std::vector<float> m_vectorReplacementAttenuation;
-  std::vector<CalVector> m_vectorVertex;
-  std::vector<CalVector> m_vectorNormal;
-  std::vector<Face> m_vectorFace;
-  std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
-  std::vector<float> m_vectorSubMorphTargetGroupAttenuation;  
-  int m_vertexCount;
-  int m_faceCount;
+    std::vector<float> m_vectorMorphTargetWeight;
+    std::vector<float> m_vectorAccumulatedWeight;
+    std::vector<float> m_vectorReplacementAttenuation;
+    std::vector<CalVector> m_vectorVertex;
+    std::vector<CalVector> m_vectorNormal;
+    std::vector<Face> m_vectorFace;
+    std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
+    std::vector<float> m_vectorSubMorphTargetGroupAttenuation;
+    int m_vertexCount;
+    int m_faceCount;
 };

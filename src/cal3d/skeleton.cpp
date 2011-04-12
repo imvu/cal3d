@@ -21,40 +21,37 @@
 #include "cal3d/corebone.h" // DEBUG
 
 CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton)
-: m_pCoreSkeleton(pCoreSkeleton)
-{
-  assert(pCoreSkeleton);
+    : m_pCoreSkeleton(pCoreSkeleton) {
+    assert(pCoreSkeleton);
 
-  // clone the skeleton structure of the core skeleton
-  std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->coreBones;
+    // clone the skeleton structure of the core skeleton
+    std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->coreBones;
 
-  size_t boneCount = vectorCoreBone.size();
-  bones.reserve(boneCount);
+    size_t boneCount = vectorCoreBone.size();
+    bones.reserve(boneCount);
 
-  for(size_t boneId = 0; boneId < boneCount; ++boneId) {
-    bones.push_back(CalBone(vectorCoreBone[boneId].get()));
-  }
+    for (size_t boneId = 0; boneId < boneCount; ++boneId) {
+        bones.push_back(CalBone(vectorCoreBone[boneId].get()));
+    }
 
-  boneTransforms.resize(boneCount);
+    boneTransforms.resize(boneCount);
 }
 
-void CalSkeleton::calculateState()
-{
-  // calculate all bone states of the skeleton
-  const std::vector<int>& listRootCoreBoneId = m_pCoreSkeleton->rootBoneIds;
+void CalSkeleton::calculateState() {
+    // calculate all bone states of the skeleton
+    const std::vector<int>& listRootCoreBoneId = m_pCoreSkeleton->rootBoneIds;
 
-  std::vector<int>::const_iterator iteratorRootBoneId;
-  for(iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId)
-  {
-    bones[*iteratorRootBoneId].calculateState(this, *iteratorRootBoneId);
-  }
+    std::vector<int>::const_iterator iteratorRootBoneId;
+    for (iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId) {
+        bones[*iteratorRootBoneId].calculateState(this, *iteratorRootBoneId);
+    }
 }
 
 void CalSkeleton::clearState() {
-  std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::clearState));
+    std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::clearState));
 }
 
 void CalSkeleton::lockState() {
-  std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::lockState));
+    std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::lockState));
 }
 

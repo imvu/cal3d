@@ -15,23 +15,22 @@
 
 typedef boost::shared_ptr<class CalCoreSubmesh> CalCoreSubmeshPtr;
 
-class CAL3D_API CalCoreMesh
-{
+class CAL3D_API CalCoreMesh {
 public:
-  typedef std::vector<CalCoreSubmeshPtr> CalCoreSubmeshVector;
+    typedef std::vector<CalCoreSubmeshPtr> CalCoreSubmeshVector;
 
-  size_t sizeInBytes() const;
-  int addCoreSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
-  const CalCoreSubmeshPtr& getCoreSubmesh(int id) const {
-      return m_vectorCoreSubmesh[id];
-  }
-  size_t getCoreSubmeshCount() const {
-      return m_vectorCoreSubmesh.size();
-  }
-  CalCoreSubmeshVector& getVectorCoreSubmesh();
-  int addAsMorphTarget(CalCoreMesh *pCoreMesh, std::string const & morphTargetName);
-  void scale(float factor);
+    size_t sizeInBytes() const;
+    int addCoreSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
+    const CalCoreSubmeshPtr& getCoreSubmesh(int id) const {
+        return m_vectorCoreSubmesh[id];
+    }
+    size_t getCoreSubmeshCount() const {
+        return m_vectorCoreSubmesh.size();
+    }
+    CalCoreSubmeshVector& getVectorCoreSubmesh();
+    int addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
+    void scale(float factor);
 
-  CalCoreSubmeshVector m_vectorCoreSubmesh;
+    CalCoreSubmeshVector m_vectorCoreSubmesh;
 };
 typedef boost::shared_ptr<CalCoreMesh> CalCoreMeshPtr;

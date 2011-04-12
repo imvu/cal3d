@@ -22,33 +22,33 @@ typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 
 class CAL3D_API CalCoreTrack {
 public:
-  typedef std::vector<CalCoreKeyframe> KeyframeList;
+    typedef std::vector<CalCoreKeyframe> KeyframeList;
 
-  // would be const, except store a std::vector of these
-  int coreBoneId; 
-  KeyframeList keyframes;
+    // would be const, except store a std::vector of these
+    int coreBoneId;
+    KeyframeList keyframes;
 
-  bool translationRequired;
-  bool translationIsDynamic;
+    bool translationRequired;
+    bool translationIsDynamic;
 
-  CalCoreTrack(int coreBoneId, const KeyframeList& keyframes);
+    CalCoreTrack(int coreBoneId, const KeyframeList& keyframes);
 
-  size_t sizeInBytes() const;
+    size_t sizeInBytes() const;
 
-  void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
+    void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
 
-  CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
-  void translationCompressibility(
-    bool* transRequiredResult, bool* transDynamicResult,
-    float threshold, float highRangeThreshold, CalCoreSkeleton* skel
-  ) const;
+    CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
+    void translationCompressibility(
+        bool* transRequiredResult, bool* transDynamicResult,
+        float threshold, float highRangeThreshold, CalCoreSkeleton* skel
+    ) const;
 
 private:
-  KeyframeList::const_iterator getUpperBound(float time) const;
+    KeyframeList::const_iterator getUpperBound(float time) const;
 };
 typedef boost::shared_ptr<CalCoreTrack> CalCoreTrackPtr;
 
 inline bool operator==(const CalCoreTrack& lhs, const CalCoreTrack& rhs) {
-  return lhs.coreBoneId == rhs.coreBoneId &&
-    lhs.keyframes == rhs.keyframes;
+    return lhs.coreBoneId == rhs.coreBoneId &&
+           lhs.keyframes == rhs.keyframes;
 }

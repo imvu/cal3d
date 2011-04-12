@@ -20,19 +20,17 @@
 #include "cal3d/model.h"
 
 CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
-: coreMesh(pCoreMesh)
-{
-  assert(pCoreMesh);
+    : coreMesh(pCoreMesh) {
+    assert(pCoreMesh);
 
-  // clone the mesh structure of the core mesh
-  CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
+    // clone the mesh structure of the core mesh
+    CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
 
-  SubmeshVector& m_vectorSubmesh = const_cast<SubmeshVector&>(submeshes); // Oh for a 'readonly' keyword like C#
+    SubmeshVector& m_vectorSubmesh = const_cast<SubmeshVector&>(submeshes); // Oh for a 'readonly' keyword like C#
 
-  int submeshCount = vectorCoreSubmesh.size();
-  m_vectorSubmesh.reserve(submeshCount);
-  for(int submeshId = 0; submeshId < submeshCount; ++submeshId)
-  {
-    m_vectorSubmesh.push_back(boost::shared_ptr<CalSubmesh>(new CalSubmesh(vectorCoreSubmesh[submeshId])));
-  }
+    int submeshCount = vectorCoreSubmesh.size();
+    m_vectorSubmesh.reserve(submeshCount);
+    for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
+        m_vectorSubmesh.push_back(boost::shared_ptr<CalSubmesh>(new CalSubmesh(vectorCoreSubmesh[submeshId])));
+    }
 }

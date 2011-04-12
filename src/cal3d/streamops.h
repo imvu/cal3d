@@ -9,11 +9,11 @@
 #include <cal3d/coretrack.h>
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector4& v) {
-  return os << "CalVector4(" << v.x << "," << v.y << "," << v.z << "," << v.w << ")";
+    return os << "CalVector4(" << v.x << "," << v.y << "," << v.z << "," << v.w << ")";
 }
 
 inline std::ostream& operator<<(std::ostream& os, const BoneTransform& bt) {
-  return os << "[rowx=" << bt.rowx << " rowy=" << bt.rowy << " rowz=" << bt.rowz << "]";
+    return os << "[rowx=" << bt.rowx << " rowy=" << bt.rowy << " rowz=" << bt.rowz << "]";
 }
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector& v) {
@@ -33,9 +33,9 @@ inline std::ostream& operator<<(std::ostream& os, const CalCoreKeyframe& keyfram
 }
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreAnimation& animation) {
-  return os << "CalCoreAnimation(" << animation.duration << ", " << animation.tracks << ")";
+    return os << "CalCoreAnimation(" << animation.duration << ", " << animation.tracks << ")";
 }
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreTrack& track) {
-  return os << "CalCoreTrack(" << track.coreBoneId << ", " << track.keyframes << ")";
+    return os << "CalCoreTrack(" << track.coreBoneId << ", " << track.keyframes << ")";
 }

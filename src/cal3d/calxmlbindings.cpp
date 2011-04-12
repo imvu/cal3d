@@ -18,49 +18,45 @@
 #include "cal3d/tinybind.h"
 #include "calxmlbindings.h"
 
-TiXmlBinding<CalHeader> const *
-GetTiXmlBinding( CalHeader const &,  IdentityBase  )
-{
-  static MemberTiXmlBinding<CalHeader> binding;
-  if( binding.empty() ) {
-    binding.AddMember( "VERSION", MemberAttribute(&CalHeader::version) );
-    binding.AddMember( "MAGIC", MemberAttribute(&CalHeader::magic) );
-  }
-  return &binding;
+TiXmlBinding<CalHeader> const*
+GetTiXmlBinding(CalHeader const&,  IdentityBase) {
+    static MemberTiXmlBinding<CalHeader> binding;
+    if (binding.empty()) {
+        binding.AddMember("VERSION", MemberAttribute(&CalHeader::version));
+        binding.AddMember("MAGIC", MemberAttribute(&CalHeader::magic));
+    }
+    return &binding;
 }
 
 
-TiXmlBinding<CalCoreAnimatedMorph> const *
-GetTiXmlBinding( CalCoreAnimatedMorph const &,  IdentityBase  )
-{
-  static MemberTiXmlBinding<CalCoreAnimatedMorph> binding;
-  if( binding.empty() ) {
-    binding.AddMember("DURATION", MemberAttribute(&CalCoreAnimatedMorph::duration));
-    binding.AddMember("TRACK", MemberPeer(&CalCoreAnimatedMorph::tracks));
-  }
-  return &binding;
+TiXmlBinding<CalCoreAnimatedMorph> const*
+GetTiXmlBinding(CalCoreAnimatedMorph const&,  IdentityBase) {
+    static MemberTiXmlBinding<CalCoreAnimatedMorph> binding;
+    if (binding.empty()) {
+        binding.AddMember("DURATION", MemberAttribute(&CalCoreAnimatedMorph::duration));
+        binding.AddMember("TRACK", MemberPeer(&CalCoreAnimatedMorph::tracks));
+    }
+    return &binding;
 }
 
-TiXmlBinding<CalCoreMorphTrack> const *
-GetTiXmlBinding( CalCoreMorphTrack const &,  IdentityBase  )
-{
-  static MemberTiXmlBinding<CalCoreMorphTrack> binding;
-  if( binding.empty() ) {
-    binding.AddMember("MORPHNAME", MemberAttribute(&CalCoreMorphTrack::morphName));
-    binding.AddMember("KEYFRAME", MemberPeer(&CalCoreMorphTrack::keyframes));
-  }
-  return &binding;
+TiXmlBinding<CalCoreMorphTrack> const*
+GetTiXmlBinding(CalCoreMorphTrack const&,  IdentityBase) {
+    static MemberTiXmlBinding<CalCoreMorphTrack> binding;
+    if (binding.empty()) {
+        binding.AddMember("MORPHNAME", MemberAttribute(&CalCoreMorphTrack::morphName));
+        binding.AddMember("KEYFRAME", MemberPeer(&CalCoreMorphTrack::keyframes));
+    }
+    return &binding;
 }
 
-TiXmlBinding<CalCoreMorphKeyframe> const *
-GetTiXmlBinding( CalCoreMorphKeyframe const &,  IdentityBase  )
-{
-  static MemberTiXmlBinding<CalCoreMorphKeyframe> binding;
-  if( binding.empty() ) {
-    binding.AddMember("TIME", MemberAttribute(&CalCoreMorphKeyframe::time));
-    binding.AddMember("WEIGHT", Member(&CalCoreMorphKeyframe::weight));
-  }
-  return &binding;
+TiXmlBinding<CalCoreMorphKeyframe> const*
+GetTiXmlBinding(CalCoreMorphKeyframe const&,  IdentityBase) {
+    static MemberTiXmlBinding<CalCoreMorphKeyframe> binding;
+    if (binding.empty()) {
+        binding.AddMember("TIME", MemberAttribute(&CalCoreMorphKeyframe::time));
+        binding.AddMember("WEIGHT", Member(&CalCoreMorphKeyframe::weight));
+    }
+    return &binding;
 }
 
 

@@ -31,60 +31,54 @@ void CalCoreMorphTrack::addCoreMorphKeyframe(CalCoreMorphKeyframe keyframe) {
 }
 
 float CalCoreMorphTrack::getState(float time) {
-  std::vector<CalCoreMorphKeyframe>::iterator iteratorCoreMorphKeyframeBefore;
-  std::vector<CalCoreMorphKeyframe>::iterator iteratorCoreMorphKeyframeAfter;
+    std::vector<CalCoreMorphKeyframe>::iterator iteratorCoreMorphKeyframeBefore;
+    std::vector<CalCoreMorphKeyframe>::iterator iteratorCoreMorphKeyframeAfter;
 
-  // get the keyframe after the requested time
-  iteratorCoreMorphKeyframeAfter = getUpperBound(time);
+    // get the keyframe after the requested time
+    iteratorCoreMorphKeyframeAfter = getUpperBound(time);
 
-  // check if the time is after the last keyframe
-  if(iteratorCoreMorphKeyframeAfter == keyframes.end())
-  {
-    // return the last keyframe state
-    --iteratorCoreMorphKeyframeAfter;
-    return (*iteratorCoreMorphKeyframeAfter).weight;
-  }
+    // check if the time is after the last keyframe
+    if (iteratorCoreMorphKeyframeAfter == keyframes.end()) {
+        // return the last keyframe state
+        --iteratorCoreMorphKeyframeAfter;
+        return (*iteratorCoreMorphKeyframeAfter).weight;
+    }
 
-  // check if the time is before the first keyframe
-  if(iteratorCoreMorphKeyframeAfter == keyframes.begin())
-  {
-    // return the first keyframe state
-    return iteratorCoreMorphKeyframeAfter->weight;
-  }
+    // check if the time is before the first keyframe
+    if (iteratorCoreMorphKeyframeAfter == keyframes.begin()) {
+        // return the first keyframe state
+        return iteratorCoreMorphKeyframeAfter->weight;
+    }
 
-  // get the keyframe before the requested one
-  iteratorCoreMorphKeyframeBefore = iteratorCoreMorphKeyframeAfter;
-  --iteratorCoreMorphKeyframeBefore;
+    // get the keyframe before the requested one
+    iteratorCoreMorphKeyframeBefore = iteratorCoreMorphKeyframeAfter;
+    --iteratorCoreMorphKeyframeBefore;
 
-  // get the two keyframe pointers
-  CalCoreMorphKeyframe* pCoreMorphKeyframeBefore = &(*iteratorCoreMorphKeyframeBefore);
-  CalCoreMorphKeyframe* pCoreMorphKeyframeAfter = &(*iteratorCoreMorphKeyframeAfter);
+    // get the two keyframe pointers
+    CalCoreMorphKeyframe* pCoreMorphKeyframeBefore = &(*iteratorCoreMorphKeyframeBefore);
+    CalCoreMorphKeyframe* pCoreMorphKeyframeAfter = &(*iteratorCoreMorphKeyframeAfter);
 
-  // calculate the blending factor between the two keyframe states
-  float blendFactor = (time - pCoreMorphKeyframeBefore->time) / (pCoreMorphKeyframeAfter->time - pCoreMorphKeyframeBefore->time);
+    // calculate the blending factor between the two keyframe states
+    float blendFactor = (time - pCoreMorphKeyframeBefore->time) / (pCoreMorphKeyframeAfter->time - pCoreMorphKeyframeBefore->time);
 
-  // blend between the two keyframes
-  float weight = pCoreMorphKeyframeBefore->weight;
-  float otherWeight = pCoreMorphKeyframeAfter->weight;
-  weight += blendFactor * (otherWeight - weight);
-  return weight;
+    // blend between the two keyframes
+    float weight = pCoreMorphKeyframeBefore->weight;
+    float otherWeight = pCoreMorphKeyframeAfter->weight;
+    weight += blendFactor * (otherWeight - weight);
+    return weight;
 }
 
 std::vector<CalCoreMorphKeyframe>::iterator CalCoreMorphTrack::getUpperBound(float time) {
     int lowerBound = 0;
-    int upperBound = keyframes.size()-1;
+    int upperBound = keyframes.size() - 1;
 
-    while(lowerBound<upperBound-1)
-    {
-        int middle = (lowerBound+upperBound)/2;
+    while (lowerBound < upperBound - 1) {
+        int middle = (lowerBound + upperBound) / 2;
 
-        if(time >= keyframes[middle].time)
-        {
-            lowerBound=middle;
-        }
-        else
-        {
-            upperBound=middle;
+        if (time >= keyframes[middle].time) {
+            lowerBound = middle;
+        } else {
+            upperBound = middle;
         }
     }
 

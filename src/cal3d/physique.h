@@ -17,40 +17,40 @@ struct BoneTransform;
 class CalSubmesh;
 
 namespace CalPhysique {
-  typedef void (*SkinRoutine)(
-    const BoneTransform*,
-    int,
-    const CalCoreSubmesh::Vertex*,
-    const CalCoreSubmesh::Influence*,
-    CalVector4*);
+    typedef void (*SkinRoutine)(
+        const BoneTransform*,
+        int,
+        const CalCoreSubmesh::Vertex*,
+        const CalCoreSubmesh::Influence*,
+        CalVector4*);
 
-  CAL3D_API void calculateVerticesAndNormals_x87(
-    const BoneTransform* boneTransforms,
-    int vertexCount,
-    const CalCoreSubmesh::Vertex* vertices,
-    const CalCoreSubmesh::Influence* influences,
-    CalVector4* output_vertex);
+    CAL3D_API void calculateVerticesAndNormals_x87(
+        const BoneTransform* boneTransforms,
+        int vertexCount,
+        const CalCoreSubmesh::Vertex* vertices,
+        const CalCoreSubmesh::Influence* influences,
+        CalVector4* output_vertex);
 
 #ifndef IMVU_NO_INTRINSICS
-  CAL3D_API void calculateVerticesAndNormals_SSE_intrinsics(
-    const BoneTransform* boneTransforms,
-    int vertexCount,
-    const CalCoreSubmesh::Vertex* vertices,
-    const CalCoreSubmesh::Influence* influences,
-    CalVector4* output_vertex);
+    CAL3D_API void calculateVerticesAndNormals_SSE_intrinsics(
+        const BoneTransform* boneTransforms,
+        int vertexCount,
+        const CalCoreSubmesh::Vertex* vertices,
+        const CalCoreSubmesh::Influence* influences,
+        CalVector4* output_vertex);
 #endif
 
 #ifndef IMVU_NO_ASM_BLOCKS
-  CAL3D_API void calculateVerticesAndNormals_SSE(
-    const BoneTransform* boneTransforms,
-    int vertexCount,
-    const CalCoreSubmesh::Vertex* vertices,
-    const CalCoreSubmesh::Influence* influences,
-    CalVector4* output_vertices);
+    CAL3D_API void calculateVerticesAndNormals_SSE(
+        const BoneTransform* boneTransforms,
+        int vertexCount,
+        const CalCoreSubmesh::Vertex* vertices,
+        const CalCoreSubmesh::Influence* influences,
+        CalVector4* output_vertices);
 #endif
 
-  CAL3D_API void calculateVerticesAndNormals(
-    const BoneTransform* boneTransforms,
-    const CalSubmesh* pSubmesh,
-    float* pVertexBuffer);
+    CAL3D_API void calculateVerticesAndNormals(
+        const BoneTransform* boneTransforms,
+        const CalSubmesh* pSubmesh,
+        float* pVertexBuffer);
 };

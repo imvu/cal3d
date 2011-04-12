@@ -15,17 +15,19 @@
 
 class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder {
 public:
-  struct Map {
-    std::string filename;
-    std::string type;
+    struct Map {
+        std::string filename;
+        std::string type;
 
-    bool operator==(const Map& rhs) const {
-        return filename == rhs.filename && type == rhs.type;
+        bool operator==(const Map& rhs) const {
+            return filename == rhs.filename && type == rhs.type;
+        }
+    };
+
+    std::vector<Map> maps;
+
+    bool getTwoSided() const {
+        return maps.size() > 1;    // Should come from check box.
     }
-  };
-
-  std::vector<Map> maps;
-
-  bool getTwoSided() const { return maps.size() > 1; } // Should come from check box.
 };
 typedef boost::shared_ptr<CalCoreMaterial> CalCoreMaterialPtr;

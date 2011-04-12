@@ -17,16 +17,15 @@
 #include "cal3d/corebone.h"
 
 int CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone) {
-  int boneId = coreBones.size();
-  coreBones.push_back(pCoreBone);
+    int boneId = coreBones.size();
+    coreBones.push_back(pCoreBone);
 
-  if(pCoreBone->parentId == -1)
-  {
-    rootBoneIds.push_back(boneId);
-  }
+    if (pCoreBone->parentId == -1) {
+        rootBoneIds.push_back(boneId);
+    }
 
-  mapCoreBoneName(boneId, pCoreBone->name);
-  return boneId;
+    mapCoreBoneName(boneId, pCoreBone->name);
+    return boneId;
 }
 
 void CalCoreSkeleton::calculateState() {
@@ -40,42 +39,38 @@ void CalCoreSkeleton::calculateState() {
 }
 
 CalCoreBone* CalCoreSkeleton::getCoreBone(const std::string& strName) {
-   return coreBones[getCoreBoneId(strName)].get();
+    return coreBones[getCoreBoneId(strName)].get();
 }
 
-int CalCoreSkeleton::getCoreBoneId(const std::string& strName)
-{
-  //Check to make sure the mapping exists
-  if (m_mapCoreBoneNames.count(strName) <= 0)
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return -1;
-  }
+int CalCoreSkeleton::getCoreBoneId(const std::string& strName) {
+    //Check to make sure the mapping exists
+    if (m_mapCoreBoneNames.count(strName) <= 0) {
+        CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+        return -1;
+    }
 
-  return m_mapCoreBoneNames[strName];
+    return m_mapCoreBoneNames[strName];
 
 }
 
-bool CalCoreSkeleton::mapCoreBoneName(int coreBoneId, const std::string& strName)
-{
-   //Make sure the ID given is a valid corebone ID number
-   if ((coreBoneId < 0) || (coreBoneId >= (int)coreBones.size()))
-   {
-      return false;
-   }
+bool CalCoreSkeleton::mapCoreBoneName(int coreBoneId, const std::string& strName) {
+    //Make sure the ID given is a valid corebone ID number
+    if ((coreBoneId < 0) || (coreBoneId >= (int)coreBones.size())) {
+        return false;
+    }
 
-   //Add the mapping or overwrite an existing mapping
-   m_mapCoreBoneNames[strName] = coreBoneId;
+    //Add the mapping or overwrite an existing mapping
+    m_mapCoreBoneNames[strName] = coreBoneId;
 
-   return true;
+    return true;
 }
 
 void CalCoreSkeleton::scale(float factor) {
-  for (
-      std::vector<int>::const_iterator i = rootBoneIds.begin();
-      i != rootBoneIds.end();
-      ++i
-  ) {
-      coreBones[*i]->scale(factor, this);
-  }
+    for (
+        std::vector<int>::const_iterator i = rootBoneIds.begin();
+        i != rootBoneIds.end();
+        ++i
+    ) {
+        coreBones[*i]->scale(factor, this);
+    }
 }

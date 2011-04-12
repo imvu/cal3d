@@ -31,14 +31,12 @@
 #include <vector>
 #include <list>
 
-class IdentityBase
-{
+class IdentityBase {
 public:
 };
 
 template< class T >
-class Identity : public IdentityBase
-{
+class Identity : public IdentityBase {
 public:
     typedef T type;
 
@@ -52,24 +50,23 @@ enum MemberSerializeFlags {
     MemberOptional = 1,
 };
 
-class Tag
-{
+class Tag {
 public:
     // support up to 3 tags
-    char const * tag_[3];
+    char const* tag_[3];
 
 
-    Tag( char const * tagOne = NULL ) {
+    Tag(char const* tagOne = NULL) {
         tag_[0] = tagOne;
         tag_[1] = NULL;
         tag_[2] = NULL;
     }
-    Tag( char const * tagOne, char const * tagTwo ) {
+    Tag(char const* tagOne, char const* tagTwo) {
         tag_[0] = tagOne;
         tag_[1] = tagTwo;
         tag_[2] = NULL;
     }
-    Tag( char const * tagOne, char const * tagTwo, char const * tagThree ) {
+    Tag(char const* tagOne, char const* tagTwo, char const* tagThree) {
         tag_[0] = tagOne;
         tag_[1] = tagTwo;
         tag_[2] = tagThree;
@@ -81,131 +78,126 @@ struct SerializeParams {
 };
 
 template<class T>
-class TiXmlBinding
-{
+class TiXmlBinding {
 public:
-    virtual bool fromXml( TiXmlElement const & elem, T * data, SerializeParams const & ) const = 0;  
+    virtual bool fromXml(TiXmlElement const& elem, T* data, SerializeParams const&) const = 0;
 };
 
 template<class T>
 bool
-BindFromXml( TiXmlElement const & elemIn, T * dataOut )
-{
-    TiXmlBinding<T> const * binding = GetTiXmlBinding( *dataOut, Identity<T>() );
+BindFromXml(TiXmlElement const& elemIn, T* dataOut) {
+    TiXmlBinding<T> const* binding = GetTiXmlBinding(*dataOut, Identity<T>());
     SerializeParams params;
-    return binding->fromXml( elemIn, dataOut, params );
+    return binding->fromXml(elemIn, dataOut, params);
 }
 
 
 template<class T>
-class IMemberHolder
-{
+class IMemberHolder {
 public:
     MemberSerializeFlags flags_;
     Tag tag_;
     SerializeParams params_;
 
-    void setFlags( MemberSerializeFlags f ) {
+    void setFlags(MemberSerializeFlags f) {
         flags_ = f;
     }
 
-    SerializeParams const & params() {
+    SerializeParams const& params() {
         params_.tag_ = tag_;
         return params_;
     }
-  
-    virtual char const * tag( int which = 0) { return tag_.tag_[which]; }
-  
-    virtual bool fromXml( TiXmlElement const &, T * ) = 0;
+
+    virtual char const* tag(int which = 0) {
+        return tag_.tag_[which];
+    }
+
+    virtual bool fromXml(TiXmlElement const&, T*) = 0;
     virtual bool isAttributeMember() = 0;
 
-  
+
 };
 
 
 
 template<class T, class MT>
-class IMemberValuePolicy
-{
+class IMemberValuePolicy {
 public:
-    virtual MT const & getMemberValue( T const * thisPtr ) = 0;
-    virtual void setMemberValue( T * thisPtr, MT const & mv ) = 0;
+    virtual MT const& getMemberValue(T const* thisPtr) = 0;
+    virtual void setMemberValue(T* thisPtr, MT const& mv) = 0;
 };
 
 
 template<class T, class MT>
-class MemberFuncHolder : public IMemberValuePolicy<T, MT>
-{
+class MemberFuncHolder : public IMemberValuePolicy<T, MT> {
 public:
-    MT (T::*getter_)();
+    MT(T::*getter_)();
     void (T::*setter_)(MT);
 
-    virtual MT const & getMemberValue( T const * thisPtr ) {
+    virtual MT const& getMemberValue(T const* thisPtr) {
         static MT mv;
         mv = (const_cast<T*>(thisPtr)->*getter_)();
         return mv;
     }
 
-    virtual void setMemberValue( T * thisPtr, MT const & mv ) {
+    virtual void setMemberValue(T* thisPtr, MT const& mv) {
         (thisPtr->*setter_)(mv);
     }
 
 };
 
 template<class T, class MT>
-class MemberFuncHolderConstRef  : public IMemberValuePolicy<T, MT>
-{
+class MemberFuncHolderConstRef  : public IMemberValuePolicy<T, MT> {
 public:
-    MT const & (T::*getter_)();
-    void (T::*setter_)(MT const &);
+    MT const& (T::*getter_)();
+    void (T::*setter_)(MT const&);
 
-    virtual MT const & getMemberValue( T const * thisPtr ) {
+    virtual MT const& getMemberValue(T const* thisPtr) {
         return (thisPtr->*getter_)();
     }
 
-    virtual void setMemberValue( T * thisPtr, MT const & mv ) {
+    virtual void setMemberValue(T* thisPtr, MT const& mv) {
         (thisPtr->*setter_)(mv);
     }
 };
 
 template<class T, class MT>
-class MemberPtrHolder : public IMemberValuePolicy<T, MT>
-{
+class MemberPtrHolder : public IMemberValuePolicy<T, MT> {
 public:
-    MT T::*memberPtr_;
-    virtual MT const & getMemberValue( T const * thisPtr ) { return thisPtr->*memberPtr_; }
-    virtual void setMemberValue( T * thisPtr, MT const & mv ) { 
+    MT T::* memberPtr_;
+    virtual MT const& getMemberValue(T const* thisPtr) {
+        return thisPtr->*memberPtr_;
+    }
+    virtual void setMemberValue(T* thisPtr, MT const& mv) {
         thisPtr->*memberPtr_ = mv;
     }
 };
 
 template<class T, class MT>
-class MemberRefFuncHolder : public IMemberValuePolicy<T, MT>
-{
+class MemberRefFuncHolder : public IMemberValuePolicy<T, MT> {
 public:
-    MT & (T::*memberRefFunc_)();
-    virtual MT const & getMemberValue( T const * thisPtr ) { return (const_cast<T*>(thisPtr)->*memberRefFunc_)(); }
-    virtual void setMemberValue( T * thisPtr, MT const & mv ) {
+    MT& (T::*memberRefFunc_)();
+    virtual MT const& getMemberValue(T const* thisPtr) {
+        return (const_cast<T*>(thisPtr)->*memberRefFunc_)();
+    }
+    virtual void setMemberValue(T* thisPtr, MT const& mv) {
         (thisPtr->*memberRefFunc_)() = mv;
     }
 };
 
 
 template<class T, class MT>
-class FromXmlElement : public IMemberHolder<T>
-{
+class FromXmlElement : public IMemberHolder<T> {
 public:
     IMemberValuePolicy<T, MT> * mvPolicy_;
-    FromXmlElement( IMemberValuePolicy<T, MT> * mvPolicy )
-    {
+    FromXmlElement(IMemberValuePolicy<T, MT> * mvPolicy) {
         mvPolicy_ = mvPolicy;
     }
-  
-    virtual bool fromXml( TiXmlElement const & elem, T * thisPtr)
-    {
-        MT & mv = const_cast<MT &>(mvPolicy_->getMemberValue(thisPtr));
-        TiXmlBinding<MT> const * binding = GetTiXmlBinding( mv,  Identity<MT>()  );
-        if( binding->fromXml(elem, &mv, IMemberHolder<T>::params()) ) {
+
+    virtual bool fromXml(TiXmlElement const& elem, T* thisPtr) {
+        MT& mv = const_cast<MT&>(mvPolicy_->getMemberValue(thisPtr));
+        TiXmlBinding<MT> const* binding = GetTiXmlBinding(mv,  Identity<MT>());
+        if (binding->fromXml(elem, &mv, IMemberHolder<T>::params())) {
             mvPolicy_->setMemberValue(thisPtr, mv);
             return true;
         } else {
@@ -213,41 +205,38 @@ public:
         }
     }
 
-    virtual bool isAttributeMember() { return true; }
+    virtual bool isAttributeMember() {
+        return true;
+    }
 };
 
 
 template<class T, class MT, class FromXmlPolicy, class MemberValuePolicy>
-class MemberHolder
-{
+class MemberHolder {
 public:
     FromXmlPolicy xmlPolicy_;
     MemberValuePolicy mvPolicy_;
 
     MemberHolder()
-    : xmlPolicy_((IMemberValuePolicy<T, MT> *)&mvPolicy_)
-    {
+        : xmlPolicy_((IMemberValuePolicy<T, MT> *)&mvPolicy_) {
     }
 };
 
 
 
 template<class T, class MT>
-class FromXmlChildElement : public IMemberHolder<T>
-{
+class FromXmlChildElement : public IMemberHolder<T> {
 public:
     IMemberValuePolicy<T, MT> * mvPolicy_;
-    FromXmlChildElement( IMemberValuePolicy<T, MT> * mvPolicy )
-    {
+    FromXmlChildElement(IMemberValuePolicy<T, MT> * mvPolicy) {
         mvPolicy_ = mvPolicy;
     }
-  
-    virtual bool fromXml( TiXmlElement const & elem, T * thisPtr)
-    {
-        if( !cal3d_stricmp(elem.Value(), IMemberHolder<T>::tag()) ) {
+
+    virtual bool fromXml(TiXmlElement const& elem, T* thisPtr) {
+        if (!cal3d_stricmp(elem.Value(), IMemberHolder<T>::tag())) {
             MT mv;
-            TiXmlBinding<MT> const * binding = GetTiXmlBinding( mv,  Identity<MT>()  );
-            if( binding->fromXml(elem, &mv, IMemberHolder<T>::params()) ) {
+            TiXmlBinding<MT> const* binding = GetTiXmlBinding(mv,  Identity<MT>());
+            if (binding->fromXml(elem, &mv, IMemberHolder<T>::params())) {
                 mvPolicy_->setMemberValue(thisPtr, mv);
                 return true;
             } else {
@@ -258,26 +247,25 @@ public:
         }
     }
 
-    virtual bool isAttributeMember() { return false; }
+    virtual bool isAttributeMember() {
+        return false;
+    }
 };
 
 
 template<class T, class MT>
-class FromXmlAttribute  : public IMemberHolder<T>
-{
+class FromXmlAttribute  : public IMemberHolder<T> {
 public:
     IMemberValuePolicy<T, MT> * mvPolicy_;
-    FromXmlAttribute( IMemberValuePolicy<T, MT> * mvPolicy )
-    {
+    FromXmlAttribute(IMemberValuePolicy<T, MT> * mvPolicy) {
         mvPolicy_ = mvPolicy;
     }
 
-    virtual bool fromXml( TiXmlElement const & elem, T * thisPtr)
-    {
+    virtual bool fromXml(TiXmlElement const& elem, T* thisPtr) {
         MT mv;
-        const char * attributeValue = elem.Attribute( IMemberHolder<T>::tag() );
-        if( attributeValue && *attributeValue ) {
-            ConvertFromString( attributeValue, &mv );
+        const char* attributeValue = elem.Attribute(IMemberHolder<T>::tag());
+        if (attributeValue && *attributeValue) {
+            ConvertFromString(attributeValue, &mv);
             mvPolicy_->setMemberValue(thisPtr, mv);
             return true;
         } else {
@@ -285,64 +273,61 @@ public:
         }
     }
 
-    virtual bool isAttributeMember() { return true; }
+    virtual bool isAttributeMember() {
+        return true;
+    }
 };
 
 template<class T, class MT>
-IMemberHolder<T> * Member(  MT T::*mp )
-{
+IMemberHolder<T> * Member(MT T::*mp) {
     typedef FromXmlChildElement<T, MT> XmlPolicy;
     typedef MemberPtrHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.memberPtr_ = mp;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * Member(MT & (T::*mp)() )
-{
+IMemberHolder<T> * Member(MT & (T::*mp)()) {
     typedef FromXmlChildElement<T, MT> XmlPolicy;
     typedef MemberRefFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.memberRefFunc_ = mp;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * Member(  MT (T::*getter)(), void (T::*setter)(MT) )
-{
+IMemberHolder<T> * Member(MT(T::*getter)(), void (T::*setter)(MT)) {
     typedef FromXmlChildElement<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * Member(  MT (T::*getter)()const, void (T::*setter)(MT) )
-{
+IMemberHolder<T> * Member(MT(T::*getter)()const, void (T::*setter)(MT)) {
     typedef FromXmlChildElement<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
-    mph->mvPolicy_.getter_ = (MT (T::*)())getter;
+    MH_Type* mph = new MH_Type();
+    mph->mvPolicy_.getter_ = (MT(T::*)())getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * Member( 
+IMemberHolder<T> * Member(
     MT const & (T::*getter)(),
-    void (T::*setter)(MT const &))
-{
+    void (T::*setter)(MT const&)) {
     typedef FromXmlChildElement<T, MT> XmlPolicy;
     typedef MemberFuncHolderConstRef<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
@@ -350,58 +335,56 @@ IMemberHolder<T> * Member(
 
 // BEGIN ATTRIBUTE MAKERS
 template<class T, class MT>
-IMemberHolder<T>* MemberAttribute(  MT T::*mp )
-{
+IMemberHolder<T>* MemberAttribute(MT T::*mp) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberPtrHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.memberPtr_ = mp;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T>* MemberAttribute(MT (T::*getter)()) {
+IMemberHolder<T>* MemberAttribute(MT(T::*getter)()) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = 0;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute(  MT (T::*getter)(), void (T::*setter)(MT) ) {
+IMemberHolder<T> * MemberAttribute(MT(T::*getter)(), void (T::*setter)(MT)) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute(  MT (T::*getter)() const, void (T::*setter)(MT) ) {
+IMemberHolder<T> * MemberAttribute(MT(T::*getter)() const, void (T::*setter)(MT)) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
-    mph->mvPolicy_.getter_ = (MT (T::*)())getter;
+    MH_Type* mph = new MH_Type();
+    mph->mvPolicy_.getter_ = (MT(T::*)())getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberAttribute( 
+IMemberHolder<T> * MemberAttribute(
     MT const & (T::*getter)() const,
-    void (T::*setter)(MT const &))
-{
+    void (T::*setter)(MT const&)) {
     typedef FromXmlAttribute<T, MT> XmlPolicy;
     typedef MemberFuncHolderConstRef<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
@@ -410,49 +393,45 @@ IMemberHolder<T> * MemberAttribute(
 
 // BEGIN PEER MAKERS
 template<class T, class MT>
-IMemberHolder<T> * MemberPeer(  MT T::*mp )
-{
+IMemberHolder<T> * MemberPeer(MT T::*mp) {
     typedef FromXmlElement<T, MT> XmlPolicy;
     typedef MemberPtrHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.memberPtr_ = mp;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberPeer(  MT (T::*getter)(), void (T::*setter)(MT) )
-{
+IMemberHolder<T> * MemberPeer(MT(T::*getter)(), void (T::*setter)(MT)) {
     typedef FromXmlElement<T, MT> XmlPolicy;
     typedef MemberFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberPeer( 
+IMemberHolder<T> * MemberPeer(
     MT const & (T::*getter)(),
-    void (T::*setter)(MT const &))
-{
+    void (T::*setter)(MT const&)) {
     typedef FromXmlElement<T, MT> XmlPolicy;
     typedef MemberFuncHolderConstRef<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.getter_ = getter;
     mph->mvPolicy_.setter_ = setter;
     return &mph->xmlPolicy_;
 }
 
 template<class T, class MT>
-IMemberHolder<T> * MemberPeer(MT & (T::*mp)() )
-{
+IMemberHolder<T> * MemberPeer(MT & (T::*mp)()) {
     typedef FromXmlElement<T, MT> XmlPolicy;
     typedef MemberRefFuncHolder<T, MT> MemberValuePolicy;
     typedef MemberHolder<T, MT, XmlPolicy, MemberValuePolicy> MH_Type;
-    MH_Type * mph = new MH_Type();
+    MH_Type* mph = new MH_Type();
     mph->mvPolicy_.memberRefFunc_ = mp;
     return &mph->xmlPolicy_;
 }
@@ -460,49 +439,45 @@ IMemberHolder<T> * MemberPeer(MT & (T::*mp)() )
 // END PEER MAKERS
 
 template<class T>
-class MemberTiXmlBinding : public TiXmlBinding<T>
-{
+class MemberTiXmlBinding : public TiXmlBinding<T> {
 private:
     std::vector<IMemberHolder<T> *> members_;
-  
+
 public:
-    bool empty() const
-    {
+    bool empty() const {
         return members_.empty();
     }
 
-    IMemberHolder<T> * AddMember( Tag tag, IMemberHolder<T> * mph )
-    {
+    IMemberHolder<T> * AddMember(Tag tag, IMemberHolder<T> * mph) {
         mph->flags_ = MemberSerializeFlagsNone;
         mph->tag_ = tag;
-        members_.push_back( mph );
+        members_.push_back(mph);
         return mph;
     }
 
-    virtual bool fromXml( TiXmlElement const & elem, T * data, SerializeParams const &) const 
-    {
-        TiXmlElement const * child = elem.FirstChildElement();
-        for( size_t i = 0; i < members_.size(); i++ ) {
+    virtual bool fromXml(TiXmlElement const& elem, T* data, SerializeParams const&) const {
+        TiXmlElement const* child = elem.FirstChildElement();
+        for (size_t i = 0; i < members_.size(); i++) {
             IMemberHolder<T> * mph = members_[i];
             bool error = false;
-      
+
             bool ret;
-            if( mph->isAttributeMember() ) {
-                ret = mph->fromXml( elem, data );
+            if (mph->isAttributeMember()) {
+                ret = mph->fromXml(elem, data);
             } else {
-                if( !child ) {
+                if (!child) {
                     return false;
                 }
-                ret = mph->fromXml( *child, data );
+                ret = mph->fromXml(*child, data);
             }
             error = !ret;
-            if( mph->isAttributeMember() ) {
-            } else if( !error ) {
+            if (mph->isAttributeMember()) {
+            } else if (!error) {
                 child = child->NextSiblingElement();
             }
-      
-            if( error ) {
-                if( mph->isAttributeMember() ){
+
+            if (error) {
+                if (mph->isAttributeMember()) {
                     // no problem
                     continue;
                 } else {
@@ -513,137 +488,127 @@ public:
         }
         return true;
     }
-  
+
 };
 
 template<class T>
-void ConvertFromString( char const * strIn, T * dataOut );
+void ConvertFromString(char const* strIn, T* dataOut);
 
 template<class T>
-class GenericTiXmlBinding : public TiXmlBinding<T>
-{
+class GenericTiXmlBinding : public TiXmlBinding<T> {
 public:
-    virtual bool fromXml( TiXmlElement const & elem, T * data, SerializeParams const & ) const 
-    {
-        TiXmlNode * node = elem.FirstChild();
-        TiXmlText * nodedata = node->ToText();
-        ConvertFromString( nodedata->Value(), data );
+    virtual bool fromXml(TiXmlElement const& elem, T* data, SerializeParams const&) const {
+        TiXmlNode* node = elem.FirstChild();
+        TiXmlText* nodedata = node->ToText();
+        ConvertFromString(nodedata->Value(), data);
         return true;
     }
-  
+
 };
 
 template<class T, class VecT>
-class StlContainerTiXmlBinding : public TiXmlBinding<VecT>
-{
+class StlContainerTiXmlBinding : public TiXmlBinding<VecT> {
 public:
 
-    char const * subTag_;
+    char const* subTag_;
     bool useSubTag_;
-    char const * sizeAttributeName_;
-    StlContainerTiXmlBinding(bool useSubTag, char const * st = NULL, char const * sizeAttributeName = NULL)
-    :subTag_(st), useSubTag_(useSubTag), sizeAttributeName_(sizeAttributeName)
-    {
+    char const* sizeAttributeName_;
+    StlContainerTiXmlBinding(bool useSubTag, char const* st = NULL, char const* sizeAttributeName = NULL)
+        : subTag_(st), useSubTag_(useSubTag), sizeAttributeName_(sizeAttributeName) {
     }
-    
-    virtual bool fromXml( TiXmlElement const & elem, VecT * data, SerializeParams const & params ) const 
-    {
+
+    virtual bool fromXml(TiXmlElement const& elem, VecT* data, SerializeParams const& params) const {
         data->clear();
-        TiXmlElement const * child;
+        TiXmlElement const* child;
         child = elem.FirstChildElement();
-        if( sizeAttributeName_ ) {
+        if (sizeAttributeName_) {
             int sz = 0;
-            ConvertFromString( elem.Attribute(sizeAttributeName_), &sz );
-            if( sz ) {
+            ConvertFromString(elem.Attribute(sizeAttributeName_), &sz);
+            if (sz) {
                 //data->reserve(sz);
             }
         }
-        while(child) {
-            T * value = new T();
-            TiXmlBinding<T> const * binding = GetTiXmlBinding( *value,  Identity<T>()  );
-            bool ret = binding->fromXml( *child, value, params );
+        while (child) {
+            T* value = new T();
+            TiXmlBinding<T> const* binding = GetTiXmlBinding(*value,  Identity<T>());
+            bool ret = binding->fromXml(*child, value, params);
             data->push_back(*value);
-            if( ! ret ) {
+            if (! ret) {
                 return false;
             }
             child = child->NextSiblingElement();
         }
         return true;
     }
-    
+
 };
 
 template<class T, class VecT>
-class StlContainerPtrBinding : public TiXmlBinding<VecT>
-{
+class StlContainerPtrBinding : public TiXmlBinding<VecT> {
 public:
-    
-    char const * subTag_;
+
+    char const* subTag_;
     bool useSubTag_;
-    char const * sizeAttributeName_;
-    StlContainerPtrBinding(bool useSubTag, char const * st = NULL, char const * sizeAttributeName = NULL)
-    :subTag_(st), useSubTag_(useSubTag), sizeAttributeName_(sizeAttributeName)
-    {
+    char const* sizeAttributeName_;
+    StlContainerPtrBinding(bool useSubTag, char const* st = NULL, char const* sizeAttributeName = NULL)
+        : subTag_(st), useSubTag_(useSubTag), sizeAttributeName_(sizeAttributeName) {
     }
 
-    virtual bool fromXml( TiXmlElement const & elem, VecT * data, SerializeParams const & params ) const 
-    {
+    virtual bool fromXml(TiXmlElement const& elem, VecT* data, SerializeParams const& params) const {
         data->clear();
-        TiXmlElement const * child;
+        TiXmlElement const* child;
         child = elem.FirstChildElement();
-        if( sizeAttributeName_ ) {
+        if (sizeAttributeName_) {
             int sz = 0;
-            ConvertFromString( elem.Attribute(sizeAttributeName_), &sz );
-            if( sz ) {
+            ConvertFromString(elem.Attribute(sizeAttributeName_), &sz);
+            if (sz) {
                 //data->reserve(sz);
             }
         }
-        while(child) {
-            T * value = new T();
-            if( !value->create() ) {
+        while (child) {
+            T* value = new T();
+            if (!value->create()) {
                 return false;
             }
-            TiXmlBinding<T> const * binding = GetTiXmlBinding( *value,  Identity<T>()  );
-            bool ret = binding->fromXml( *child, value, params );
+            TiXmlBinding<T> const* binding = GetTiXmlBinding(*value,  Identity<T>());
+            bool ret = binding->fromXml(*child, value, params);
             data->push_back(value);
-            if( ! ret ) {
+            if (! ret) {
                 return false;
             }
             child = child->NextSiblingElement();
         }
         return true;
     }
-    
+
 };
 
 template<class T>
-TiXmlBinding<T> const *
-GetTiXmlBinding( T const &, IdentityBase  );
+TiXmlBinding<T> const*
+GetTiXmlBinding(T const&, IdentityBase);
 
 
-TiXmlBinding<float> const *
-GetTiXmlBinding( float const &, IdentityBase  );
-TiXmlBinding<double> const *
-GetTiXmlBinding( double const &, IdentityBase  );
-TiXmlBinding<int> const *
-GetTiXmlBinding( int const &, IdentityBase  );
-TiXmlBinding<char const *> const *
-GetTiXmlBinding( char const * const &, IdentityBase  );
-TiXmlBinding<std::string> const *
-GetTiXmlBinding( std::string const &, IdentityBase  );
+TiXmlBinding<float> const*
+GetTiXmlBinding(float const&, IdentityBase);
+TiXmlBinding<double> const*
+GetTiXmlBinding(double const&, IdentityBase);
+TiXmlBinding<int> const*
+GetTiXmlBinding(int const&, IdentityBase);
+TiXmlBinding<char const*> const*
+GetTiXmlBinding(char const* const&, IdentityBase);
+TiXmlBinding<std::string> const*
+GetTiXmlBinding(std::string const&, IdentityBase);
 
 template<class T, class VecT>
-TiXmlBinding<VecT> const *
-GetTiXmlBinding( std::vector<T> const &, Identity<VecT>  )
-{
+TiXmlBinding<VecT> const*
+GetTiXmlBinding(std::vector<T> const&, Identity<VecT>) {
     static StlContainerTiXmlBinding<T, VecT> binding(false);
     return &binding;
 }
 
 template<class T, class VecT>
-TiXmlBinding<VecT> const *
-GetTiXmlBinding( std::list<T> const &, Identity<VecT>  )
-{
+TiXmlBinding<VecT> const*
+GetTiXmlBinding(std::list<T> const&, Identity<VecT>) {
     static StlContainerTiXmlBinding<T, VecT> binding(false);
     return &binding;
 }

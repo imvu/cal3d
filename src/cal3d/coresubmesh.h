@@ -23,211 +23,210 @@ class CalCoreSubMorphTarget;
 
 
 enum CalMorphTargetType {
-  CalMorphTargetTypeNull = 0,
-  CalMorphTargetTypeAdditive,
-  CalMorphTargetTypeClamped,
-  CalMorphTargetTypeAverage,
-  CalMorphTargetTypeExclusive
+    CalMorphTargetTypeNull = 0,
+    CalMorphTargetTypeAdditive,
+    CalMorphTargetTypeClamped,
+    CalMorphTargetTypeAverage,
+    CalMorphTargetTypeExclusive
 };
 
-class CAL3D_API CalCoreSubmesh
-{
+class CAL3D_API CalCoreSubmesh {
 public:
-  struct TextureCoordinate
-  {
-    float u, v;
-  };
+    struct TextureCoordinate {
+        float u, v;
+    };
 
-  struct Influence
-  {
-    Influence() {
-      boneId = -1;
-      weight = 0.0f;
-      lastInfluenceForThisVertex = 0;
-    }
-
-    Influence(unsigned b, float w, bool last) {
-      boneId = b;
-      weight = w;
-      lastInfluenceForThisVertex = last ? 1 : 0;
-    }
-
-    unsigned boneId;
-    float weight;
-    unsigned lastInfluenceForThisVertex;
-
-    bool operator==(const Influence& rhs) const {
-      return std::make_pair(boneId, quantize(weight)) == std::make_pair(rhs.boneId, quantize(rhs.weight));
-    }
-
-    bool operator<(const Influence& rhs) const {
-      return std::make_pair(boneId, quantize(weight)) < std::make_pair(rhs.boneId, quantize(rhs.weight));
-    }
-
-    // floating point equivalence is tricky
-    static int quantize(float f) {
-      return static_cast<int>(f * 10000.0);
-    }
-  };
-
-  struct InfluenceSet {
-    InfluenceSet() {
-    }
-
-    InfluenceSet(const std::vector<Influence>& vi)
-    : influences(vi.begin(), vi.end()) {
-    }
-
-    std::set<Influence> influences;
-
-    bool operator==(const InfluenceSet& rhs) const {
-      if (influences.size() != rhs.influences.size()) {
-        return false;
-      }
-      std::set<Influence>::const_iterator begin1 = influences.begin();
-      std::set<Influence>::const_iterator begin2 = rhs.influences.begin();
-
-      while (begin1 != influences.end()) {
-        if (!(*begin1 == *begin2)) {
-          return false;
+    struct Influence {
+        Influence() {
+            boneId = -1;
+            weight = 0.0f;
+            lastInfluenceForThisVertex = 0;
         }
-        ++begin1;
-        ++begin2;
-      }
 
-      return true;
+        Influence(unsigned b, float w, bool last) {
+            boneId = b;
+            weight = w;
+            lastInfluenceForThisVertex = last ? 1 : 0;
+        }
+
+        unsigned boneId;
+        float weight;
+        unsigned lastInfluenceForThisVertex;
+
+        bool operator==(const Influence& rhs) const {
+            return std::make_pair(boneId, quantize(weight)) == std::make_pair(rhs.boneId, quantize(rhs.weight));
+        }
+
+        bool operator<(const Influence& rhs) const {
+            return std::make_pair(boneId, quantize(weight)) < std::make_pair(rhs.boneId, quantize(rhs.weight));
+        }
+
+        // floating point equivalence is tricky
+        static int quantize(float f) {
+            return static_cast<int>(f * 10000.0);
+        }
+    };
+
+    struct InfluenceSet {
+        InfluenceSet() {
+        }
+
+        InfluenceSet(const std::vector<Influence>& vi)
+            : influences(vi.begin(), vi.end()) {
+        }
+
+        std::set<Influence> influences;
+
+        bool operator==(const InfluenceSet& rhs) const {
+            if (influences.size() != rhs.influences.size()) {
+                return false;
+            }
+            std::set<Influence>::const_iterator begin1 = influences.begin();
+            std::set<Influence>::const_iterator begin2 = rhs.influences.begin();
+
+            while (begin1 != influences.end()) {
+                if (!(*begin1 == *begin2)) {
+                    return false;
+                }
+                ++begin1;
+                ++begin2;
+            }
+
+            return true;
+        }
+    };
+
+    CAL3D_ALIGN_HEAD(16)
+    struct Vertex {
+        CalPoint4 position;
+        CalVector4 normal;
     }
-  };
+    CAL3D_ALIGN_TAIL(16);
 
-  CAL3D_ALIGN_HEAD(16)
-  struct Vertex
-  {
-    CalPoint4 position;
-    CalVector4 normal;
-  }
-  CAL3D_ALIGN_TAIL(16);
+    struct InfluenceRange {
+        unsigned influenceStart;
+        unsigned influenceEnd;
+    };
 
-  struct InfluenceRange
-  {
-    unsigned influenceStart;
-    unsigned influenceEnd;
-  };
+    struct Face {
+        CalIndex vertexId[3];
+    };
 
-  struct Face
-  {
-    CalIndex vertexId[3];
-  };
+    struct LodData {
+        int collapseId;
+        int faceCollapseCount;
+    };
 
-  struct LodData
-  {
-    int collapseId;
-    int faceCollapseCount;
-  };
-  
-  typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
-  typedef std::vector<Face> VectorFace;
-  typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
-  typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
-  typedef SSEArray<Vertex> VectorVertex;
-  typedef std::vector<Influence> InfluenceVector;
+    typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
+    typedef std::vector<Face> VectorFace;
+    typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
+    typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
+    typedef SSEArray<Vertex> VectorVertex;
+    typedef std::vector<Influence> InfluenceVector;
 
-  CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
+    CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
-  size_t sizeInBytes() const;
-  int getCoreMaterialThreadId() const {
-    return m_coreMaterialThreadId;
-  }
-  int getFaceCount() const {
-    return m_vectorFace.size();
-  }
-  int getLodCount() const {
-    return m_lodCount;
-  }
-  bool hasNonWhiteVertexColors() const {
-    return m_hasNonWhiteVertexColors;
-  }
-  const std::vector<Face>& getVectorFace() const;
-  const std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate() const {
-    return m_vectorvectorTextureCoordinate;
-  }
+    size_t sizeInBytes() const;
+    int getCoreMaterialThreadId() const {
+        return m_coreMaterialThreadId;
+    }
+    int getFaceCount() const {
+        return m_vectorFace.size();
+    }
+    int getLodCount() const {
+        return m_lodCount;
+    }
+    bool hasNonWhiteVertexColors() const {
+        return m_hasNonWhiteVertexColors;
+    }
+    const std::vector<Face>& getVectorFace() const;
+    const std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate() const {
+        return m_vectorvectorTextureCoordinate;
+    }
 
-  const SSEArray<Vertex>& getVectorVertex() const {
-    return m_vertices;
-  }
+    const SSEArray<Vertex>& getVectorVertex() const {
+        return m_vertices;
+    }
 
-  std::vector<CalColor32>& getVertexColors() {
-    return m_vertexColors;
-  }
-  const std::vector<CalColor32>& getVertexColors() const {
-    return m_vertexColors;
-  }
+    std::vector<CalColor32>& getVertexColors() {
+        return m_vertexColors;
+    }
+    const std::vector<CalColor32>& getVertexColors() const {
+        return m_vertexColors;
+    }
 
-  std::vector<LodData>& getLodData() { return m_lodData; }
+    std::vector<LodData>& getLodData() {
+        return m_lodData;
+    }
 
-  int getVertexCount() const {
-    return m_vertices.size();
-  }
-  void setCoreMaterialThreadId(int coreMaterialThreadId);
-  bool setFace(int faceId, const Face& face);
-  void setLodCount(int lodCount);
+    int getVertexCount() const {
+        return m_vertices.size();
+    }
+    void setCoreMaterialThreadId(int coreMaterialThreadId);
+    bool setFace(int faceId, const Face& face);
+    void setLodCount(int lodCount);
 
-  void addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& influences);
-  bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
+    void addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& influences);
+    bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
-  void setHasNonWhiteVertexColors( bool p ) { m_hasNonWhiteVertexColors = p; }
-  int addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
-  const boost::shared_ptr<CalCoreSubMorphTarget>& getCoreSubMorphTarget(unsigned id) {
-    assert(id < m_vectorCoreSubMorphTarget.size());
-    return m_vectorCoreSubMorphTarget[id];
-  }
-  int getCoreSubMorphTargetCount();
-  CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
-  void scale(float factor);
-  void setSubMorphTargetGroupIndexArray( unsigned int len, unsigned int const * indexArray );
-  inline unsigned int subMorphTargetGroupIndex( int subMorphTargetId ) { 
-    if( size_t(subMorphTargetId) >= m_vectorSubMorphTargetGroupIndex.size() ) return 0xffffffff;
-    return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
-  }
+    void setHasNonWhiteVertexColors(bool p) {
+        m_hasNonWhiteVertexColors = p;
+    }
+    int addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& getCoreSubMorphTarget(unsigned id) {
+        assert(id < m_vectorCoreSubMorphTarget.size());
+        return m_vectorCoreSubMorphTarget[id];
+    }
+    int getCoreSubMorphTargetCount();
+    CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
+    void scale(float factor);
+    void setSubMorphTargetGroupIndexArray(unsigned int len, unsigned int const* indexArray);
+    inline unsigned int subMorphTargetGroupIndex(int subMorphTargetId) {
+        if (size_t(subMorphTargetId) >= m_vectorSubMorphTargetGroupIndex.size()) {
+            return 0xffffffff;
+        }
+        return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
+    }
 
-  const InfluenceRange& getInfluenceRange(size_t vertexId) {
-    return m_influenceRanges[vertexId];
-  }
+    const InfluenceRange& getInfluenceRange(size_t vertexId) {
+        return m_influenceRanges[vertexId];
+    }
 
-  bool isStatic() const;
-  BoneTransform getStaticTransform(const BoneTransform* bones) const;
+    bool isStatic() const;
+    BoneTransform getStaticTransform(const BoneTransform* bones) const;
 
-  const InfluenceVector& getInfluences() const {
-    return m_influences;
-  }
+    const InfluenceVector& getInfluences() const {
+        return m_influences;
+    }
 
-  CalAABox getBoundingVolume() const {
-    return m_boundingVolume;
-  }
+    CalAABox getBoundingVolume() const {
+        return m_boundingVolume;
+    }
 
 private:
-  int m_currentVertexId;
+    int m_currentVertexId;
 
-  // The following arrays should always be the same size.
-  SSEArray<Vertex> m_vertices;
-  std::vector<CalColor32> m_vertexColors;
-  std::vector<LodData> m_lodData;
-  std::vector<InfluenceRange> m_influenceRanges;
+    // The following arrays should always be the same size.
+    SSEArray<Vertex> m_vertices;
+    std::vector<CalColor32> m_vertexColors;
+    std::vector<LodData> m_lodData;
+    std::vector<InfluenceRange> m_influenceRanges;
 
-  std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
-  std::vector<Face> m_vectorFace;
+    std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
+    std::vector<Face> m_vectorFace;
 
-  std::map<InfluenceSet, size_t> m_influenceSetIds;
+    std::map<InfluenceSet, size_t> m_influenceSetIds;
 
-  CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
-  int m_coreMaterialThreadId;
-  int m_lodCount;
-  std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
-  bool m_hasNonWhiteVertexColors;
+    CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
+    int m_coreMaterialThreadId;
+    int m_lodCount;
+    std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
+    bool m_hasNonWhiteVertexColors;
 
-  bool m_isStatic;
-  InfluenceSet m_staticInfluenceSet;
+    bool m_isStatic;
+    InfluenceSet m_staticInfluenceSet;
 
-  std::vector<Influence> m_influences;
-  CalAABox m_boundingVolume;
+    std::vector<Influence> m_influences;
+    CalAABox m_boundingVolume;
 };
 typedef boost::shared_ptr<CalCoreSubmesh> CalCoreSubmeshPtr;

@@ -4,11 +4,10 @@
 // do this to support your STL container types, like list and vector
 #if 0
 typedef std::vector<int> StlIntVector;
-TiXmlBinding<StlIntVector> const *
-GetTiXmlBinding( StlIntVector const &,  StlIntVector const &  )
-{
-  static StlContainerTiXmlBinding<int, StlIntVector> binding(false);
-  return &binding;
+TiXmlBinding<StlIntVector> const*
+GetTiXmlBinding(StlIntVector const&,  StlIntVector const&) {
+    static StlContainerTiXmlBinding<int, StlIntVector> binding(false);
+    return &binding;
 }
 #endif
 
@@ -20,162 +19,141 @@ GetTiXmlBinding( StlIntVector const &,  StlIntVector const &  )
 
 #ifdef TIXML_USE_STL
 template<class T>
-char const *
-ConvertToString( T const & t )
-{
-  std::stringstream str;
-  static std::string strOut;
-  str << t;
-  strOut = str.str();
-  return strOut.c_str();
+char const*
+ConvertToString(T const& t) {
+    std::stringstream str;
+    static std::string strOut;
+    str << t;
+    strOut = str.str();
+    return strOut.c_str();
 }
 
 template<class T>
 void
-ConvertFromString( char const * strIn, T * dataOut )
-{
-  std::stringstream str;
-  str << strIn;
-  str >> *dataOut;
+ConvertFromString(char const* strIn, T* dataOut) {
+    std::stringstream str;
+    str << strIn;
+    str >> *dataOut;
 }
 
 template<>
 void
-ConvertFromString<char const *>( char const * strIn, const char * * dataOut )
-{
-  static std::string strHolder;
-  strHolder = strIn;
-  *dataOut = strHolder.c_str();
+ConvertFromString<char const*>(char const* strIn, const char * * dataOut) {
+    static std::string strHolder;
+    strHolder = strIn;
+    *dataOut = strHolder.c_str();
 }
 
 #else
 
 
-char const *
-ConvertToString( double const & d )
-{
-  static char buffer[2048];
-  sprintf(buffer, "%g", d);
-  return buffer;
+char const*
+ConvertToString(double const& d) {
+    static char buffer[2048];
+    sprintf(buffer, "%g", d);
+    return buffer;
 }
 
-char const *
-ConvertToString( float const & f )
-{
-  return ConvertToString((double)f);
+char const*
+ConvertToString(float const& f) {
+    return ConvertToString((double)f);
 }
 
-char const *
-ConvertToString( int const & d )
-{
-  static char buffer[2048];
-  sprintf(buffer, "%d", d);
-  return buffer;
+char const*
+ConvertToString(int const& d) {
+    static char buffer[2048];
+    sprintf(buffer, "%d", d);
+    return buffer;
 }
 
-char const *
-ConvertToString( unsigned int const & d )
-{
-  static char buffer[2048];
-  sprintf(buffer, "%u", d);
-  return buffer;
+char const*
+ConvertToString(unsigned int const& d) {
+    static char buffer[2048];
+    sprintf(buffer, "%u", d);
+    return buffer;
 }
 
-char const *
-ConvertToString( char const * const & s )
-{
-  return s;
+char const*
+ConvertToString(char const* const& s) {
+    return s;
 }
 
-char const *
-ConvertToString( std::string const & s )
-{
-  return s.c_str();
+char const*
+ConvertToString(std::string const& s) {
+    return s.c_str();
 }
 
 
 void
-ConvertFromString( char const * strIn, const char * * dataOut )
-{
-  *dataOut = strIn;
+ConvertFromString(char const* strIn, const char * * dataOut) {
+    *dataOut = strIn;
 }
 
 void
-ConvertFromString( char const * strIn, std::string * dataOut )
-{
-  *dataOut = strIn;
+ConvertFromString(char const* strIn, std::string* dataOut) {
+    *dataOut = strIn;
 }
 
 void
-ConvertFromString( char const * strIn,  int * dataOut )
-{
-  *dataOut = atoi(strIn);
+ConvertFromString(char const* strIn,  int* dataOut) {
+    *dataOut = atoi(strIn);
 }
 
 void
-ConvertFromString( char const * strIn,  unsigned int * dataOut )
-{
-  *dataOut = (unsigned int) atoi(strIn);
+ConvertFromString(char const* strIn,  unsigned int* dataOut) {
+    *dataOut = (unsigned int) atoi(strIn);
 }
 
 void
-ConvertFromString( char const * strIn,  double * dataOut )
-{
-  *dataOut = atof(strIn);
+ConvertFromString(char const* strIn,  double* dataOut) {
+    *dataOut = atof(strIn);
 }
 
 void
-ConvertFromString( char const * strIn,  float * dataOut )
-{
-  *dataOut = (float)atof(strIn);
+ConvertFromString(char const* strIn,  float* dataOut) {
+    *dataOut = (float)atof(strIn);
 }
 #endif
 
 
 template<class T>
-TiXmlBinding<T> const *
-GetTiXmlBinding( T const &, IdentityBase  )
-{
-  static GenericTiXmlBinding<T> binding;
-  return &binding;
+TiXmlBinding<T> const*
+GetTiXmlBinding(T const&, IdentityBase) {
+    static GenericTiXmlBinding<T> binding;
+    return &binding;
 }
 
 
-TiXmlBinding<float> const *
-GetTiXmlBinding( float const &, IdentityBase  )
-{
-  static GenericTiXmlBinding<float> binding;
-  return &binding;
+TiXmlBinding<float> const*
+GetTiXmlBinding(float const&, IdentityBase) {
+    static GenericTiXmlBinding<float> binding;
+    return &binding;
 }
 
-TiXmlBinding<double> const *
-GetTiXmlBinding( double const &, IdentityBase  )
-{
-  static GenericTiXmlBinding<double> binding;
-  return &binding;
+TiXmlBinding<double> const*
+GetTiXmlBinding(double const&, IdentityBase) {
+    static GenericTiXmlBinding<double> binding;
+    return &binding;
 }
 
-TiXmlBinding<int> const *
-GetTiXmlBinding( int const &, IdentityBase  )
-{
-  static GenericTiXmlBinding<int> binding;
-  return &binding;
+TiXmlBinding<int> const*
+GetTiXmlBinding(int const&, IdentityBase) {
+    static GenericTiXmlBinding<int> binding;
+    return &binding;
 }
 
-TiXmlBinding<char const *> const *
-GetTiXmlBinding( char const * const &, IdentityBase  )
-{
-  static GenericTiXmlBinding<char const *> binding;
-  return &binding;
+TiXmlBinding<char const*> const*
+GetTiXmlBinding(char const* const&, IdentityBase) {
+    static GenericTiXmlBinding<char const*> binding;
+    return &binding;
 }
 
-TiXmlBinding<std::string> const *
-GetTiXmlBinding( std::string const &, IdentityBase  )
-{
-  static GenericTiXmlBinding<std::string> binding;
-  return &binding;
+TiXmlBinding<std::string> const*
+GetTiXmlBinding(std::string const&, IdentityBase) {
+    static GenericTiXmlBinding<std::string> binding;
+    return &binding;
 }
 
-template void ConvertFromString<std::string>(char const* strIn, std::string* dataOut );
-template void ConvertFromString<float>(char const* strIn, float* dataOut );
-template void ConvertFromString<int>(char const* strIn, int* dataOut );
+template void ConvertFromString<std::string>(char const* strIn, std::string* dataOut);
+template void ConvertFromString<float>(char const* strIn, float* dataOut);
+template void ConvertFromString<int>(char const* strIn, int* dataOut);

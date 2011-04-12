@@ -15,7 +15,7 @@
 #include "cal3d/quaternion.h"
 #include "cal3d/vector.h"
 
- /*****************************************************************************/
+/*****************************************************************************/
 /** Constructs the quaternion instance.
   *
   * This function is the default constructor of the quaternion instance.
@@ -26,7 +26,7 @@ CalQuaternion::CalQuaternion()
 {
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Constructs the quaternion instance.
   *
   * This function is a constructor of the quaternion instance.
@@ -39,7 +39,7 @@ CalQuaternion::CalQuaternion(const CalQuaternion& q)
 {
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Constructs the quaternion instance.
   *
   * This function is a constructor of the quaternion instance.
@@ -55,7 +55,7 @@ CalQuaternion::CalQuaternion(float qx, float qy, float qz, float qw)
 {
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Destructs the quaternion instance.
   *
   * This function is the destructor of the quaternion instance.
@@ -65,7 +65,7 @@ CalQuaternion::~CalQuaternion()
 {
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Provides access to the components of the quaternion instance.
   *
   * This function provides read and write access to the three components of the
@@ -81,7 +81,7 @@ float& CalQuaternion::operator[](unsigned int index)
   return (&x)[index];
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Provides access to the components of the quaternion instance.
   *
   * This function provides read access to the three components of the quaternion
@@ -97,7 +97,7 @@ const float& CalQuaternion::operator[](unsigned int index) const
   return (&x)[index];
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Equates the quaternion instance with another quaternion.
   *
   * This operator equates the quaternion instance with another quaternion.
@@ -113,7 +113,7 @@ void CalQuaternion::operator=(const CalQuaternion& q)
   w = q.w;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Multiplies another quaternion to the quaternion instance.
   *
   * This operator multiplies another quaternion to the quaternion instance.
@@ -135,7 +135,7 @@ void CalQuaternion::operator*=(const CalQuaternion& q)
   w = qw * q.w - qx * q.x - qy * q.y - qz * q.z;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Multiplies a vector to the quaternion instance.
   *
   * This operator multiplies a vector to the quaternion instance.
@@ -157,7 +157,7 @@ void CalQuaternion::operator*=(const CalVector& v)
   w =          - qx * v.x - qy * v.y - qz * v.z;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Calculates the product of two quaternions.
   *
   * This operator calculates the product of two quaternions.
@@ -178,7 +178,7 @@ CalQuaternion operator*(const CalQuaternion& q, const CalQuaternion& r)
   );
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Interpolates the quaternion instance to another quaternion.
   *
   * This function interpolates the quaternion instance to another quaternion by
@@ -230,7 +230,7 @@ void CalQuaternion::blend(float d, const CalQuaternion& q)
   w = inv_d * w + d * q.w;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Clears the quaternion instance.
   *
   * This function clears the quaternion instance.
@@ -244,7 +244,7 @@ void CalQuaternion::clear()
   w = 1.0f;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Conjugates the quaternion instance.
   *
   * This function conjugates the quaternion instance.
@@ -257,7 +257,7 @@ void CalQuaternion::conjugate()
   z = -z;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Inverts the quaternion instance.
   *
   * This function inverts the quaternion instance.
@@ -269,7 +269,7 @@ void CalQuaternion::invert()
   const float norm = (x*x) + (y*y) + (z*z) + (w*w);
 
   if (norm == 0.0f) return;
-  
+
   const float inv_norm = 1 / norm;
   x *= inv_norm;
   y *= inv_norm;
@@ -278,7 +278,7 @@ void CalQuaternion::invert()
 }
 */
 
- /*****************************************************************************/
+/*****************************************************************************/
 /** Sets new values.
   *
   * This function sets new values in the quaternion instance.
@@ -297,10 +297,10 @@ void CalQuaternion::set(float qx, float qy, float qz, float qw)
   w = qw;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Computes the shortest arc quaternion that will rotate one vector to another.
   *
-  * This function finds the shortest arc quaternion. 
+  * This function finds the shortest arc quaternion.
   * Based on equations from "Game Programming Gems" - chapter 2.10
   *
   * @param from The original vector
@@ -318,7 +318,7 @@ CalQuaternion shortestArc( const CalVector& from, const CalVector& to )
 
    //Return with the w component (Note that w is inverted because Cal3D has
    // left-handed rotations )
-   return CalQuaternion( cross[0], cross[1], cross[2], -dot/2 ) ; 
+   return CalQuaternion( cross[0], cross[1], cross[2], -dot/2 ) ;
 
 }
 */

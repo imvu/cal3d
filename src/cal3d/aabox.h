@@ -15,8 +15,8 @@ struct CalAABox {
     {}
 
     CalAABox(const CalVector& _min, const CalVector& _max)
-    : min(_min)
-    , max(_max)
+        : min(_min)
+        , max(_max)
     {}
 
     CalVector min;

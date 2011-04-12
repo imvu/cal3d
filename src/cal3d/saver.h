@@ -26,8 +26,7 @@ typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 class CalVector;
 class CalQuaternion;
 
-class CAL3D_API CalSaver
-{
+class CAL3D_API CalSaver {
 public:
     static std::string saveCoreAnimationToBuffer(CalCoreAnimationPtr pCoreAnimation);
     static std::string saveCoreAnimatedMorphToBuffer(CalCoreAnimatedMorphPtr pCoreAnimatedMorph);
@@ -35,37 +34,37 @@ public:
     static std::string saveCoreMeshToBuffer(CalCoreMeshPtr pCoreMesh);
     static std::string saveCoreSkeletonToBuffer(CalCoreSkeletonPtr pCoreSkeleton);
 
-    static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation);
+    static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation);
     static bool saveCoreAnimation(std::ostream& stream, CalCoreAnimation* coreAnimation);
 
     static bool saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph);
     static bool saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* pCoreAnimatedMorph);
 
-    static bool saveCoreMaterial(const std::string& strFilename, CalCoreMaterial *pCoreMaterial);
-    static bool saveCoreMaterial(std::ostream& file, CalCoreMaterial *pCoreMaterial);
+    static bool saveCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
+    static bool saveCoreMaterial(std::ostream& file, CalCoreMaterial* pCoreMaterial);
 
-    static bool saveCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMesh);  
-    static bool saveCoreMesh(std::ostream& os, CalCoreMesh *pCoreMesh);
+    static bool saveCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh);
+    static bool saveCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh);
 
-    static bool saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton *pCoreSkeleton);
+    static bool saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton);
     static bool saveCoreSkeleton(std::ostream& os, CalCoreSkeleton* pCoreSkeleton);
-    
-    static bool saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkeleton *pCoreSkeleton);
-    static bool saveXmlCoreAnimation(const std::string& strFilename, CalCoreAnimation *pCoreAnimation);
+
+    static bool saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton);
+    static bool saveXmlCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation);
     static bool saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAnimation);
-    static bool saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph *pCoreAnimatedMorph);
-    static bool saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh *pCoreMesh);
-    static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial *pCoreMaterial);  
-    
-private:
-    static bool saveCoreBones(std::ostream& file, CalCoreBone *pCoreBone);
-    static bool saveCoreKeyframe(std::ostream& file, const std::string& strFilename, const CalCoreKeyframe *pCoreKeyframe);
-    static bool saveCoreSubmesh(std::ostream& file, CalCoreSubmesh *pCoreSubmesh);
-    static bool saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack *pCoreTrack);
-    static bool saveCoreMorphKeyframe(std::ostream& file, const std::string& strFilename, CalCoreMorphKeyframe *pCoreMorphKeyframe);
-    static bool saveCoreMorphTrack(std::ostream& file, const std::string& strFilename, CalCoreMorphTrack *pCoreMorphTrack);
+    static bool saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph);
+    static bool saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh);
+    static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
 
 private:
-  CalSaver();
-  ~CalSaver();
+    static bool saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone);
+    static bool saveCoreKeyframe(std::ostream& file, const std::string& strFilename, const CalCoreKeyframe* pCoreKeyframe);
+    static bool saveCoreSubmesh(std::ostream& file, CalCoreSubmesh* pCoreSubmesh);
+    static bool saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack* pCoreTrack);
+    static bool saveCoreMorphKeyframe(std::ostream& file, const std::string& strFilename, CalCoreMorphKeyframe* pCoreMorphKeyframe);
+    static bool saveCoreMorphTrack(std::ostream& file, const std::string& strFilename, CalCoreMorphTrack* pCoreMorphTrack);
+
+private:
+    CalSaver();
+    ~CalSaver();
 };

@@ -12,7 +12,7 @@
 #include "config.h"
 #endif
 
-#include "cal3d/coreanimation.h" 
+#include "cal3d/coreanimation.h"
 #include "cal3d/coretrack.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
@@ -22,20 +22,20 @@ size_t sizeInBytes(const CalCoreTrack& t) {
 }
 
 size_t CalCoreAnimation::sizeInBytes() const {
-  return sizeof(*this) + ::sizeInBytes(tracks);
+    return sizeof(*this) + ::sizeInBytes(tracks);
 }
 
 const CalCoreTrack* CalCoreAnimation::getCoreTrack(int coreBoneId) const {
-  for (
-    TrackList::const_iterator iteratorCoreTrack = tracks.begin();
-    iteratorCoreTrack != tracks.end();
-    ++iteratorCoreTrack
-  ) {
-    if (iteratorCoreTrack->coreBoneId == coreBoneId) {
-      return &*iteratorCoreTrack;
+    for (
+        TrackList::const_iterator iteratorCoreTrack = tracks.begin();
+        iteratorCoreTrack != tracks.end();
+        ++iteratorCoreTrack
+    ) {
+        if (iteratorCoreTrack->coreBoneId == coreBoneId) {
+            return &*iteratorCoreTrack;
+        }
     }
-  }
 
-  // no match found
-  return 0;
+    // no match found
+    return 0;
 }

@@ -23,194 +23,196 @@
 #include "cal3d/bone.h"
 #include "cal3d/animation.h"
 
- 
+
 boost::shared_ptr<CalAnimation> CalMixer::addManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
-  boost::shared_ptr<CalAnimation> pAnimationAction(new CalAnimation(coreAnimation));
-  m_listAnimationAction.push_front(pAnimationAction);
-  return pAnimationAction;
+    boost::shared_ptr<CalAnimation> pAnimationAction(new CalAnimation(coreAnimation));
+    m_listAnimationAction.push_front(pAnimationAction);
+    return pAnimationAction;
 }
 
 void CalMixer::removeManualAnimation(const boost::shared_ptr<CalAnimation>& animation) {
-  m_listAnimationAction.remove(animation);
+    m_listAnimationAction.remove(animation);
 }
 
 
 void CalMixer::setManualAnimationAttributes(
     const boost::shared_ptr<CalAnimation>& aa,
-    const CalMixerManualAnimationAttributes& p)
-{
-  aa->time = p.time_;
-  aa->weight = p.weight_;
-  aa->scale = p.scale_;
-  aa->rampValue = p.rampValue_;
+    const CalMixerManualAnimationAttributes& p) {
+    aa->time = p.time_;
+    aa->weight = p.weight_;
+    aa->scale = p.scale_;
+    aa->rampValue = p.rampValue_;
 
-  // now update composition function
+    // now update composition function
 
-  CalAnimation::CompositionFunction oldValue = aa->compositionFunction;
+    CalAnimation::CompositionFunction oldValue = aa->compositionFunction;
 
-  // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
-  // it at the front, which wouldn't preserve the property that the most recently inserted
-  // animation is highest priority.
-  if( oldValue == p.compositionFunction_ ) {
-      return;
-  }
-  aa->compositionFunction = p.compositionFunction_;
-
-  // Iterate through the list and remove this element.
-  m_listAnimationAction.remove( aa );
-
-  // Now insert it back in in the appropriate position.  Replace animations go in at the front.
-  // Average animations go in after the replace animations.
-  switch (p.compositionFunction_) {
-    case CalAnimation::CompositionFunctionReplace: {
-      // Replace animations go on the front of the list.
-      m_listAnimationAction.push_front( aa );
-      break;
+    // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
+    // it at the front, which wouldn't preserve the property that the most recently inserted
+    // animation is highest priority.
+    if (oldValue == p.compositionFunction_) {
+        return;
     }
-    case CalAnimation::CompositionFunctionCrossFade: {
-      // Average animations go after replace, but before Average.
-      std::list<boost::shared_ptr<CalAnimation> >::iterator aait2;
-      for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
-        CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
-        if( cf != CalAnimation::CompositionFunctionReplace ) {
-          break;
+    aa->compositionFunction = p.compositionFunction_;
+
+    // Iterate through the list and remove this element.
+    m_listAnimationAction.remove(aa);
+
+    // Now insert it back in in the appropriate position.  Replace animations go in at the front.
+    // Average animations go in after the replace animations.
+    switch (p.compositionFunction_) {
+        case CalAnimation::CompositionFunctionReplace: {
+            // Replace animations go on the front of the list.
+            m_listAnimationAction.push_front(aa);
+            break;
         }
-      }
-      m_listAnimationAction.insert( aait2, aa );
-      break;
-    }
-    case CalAnimation::CompositionFunctionAverage: {
-      // Average animations go before the first Average animation.
-      std::list<boost::shared_ptr<CalAnimation> >::iterator aait2;
-      for( aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++ ) {
-        CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
-        if( cf == CalAnimation::CompositionFunctionAverage ) { // Skip over replace and crossFade animations
-          break;
+        case CalAnimation::CompositionFunctionCrossFade: {
+            // Average animations go after replace, but before Average.
+            std::list<boost::shared_ptr<CalAnimation> >::iterator aait2;
+            for (aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++) {
+                CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
+                if (cf != CalAnimation::CompositionFunctionReplace) {
+                    break;
+                }
+            }
+            m_listAnimationAction.insert(aait2, aa);
+            break;
         }
-      }
-      m_listAnimationAction.insert( aait2, aa );
-      break;
+        case CalAnimation::CompositionFunctionAverage: {
+            // Average animations go before the first Average animation.
+            std::list<boost::shared_ptr<CalAnimation> >::iterator aait2;
+            for (aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++) {
+                CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
+                if (cf == CalAnimation::CompositionFunctionAverage) {  // Skip over replace and crossFade animations
+                    break;
+                }
+            }
+            m_listAnimationAction.insert(aait2, aa);
+            break;
+        }
+        default: {
+            assert(!"Unexpected");
+            break;
+        }
     }
-    default: {
-      assert( !"Unexpected" );
-      break;
-    }
-  }
 }
 
 
 CalMixer::CalMixer() {
-  m_numBoneAdjustments = 0;
+    m_numBoneAdjustments = 0;
 }
 
 void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
-  std::vector<CalBone>& vectorBone = pSkeleton->bones;
+    std::vector<CalBone>& vectorBone = pSkeleton->bones;
 
-  for (unsigned i = 0; i < m_numBoneAdjustments; i++) {
-    CalMixerBoneAdjustmentAndBoneId * ba = & m_boneAdjustmentAndBoneIdArray[ i ];
-    CalBone * bo = &vectorBone[ ba->boneId_ ];
-    const CalCoreBone& cbo = bo->getCoreBone();
-    if( ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale ) {
-      bo->setMeshScaleAbsolute( ba->boneAdjustment_.meshScaleAbsolute_ );
+    for (unsigned i = 0; i < m_numBoneAdjustments; i++) {
+        CalMixerBoneAdjustmentAndBoneId* ba = & m_boneAdjustmentAndBoneIdArray[ i ];
+        CalBone* bo = &vectorBone[ ba->boneId_ ];
+        const CalCoreBone& cbo = bo->getCoreBone();
+        if (ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale) {
+            bo->setMeshScaleAbsolute(ba->boneAdjustment_.meshScaleAbsolute_);
+        }
+        if (ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot) {
+            const CalVector& localPos = cbo.getTranslation();
+            CalVector adjustedLocalPos = localPos;
+            CalQuaternion adjustedLocalOri = ba->boneAdjustment_.localOri_;
+            static float const scale = 1.0f;
+            float rampValue = ba->boneAdjustment_.rampValue_;
+            static bool const replace = true;
+            static float const unrampedWeight = 1.0f;
+            bo->blendState(
+                unrampedWeight,
+                adjustedLocalPos,
+                adjustedLocalOri,
+                scale,
+                replace,
+                rampValue);
+        }
     }
-    if( ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot ) {
-      const CalVector & localPos = cbo.getTranslation();
-      CalVector adjustedLocalPos = localPos;
-      CalQuaternion adjustedLocalOri = ba->boneAdjustment_.localOri_;
-      static float const scale = 1.0f;
-      float rampValue = ba->boneAdjustment_.rampValue_;
-      static bool const replace = true;
-      static float const unrampedWeight = 1.0f;
-      bo->blendState(
-        unrampedWeight, 
-        adjustedLocalPos,
-        adjustedLocalOri, 
-        scale,
-        replace,
-        rampValue);
-    }
-  }
 }
 
 bool
-CalMixer::addBoneAdjustment( int boneId, CalMixerBoneAdjustment const & ba )
-{
-  if( m_numBoneAdjustments == CalMixerBoneAdjustmentsMax ) return false;
-  m_boneAdjustmentAndBoneIdArray[ m_numBoneAdjustments ].boneAdjustment_ = ba;
-  m_boneAdjustmentAndBoneIdArray[ m_numBoneAdjustments ].boneId_ = boneId;
-  m_numBoneAdjustments++;
-  return true;
+CalMixer::addBoneAdjustment(int boneId, CalMixerBoneAdjustment const& ba) {
+    if (m_numBoneAdjustments == CalMixerBoneAdjustmentsMax) {
+        return false;
+    }
+    m_boneAdjustmentAndBoneIdArray[ m_numBoneAdjustments ].boneAdjustment_ = ba;
+    m_boneAdjustmentAndBoneIdArray[ m_numBoneAdjustments ].boneId_ = boneId;
+    m_numBoneAdjustments++;
+    return true;
 }
 
 void
-CalMixer::removeAllBoneAdjustments()
-{
-  m_numBoneAdjustments = 0;
+CalMixer::removeAllBoneAdjustments() {
+    m_numBoneAdjustments = 0;
 }
 
-bool 
-CalMixer::removeBoneAdjustment( int boneId )
-{
-  unsigned int i;
-  for( i = 0; i < m_numBoneAdjustments; i++ ) {
-    CalMixerBoneAdjustmentAndBoneId * ba = & m_boneAdjustmentAndBoneIdArray[ i ];
-    if( ba->boneId_ == boneId ) break;
-  }
-  if( i == m_numBoneAdjustments ) return false; // Couldn't find it.
-  i++;
-  while( i < m_numBoneAdjustments ) {
-    m_boneAdjustmentAndBoneIdArray[ i - 1 ] = m_boneAdjustmentAndBoneIdArray[ i ];
+bool
+CalMixer::removeBoneAdjustment(int boneId) {
+    unsigned int i;
+    for (i = 0; i < m_numBoneAdjustments; i++) {
+        CalMixerBoneAdjustmentAndBoneId* ba = & m_boneAdjustmentAndBoneIdArray[ i ];
+        if (ba->boneId_ == boneId) {
+            break;
+        }
+    }
+    if (i == m_numBoneAdjustments) {
+        return false;    // Couldn't find it.
+    }
     i++;
-  }
-  m_numBoneAdjustments--;
-  return true;
+    while (i < m_numBoneAdjustments) {
+        m_boneAdjustmentAndBoneIdArray[ i - 1 ] = m_boneAdjustmentAndBoneIdArray[ i ];
+        i++;
+    }
+    m_numBoneAdjustments--;
+    return true;
 }
 
 
 void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
-  pSkeleton->clearState();
+    pSkeleton->clearState();
 
-  std::vector<CalBone>& vectorBone = pSkeleton->bones;
+    std::vector<CalBone>& vectorBone = pSkeleton->bones;
 
-  // The bone adjustments are "replace" so they have to go first, giving them
-  // highest priority and full influence.  Subsequent animations affecting the same bones, 
-  // including subsequent replace animations, will have their incluence attenuated appropriately.
-  applyBoneAdjustments(pSkeleton);
+    // The bone adjustments are "replace" so they have to go first, giving them
+    // highest priority and full influence.  Subsequent animations affecting the same bones,
+    // including subsequent replace animations, will have their incluence attenuated appropriately.
+    applyBoneAdjustments(pSkeleton);
 
-  // loop through all animation actions
-  std::list<boost::shared_ptr<CalAnimation> >::iterator itaa;
-  for( itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++ ) {
-    CalAnimation* aa = itaa->get();
-    
-    const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
-    CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
-    
-    CalCoreAnimation::TrackList::iterator itct;
-    for (itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++) {
-      if (itct->coreBoneId >= int(vectorBone.size())) {
-        continue;
-      }
-      CalBone* pBone = &vectorBone[itct->coreBoneId];
-      
-      // get the current translation and rotation
-      CalVector translation;
-      CalQuaternion rotation;
-      itct->getState(aa->time, translation, rotation);
-      
-      // Replace and CrossFade both blend with the replace function.
-      bool replace = aa->compositionFunction != CalAnimation::CompositionFunctionAverage;
-      pBone->blendState(aa->weight, translation, rotation, aa->scale, replace, aa->rampValue);
+    // loop through all animation actions
+    std::list<boost::shared_ptr<CalAnimation> >::iterator itaa;
+    for (itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++) {
+        CalAnimation* aa = itaa->get();
+
+        const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
+        CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
+
+        CalCoreAnimation::TrackList::iterator itct;
+        for (itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++) {
+            if (itct->coreBoneId >= int(vectorBone.size())) {
+                continue;
+            }
+            CalBone* pBone = &vectorBone[itct->coreBoneId];
+
+            // get the current translation and rotation
+            CalVector translation;
+            CalQuaternion rotation;
+            itct->getState(aa->time, translation, rotation);
+
+            // Replace and CrossFade both blend with the replace function.
+            bool replace = aa->compositionFunction != CalAnimation::CompositionFunctionAverage;
+            pBone->blendState(aa->weight, translation, rotation, aa->scale, replace, aa->rampValue);
+        }
     }
-  }
 
-  // === What does lockState() mean?  Why do we need it at all?  It seems only to allow us
-  // to blend all the animation actions together into a temporary sum, and then
-  // blend all the animation cycles together into a different sum, and then blend
-  // the two sums together according to their relative weight sums.  I believe this is mathematically
-  // equivalent of blending all the animation actions and cycles together into a single sum,
-  // according to their relative weights.
-  pSkeleton->lockState();
+    // === What does lockState() mean?  Why do we need it at all?  It seems only to allow us
+    // to blend all the animation actions together into a temporary sum, and then
+    // blend all the animation cycles together into a different sum, and then blend
+    // the two sums together according to their relative weight sums.  I believe this is mathematically
+    // equivalent of blending all the animation actions and cycles together into a single sum,
+    // according to their relative weights.
+    pSkeleton->lockState();
 
-  // let the skeleton calculate its final state
-  pSkeleton->calculateState();
+    // let the skeleton calculate its final state
+    pSkeleton->calculateState();
 }

@@ -14,18 +14,17 @@
 #include "cal3d/global.h"
 #include "cal3d/coretrack.h"
 
-class CAL3D_API CalCoreAnimation
-{
+class CAL3D_API CalCoreAnimation {
 public:
-  size_t sizeInBytes() const;
-  const CalCoreTrack* getCoreTrack(int coreBoneId) const;
+    size_t sizeInBytes() const;
+    const CalCoreTrack* getCoreTrack(int coreBoneId) const;
 
-  float duration;
-  typedef std::vector<CalCoreTrack> TrackList;
-  TrackList tracks;
+    float duration;
+    typedef std::vector<CalCoreTrack> TrackList;
+    TrackList tracks;
 };
 
 inline bool operator==(const CalCoreAnimation& lhs, const CalCoreAnimation& rhs) {
-  return lhs.duration == rhs.duration &&
-    lhs.tracks == rhs.tracks;
+    return lhs.duration == rhs.duration &&
+           lhs.tracks == rhs.tracks;
 }

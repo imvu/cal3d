@@ -20,89 +20,78 @@
 
 
 CalCoreBone::CalCoreBone(const std::string& n, int p)
-  : parentId(p)
-  , name(n)
-{
+    : parentId(p)
+    , name(n) {
 }
 
 
-bool CalCoreBone::addChildId(int childId)
-{
-  m_listChildId.push_back(childId);
+bool CalCoreBone::addChildId(int childId) {
+    m_listChildId.push_back(childId);
 
-  return true;
+    return true;
 }
 
- /*****************************************************************************/
+/*****************************************************************************/
 /** Calculates the current state.
   *
   * This function calculates the current state (absolute translation and
   * rotation) of the core bone instance and all its children.
   *****************************************************************************/
 
-void CalCoreBone::calculateState(CalCoreSkeleton* skeleton)
-{
-  if(parentId == -1)
-  {
-    // no parent, this means absolute state == relative state
-    m_translationAbsolute = m_translation;
-    m_rotationAbsolute = m_rotation;
-  }
-  else
-  {
-    // get the parent bone
-    CalCoreBone *pParent = skeleton->coreBones[parentId].get();
+void CalCoreBone::calculateState(CalCoreSkeleton* skeleton) {
+    if (parentId == -1) {
+        // no parent, this means absolute state == relative state
+        m_translationAbsolute = m_translation;
+        m_rotationAbsolute = m_rotation;
+    } else {
+        // get the parent bone
+        CalCoreBone* pParent = skeleton->coreBones[parentId].get();
 
-    // transform relative state with the absolute state of the parent
-    m_translationAbsolute = m_translation;
-    m_translationAbsolute *= pParent->getRotationAbsolute();
-    m_translationAbsolute += pParent->getTranslationAbsolute();
+        // transform relative state with the absolute state of the parent
+        m_translationAbsolute = m_translation;
+        m_translationAbsolute *= pParent->getRotationAbsolute();
+        m_translationAbsolute += pParent->getTranslationAbsolute();
 
-    m_rotationAbsolute = m_rotation;
-    m_rotationAbsolute *= pParent->getRotationAbsolute();
-  }
+        m_rotationAbsolute = m_rotation;
+        m_rotationAbsolute *= pParent->getRotationAbsolute();
+    }
 
-  // calculate all child bones
-  std::vector<int>::iterator iteratorChildId;
-  for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId)
-  {
-    skeleton->coreBones[*iteratorChildId]->calculateState(skeleton);
-  }
+    // calculate all child bones
+    std::vector<int>::iterator iteratorChildId;
+    for (iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId) {
+        skeleton->coreBones[*iteratorChildId]->calculateState(skeleton);
+    }
 }
 
-void CalCoreBone::setRotation(const CalQuaternion& rotation)
-{
-  m_rotation = rotation;
+void CalCoreBone::setRotation(const CalQuaternion& rotation) {
+    m_rotation = rotation;
 }
 
-void CalCoreBone::setRotationBoneSpace(const CalQuaternion& rotation)
-{
-  m_rotationBoneSpace = rotation;
+void CalCoreBone::setRotationBoneSpace(const CalQuaternion& rotation) {
+    m_rotationBoneSpace = rotation;
 }
 
-void CalCoreBone::setTranslation(const CalVector& translation)
-{
-  m_translation = translation;
+void CalCoreBone::setTranslation(const CalVector& translation) {
+    m_translation = translation;
 }
 
-void CalCoreBone::setTranslationBoneSpace(const CalVector& translation)
-{
-  m_translationBoneSpace = translation;
+void CalCoreBone::setTranslationBoneSpace(const CalVector& translation) {
+    m_translationBoneSpace = translation;
 }
 
 void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
     m_translation *= factor;
     m_translationAbsolute *= factor;
     m_translationBoneSpace *= factor;
-	
+
     // calculate all child bones
     std::vector<int>::const_iterator iteratorChildId;
-    for(iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId) {
+    for (iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId) {
         skeleton->coreBones[*iteratorChildId]->scale(factor, skeleton);
     }
 }
 
 
 bool CalCoreBone::hasLightingData() {
-  return lightType != LIGHT_TYPE_NONE;
+    return lightType != LIGHT_TYPE_NONE;
 }

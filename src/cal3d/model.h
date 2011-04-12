@@ -20,14 +20,13 @@ class CalSkeleton;
 class CalMixer;
 class CalMesh;
 
-class CAL3D_API CalModel
-{
-public: 
-  CalModel(const boost::shared_ptr<CalCoreSkeleton>& pCoreModel);
+class CAL3D_API CalModel {
+public:
+    CalModel(const boost::shared_ptr<CalCoreSkeleton>& pCoreModel);
 
-  CalMesh* attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
-  CalMesh* getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+    CalMesh* attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+    CalMesh* getMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
 
-  const boost::shared_ptr<CalSkeleton> skeleton;
-  std::vector< boost::shared_ptr<CalMesh> > meshes;
+    const boost::shared_ptr<CalSkeleton> skeleton;
+    std::vector< boost::shared_ptr<CalMesh> > meshes;
 };

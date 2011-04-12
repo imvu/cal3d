@@ -21,28 +21,27 @@
  */
 
 
-class CAL3D_API CalBufferSource : public CalDataSource
-{
+class CAL3D_API CalBufferSource : public CalDataSource {
 public:
-  CalBufferSource(const void* inputBuffer, size_t length);
+    CalBufferSource(const void* inputBuffer, size_t length);
 
-  virtual void setError() const;
-  virtual bool readBytes(void* pBuffer, int length);
-  virtual bool readFloat(float& value);
-  virtual bool readInteger(int& value);
-  virtual bool readString(std::string& strValue);
+    virtual void setError() const;
+    virtual bool readBytes(void* pBuffer, int length);
+    virtual bool readFloat(float& value);
+    virtual bool readInteger(int& value);
+    virtual bool readString(std::string& strValue);
 
-  const void* data() const {
-    return mInputBuffer;
-  }
-  size_t size() const {
-    return mLength;
-  }
+    const void* data() const {
+        return mInputBuffer;
+    }
+    size_t size() const {
+        return mLength;
+    }
 
 private:
-  const void* mInputBuffer;
-  size_t mOffset;
-  size_t mLength;
+    const void* mInputBuffer;
+    size_t mOffset;
+    size_t mLength;
 
-  CalBufferSource(); //Can't use this
+    CalBufferSource(); //Can't use this
 };

@@ -20,7 +20,7 @@
 #include "cal3d/quaternion.h"
 #include "cal3d/vector.h"
 
- /*****************************************************************************/
+/*****************************************************************************/
 /** Constructs the matrix instance.
   *
   * This function is the default constructor of the matrix instance.
@@ -33,7 +33,7 @@ CalMatrix::CalMatrix()
 {
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Destructs the matrix instance.
   *
   * This function is the destructor of the matrix instance.
@@ -43,7 +43,7 @@ CalMatrix::~CalMatrix()
 {
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Copying a Matrix
   *
   * This function copies one matrix into another.
@@ -56,40 +56,44 @@ void CalMatrix::operator =(const CalMatrix& m)
   dzdx=m.dzdx; dzdy=m.dzdy; dzdz=m.dzdz;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Quaternion to Matrix Conversion Constructor
   *
   * This function converts a quaternion into a rotation matrix.
   *****************************************************************************/
 
-CalMatrix::CalMatrix(const CalQuaternion& q)
-{
-  *this = q;
+CalMatrix::CalMatrix(const CalQuaternion& q) {
+    *this = q;
 }
 
- /*****************************************************************************/
+/*****************************************************************************/
 /** Quaternion to Matrix Conversion.
   *
   * This function converts a quaternion into a rotation matrix.
   *****************************************************************************/
 
-void CalMatrix::operator =(const CalQuaternion& q)
-{
-  float xx2=q.x*q.x*2;
-  float yy2=q.y*q.y*2;
-  float zz2=q.z*q.z*2;
-  float xy2=q.x*q.y*2;
-  float zw2=q.z*q.w*2;
-  float xz2=q.x*q.z*2;
-  float yw2=q.y*q.w*2;
-  float yz2=q.y*q.z*2;
-  float xw2=q.x*q.w*2;
-  dxdx=1-yy2-zz2;   dxdy=  xy2+zw2;  dxdz=  xz2-yw2;
-  dydx=  xy2-zw2;   dydy=1-xx2-zz2;  dydz=  yz2+xw2;
-  dzdx=  xz2+yw2;   dzdy=  yz2-xw2;  dzdz=1-xx2-yy2;
+void CalMatrix::operator =(const CalQuaternion& q) {
+    float xx2 = q.x * q.x * 2;
+    float yy2 = q.y * q.y * 2;
+    float zz2 = q.z * q.z * 2;
+    float xy2 = q.x * q.y * 2;
+    float zw2 = q.z * q.w * 2;
+    float xz2 = q.x * q.z * 2;
+    float yw2 = q.y * q.w * 2;
+    float yz2 = q.y * q.z * 2;
+    float xw2 = q.x * q.w * 2;
+    dxdx = 1 - yy2 - zz2;
+    dxdy =  xy2 + zw2;
+    dxdz =  xz2 - yw2;
+    dydx =  xy2 - zw2;
+    dydy = 1 - xx2 - zz2;
+    dydz =  yz2 + xw2;
+    dzdx =  xz2 + yw2;
+    dzdy =  yz2 - xw2;
+    dzdz = 1 - xx2 - yy2;
 }
 
- /*****************************************************************************/
+/*****************************************************************************/
 /** Matrix Initialization
   *
   * This function sets one matrix to a factor times another.
@@ -108,7 +112,7 @@ CalMatrix::CalMatrix(float factor, const CalMatrix& m)
   dzdz = m.dzdz*factor;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Matrix Blending
   *
   * This function adds a weight times another matrix to the current matrix.
@@ -127,7 +131,7 @@ void CalMatrix::blend(float factor, const CalMatrix& m)
   dzdz += m.dzdz*factor;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Matrix Scaling
   *
   * This function multiplies every element in the matrix by the factor.
@@ -146,7 +150,7 @@ void CalMatrix::operator *=(float factor)
   dzdz *= factor;
 }
 */
- /*****************************************************************************/
+/*****************************************************************************/
 /** Matrix Multiplication
   *
   * This function multiplies two matrices.

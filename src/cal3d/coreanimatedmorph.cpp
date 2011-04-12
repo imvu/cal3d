@@ -29,55 +29,54 @@ size_t CalCoreAnimatedMorph::sizeInBytes() const {
 }
 
 void CalCoreAnimatedMorph::removeZeroScaleTracks() {
-  std::vector<CalCoreMorphTrack> & p = tracks;
-  bool changed = true;
-  while( changed ) {
-    changed = false;
-    std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
-    for(iteratorCoreTrack = p.begin(); iteratorCoreTrack != p.end(); ++iteratorCoreTrack) {
-      // get the core bone
-      CalCoreMorphTrack *pCoreTrack;
-      pCoreTrack = &(*iteratorCoreTrack);
-      std::vector<CalCoreMorphKeyframe> & morphNameList = pCoreTrack->keyframes;
-      
-      bool nonZeroScaleTrack = false;
-      for(size_t keyframeId = 0; keyframeId < morphNameList.size(); keyframeId++) {
-        float weight = morphNameList[keyframeId].weight;
-        if( weight != 0.0f ) {
-          nonZeroScaleTrack = true;
-          break;
+    std::vector<CalCoreMorphTrack> & p = tracks;
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+        for (iteratorCoreTrack = p.begin(); iteratorCoreTrack != p.end(); ++iteratorCoreTrack) {
+            // get the core bone
+            CalCoreMorphTrack* pCoreTrack;
+            pCoreTrack = &(*iteratorCoreTrack);
+            std::vector<CalCoreMorphKeyframe> & morphNameList = pCoreTrack->keyframes;
+
+            bool nonZeroScaleTrack = false;
+            for (size_t keyframeId = 0; keyframeId < morphNameList.size(); keyframeId++) {
+                float weight = morphNameList[keyframeId].weight;
+                if (weight != 0.0f) {
+                    nonZeroScaleTrack = true;
+                    break;
+                }
+            }
+            if (!nonZeroScaleTrack) {
+                p.erase(iteratorCoreTrack);
+                changed = true;
+                break;
+            }
         }
-      }
-      if( !nonZeroScaleTrack ) {
-        p.erase( iteratorCoreTrack );
-        changed = true;
-        break;
-      }
     }
-  }
 }
 
 
 
-CalCoreMorphTrack *CalCoreAnimatedMorph::getCoreTrack(std::string const & name)
-{
-  // loop through all core track
-  std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
-  {
-    // check if we found the matching core bone
-    if(iteratorCoreTrack->morphName == name) return &(*iteratorCoreTrack);
-  }
+CalCoreMorphTrack* CalCoreAnimatedMorph::getCoreTrack(std::string const& name) {
+    // loop through all core track
+    std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+    for (iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack) {
+        // check if we found the matching core bone
+        if (iteratorCoreTrack->morphName == name) {
+            return &(*iteratorCoreTrack);
+        }
+    }
 
-  // no match found
-  return 0;
+    // no match found
+    return 0;
 }
 
 void CalCoreAnimatedMorph::scale(float factor) {
-  // loop through all core track
-  std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
-  for(iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack)
-  {
-      iteratorCoreTrack->scale(factor);
-  }
+    // loop through all core track
+    std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
+    for (iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack) {
+        iteratorCoreTrack->scale(factor);
+    }
 }

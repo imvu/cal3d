@@ -1,12 +1,12 @@
 //****************************************************************************//
-  // corebone.h                                                                 //
-  // Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
-  //****************************************************************************//
-    // This library is free software; you can redistribute it and/or modify it    //
-    // under the terms of the GNU Lesser General Public License as published by   //
-    // the Free Software Foundation; either version 2.1 of the License, or (at    //
-    // your option) any later version.                                            //
-    //****************************************************************************//
+// corebone.h                                                                 //
+// Copyright (C) 2001, 2002 Bruno 'Beosil' Heidelberger                       //
+//****************************************************************************//
+// This library is free software; you can redistribute it and/or modify it    //
+// under the terms of the GNU Lesser General Public License as published by   //
+// the Free Software Foundation; either version 2.1 of the License, or (at    //
+// your option) any later version.                                            //
+//****************************************************************************//
 
 #pragma once
 
@@ -16,7 +16,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-    class CalCoreSkeleton;
+class CalCoreSkeleton;
 
 enum CalLightType {
     LIGHT_TYPE_NONE,
@@ -33,13 +33,27 @@ public:
 
     bool addChildId(int childId);
     void calculateState(CalCoreSkeleton* skeleton);
-    const std::vector<int>& getListChildId() const { return m_listChildId; }
-    const CalQuaternion& getRotation() const { return m_rotation; }
-    const CalQuaternion& getRotationAbsolute() const { return m_rotationAbsolute; }
-    const CalQuaternion& getRotationBoneSpace() const { return m_rotationBoneSpace; }
-    const CalVector& getTranslation() const { return m_translation; }
-    const CalVector& getTranslationAbsolute() const { return m_translationAbsolute; }
-    const CalVector& getTranslationBoneSpace() const { return m_translationBoneSpace; }
+    const std::vector<int>& getListChildId() const {
+        return m_listChildId;
+    }
+    const CalQuaternion& getRotation() const {
+        return m_rotation;
+    }
+    const CalQuaternion& getRotationAbsolute() const {
+        return m_rotationAbsolute;
+    }
+    const CalQuaternion& getRotationBoneSpace() const {
+        return m_rotationBoneSpace;
+    }
+    const CalVector& getTranslation() const {
+        return m_translation;
+    }
+    const CalVector& getTranslationAbsolute() const {
+        return m_translationAbsolute;
+    }
+    const CalVector& getTranslationBoneSpace() const {
+        return m_translationBoneSpace;
+    }
     void setRotation(const CalQuaternion& rotation);
     void setRotationBoneSpace(const CalQuaternion& rotation);
     void setTranslation(const CalVector& translation);
@@ -49,8 +63,10 @@ public:
 
     bool hasLightingData();
 
-    /*const*/ int parentId;
-    /*const*/ std::string name;
+    /*const*/
+    int parentId;
+    /*const*/
+    std::string name;
 
     CalVector lightColor;
     CalLightType lightType;

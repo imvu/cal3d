@@ -19,18 +19,17 @@
 class CalCoreSkeleton;
 class CalBone;
 
-class CAL3D_API CalSkeleton
-{
+class CAL3D_API CalSkeleton {
 public:
-  CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton);
+    CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton);
 
-  void calculateState();
-  void clearState();
-  void lockState();
+    void calculateState();
+    void clearState();
+    void lockState();
 
-  std::vector<CalBone> bones;
-  SSEArray<BoneTransform> boneTransforms;
+    std::vector<CalBone> bones;
+    SSEArray<BoneTransform> boneTransforms;
 
 private:
-  boost::shared_ptr<CalCoreSkeleton> m_pCoreSkeleton;
+    boost::shared_ptr<CalCoreSkeleton> m_pCoreSkeleton;
 };

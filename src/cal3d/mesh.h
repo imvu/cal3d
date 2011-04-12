@@ -16,13 +16,12 @@
 class CalCoreMesh;
 class CalSubmesh;
 
-class CAL3D_API CalMesh
-{
+class CAL3D_API CalMesh {
 public:
-  typedef std::vector<boost::shared_ptr<CalSubmesh> > SubmeshVector;
+    typedef std::vector<boost::shared_ptr<CalSubmesh> > SubmeshVector;
 
-  CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+    CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
 
-  const boost::shared_ptr<CalCoreMesh> coreMesh;
-  const SubmeshVector submeshes;
+    const boost::shared_ptr<CalCoreMesh> coreMesh;
+    const SubmeshVector submeshes;
 };
