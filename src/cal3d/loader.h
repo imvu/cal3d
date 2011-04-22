@@ -27,7 +27,7 @@ class CalCoreKeyframe;
 class CalCoreMorphTrack;
 class CalCoreMorphKeyframe;
 class CalCoreMesh;
-class CalCoreSubmesh;
+typedef boost::shared_ptr<class CalCoreSubmesh> CalCoreSubmeshPtr;
 class CalCoreMaterial;
 class CalVector;
 class CalQuaternion;
@@ -87,7 +87,7 @@ private:
             bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
             bool useAnimationCompression);
     static CalCoreMorphKeyframe* loadCoreMorphKeyframe(CalDataSource& dataSrc);
-    static CalCoreSubmesh* loadCoreSubmesh(CalDataSource& dataSrc, int version);
+    static CalCoreSubmeshPtr loadCoreSubmesh(CalDataSource& dataSrc, int version);
     static CalCoreTrack* loadCoreTrack(CalDataSource& dataSrc, CalCoreSkeleton* skel, int version, bool useAnimationCompresssion);
     static CalCoreMorphTrack* loadCoreMorphTrack(CalDataSource& dataSrc);
 

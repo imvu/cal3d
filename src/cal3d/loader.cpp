@@ -941,10 +941,10 @@ CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) {
+CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) {
     if (!dataSrc.ok()) {
         dataSrc.setError();
-        return 0;
+        return CalCoreSubmeshPtr();
     }
 
     bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
@@ -979,22 +979,15 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
     // check if an error happened
     if (!dataSrc.ok()) {
         dataSrc.setError();
-        return 0;
+        return CalCoreSubmeshPtr();
     }
 
-    // allocate a new core submesh instance
-    CalCoreSubmesh* pCoreSubmesh = new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount);
-
-    // set the LOD step count
+    CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
     pCoreSubmesh->setLodCount(lodCount);
-
-    // set the core material id
     pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
-    // load all vertices and their influences
     pCoreSubmesh->setHasNonWhiteVertexColors(false);
-    int vertexId;
-    for (vertexId = 0; vertexId < vertexCount; ++vertexId) {
+    for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
         CalCoreSubmesh::Vertex vertex;
         CalCoreSubmesh::LodData lodData;
         CalColor32 vertexColor;
@@ -1025,8 +1018,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
         // check if an error happened
         if (!dataSrc.ok()) {
             dataSrc.setError();
-            delete pCoreSubmesh;
-            return 0;
+            return CalCoreSubmeshPtr();
         }
 
         // load all texture coordinates of the vertex
@@ -1041,8 +1033,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
             // check if an error happened
             if (!dataSrc.ok()) {
                 dataSrc.setError();
-                delete pCoreSubmesh;
-                return 0;
+                return CalCoreSubmeshPtr();
             }
 
             // set texture coordinate in the core submesh instance
@@ -1053,8 +1044,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
         int influenceCount;
         if (!dataSrc.readInteger(influenceCount) || (influenceCount < 0)) {
             dataSrc.setError();
-            delete pCoreSubmesh;
-            return 0;
+            return CalCoreSubmeshPtr();
         }
 
         std::vector<CalCoreSubmesh::Influence> influences;
@@ -1066,8 +1056,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
 
             if (!dataSrc.ok()) {
                 dataSrc.setError();
-                delete pCoreSubmesh;
-                return 0;
+                return CalCoreSubmeshPtr();
             }
         }
 
@@ -1083,15 +1072,13 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
             // check if an error happened
             if (!dataSrc.ok()) {
                 dataSrc.setError();
-                delete pCoreSubmesh;
-                return 0;
+                return CalCoreSubmeshPtr();
             }
         }
     }
 
     // load all springs
-    int springId;
-    for (springId = 0; springId < springCount; ++springId) {
+    for (int springId = 0; springId < springCount; ++springId) {
         int i;
         float f;
 
@@ -1104,8 +1091,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
         // check if an error happened
         if (!dataSrc.ok()) {
             dataSrc.setError();
-            delete pCoreSubmesh;
-            return 0;
+            return CalCoreSubmeshPtr();
         }
     }
 
@@ -1121,7 +1107,6 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
 
         for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
             CalCoreSubMorphTarget::BlendVertex Vertex;
-            Vertex.textureCoords.clear();
             Vertex.textureCoords.reserve(textureCoordinateCount);
 
             bool copyOrig;
@@ -1144,9 +1129,8 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
                     Vertex.textureCoords.push_back(textureCoordinate);
                 }
                 if (! dataSrc.ok()) {
-                    delete pCoreSubmesh;
                     dataSrc.setError();
-                    return false;
+                    return CalCoreSubmeshPtr();
                 }
 
                 morphTarget->setBlendVertex(blendVertI, Vertex);
@@ -1157,9 +1141,8 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
     }
 
     // load all faces
-    int faceId;
     bool flipModel = false;
-    for (faceId = 0; faceId < faceCount; ++faceId) {
+    for (int faceId = 0; faceId < faceCount; ++faceId) {
         CalCoreSubmesh::Face face;
 
         // load data of the face
@@ -1172,8 +1155,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
         if (sizeof(CalIndex) == 2) {
             if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-                delete pCoreSubmesh;
-                return 0;
+                return CalCoreSubmeshPtr();
             }
         }
         face.vertexId[0] = tmp[0];
@@ -1183,8 +1165,7 @@ CalCoreSubmesh* CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) 
         // check if an error happened
         if (!dataSrc.ok()) {
             dataSrc.setError();
-            delete pCoreSubmesh;
-            return 0;
+            return CalCoreSubmeshPtr();
         }
 
         // flip if needed
