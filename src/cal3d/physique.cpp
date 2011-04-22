@@ -440,11 +440,13 @@ void CalPhysique::calculateVerticesAndNormals(
         unsigned int numMiaws;
         pSubmesh->getMorphIdAndWeightArray(MiawCache, & numMiaws, (unsigned int) morphTargetCount);
 
+        const float originalBaseWeight = pSubmesh->getBaseWeight();
+
         // Fill MorphSubmeshCache w/ outputs of morph target calculation
         for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
             const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
 
-            float baseWeight = pSubmesh->getBaseWeight();
+            float baseWeight = originalBaseWeight;
             CalVector position;
             CalVector normal;
             for (unsigned i = 0; i < numMiaws; i++) {
