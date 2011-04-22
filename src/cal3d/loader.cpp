@@ -78,7 +78,7 @@ void allocateVectorWhereSizeIsGuarded(size_t n, std::vector<T> &o_ret, int lineN
     }
 }
 
-bool CAL3D_API CalVectorFromDataSrc(CalDataSource& dataSrc, CalVector* calVec) {
+bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector* calVec) {
     return dataSrc.readFloat(calVec->x) &&
            dataSrc.readFloat(calVec->y) &&
            dataSrc.readFloat(calVec->z);
@@ -106,7 +106,7 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalC
 template<typename RV>
 RV tryBothLoaders(
     CalBufferSource& inputSource,
-    RV(*binaryLoader)(CalDataSource&),
+    RV(*binaryLoader)(CalBufferSource&),
     RV(*xmlLoader)(const char*)
 ) {
     try {
@@ -137,7 +137,7 @@ CalCoreSkeleton* CalLoader::loadCoreSkeleton(CalBufferSource& inputSrc) {
     return tryBothLoaders(inputSrc, &loadBinaryCoreSkeleton, &loadXmlCoreSkeleton);
 }
 
-CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, CalCoreSkeleton* skel) {
+CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc, CalCoreSkeleton* skel) {
     const CalCoreAnimationPtr null;
 
     // check if this is a valid file
@@ -206,7 +206,7 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalDataSource& dataSrc, C
 
 
 
-CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& dataSrc) {
+CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalBufferSource& dataSrc) {
     const CalCoreAnimatedMorphPtr null;
 
     char magic[4];
@@ -279,7 +279,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalDataSource& da
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc) {
+CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalBufferSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
@@ -367,7 +367,7 @@ CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalDataSource& dataSrc) {
+CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
@@ -427,7 +427,7 @@ CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalDataSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc) {
+CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
@@ -499,7 +499,7 @@ CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreBone* CalLoader::loadCoreBones(CalDataSource& dataSrc, int version) {
+CalCoreBone* CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
     bool hasNodeLights = (version >= Cal::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
 
     // read the name of the bone
@@ -595,7 +595,7 @@ CalLoader::usesAnimationCompression(int version) {
 
 
 CalCoreKeyframe* CalLoader::loadCoreKeyframe(
-    CalDataSource& dataSrc, CalCoreBone* coreboneOrNull, int version,
+    CalBufferSource& dataSrc, CalCoreBone* coreboneOrNull, int version,
     CalCoreKeyframe* prevCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
     bool useAnimationCompression) {
@@ -859,7 +859,7 @@ CalLoader::readCompressedKeyframe(
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
+CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalBufferSource& dataSrc) {
     // get the time of the morphKeyframe
     float time;
     dataSrc.readFloat(time);
@@ -896,7 +896,7 @@ CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) {
+CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int version) {
     bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
     bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
 
@@ -975,7 +975,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
         // get the number of influences
         int influenceCount;
         if (!dataSrc.readInteger(influenceCount) || (influenceCount < 0)) {
-            dataSrc.setError();
             return CalCoreSubmeshPtr();
         }
 
@@ -1088,7 +1087,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
 }
 
 CalCoreTrack* CalLoader::loadCoreTrack(
-    CalDataSource& dataSrc,
+    CalBufferSource& dataSrc,
     CalCoreSkeleton* skel,
     int version,
     bool useAnimationCompression
@@ -1186,7 +1185,7 @@ CalCoreTrack* CalLoader::loadCoreTrack(
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreMorphTrack* CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc) {
+CalCoreMorphTrack* CalLoader::loadCoreMorphTrack(CalBufferSource& dataSrc) {
     // read the morph name
     std::string morphName;
     if (!dataSrc.readString(morphName)) {

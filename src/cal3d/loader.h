@@ -33,7 +33,7 @@ class CalVector;
 class CalQuaternion;
 class CalBufferSource;
 
-bool CAL3D_API CalVectorFromDataSrc(CalDataSource& dataSrc, CalVector* calVec);
+bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector* calVec);
 
 class CAL3D_API CalLoader {
     // member functions
@@ -58,11 +58,11 @@ public:
     static CalCoreSkeleton* loadCoreSkeleton(CalBufferSource& inputSrc);
 
 private:
-    static CalCoreAnimationPtr loadBinaryCoreAnimation(CalDataSource& inputSrc, CalCoreSkeleton* skel = 0);
-    static CalCoreAnimatedMorphPtr loadBinaryCoreAnimatedMorph(CalDataSource& inputSrc);
-    static CalCoreMaterial* loadBinaryCoreMaterial(CalDataSource& inputSrc);
-    static CalCoreMesh* loadBinaryCoreMesh(CalDataSource& inputSrc);
-    static CalCoreSkeleton* loadBinaryCoreSkeleton(CalDataSource& inputSrc);
+    static CalCoreAnimationPtr loadBinaryCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton* skel = 0);
+    static CalCoreAnimatedMorphPtr loadBinaryCoreAnimatedMorph(CalBufferSource& inputSrc);
+    static CalCoreMaterial* loadBinaryCoreMaterial(CalBufferSource& inputSrc);
+    static CalCoreMesh* loadBinaryCoreMesh(CalBufferSource& inputSrc);
+    static CalCoreSkeleton* loadBinaryCoreSkeleton(CalBufferSource& inputSrc);
 
     static CalCoreAnimationPtr loadXmlCoreAnimation(const char*, CalCoreSkeleton* skel);
     static CalCoreAnimationPtr loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCoreSkeleton* skel);
@@ -81,15 +81,15 @@ private:
 
     static bool isHeaderWellFormed(const TiXmlElement* header);
 
-    static CalCoreBone* loadCoreBones(CalDataSource& dataSrc, int version);
-    static CalCoreKeyframe* loadCoreKeyframe(CalDataSource& dataSrc, CalCoreBone* coreboneOrNull,
+    static CalCoreBone* loadCoreBones(CalBufferSource& dataSrc, int version);
+    static CalCoreKeyframe* loadCoreKeyframe(CalBufferSource& dataSrc, CalCoreBone* coreboneOrNull,
             int version, CalCoreKeyframe* lastCoreKeyframe,
             bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
             bool useAnimationCompression);
-    static CalCoreMorphKeyframe* loadCoreMorphKeyframe(CalDataSource& dataSrc);
-    static CalCoreSubmeshPtr loadCoreSubmesh(CalDataSource& dataSrc, int version);
-    static CalCoreTrack* loadCoreTrack(CalDataSource& dataSrc, CalCoreSkeleton* skel, int version, bool useAnimationCompresssion);
-    static CalCoreMorphTrack* loadCoreMorphTrack(CalDataSource& dataSrc);
+    static CalCoreMorphKeyframe* loadCoreMorphKeyframe(CalBufferSource& dataSrc);
+    static CalCoreSubmeshPtr loadCoreSubmesh(CalBufferSource& dataSrc, int version);
+    static CalCoreTrack* loadCoreTrack(CalBufferSource& dataSrc, CalCoreSkeleton* skel, int version, bool useAnimationCompresssion);
+    static CalCoreMorphTrack* loadCoreMorphTrack(CalBufferSource& dataSrc);
 
     static bool usesAnimationCompression(int version);
     static unsigned int compressedKeyframeRequiredBytes(CalCoreKeyframe* lastCoreKeyframe, bool translationRequired, bool highRangeRequired, bool translationIsDynamic);

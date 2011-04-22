@@ -13,23 +13,21 @@
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
 
-/**
- * CalBufferSource class.
- *
- * This is an object designed to represent a source of Cal3d data as coming from
- * a memory buffer.
- */
-
-
-class CAL3D_API CalBufferSource : public CalDataSource {
+class CAL3D_API CalBufferSource {
 public:
     CalBufferSource(const void* inputBuffer, size_t length);
 
-    virtual void setError() const;
-    virtual bool readBytes(void* pBuffer, int length);
-    virtual bool readFloat(float& value);
-    virtual bool readInteger(int& value);
-    virtual bool readString(std::string& strValue);
+    bool readInteger(unsigned& value) {
+        int i;
+        bool rv = readInteger(i);
+        value = i;
+        return rv;
+    }
+
+    bool readBytes(void* pBuffer, int length);
+    bool readFloat(float& value);
+    bool readInteger(int& value);
+    bool readString(std::string& strValue);
 
     const void* data() const {
         return mInputBuffer;

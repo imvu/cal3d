@@ -24,10 +24,6 @@ CalBufferSource::CalBufferSource(const void* inputBuffer, size_t length)
 }
 
 
-void CalBufferSource::setError() const {
-    CalError::setLastError(CalError::NULL_BUFFER, __FILE__, __LINE__);
-}
-
 bool CalBufferSource::readBytes(void* pBuffer, int length) {
     //Check that the buffer and the target are usable
     if (pBuffer == NULL) {

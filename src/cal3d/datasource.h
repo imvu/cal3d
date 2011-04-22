@@ -14,30 +14,6 @@
 #include <string>
 #include "cal3d/global.h"
 
-/**
- * CalDataSource abstract interface class.
- *
- * This is an abstract class designed to represent a source of Cal3d data,
- * whether it is an ifstream, istream, or even a memory buffer. Inheriting
- * classes must implement the 'read' functions below.
- */
-
-class CAL3D_API CalDataSource {
-public:
-    virtual void setError() const = 0;
-    virtual bool readBytes(void* pBuffer, int length) = 0;
-    virtual bool readFloat(float& value) = 0;
-    virtual bool readInteger(int& value) = 0;
-    virtual bool readString(std::string& strValue) = 0;
-
-    bool readInteger(unsigned& value) {
-        int i;
-        bool rv = readInteger(i);
-        value = i;
-        return rv;
-    }
-};
-
 namespace CalPlatform {
     CAL3D_API bool readBytes(std::istream& input, void* pBuffer, int length);
     CAL3D_API bool readFloat(std::istream& input, float& value);
