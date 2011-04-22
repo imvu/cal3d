@@ -300,3 +300,106 @@ TEST(morph_targets_performance_test) {
 
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
+
+TEST(single_morph_target) {
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    inf[0].lastInfluenceForThisVertex = true;
+
+    CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(3, 0, 1));
+    CalCoreSubmesh::Vertex v;
+
+    v.position.setAsPoint(CalVector(0, 0, 0));
+    v.normal.setAsVector(CalVector(0, 0, 0));
+    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+
+    CalCoreSubMorphTargetPtr morphTarget(new CalCoreSubMorphTarget("foo"));
+    CalCoreSubMorphTarget::BlendVertex bv;
+    bv.position.setAsPoint(CalVector(1, 1, 1));
+    bv.normal.setAsVector(CalVector(1, 1, 1));
+    morphTarget->reserve(3);
+    morphTarget->setBlendVertex(0, bv);
+    morphTarget->setBlendVertex(1, bv);
+    morphTarget->setBlendVertex(2, bv);
+    coreSubmesh->addCoreSubMorphTarget(morphTarget);
+
+    CalSubmesh submesh(coreSubmesh);
+    submesh.setMorphTargetWeight("foo", 0.5f);
+    
+    BoneTransform bt;
+    bt.rowx.set(1, 0, 0, 0);
+    bt.rowy.set(0, 1, 0, 0);
+    bt.rowz.set(0, 0, 1, 0);
+
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[2] CAL3D_ALIGN_TAIL(16);
+
+    CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
+
+    CHECK_EQUAL(0.5, output[0].x);
+    CHECK_EQUAL(0.5, output[0].y);
+    CHECK_EQUAL(0.5, output[0].z);
+    //CHECK_EQUAL(1.0, output[0].w);
+    CHECK_EQUAL(0.5, output[1].x);
+    CHECK_EQUAL(0.5, output[1].y);
+    CHECK_EQUAL(0.5, output[1].z);
+    //CHECK_EQUAL(0.0, output[1].w);
+}
+
+TEST(two_morph_targets) {
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    inf[0].lastInfluenceForThisVertex = true;
+
+    CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(3, 0, 1));
+    CalCoreSubmesh::Vertex v;
+
+    v.position.setAsPoint(CalVector(0, 0, 0));
+    v.normal.setAsVector(CalVector(0, 0, 0));
+    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+
+    CalCoreSubMorphTarget::BlendVertex bv;
+    bv.position.setAsPoint(CalVector(1, 1, 1));
+    bv.normal.setAsVector(CalVector(1, 1, 1));
+
+    CalCoreSubMorphTargetPtr morphTarget1(new CalCoreSubMorphTarget("foo"));
+    morphTarget1->reserve(3);
+    morphTarget1->setBlendVertex(0, bv);
+    morphTarget1->setBlendVertex(1, bv);
+    morphTarget1->setBlendVertex(2, bv);
+    coreSubmesh->addCoreSubMorphTarget(morphTarget1);
+
+    CalCoreSubMorphTargetPtr morphTarget2(new CalCoreSubMorphTarget("bar"));
+    morphTarget2->reserve(3);
+    morphTarget2->setBlendVertex(0, bv);
+    morphTarget2->setBlendVertex(1, bv);
+    morphTarget2->setBlendVertex(2, bv);
+    coreSubmesh->addCoreSubMorphTarget(morphTarget2);
+
+    CalSubmesh submesh(coreSubmesh);
+    submesh.setMorphTargetWeight("foo", 0.25f);
+    submesh.setMorphTargetWeight("bar", 0.25f);
+    
+    BoneTransform bt;
+    bt.rowx.set(1, 0, 0, 0);
+    bt.rowy.set(0, 1, 0, 0);
+    bt.rowz.set(0, 0, 1, 0);
+
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[2] CAL3D_ALIGN_TAIL(16);
+
+    CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
+
+    CHECK_EQUAL(0.5, output[0].x);
+    CHECK_EQUAL(0.5, output[0].y);
+    CHECK_EQUAL(0.5, output[0].z);
+    //CHECK_EQUAL(1.0, output[0].w);
+    CHECK_EQUAL(0.5, output[1].x);
+    CHECK_EQUAL(0.5, output[1].y);
+    CHECK_EQUAL(0.5, output[1].z);
+    //CHECK_EQUAL(0.0, output[1].w);
+}

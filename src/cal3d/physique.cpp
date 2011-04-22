@@ -479,9 +479,9 @@ void CalPhysique::calculateVerticesAndNormals(
     }
 
     return optimizedSkinRoutine(
-               boneTransforms,
-               vertexCount,
-               vertices,
-               Cal::pointerFromVector(pSubmesh->coreSubmesh->getInfluences()),
-               reinterpret_cast<CalVector4*>(pVertexBuffer));
+        boneTransforms,
+        vertexCount,
+        vertices,
+        Cal::pointerFromVector(pSubmesh->coreSubmesh->getInfluences()),
+        reinterpret_cast<CalVector4*>(pVertexBuffer));
 }
