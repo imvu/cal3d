@@ -720,16 +720,11 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
                 continue;
             }
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
-            static double differenceTolerance = 0.01;
+            static float differenceTolerance = 0.01f;
             CalVector positionDiff = bv->position - Vertex.position.asCalVector();
-            CalVector normalDiff = bv->normal - Vertex.normal.asCalVector();
-            double positionDiffLength = fabs(positionDiff.length());
+            float positionDiffLength = positionDiff.length();
 
-            bool skip = false;
-//      if( positionDiffLength < differenceTolerance && normalDiffLength < differenceTolerance ) {
-            if (positionDiffLength < differenceTolerance) {
-                skip = true;
-            }
+            bool skip = positionDiffLength < differenceTolerance;
 
             std::vector<CalCoreSubmesh::TextureCoordinate> const& textureCoords = bv->textureCoords;
             size_t tcI;
@@ -1363,16 +1358,11 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
                     continue;
                 }
                 const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
-                static double differenceTolerance = 1.0;
+                static float differenceTolerance = 1.0;
                 CalVector positionDiff = bv->position - Vertex.position.asCalVector();
-                CalVector normalDiff = bv->normal - Vertex.normal.asCalVector();
-                double positionDiffLength = fabs(positionDiff.length());
+                float positionDiffLength = positionDiff.length();
 
-                bool skip = false;
-//                    if( positionDiffLength < differenceTolerance && normalDiffLength < differenceTolerance ) {
-                if (positionDiffLength < differenceTolerance) {
-                    skip = true;
-                }
+                bool skip = positionDiffLength < differenceTolerance;
 
                 std::vector<CalCoreSubmesh::TextureCoordinate> const& textureCoords = bv->textureCoords;
                 size_t tcI;

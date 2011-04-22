@@ -94,7 +94,7 @@ public:
         return (float)(x * x + y * y + z * z);
     }
     inline float length() const {
-        return (float)sqrt(lengthSquared());
+        return sqrtf(lengthSquared());
     }
     inline float normalize() {
         // calculate the length of the vector
