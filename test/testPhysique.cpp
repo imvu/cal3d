@@ -301,6 +301,41 @@ TEST(morph_targets_performance_test) {
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
 
+TEST(bunch_of_unweighted_morph_targets_performance_test) {
+    const int N = 10000;
+    const int M = 30;
+    const int TrialCount = 10;
+
+    CalCoreSubmeshPtr coreSubmesh(djinnCoreSubmesh(N));
+
+    for (int i = 0; i < M; ++i) {
+        char buf[80];
+        sprintf(buf, "%d", i);
+        coreSubmesh->addCoreSubMorphTarget(djinnMorphTarget(N, buf));
+    }
+
+    CalSubmesh submesh(coreSubmesh);
+    submesh.setMorphTargetWeight("0", 0.25f);
+
+    BoneTransform bt;
+    memset(&bt, 0, sizeof(bt));
+
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[N * 2] CAL3D_ALIGN_TAIL(16);
+
+    cal3d_int64 min = 99999999999999LL;
+    for (int t = 0; t < TrialCount; ++t) {
+        cal3d_int64 start = __rdtsc();
+        CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
+        cal3d_int64 end = __rdtsc();
+        cal3d_int64 elapsed = end - start;
+        if (elapsed < min) {
+            min = elapsed;
+        }
+    }
+
+    printf("Cycles per vertex: %d\n", (int)(min / N));
+}
+
 TEST(single_morph_target) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
