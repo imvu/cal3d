@@ -36,14 +36,8 @@ public:
         return m_vectorFace;
     }
 
-    std::vector<CalVector>& getVectorNormal() {
-        return m_vectorNormal;
-    }
     int getFaceCount() const {
         return m_faceCount;
-    }
-    std::vector<CalVector>& getVectorVertex() {
-        return m_vectorVertex;
     }
     int getVertexCount() const {
         return m_vertexCount;
@@ -80,8 +74,6 @@ private:
     std::vector<float> m_vectorMorphTargetWeight;
     std::vector<float> m_vectorAccumulatedWeight;
     std::vector<float> m_vectorReplacementAttenuation;
-    std::vector<CalVector> m_vectorVertex;
-    std::vector<CalVector> m_vectorNormal;
     std::vector<Face> m_vectorFace;
     std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
     std::vector<float> m_vectorSubMorphTargetGroupAttenuation;
