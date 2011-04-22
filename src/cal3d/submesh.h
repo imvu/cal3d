@@ -25,26 +25,11 @@ struct MorphIdAndWeight {
 
 class CAL3D_API CalSubmesh : public Cal::UserDataHolder {
 public:
-    typedef CalCoreSubmesh::Face Face;
-
     const CalCoreSubmeshPtr coreSubmesh;
     CalCoreMaterialPtr material;
 
     CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
 
-    const std::vector<Face>& getVectorFace() const {
-        return m_vectorFace;
-    }
-
-    int getFaceCount() const {
-        return m_faceCount;
-    }
-    int getVertexCount() const {
-        return m_vertexCount;
-    }
-private:
-    void setLodLevel(float lodLevel);
-public:
     std::vector<float>& getVectorWeight();
     float getMorphTargetWeight(int blendId) const;
     void setMorphTargetWeight(std::string const& morphName, float weight);
@@ -74,9 +59,6 @@ private:
     std::vector<float> m_vectorMorphTargetWeight;
     std::vector<float> m_vectorAccumulatedWeight;
     std::vector<float> m_vectorReplacementAttenuation;
-    std::vector<Face> m_vectorFace;
     std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
     std::vector<float> m_vectorSubMorphTargetGroupAttenuation;
-    int m_vertexCount;
-    int m_faceCount;
 };

@@ -158,10 +158,7 @@ TEST(is_not_static_if_has_morph_targets) {
 
 TEST(CalSubmesh_getFaces_succeeds_if_face_list_is_empty) {
     boost::shared_ptr<CalCoreSubmesh> csm(new CalCoreSubmesh(0, 0, 0));
-
-    CalSubmesh sm(csm);
-
-    sm.getVectorFace();
+    csm->getVectorFace();
 }
 
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {

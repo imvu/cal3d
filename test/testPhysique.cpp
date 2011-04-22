@@ -334,7 +334,7 @@ TEST(single_morph_target) {
     bt.rowy.set(0, 1, 0, 0);
     bt.rowz.set(0, 0, 1, 0);
 
-    CAL3D_ALIGN_HEAD(16) CalVector4 output[2] CAL3D_ALIGN_TAIL(16);
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[3 * 2] CAL3D_ALIGN_TAIL(16);
 
     CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
 
@@ -390,7 +390,7 @@ TEST(two_morph_targets) {
     bt.rowy.set(0, 1, 0, 0);
     bt.rowz.set(0, 0, 1, 0);
 
-    CAL3D_ALIGN_HEAD(16) CalVector4 output[2] CAL3D_ALIGN_TAIL(16);
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[3 * 2] CAL3D_ALIGN_TAIL(16);
 
     CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
 

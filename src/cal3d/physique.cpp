@@ -424,8 +424,9 @@ void CalPhysique::calculateVerticesAndNormals(
     const CalSubmesh* pSubmesh,
     float* pVertexBuffer
 ) {
-    const int vertexCount = pSubmesh->getVertexCount();
-    const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(pSubmesh->coreSubmesh->getVectorVertex());
+    CalCoreSubmesh* coreSubmesh = pSubmesh->coreSubmesh.get();
+    const int vertexCount = coreSubmesh->getVertexCount();
+    const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(coreSubmesh->getVectorVertex());
 
     if (pSubmesh->getMorphTargetWeightCount() && pSubmesh->getBaseWeight() != 1.0f) {
         if (vertexCount > MorphSubmeshCache.size()) {
@@ -433,7 +434,7 @@ void CalPhysique::calculateVerticesAndNormals(
         }
 
         // get the sub morph target vector from the core sub mesh
-        CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = pSubmesh->coreSubmesh->getVectorCoreSubMorphTarget();
+        CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = coreSubmesh->getVectorCoreSubMorphTarget();
         int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
         EnlargeMiawCacheAsNecessary(morphTargetCount);
         unsigned int numMiaws;
@@ -482,6 +483,6 @@ void CalPhysique::calculateVerticesAndNormals(
         boneTransforms,
         vertexCount,
         vertices,
-        Cal::pointerFromVector(pSubmesh->coreSubmesh->getInfluences()),
+        Cal::pointerFromVector(coreSubmesh->getInfluences()),
         reinterpret_cast<CalVector4*>(pVertexBuffer));
 }

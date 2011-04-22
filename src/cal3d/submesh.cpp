@@ -30,12 +30,6 @@ CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
     : coreSubmesh(pCoreSubmesh) {
     assert(pCoreSubmesh);
 
-    // reserve memory for the face vector
-    m_vectorFace.resize(coreSubmesh->getFaceCount());
-
-    // set the initial lod level
-    setLodLevel(1.0f);
-
     //Setting the morph target weights
     m_vectorMorphTargetWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
     m_vectorAccumulatedWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
@@ -53,69 +47,6 @@ CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
         m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
     }
 }
-
-/*****************************************************************************/
-/** Sets the LOD level.
-  *
-  * This function sets the LOD level of the submesh instance.
-  *
-  * @param lodLevel The LOD level in the range [0.0, 1.0].
-  *****************************************************************************/
-
-void CalSubmesh::setLodLevel(float lodLevel) {
-    // clamp the lod level to [0.0, 1.0]
-    if (lodLevel < 0.0f) {
-        lodLevel = 0.0f;
-    }
-    if (lodLevel > 1.0f) {
-        lodLevel = 1.0f;
-    }
-
-    // get the lod count of the core submesh
-    int lodCount;
-    lodCount = coreSubmesh->getLodCount();
-
-    // calculate the target lod count
-    lodCount = (int)((1.0f - lodLevel) * lodCount);
-
-    // calculate the new number of vertices
-    m_vertexCount = coreSubmesh->getVertexCount() - lodCount;
-
-    const std::vector<CalCoreSubmesh::Face>& vectorFace = coreSubmesh->getVectorFace();
-    const CalCoreSubmesh::VectorVertex& vectorVertex = coreSubmesh->getVectorVertex();
-    std::vector<CalCoreSubmesh::LodData>& lodData = coreSubmesh->getLodData();
-
-    // calculate the new number of faces
-    m_faceCount = vectorFace.size();
-
-    for (int vertexId = vectorVertex.size() - 1; vertexId >= m_vertexCount; vertexId--) {
-        m_faceCount -= lodData[vertexId].faceCollapseCount;
-    }
-
-    // fill the face vector with the collapsed vertex ids
-    for (int faceId = 0; faceId < m_faceCount; ++faceId) {
-        for (int vertexId = 0; vertexId < 3; ++vertexId) {
-            // get the vertex id
-            CalIndex collapsedVertexId;
-            collapsedVertexId = vectorFace[faceId].vertexId[vertexId];
-
-            // collapse the vertex id until it fits into the current lod level
-            while (collapsedVertexId >= m_vertexCount) {
-                collapsedVertexId = lodData[collapsedVertexId].collapseId;
-            }
-
-            // store the collapse vertex id in the submesh face vector
-            m_vectorFace[faceId].vertexId[vertexId] = collapsedVertexId;
-        }
-    }
-}
-
-/*****************************************************************************/
-/** Gets weight of a morph target with the given id.
-  *
-  * @param blendId The morph target id.
-  * @return The weight of the morph target.
-  *****************************************************************************/
 
 float CalSubmesh::getMorphTargetWeight(int blendId) const {
     return m_vectorMorphTargetWeight[blendId];
