@@ -330,13 +330,6 @@ CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc) {
     float shininess;
     dataSrc.readFloat(shininess);
 
-    // check if an error happened
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        delete pCoreMaterial;
-        return 0;
-    }
-
     // read the number of maps
     int mapCount;
     if (!dataSrc.readInteger(mapCount) || (mapCount < 0)) {
@@ -354,12 +347,6 @@ CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalDataSource& dataSrc) {
             dataSrc.readString(map.type);
         } else {
             map.type = "";
-        }
-
-        if (!dataSrc.ok()) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-            delete pCoreMaterial;
-            return 0;
         }
 
         pCoreMaterial->maps.push_back(map);
@@ -515,11 +502,6 @@ CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalDataSource& dataSrc) {
 CalCoreBone* CalLoader::loadCoreBones(CalDataSource& dataSrc, int version) {
     bool hasNodeLights = (version >= Cal::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
 
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
-
     // read the name of the bone
     std::string strName;
     dataSrc.readString(strName);
@@ -566,12 +548,6 @@ CalCoreBone* CalLoader::loadCoreBones(CalDataSource& dataSrc, int version) {
     CalQuaternion rot(rx, ry, rz, rw);
     CalQuaternion rotbs(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
     CalVector trans(tx, ty, tz);
-
-    // check if an error happened
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
 
     // allocate a new core bone instance
     CalCoreBone* pCoreBone = new CalCoreBone(strName, parentId);
@@ -623,10 +599,6 @@ CalCoreKeyframe* CalLoader::loadCoreKeyframe(
     CalCoreKeyframe* prevCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
     bool useAnimationCompression) {
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
 
     float time;
     float tx, ty, tz;
@@ -695,12 +667,6 @@ CalCoreKeyframe* CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(rw);
     }
 
-
-    // check if an error happened
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
 
     // allocate a new core keyframe instance
     CalCoreKeyframe* pCoreKeyframe;
@@ -894,11 +860,6 @@ CalLoader::readCompressedKeyframe(
  *****************************************************************************/
 
 CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
-
     // get the time of the morphKeyframe
     float time;
     dataSrc.readFloat(time);
@@ -906,12 +867,6 @@ CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
     // get the translation of the bone
     float weight;
     dataSrc.readFloat(weight);
-
-    // check if an error happened
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
 
     // allocate a new core morphKeyframe instance
     CalCoreMorphKeyframe* pCoreMorphKeyframe;
@@ -942,11 +897,6 @@ CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalDataSource& dataSrc) {
  *****************************************************************************/
 
 CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version) {
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return CalCoreSubmeshPtr();
-    }
-
     bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
     bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
 
@@ -974,12 +924,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
     int morphCount = 0;
     if (hasMorphTargetsInMorphFiles) {
         dataSrc.readInteger(morphCount);
-    }
-
-    // check if an error happened
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return CalCoreSubmeshPtr();
     }
 
     CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
@@ -1015,12 +959,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
         dataSrc.readInteger(lodData.collapseId);
         dataSrc.readInteger(lodData.faceCollapseCount);
 
-        // check if an error happened
-        if (!dataSrc.ok()) {
-            dataSrc.setError();
-            return CalCoreSubmeshPtr();
-        }
-
         // load all texture coordinates of the vertex
         int textureCoordinateId;
         for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
@@ -1029,12 +967,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
             // load data of the influence
             dataSrc.readFloat(textureCoordinate.u);
             dataSrc.readFloat(textureCoordinate.v);
-
-            // check if an error happened
-            if (!dataSrc.ok()) {
-                dataSrc.setError();
-                return CalCoreSubmeshPtr();
-            }
 
             // set texture coordinate in the core submesh instance
             pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinateId, textureCoordinate);
@@ -1053,11 +985,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
         for (int influenceId = 0; influenceId < influenceCount; ++influenceId) {
             dataSrc.readInteger(influences[influenceId].boneId),
                                 dataSrc.readFloat(influences[influenceId].weight);
-
-            if (!dataSrc.ok()) {
-                dataSrc.setError();
-                return CalCoreSubmeshPtr();
-            }
         }
 
         // set vertex in the core submesh instance
@@ -1068,12 +995,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
             float f;
             // load data of the physical property
             dataSrc.readFloat(f);
-
-            // check if an error happened
-            if (!dataSrc.ok()) {
-                dataSrc.setError();
-                return CalCoreSubmeshPtr();
-            }
         }
     }
 
@@ -1087,12 +1008,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
         dataSrc.readInteger(i);
         dataSrc.readFloat(f);
         dataSrc.readFloat(f);
-
-        // check if an error happened
-        if (!dataSrc.ok()) {
-            dataSrc.setError();
-            return CalCoreSubmeshPtr();
-        }
     }
 
     for (int morphId = 0; morphId < morphCount; morphId++) {
@@ -1128,10 +1043,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
 
                     Vertex.textureCoords.push_back(textureCoordinate);
                 }
-                if (! dataSrc.ok()) {
-                    dataSrc.setError();
-                    return CalCoreSubmeshPtr();
-                }
 
                 morphTarget->setBlendVertex(blendVertI, Vertex);
                 dataSrc.readInteger(blendVertId);
@@ -1162,12 +1073,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalDataSource& dataSrc, int version
         face.vertexId[1] = tmp[1];
         face.vertexId[2] = tmp[2];
 
-        // check if an error happened
-        if (!dataSrc.ok()) {
-            dataSrc.setError();
-            return CalCoreSubmeshPtr();
-        }
-
         // flip if needed
         if (flipModel) {
             tmp[3] = face.vertexId[1];
@@ -1188,11 +1093,6 @@ CalCoreTrack* CalLoader::loadCoreTrack(
     int version,
     bool useAnimationCompression
 ) {
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
-
     // Read the bone id.
     int coreBoneId;
     bool translationRequired = true;
@@ -1287,11 +1187,6 @@ CalCoreTrack* CalLoader::loadCoreTrack(
  *****************************************************************************/
 
 CalCoreMorphTrack* CalLoader::loadCoreMorphTrack(CalDataSource& dataSrc) {
-    if (!dataSrc.ok()) {
-        dataSrc.setError();
-        return 0;
-    }
-
     // read the morph name
     std::string morphName;
     if (!dataSrc.readString(morphName)) {

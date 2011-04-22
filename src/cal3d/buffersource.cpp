@@ -30,7 +30,7 @@ void CalBufferSource::setError() const {
 
 bool CalBufferSource::readBytes(void* pBuffer, int length) {
     //Check that the buffer and the target are usable
-    if (!ok() || (pBuffer == NULL)) {
+    if (pBuffer == NULL) {
         return false;
     }
     if (mOffset + length > mLength) {
@@ -39,15 +39,11 @@ bool CalBufferSource::readBytes(void* pBuffer, int length) {
 
     bool result = CalPlatform::readBytes(((char*)mInputBuffer + mOffset), pBuffer, length);
     mOffset += length;
-
     return result;
 }
 
 bool CalBufferSource::readFloat(float& value) {
     //Check that the buffer is usable
-    if (!ok()) {
-        return false;
-    }
     if (mOffset + 4 > mLength) {
         return false;
     }
@@ -59,10 +55,6 @@ bool CalBufferSource::readFloat(float& value) {
 }
 
 bool CalBufferSource::readInteger(int& value) {
-    //Check that the buffer is usable
-    if (!ok()) {
-        return false;
-    }
     if (mOffset + 4 > mLength) {
         return false;
     }
@@ -74,11 +66,6 @@ bool CalBufferSource::readInteger(int& value) {
 }
 
 bool CalBufferSource::readString(std::string& strValue) {
-    //Check that the buffer is usable
-    if (!ok()) {
-        return false;
-    }
-
     bool result = CalPlatform::readString(((char*)mInputBuffer + mOffset), strValue);
 
     mOffset += (strValue.length() + 4 + 1); // +1 is for Null-terminator
