@@ -15,26 +15,27 @@
 #include <string.h>
 #include "cal3d/coresubmorphtarget.h"
 
-CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& name)
-    : m_morphTargetName(name)
-    , m_morphTargetType(CalMorphTargetTypeAdditive) {
-    // If the name ends in ".Additive" or ".Exclusive" or ".Clamped"
-    // or ".Average" then set the type of the morph target.  By
-    // default it is Additive.
-    char const* s2 = name.c_str();
-    char const* dot = strrchr(s2, '.');
+static CalMorphTargetType calculateType(const char* s2) {
+    const char* dot = strrchr(s2, '.');
     if (dot) {
         dot++;
         if (cal3d_stricmp(dot, "exclusive") == 0) {
-            m_morphTargetType = CalMorphTargetTypeExclusive;
+            return CalMorphTargetTypeExclusive;
         } else if (cal3d_stricmp(dot, "additive") == 0) {
-            m_morphTargetType = CalMorphTargetTypeAdditive;
+            return CalMorphTargetTypeAdditive;
         } else if (cal3d_stricmp(dot, "clamped") == 0) {
-            m_morphTargetType = CalMorphTargetTypeClamped;
+            return CalMorphTargetTypeClamped;
         } else if (cal3d_stricmp(dot, "average") == 0) {
-            m_morphTargetType = CalMorphTargetTypeAverage;
+            return CalMorphTargetTypeAverage;
         }
     }
+    return CalMorphTargetTypeAdditive;
+}
+
+CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& n)
+    : name(n)
+    , morphTargetType(calculateType(n.c_str()))
+{
 }
 
 CalCoreSubMorphTarget::~CalCoreSubMorphTarget() {
@@ -49,20 +50,8 @@ unsigned int CalCoreSubMorphTarget::size() const {
 
     // Assume single texture coordinate pair.
     r += (sizeof(BlendVertex) + sizeof(CalCoreSubmesh::TextureCoordinate)) * m_vectorBlendVertex.size();
-    r += m_morphTargetName.size();
+    r += name.size();
     return r;
-}
-
-
-
-const std::vector<CalCoreSubMorphTarget::BlendVertex*>& CalCoreSubMorphTarget::getVectorBlendVertex() const {
-    return m_vectorBlendVertex;
-}
-
-
-
-int CalCoreSubMorphTarget::getBlendVertexCount() const {
-    return m_vectorBlendVertex.size();
 }
 
 void CalCoreSubMorphTarget::reserve(int blendVertexCount) {
@@ -72,8 +61,6 @@ void CalCoreSubMorphTarget::reserve(int blendVertexCount) {
         m_vectorBlendVertex[i] = NULL;
     }
 }
-
-
 
 bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& blendVertex) {
     if ((blendVertexId < 0) || (blendVertexId >= (int)m_vectorBlendVertex.size())) {
@@ -92,10 +79,4 @@ bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex&
     }
 
     return true;
-}
-
-
-CalMorphTargetType
-CalCoreSubMorphTarget::morphTargetType() {
-    return m_morphTargetType;
 }

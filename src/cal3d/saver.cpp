@@ -711,7 +711,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
 
     for (int morphId = 0; morphId < morphCount; morphId++) {
         boost::shared_ptr<CalCoreSubMorphTarget> morphTarget = vectorMorphs[morphId];
-        CalPlatform::writeString(os, morphTarget->name());
+        CalPlatform::writeString(os, morphTarget->name);
         int morphVertCount = 0;
 
         for (int blendId = 0; blendId < morphTarget->getBlendVertexCount(); ++blendId) {
@@ -1354,7 +1354,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
             str << morphId;
 
             morph.SetAttribute("MORPHID", str.str());
-            morph.SetAttribute("NAME", morphTarget->name());
+            morph.SetAttribute("NAME", morphTarget->name);
 
             int morphVertCount = 0;
             for (int blendId = 0; blendId < morphTarget->getBlendVertexCount(); ++blendId) {
