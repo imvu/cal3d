@@ -184,25 +184,9 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
 }
 
-/*****************************************************************************/
-/** Adds a core sub morph target.
-  *
-  * This function adds a core sub morph target to the core sub mesh instance.
-  *
-  * @param pCoreSubMorphTarget A pointer to the core sub morph target that should be added.
-  *
-  * @return One of the following values:
-  *         \li the assigned sub morph target \b ID of the added core sub morph target
-  *         \li \b -1 if an error happend
-  *****************************************************************************/
-
 int CalCoreSubmesh::addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget) {
-    // get next sub morph target id
-    int subMorphTargetId;
-    subMorphTargetId = m_vectorCoreSubMorphTarget.size();
-
+    int subMorphTargetId = m_vectorCoreSubMorphTarget.size();
     m_vectorCoreSubMorphTarget.push_back(pCoreSubMorphTarget);
-
     return subMorphTargetId;
 }
 

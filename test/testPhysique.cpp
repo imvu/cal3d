@@ -1,6 +1,7 @@
 #include "TestPrologue.h"
 #include <cal3d/renderer.h>
 #include <cal3d/bone.h>
+#include <cal3d/coresubmorphtarget.h>
 #include <cal3d/model.h>
 #include <cal3d/submesh.h>
 #include <cal3d/skeleton.h>
@@ -240,3 +241,62 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
 APPLY_SKIN_FIXTURES(skin_10000_vertices_1_influence_cycle_count);
+
+static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
+    CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(N, 0, 0));
+    for (int k = 0; k < N; ++k) {
+        CalCoreSubmesh::Vertex v;
+        v.position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
+        v.normal.setAsVector(CalVector(0.0f, 0.0f, 1.0f));
+        std::vector<CalCoreSubmesh::Influence> inf(1);
+        inf[0].boneId = 0;
+        inf[0].weight = 1.0f;
+        inf[0].lastInfluenceForThisVertex = true;
+        coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    }
+    return coreSubmesh;
+}
+
+static CalCoreSubMorphTargetPtr djinnMorphTarget(int N, const char* name) {
+    CalCoreSubMorphTargetPtr morphTarget(new CalCoreSubMorphTarget(name));
+    morphTarget->reserve(N);
+    for (int k = 0; k < N; ++k) {
+        CalCoreSubMorphTarget::BlendVertex bv;
+        bv.position = CalVector(1.0f, 2.0f, 3.0f);
+        bv.normal = CalVector(0.0f, 0.0f, 1.0f);
+        morphTarget->setBlendVertex(k, bv);
+    }
+    return morphTarget;
+}
+
+TEST(morph_targets_performance_test) {
+    const int N = 10000;
+    const int TrialCount = 10;
+
+    CalCoreSubmeshPtr coreSubmesh(djinnCoreSubmesh(N));
+
+    coreSubmesh->addCoreSubMorphTarget(djinnMorphTarget(N, "foo1"));
+    coreSubmesh->addCoreSubMorphTarget(djinnMorphTarget(N, "foo2"));
+
+    CalSubmesh submesh(coreSubmesh);
+    submesh.setMorphTargetWeight("foo1", 0.25f);
+    submesh.setMorphTargetWeight("foo2", 0.25f);
+
+    BoneTransform bt;
+    memset(&bt, 0, sizeof(bt));
+
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[N * 2] CAL3D_ALIGN_TAIL(16);
+
+    cal3d_int64 min = 99999999999999LL;
+    for (int t = 0; t < TrialCount; ++t) {
+        cal3d_int64 start = __rdtsc();
+        CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
+        cal3d_int64 end = __rdtsc();
+        cal3d_int64 elapsed = end - start;
+        if (elapsed < min) {
+            min = elapsed;
+        }
+    }
+
+    printf("Cycles per vertex: %d\n", (int)(min / N));
+}

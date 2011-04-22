@@ -67,7 +67,6 @@ int CalCoreSubMorphTarget::getBlendVertexCount() const {
 
 void CalCoreSubMorphTarget::reserve(int blendVertexCount) {
     // reserve the space needed in all the vectors
-    m_vectorBlendVertex.reserve(blendVertexCount);
     m_vectorBlendVertex.resize(blendVertexCount);
     for (int i = 0; i < m_vectorBlendVertex.size(); i++) {
         m_vectorBlendVertex[i] = NULL;

@@ -50,3 +50,4 @@ private:
     std::string m_morphTargetName;
     CalMorphTargetType m_morphTargetType;
 };
+typedef boost::shared_ptr<CalCoreSubMorphTarget> CalCoreSubMorphTargetPtr;
