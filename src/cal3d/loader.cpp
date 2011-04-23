@@ -1023,19 +1023,10 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
             CalCoreSubMorphTarget::BlendVertex Vertex;
             Vertex.textureCoords.reserve(textureCoordinateCount);
 
-            bool copyOrig;
-
-            if (blendVertI < blendVertId) {
-                copyOrig = true;
-            } else {
-                copyOrig = false;
-            }
-
-            if (!copyOrig) {
+            if (blendVertI >= blendVertId) {
                 CalVectorFromDataSrc(dataSrc, &Vertex.position);
                 CalVectorFromDataSrc(dataSrc, &Vertex.normal);
-                int textureCoordinateId;
-                for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
+                for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
                     CalCoreSubmesh::TextureCoordinate textureCoordinate;
                     dataSrc.readFloat(textureCoordinate.u);
                     dataSrc.readFloat(textureCoordinate.v);
@@ -1050,34 +1041,21 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
     }
 
-    // load all faces
-    bool flipModel = false;
     for (int faceId = 0; faceId < faceCount; ++faceId) {
         CalCoreSubmesh::Face face;
 
-        // load data of the face
-
-        int tmp[4];
+        int tmp[3];
         dataSrc.readInteger(tmp[0]);
         dataSrc.readInteger(tmp[1]);
         dataSrc.readInteger(tmp[2]);
 
-        if (sizeof(CalIndex) == 2) {
-            if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-                return CalCoreSubmeshPtr();
-            }
+        if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
+            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
+            return CalCoreSubmeshPtr();
         }
         face.vertexId[0] = tmp[0];
         face.vertexId[1] = tmp[1];
         face.vertexId[2] = tmp[2];
-
-        // flip if needed
-        if (flipModel) {
-            tmp[3] = face.vertexId[1];
-            face.vertexId[1] = face.vertexId[2];
-            face.vertexId[2] = tmp[3];
-        }
 
         // set face in the core submesh instance
         pCoreSubmesh->setFace(faceId, face);
