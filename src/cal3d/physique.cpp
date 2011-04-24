@@ -434,7 +434,6 @@ void CalPhysique::calculateVerticesAndNormals(
         }
 
         // get the sub morph target vector from the core sub mesh
-        CalCoreSubmesh::CoreSubMorphTargetVector& vectorSubMorphTarget = coreSubmesh->getVectorCoreSubMorphTarget();
         int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
         EnlargeMiawCacheAsNecessary(morphTargetCount);
         unsigned int numMiaws;
@@ -451,9 +450,7 @@ void CalPhysique::calculateVerticesAndNormals(
             CalVector normal;
             for (unsigned i = 0; i < numMiaws; i++) {
                 MorphIdAndWeight& miaw = MiawCache[ i ];
-                int morphTargetId = miaw.morphId_;
-                CalCoreSubMorphTarget::BlendVertex const* blendVertex =
-                    vectorSubMorphTarget[morphTargetId]->getBlendVertex(vertexId);
+                const CalCoreSubMorphTarget::BlendVertex* blendVertex = miaw.blendVertices[vertexId];
                 float currentWeight = miaw.weight_;
                 if (blendVertex) {
                     position.x += currentWeight * blendVertex->position.x;

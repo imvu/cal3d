@@ -17,11 +17,7 @@
 
 typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
-// Structure used to return an array of the morphs that have non-zero weights.
-struct MorphIdAndWeight {
-    int morphId_;
-    float weight_;
-};
+struct MorphIdAndWeight;
 
 class CAL3D_API CalSubmesh : public Cal::UserDataHolder {
 public:

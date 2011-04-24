@@ -67,7 +67,7 @@ void CalSubmesh::getMorphIdAndWeightArray(
     for (i = 0; i < morphTargetCount; i++) {
         float weight = m_vectorMorphTargetWeight[ i ];
         if (weight != 0) {
-            arrayResult[ j ].morphId_ = i;
+            arrayResult[ j ].blendVertices = Cal::pointerFromVector(coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
             arrayResult[ j ].weight_ = weight;
             j++;
             if (j == maxMiaws) {
