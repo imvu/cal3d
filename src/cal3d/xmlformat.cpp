@@ -141,6 +141,40 @@ static inline bool CalVectorFromXml(
 }
 
 
+static inline bool CalVectorFromXml(
+    TiXmlElement* pos,
+    char const* tag,
+    CalVector4* calVec,
+    CalCoreMesh* pCoreMesh,
+    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+) {
+    CalVector v;
+    if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
+        calVec->setAsVector(v);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+static inline bool CalVectorFromXml(
+    TiXmlElement* pos,
+    char const* tag,
+    CalPoint4* calVec,
+    CalCoreMesh* pCoreMesh,
+    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+) {
+    CalVector v;
+    if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
+        calVec->setAsPoint(v);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float* f3, float* f4) {
 #if CAL3D_USE_STL_INSTEAD_OF_SSCANF
     std::stringstream str;

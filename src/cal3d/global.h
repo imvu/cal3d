@@ -74,6 +74,15 @@ private:
     size_t _size;
 };
 
+template<unsigned Alignment>
+struct AlignedMemory {
+    void* operator new(size_t size) {
+        return CAL3D_ALIGNED_MALLOC(size, Alignment);
+    }
+    void operator delete(void* p) {
+        CAL3D_ALIGNED_FREE(p);
+    }
+};
 
 namespace Cal {
 

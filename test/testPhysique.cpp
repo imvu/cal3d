@@ -242,7 +242,6 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
 }
 APPLY_SKIN_FIXTURES(skin_10000_vertices_1_influence_cycle_count);
 
-#if 0
 static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(N, 0, 0));
     for (int k = 0; k < N; ++k) {
@@ -263,8 +262,8 @@ static CalCoreSubMorphTargetPtr djinnMorphTarget(int N, const char* name) {
     morphTarget->reserve(N);
     for (int k = 0; k < N; ++k) {
         CalCoreSubMorphTarget::BlendVertex bv;
-        bv.position = CalVector(1.0f, 2.0f, 3.0f);
-        bv.normal = CalVector(0.0f, 0.0f, 1.0f);
+        bv.position.set(1.0f, 2.0f, 3.0f, 1.0f);
+        bv.normal.set(0.0f, 0.0f, 1.0f, 0.0f);
         morphTarget->setBlendVertex(k, bv);
     }
     return morphTarget;
@@ -336,7 +335,6 @@ TEST(bunch_of_unweighted_morph_targets_performance_test) {
 
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
-#endif
 
 TEST(single_morph_target) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
