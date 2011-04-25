@@ -262,8 +262,8 @@ static CalCoreSubMorphTargetPtr djinnMorphTarget(int N, const char* name) {
     morphTarget->reserve(N);
     for (int k = 0; k < N; ++k) {
         CalCoreSubMorphTarget::BlendVertex bv;
-        bv.position = CalVector(1.0f, 2.0f, 3.0f);
-        bv.normal = CalVector(0.0f, 0.0f, 1.0f);
+        bv.position.set(1.0f, 2.0f, 3.0f, 1.0f);
+        bv.normal.set(0.0f, 0.0f, 1.0f, 0.0f);
         morphTarget->setBlendVertex(k, bv);
     }
     return morphTarget;
