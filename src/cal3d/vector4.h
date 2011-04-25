@@ -97,6 +97,13 @@ struct CalBase4 {
         set(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
+    explicit CalBase4(float f) {
+        x = f;
+        y = f;
+        z = f;
+        w = f;
+    }
+
     void set(float _x, float _y, float _z, float _w) {
         x = _x;
         y = _y;
@@ -129,6 +136,14 @@ inline CalBase4 operator*(float f, const CalBase4& v) {
         f * v.y,
         f * v.z,
         f * v.w);
+}
+
+inline CalBase4 operator*(const CalBase4& lhs, const CalBase4& rhs) {
+    return CalBase4(
+        lhs.x * rhs.x,
+        lhs.y * rhs.y,
+        lhs.z * rhs.z,
+        lhs.w * rhs.w);
 }
 
 inline bool operator==(const CalBase4& lhs, const CalBase4& rhs) {
