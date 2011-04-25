@@ -269,6 +269,7 @@ static CalCoreSubMorphTargetPtr djinnMorphTarget(int N, const char* name) {
     return morphTarget;
 }
 
+#if 0
 TEST(morph_targets_performance_test) {
     const int N = 10000;
     const int TrialCount = 10;
@@ -335,6 +336,7 @@ TEST(bunch_of_unweighted_morph_targets_performance_test) {
 
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
+#endif
 
 TEST(single_morph_target) {
     std::vector<CalCoreSubmesh::Influence> inf(1);

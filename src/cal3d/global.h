@@ -104,18 +104,14 @@ namespace Cal {
         UserData* m_userData;
     };
 
-    // file magic cookies
     const char SKELETON_FILE_MAGIC[4]  = { 'C', 'S', 'F', '\0' };
     const char ANIMATION_FILE_MAGIC[4] = { 'C', 'A', 'F', '\0' };
     const char ANIMATEDMORPH_FILE_MAGIC[4] = { 'C', 'P', 'F', '\0' };
     const char MESH_FILE_MAGIC[4]      = { 'C', 'M', 'F', '\0' };
     const char MATERIAL_FILE_MAGIC[4]  = { 'C', 'R', 'F', '\0' };
 
-
-    // library version
     const int LIBRARY_VERSION = 919;
 
-    // file versions
     const int CURRENT_FILE_VERSION = LIBRARY_VERSION;
     const int EARLIEST_COMPATIBLE_FILE_VERSION = 699;
 
