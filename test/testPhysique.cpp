@@ -242,6 +242,7 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
 }
 APPLY_SKIN_FIXTURES(skin_10000_vertices_1_influence_cycle_count);
 
+#if 0
 static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(N, 0, 0));
     for (int k = 0; k < N; ++k) {
@@ -269,7 +270,6 @@ static CalCoreSubMorphTargetPtr djinnMorphTarget(int N, const char* name) {
     return morphTarget;
 }
 
-#if 0
 TEST(morph_targets_performance_test) {
     const int N = 10000;
     const int TrialCount = 10;
