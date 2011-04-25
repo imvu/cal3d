@@ -16,9 +16,9 @@
 
 class CAL3D_API CalCoreSubMorphTarget {
 public:
-    struct BlendVertex : public AlignedMemory<16> {
-        CalPoint4 position;
-        CalVector4 normal;
+    struct BlendVertex {
+        CalVector position;
+        CalVector normal;
         std::vector<CalCoreSubmesh::TextureCoordinate> textureCoords;
     };
 

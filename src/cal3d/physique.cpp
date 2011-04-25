@@ -445,26 +445,34 @@ void CalPhysique::calculateVerticesAndNormals(
         for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
             const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
 
-            CalVector4 baseWeight(originalBaseWeight);
-            CalPoint4 position;
-            CalVector4 normal;
+            float baseWeight = originalBaseWeight;
+            CalVector position;
+            CalVector normal;
             for (unsigned i = 0; i < numMiaws; i++) {
-                MorphIdAndWeight& miaw = MiawCache[i];
+                MorphIdAndWeight& miaw = MiawCache[ i ];
                 const CalCoreSubMorphTarget::BlendVertex* blendVertex = miaw.blendVertices[vertexId];
-                CalVector4 currentWeight(miaw.weight_);
+                float currentWeight = miaw.weight_;
                 if (blendVertex) {
-                    position += currentWeight * blendVertex->position;
-                    normal   += currentWeight * blendVertex->normal;
+                    position.x += currentWeight * blendVertex->position.x;
+                    position.y += currentWeight * blendVertex->position.y;
+                    position.z += currentWeight * blendVertex->position.z;
+                    normal.x += currentWeight * blendVertex->normal.x;
+                    normal.y += currentWeight * blendVertex->normal.y;
+                    normal.z += currentWeight * blendVertex->normal.z;
                 } else {
                     baseWeight += currentWeight;
                 }
             }
-            position += baseWeight * sourceVertex.position;
-            normal   += baseWeight * sourceVertex.normal;
+            position.x += baseWeight * sourceVertex.position.x;
+            position.y += baseWeight * sourceVertex.position.y;
+            position.z += baseWeight * sourceVertex.position.z;
+            normal.x += baseWeight * sourceVertex.normal.x;
+            normal.y += baseWeight * sourceVertex.normal.y;
+            normal.z += baseWeight * sourceVertex.normal.z;
 
             CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
-            destVertex.position = position;
-            destVertex.normal = normal;
+            destVertex.position.setAsPoint(position);
+            destVertex.normal.setAsVector(normal);
         }
 
         vertices = MorphSubmeshCache.data;

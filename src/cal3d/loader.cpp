@@ -84,25 +84,6 @@ bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector* calVec)
            dataSrc.readFloat(calVec->z);
 }
 
-bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalPoint4* calVec) {
-    CalVector v;
-    if (CalVectorFromDataSrc(dataSrc, &v)) {
-        calVec->setAsPoint(v);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector4* calVec) {
-    CalVector v;
-    if (CalVectorFromDataSrc(dataSrc, &v)) {
-        calVec->setAsVector(v);
-        return true;
-    } else {
-        return false;
-    }
-}
 
 bool
 TranslationWritten(CalCoreKeyframe* lastCoreKeyframe, bool translationRequired, bool translationIsDynamic) {
