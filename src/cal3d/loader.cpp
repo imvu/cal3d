@@ -410,16 +410,10 @@ CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
     }
 
     // allocate a new core mesh instance
-    CalCoreMesh* pCoreMesh;
-    pCoreMesh = new CalCoreMesh();
-    if (pCoreMesh == 0) {
-        CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-        return 0;
-    }
+    CalCoreMesh* pCoreMesh = new CalCoreMesh;
 
     // load all core submeshes
-    int submeshId;
-    for (submeshId = 0; submeshId < submeshCount; ++submeshId) {
+    for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
         // load the core submesh
         boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(loadCoreSubmesh(dataSrc, version));
         if (!pCoreSubmesh) {
@@ -903,18 +897,6 @@ CalCoreMorphKeyframe* CalLoader::loadCoreMorphKeyframe(CalBufferSource& dataSrc)
 }
 
 
-/*****************************************************************************/
-/** Loads a core submesh instance.
- *
- * This function loads a core submesh instance from a data source.
- *
- * @param dataSrc The data source to load the core submesh instance from.
- *
- * @return One of the following values:
- *         \li a pointer to the core submesh
- *         \li \b 0 if an error happened
- *****************************************************************************/
-
 CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int version) {
     bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
     bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
@@ -978,9 +960,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         dataSrc.readInteger(lodData.collapseId);
         dataSrc.readInteger(lodData.faceCollapseCount);
 
-        // load all texture coordinates of the vertex
-        int textureCoordinateId;
-        for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
+        for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
             CalCoreSubmesh::TextureCoordinate textureCoordinate;
 
             // load data of the influence
@@ -1001,8 +981,8 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         allocateVectorWhereSizeIsGuarded(influenceCount, influences, __LINE__);
 
         for (int influenceId = 0; influenceId < influenceCount; ++influenceId) {
-            dataSrc.readInteger(influences[influenceId].boneId),
-                                dataSrc.readFloat(influences[influenceId].weight);
+            dataSrc.readInteger(influences[influenceId].boneId);
+            dataSrc.readFloat(influences[influenceId].weight);
         }
 
         // set vertex in the core submesh instance
@@ -1049,7 +1029,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
                     CalCoreSubmesh::TextureCoordinate textureCoordinate;
                     dataSrc.readFloat(textureCoordinate.u);
                     dataSrc.readFloat(textureCoordinate.v);
-
                     Vertex.textureCoords.push_back(textureCoordinate);
                 }
 

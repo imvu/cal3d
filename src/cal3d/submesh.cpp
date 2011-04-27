@@ -78,7 +78,6 @@ void CalSubmesh::getMorphIdAndWeightArray(
     * numMiawsResult = j;
 }
 
-
 /*****************************************************************************/
 /** Sets weight of a morph target with the given name
   *

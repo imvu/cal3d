@@ -712,7 +712,6 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     for (int morphId = 0; morphId < morphCount; morphId++) {
         boost::shared_ptr<CalCoreSubMorphTarget> morphTarget = vectorMorphs[morphId];
         CalPlatform::writeString(os, morphTarget->name);
-        int morphVertCount = 0;
 
         for (int blendId = 0; blendId < morphTarget->getBlendVertexCount(); ++blendId) {
             CalCoreSubMorphTarget::BlendVertex const* bv = morphTarget->getBlendVertex(blendId);
@@ -720,29 +719,12 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
                 continue;
             }
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
-            static float differenceTolerance = 0.01f;
+            const float differenceTolerance = 0.01f;
             CalVector positionDiff = bv->position.asCalVector() - Vertex.position.asCalVector();
-            float positionDiffLength = positionDiff.length();
-
-            bool skip = positionDiffLength < differenceTolerance;
-
-            std::vector<CalCoreSubmesh::TextureCoordinate> const& textureCoords = bv->textureCoords;
-            size_t tcI;
-            for (tcI = 0; tcI < textureCoords.size(); tcI++) {
-                CalCoreSubmesh::TextureCoordinate const& tc1 = textureCoords[tcI];
-                CalCoreSubmesh::TextureCoordinate const& tc2 = vectorvectorTextureCoordinate[tcI][blendId];
-                if (fabs(tc1.u - tc2.u) > differenceTolerance ||
-                        fabs(tc1.v - tc2.v) > differenceTolerance) {
-                    skip = false;
-                }
-            }
-
-
-            if (skip) {
+            if (positionDiff.length() < differenceTolerance) {
                 continue;
             }
 
-            morphVertCount++;
             CalPlatform::writeInteger(os, blendId);
             CalPlatform::writeFloat(os, bv->position.x);
             CalPlatform::writeFloat(os, bv->position.y);
@@ -750,27 +732,24 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
             CalPlatform::writeFloat(os, bv->normal.x);
             CalPlatform::writeFloat(os, bv->normal.y);
             CalPlatform::writeFloat(os, bv->normal.z);
-            for (tcI = 0; tcI < textureCoords.size(); tcI++) {
+
+            std::vector<CalCoreSubmesh::TextureCoordinate> const& textureCoords = bv->textureCoords;
+            for (size_t tcI = 0; tcI < textureCoords.size(); tcI++) {
                 CalCoreSubmesh::TextureCoordinate const& tc1 = textureCoords[tcI];
                 CalPlatform::writeFloat(os, tc1.u);
                 CalPlatform::writeFloat(os, tc1.v);
             }
         }
-        CalPlatform::writeInteger(os, (int)vectorVertex.size() + 1);
-
+        CalPlatform::writeInteger(os, vectorVertex.size() + 1);
     }
 
-    // write all faces
-    int faceId;
-    for (faceId = 0; faceId < (int)vectorFace.size(); ++faceId) {
+    for (int faceId = 0; faceId < (int)vectorFace.size(); ++faceId) {
         const CalCoreSubmesh::Face& face = vectorFace[faceId];
 
-        // write the face data
         CalPlatform::writeInteger(os, face.vertexId[0]);
         CalPlatform::writeInteger(os, face.vertexId[1]);
         CalPlatform::writeInteger(os, face.vertexId[2]);
 
-        // check if an error happend
         if (!os) {
             CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
             return false;
