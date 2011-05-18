@@ -106,8 +106,7 @@ static bool keyframeEliminatable(
     float blendFactor = (p->time - prev->time) / (next->time - prev->time);
 
     // blend between the two keyframes
-    CalVector translation = prev->translation;
-    translation.blend(blendFactor, next->translation);
+    CalVector translation = lerp(blendFactor, prev->translation, next->translation);
     CalQuaternion rotation = prev->rotation;
     rotation.blend(blendFactor, next->rotation);
     return Near(translation, rotation, p->translation, p->rotation, transTolerance, rotTolerance);
@@ -289,8 +288,7 @@ void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
         blendFactor = (time - pCoreKeyframeBefore.time) / (pCoreKeyframeAfter.time - pCoreKeyframeBefore.time);
     }
 
-    translation = pCoreKeyframeBefore.translation;
-    translation.blend(blendFactor, pCoreKeyframeAfter.translation);
+    translation = lerp(blendFactor, pCoreKeyframeBefore.translation, pCoreKeyframeAfter.translation);
 
     rotation = pCoreKeyframeBefore.rotation;
     rotation.blend(blendFactor, pCoreKeyframeAfter.rotation);

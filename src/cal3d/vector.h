@@ -77,8 +77,6 @@ public:
         return (close(x, v.x) && close(y, v.y) && close(z, v.z));
     }
 
-    void blend(float d, const CalVector& v);
-
     void clear() {
         x = 0.0f;
         y = 0.0f;
@@ -131,6 +129,6 @@ inline CalVector cross(const CalVector& a, const CalVector& u) {
     return CalVector(a.y * u.z - a.z * u.y, a.z * u.x - a.x * u.z, a.x * u.y - a.y * u.x);
 }
 
-inline void CalVector::blend(float d, const CalVector& v) {
-    (*this) = (1.0f - d) * (*this) + d * v;
+inline CalVector lerp(float f, CalVector left, CalVector right) {
+    return (1 - f) * left + f * right;
 }
