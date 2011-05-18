@@ -144,7 +144,7 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
         assert(factor <= 1.0f);
         factor = 1.0f - m_firstBlendScale * (1.0f - factor);
         m_translationAbsolute = lerp(factor, m_translationAbsolute, translation);
-        m_rotationAbsolute.blend(factor, rotation);
+        m_rotationAbsolute = slerp(factor, m_rotationAbsolute, rotation);
         m_accumulatedWeightAbsolute += attenuatedWeight;
         m_firstBlendScale = 1.0;
     }
@@ -420,11 +420,10 @@ void CalBone::lockState() {
             m_accumulatedWeight = m_accumulatedWeightAbsolute;
         } else {
             // it is not the first state, so blend all attributes
-            float factor;
-            factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
+            float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
 
             m_translation = lerp(factor, m_translation, m_translationAbsolute);
-            m_rotation.blend(factor, m_rotationAbsolute);
+            m_rotation = slerp(factor, m_rotation, m_rotationAbsolute);
 
             m_accumulatedWeight += m_accumulatedWeightAbsolute;
         }

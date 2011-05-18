@@ -65,37 +65,6 @@ public:
         w =          - qx * v.x - qy * v.y - qz * v.z;
     }
 
-    inline void blend(float d, const CalQuaternion& q) {
-        float norm = x * q.x + y * q.y + z * q.z + w * q.w;
-
-        bool bFlip = false;
-
-        if (norm < 0.0f) {
-            norm = -norm;
-            bFlip = true;
-        }
-
-        float inv_d;
-        if (1.0f - norm < 0.000001f) {
-            inv_d = 1.0f - d;
-        } else {
-            float theta = acos(norm);
-            float s = 1.0f / sin(theta);
-
-            inv_d = sin((1.0f - d) * theta) * s;
-            d = sin(d * theta) * s;
-        }
-
-        if (bFlip) {
-            d = -d;
-        }
-
-        x = inv_d * x + d * q.x;
-        y = inv_d * y + d * q.y;
-        z = inv_d * z + d * q.z;
-        w = inv_d * w + d * q.w;
-    }
-
     inline void clear() {
         x = 0.0f;
         y = 0.0f;
@@ -160,4 +129,40 @@ inline bool operator==(const CalQuaternion& lhs, const CalQuaternion& rhs) {
            && close(lhs.y, rhs.y)
            && close(lhs.z, rhs.z)
            && close(lhs.w, rhs.w);
+}
+
+inline float dot(const CalQuaternion& left, const CalQuaternion& right) {
+    return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+}
+
+inline CalQuaternion slerp(float d, const CalQuaternion& left, const CalQuaternion& right) {
+    float norm = dot(left, right);
+
+    bool bFlip = false;
+
+    if (norm < 0.0f) {
+        norm = -norm;
+        bFlip = true;
+    }
+
+    float inv_d;
+    if (1.0f - norm < 0.000001f) {
+        inv_d = 1.0f - d;
+    } else {
+        float theta = acos(norm);
+        float s = 1.0f / sin(theta);
+
+        inv_d = sin((1.0f - d) * theta) * s;
+        d = sin(d * theta) * s;
+    }
+
+    if (bFlip) {
+        d = -d;
+    }
+
+    return CalQuaternion(
+        inv_d * left.x + d * right.x,
+        inv_d * left.y + d * right.y,
+        inv_d * left.z + d * right.z,
+        inv_d * left.w + d * right.w);
 }

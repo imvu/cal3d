@@ -107,8 +107,7 @@ static bool keyframeEliminatable(
 
     // blend between the two keyframes
     CalVector translation = lerp(blendFactor, prev->translation, next->translation);
-    CalQuaternion rotation = prev->rotation;
-    rotation.blend(blendFactor, next->rotation);
+    CalQuaternion rotation = slerp(blendFactor, prev->rotation, next->rotation);
     return Near(translation, rotation, p->translation, p->rotation, transTolerance, rotTolerance);
 }
 
@@ -289,9 +288,7 @@ void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
     }
 
     translation = lerp(blendFactor, pCoreKeyframeBefore.translation, pCoreKeyframeAfter.translation);
-
-    rotation = pCoreKeyframeBefore.rotation;
-    rotation.blend(blendFactor, pCoreKeyframeAfter.rotation);
+    rotation = slerp(blendFactor, pCoreKeyframeBefore.rotation, pCoreKeyframeAfter.rotation);
 }
 
 CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float time) const {
