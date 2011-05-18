@@ -592,7 +592,7 @@ CalCoreBone* CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
             return 0;
         }
 
-        pCoreBone->addChildId(childId);
+        pCoreBone->childIds.push_back(childId);
     }
 
     return pCoreBone;

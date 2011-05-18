@@ -498,7 +498,7 @@ CalCoreSkeleton* CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
 
             int childId = atoi(childid->Value());
 
-            pCoreBone->addChildId(childId);
+            pCoreBone->childIds.push_back(childId);
         }
 
         // add the core bone to the core skeleton instance

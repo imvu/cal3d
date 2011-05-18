@@ -261,7 +261,7 @@ bool CalSaver::saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone) {
     CalPlatform::writeFloat(file, c.z);
 
     // get children list
-    const std::vector<int>& listChildId = pCoreBone->getListChildId();
+    const std::vector<int>& listChildId = pCoreBone->childIds;
 
     // write the number of children
     if (!CalPlatform::writeInteger(file, listChildId.size())) {
@@ -871,7 +871,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         TiXmlElement bone("BONE");
         bone.SetAttribute("ID", boneId);
         bone.SetAttribute("NAME", pCoreBone->name);
-        bone.SetAttribute("NUMCHILDS", pCoreBone->getListChildId().size());
+        bone.SetAttribute("NUMCHILDS", pCoreBone->childIds.size());
         if (pCoreBone->hasLightingData()) {
             bone.SetAttribute("LIGHTTYPE", pCoreBone->lightType);
             str.str("");
@@ -947,7 +947,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
         // get children list
-        const std::vector<int>& listChildId = pCoreBone->getListChildId();
+        const std::vector<int>& listChildId = pCoreBone->childIds;
 
 
         // write all children ids

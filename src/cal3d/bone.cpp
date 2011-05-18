@@ -298,7 +298,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
 
     // calculate all child bones
     std::vector<int>::const_iterator iteratorChildId;
-    for (iteratorChildId = m_coreBone.getListChildId().begin(); iteratorChildId != m_coreBone.getListChildId().end(); ++iteratorChildId) {
+    for (iteratorChildId = m_coreBone.childIds.begin(); iteratorChildId != m_coreBone.childIds.end(); ++iteratorChildId) {
         CalBone& bo = skeleton->bones[*iteratorChildId];
         bo.calculateState(skeleton, *iteratorChildId);
     }

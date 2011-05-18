@@ -345,7 +345,7 @@ TEST(simple_two_bone_skeleton) {
     CHECK(rootBone);
     const std::string rootBoneName = rootBone->name;
     CHECK_EQUAL(rootBoneName.c_str(), "AttachmentRoot");
-    const std::vector<int>& childrenOfRootBone = rootBone->getListChildId();
+    const std::vector<int>& childrenOfRootBone = rootBone->childIds;
     CHECK_EQUAL(childrenOfRootBone.size(), 1);
     int parentIdOfRootBone = rootBone->parentId;
     CHECK_EQUAL(parentIdOfRootBone, -1);

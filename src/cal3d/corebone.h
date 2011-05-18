@@ -26,16 +26,26 @@ enum CalLightType {
     LIGHT_TYPE_AMBIENT
 };
 
+namespace cal3d {
+    struct Transform {
+        CalVector translation;
+        CalQuaternion rotation;
+    };
+}
 
 class CAL3D_API CalCoreBone {
 public:
-    CalCoreBone(const std::string& name, int parentId = -1);
+    int parentId;
+    std::string name;
 
-    bool addChildId(int childId);
+    CalVector lightColor;
+    CalLightType lightType;
+
+    std::vector<int> childIds;
+
+    CalCoreBone(const std::string& name, int parentId = -1);
     void calculateState(CalCoreSkeleton* skeleton);
-    const std::vector<int>& getListChildId() const {
-        return m_listChildId;
-    }
+
     const CalQuaternion& getRotation() const {
         return m_rotation;
     }
@@ -63,16 +73,7 @@ public:
 
     bool hasLightingData();
 
-    /*const*/
-    int parentId;
-    /*const*/
-    std::string name;
-
-    CalVector lightColor;
-    CalLightType lightType;
-
 private:
-    std::vector<int> m_listChildId;
     CalVector m_translation;
     CalQuaternion m_rotation;
     CalVector m_translationAbsolute;

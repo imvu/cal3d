@@ -25,12 +25,6 @@ CalCoreBone::CalCoreBone(const std::string& n, int p)
 }
 
 
-bool CalCoreBone::addChildId(int childId) {
-    m_listChildId.push_back(childId);
-
-    return true;
-}
-
 /*****************************************************************************/
 /** Calculates the current state.
   *
@@ -58,7 +52,7 @@ void CalCoreBone::calculateState(CalCoreSkeleton* skeleton) {
 
     // calculate all child bones
     std::vector<int>::iterator iteratorChildId;
-    for (iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId) {
+    for (iteratorChildId = childIds.begin(); iteratorChildId != childIds.end(); ++iteratorChildId) {
         skeleton->coreBones[*iteratorChildId]->calculateState(skeleton);
     }
 }
@@ -86,7 +80,7 @@ void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
 
     // calculate all child bones
     std::vector<int>::const_iterator iteratorChildId;
-    for (iteratorChildId = m_listChildId.begin(); iteratorChildId != m_listChildId.end(); ++iteratorChildId) {
+    for (iteratorChildId = childIds.begin(); iteratorChildId != childIds.end(); ++iteratorChildId) {
         skeleton->coreBones[*iteratorChildId]->scale(factor, skeleton);
     }
 }
