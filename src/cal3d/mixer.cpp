@@ -113,7 +113,7 @@ void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
             bo->setMeshScaleAbsolute(ba->boneAdjustment_.meshScaleAbsolute_);
         }
         if (ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot) {
-            const CalVector& localPos = cbo.getTranslation();
+            const CalVector& localPos = cbo.relativeTransform.translation;
             CalVector adjustedLocalPos = localPos;
             CalQuaternion adjustedLocalOri = ba->boneAdjustment_.localOri_;
             static float const scale = 1.0f;

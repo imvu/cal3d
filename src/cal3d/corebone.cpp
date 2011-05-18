@@ -35,19 +35,17 @@ CalCoreBone::CalCoreBone(const std::string& n, int p)
 void CalCoreBone::calculateState(CalCoreSkeleton* skeleton) {
     if (parentId == -1) {
         // no parent, this means absolute state == relative state
-        m_translationAbsolute = m_translation;
-        m_rotationAbsolute = m_rotation;
+        absoluteTransform = relativeTransform;
     } else {
-        // get the parent bone
         CalCoreBone* pParent = skeleton->coreBones[parentId].get();
 
         // transform relative state with the absolute state of the parent
-        m_translationAbsolute = m_translation;
-        m_translationAbsolute *= pParent->getRotationAbsolute();
-        m_translationAbsolute += pParent->getTranslationAbsolute();
+        absoluteTransform.translation = relativeTransform.translation;
+        absoluteTransform.translation *= pParent->absoluteTransform.rotation;
+        absoluteTransform.translation += pParent->absoluteTransform.translation;
 
-        m_rotationAbsolute = m_rotation;
-        m_rotationAbsolute *= pParent->getRotationAbsolute();
+        absoluteTransform.rotation = relativeTransform.rotation;
+        absoluteTransform.rotation *= pParent->absoluteTransform.rotation;
     }
 
     // calculate all child bones
@@ -57,26 +55,10 @@ void CalCoreBone::calculateState(CalCoreSkeleton* skeleton) {
     }
 }
 
-void CalCoreBone::setRotation(const CalQuaternion& rotation) {
-    m_rotation = rotation;
-}
-
-void CalCoreBone::setRotationBoneSpace(const CalQuaternion& rotation) {
-    m_rotationBoneSpace = rotation;
-}
-
-void CalCoreBone::setTranslation(const CalVector& translation) {
-    m_translation = translation;
-}
-
-void CalCoreBone::setTranslationBoneSpace(const CalVector& translation) {
-    m_translationBoneSpace = translation;
-}
-
 void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
-    m_translation *= factor;
-    m_translationAbsolute *= factor;
-    m_translationBoneSpace *= factor;
+    relativeTransform.translation *= factor;
+    absoluteTransform.translation *= factor;
+    boneSpaceTransform.translation *= factor;
 
     // calculate all child bones
     std::vector<int>::const_iterator iteratorChildId;
@@ -86,6 +68,3 @@ void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
 }
 
 
-bool CalCoreBone::hasLightingData() {
-    return lightType != LIGHT_TYPE_NONE;
-}

@@ -566,10 +566,10 @@ CalCoreBone* CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
     CalCoreBone* pCoreBone = new CalCoreBone(strName, parentId);
 
     // set all attributes of the bone
-    pCoreBone->setTranslation(trans);
-    pCoreBone->setRotation(rot);
-    pCoreBone->setTranslationBoneSpace(CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace));
-    pCoreBone->setRotationBoneSpace(rotbs);
+    pCoreBone->relativeTransform.translation = trans;
+    pCoreBone->relativeTransform.rotation = rot;
+    pCoreBone->boneSpaceTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
+    pCoreBone->boneSpaceTransform.rotation = rotbs;
     if (hasNodeLights) {
         pCoreBone->lightType = (CalLightType)lightType;
         pCoreBone->lightColor = lightColor;
@@ -667,7 +667,7 @@ CalCoreKeyframe* CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(tz);
 
         if (coreboneOrNull && TranslationInvalid(CalVector(tx, ty, tz))) {
-            CalVector tv = coreboneOrNull->getTranslation();
+            CalVector tv = coreboneOrNull->relativeTransform.translation;
             tx = tv.x;
             ty = tv.y;
             tz = tv.z;
@@ -840,7 +840,7 @@ CalLoader::readCompressedKeyframe(
     } else {
         SetTranslationInvalid(vecResult);
         if (coreboneOrNull) {
-            *vecResult = coreboneOrNull->getTranslation();
+            *vecResult = coreboneOrNull->relativeTransform.translation;
         }
     }
 

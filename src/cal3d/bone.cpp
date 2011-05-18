@@ -165,8 +165,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     // check if the bone was not touched by any active animation
     if (m_accumulatedWeight == 0.0f) {
         // set the bone to the initial skeleton state
-        m_translation = m_coreBone.getTranslation();
-        m_rotation = m_coreBone.getRotation();
+        m_translation = m_coreBone.relativeTransform.translation;
+        m_rotation = m_coreBone.relativeTransform.rotation;
     }
 
     int parentId = m_coreBone.parentId;
@@ -188,7 +188,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     }
 
     // calculate the bone space transformation
-    CalVector translationBoneSpace(m_coreBone.getTranslationBoneSpace());
+    CalVector translationBoneSpace(m_coreBone.boneSpaceTransform.translation);
 
     // Must go before the *= m_rotationAbsolute.
     bool meshScalingOn;
@@ -260,13 +260,13 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        CalQuaternion coreBoneRotBoneSpaceInverse = m_coreBone.getRotationBoneSpace();
+        CalQuaternion coreBoneRotBoneSpaceInverse = m_coreBone.boneSpaceTransform.rotation;
         coreBoneRotBoneSpaceInverse.invert();
         translationBoneSpace *= coreBoneRotBoneSpaceInverse;
         translationBoneSpace.x *= m_meshScaleAbsolute.x;
         translationBoneSpace.y *= m_meshScaleAbsolute.y;
         translationBoneSpace.z *= m_meshScaleAbsolute.z;
-        translationBoneSpace *= m_coreBone.getRotationBoneSpace();
+        translationBoneSpace *= m_coreBone.boneSpaceTransform.rotation;
 
     } else {
         meshScalingOn = false;
@@ -274,7 +274,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     translationBoneSpace *= m_rotationAbsolute;
     translationBoneSpace += m_translationAbsolute;
 
-    CalMatrix transformMatrix = m_coreBone.getRotationBoneSpace();
+    CalMatrix transformMatrix = m_coreBone.boneSpaceTransform.rotation;
     if (meshScalingOn) {
 
         // By applying each scale component to the row, instead of the column, we

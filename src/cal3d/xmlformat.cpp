@@ -467,10 +467,10 @@ CalCoreSkeleton* CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, rw);
 
-        pCoreBone->setTranslation(trans);
-        pCoreBone->setRotation(rot);
-        pCoreBone->setTranslationBoneSpace(CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace));
-        pCoreBone->setRotationBoneSpace(CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace));
+        pCoreBone->relativeTransform.translation = trans;
+        pCoreBone->relativeTransform.rotation = rot;
+        pCoreBone->boneSpaceTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
+        pCoreBone->boneSpaceTransform.rotation = CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
 
         pCoreBone->lightType = lightType;
         pCoreBone->lightColor = lightColor;
@@ -642,7 +642,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCo
             float tx, ty, tz;
             SetTranslationInvalid(& tx, & ty, & tz);
             if (cb) {
-                CalVector const& cbtrans = cb->getTranslation();
+                CalVector const& cbtrans = cb->relativeTransform.translation;
                 tx = cbtrans.x;
                 ty = cbtrans.y;
                 tz = cbtrans.z;

@@ -41,43 +41,18 @@ public:
     CalVector lightColor;
     CalLightType lightType;
 
+    cal3d::Transform relativeTransform;
+    cal3d::Transform absoluteTransform;
+    cal3d::Transform boneSpaceTransform;
+
     std::vector<int> childIds;
 
     CalCoreBone(const std::string& name, int parentId = -1);
     void calculateState(CalCoreSkeleton* skeleton);
 
-    const CalQuaternion& getRotation() const {
-        return m_rotation;
-    }
-    const CalQuaternion& getRotationAbsolute() const {
-        return m_rotationAbsolute;
-    }
-    const CalQuaternion& getRotationBoneSpace() const {
-        return m_rotationBoneSpace;
-    }
-    const CalVector& getTranslation() const {
-        return m_translation;
-    }
-    const CalVector& getTranslationAbsolute() const {
-        return m_translationAbsolute;
-    }
-    const CalVector& getTranslationBoneSpace() const {
-        return m_translationBoneSpace;
-    }
-    void setRotation(const CalQuaternion& rotation);
-    void setRotationBoneSpace(const CalQuaternion& rotation);
-    void setTranslation(const CalVector& translation);
-    void setTranslationBoneSpace(const CalVector& translation);
-
     void scale(float factor, CalCoreSkeleton* skeleton);
 
-    bool hasLightingData();
-
-private:
-    CalVector m_translation;
-    CalQuaternion m_rotation;
-    CalVector m_translationAbsolute;
-    CalQuaternion m_rotationAbsolute;
-    CalVector m_translationBoneSpace;
-    CalQuaternion m_rotationBoneSpace;
+    bool hasLightingData() const {
+        return lightType != LIGHT_TYPE_NONE;
+    }
 };

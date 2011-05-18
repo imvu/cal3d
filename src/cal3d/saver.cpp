@@ -222,26 +222,26 @@ bool CalSaver::saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone) {
     }
 
     // write the translation of the bone
-    const CalVector& translation = pCoreBone->getTranslation();
+    const CalVector& translation = pCoreBone->relativeTransform.translation;
     CalPlatform::writeFloat(file, translation[0]);
     CalPlatform::writeFloat(file, translation[1]);
     CalPlatform::writeFloat(file, translation[2]);
 
     // write the rotation of the bone
-    const CalQuaternion& rotation = pCoreBone->getRotation();
+    const CalQuaternion& rotation = pCoreBone->relativeTransform.rotation;
     CalPlatform::writeFloat(file, rotation[0]);
     CalPlatform::writeFloat(file, rotation[1]);
     CalPlatform::writeFloat(file, rotation[2]);
     CalPlatform::writeFloat(file, rotation[3]);
 
     // write the translation of the bone
-    const CalVector& translationBoneSpace = pCoreBone->getTranslationBoneSpace();
+    const CalVector& translationBoneSpace = pCoreBone->boneSpaceTransform.translation;
     CalPlatform::writeFloat(file, translationBoneSpace[0]);
     CalPlatform::writeFloat(file, translationBoneSpace[1]);
     CalPlatform::writeFloat(file, translationBoneSpace[2]);
 
     // write the rotation of the bone
-    const CalQuaternion& rotationBoneSpace = pCoreBone->getRotationBoneSpace();
+    const CalQuaternion& rotationBoneSpace = pCoreBone->boneSpaceTransform.rotation;
     CalPlatform::writeFloat(file, rotationBoneSpace[0]);
     CalPlatform::writeFloat(file, rotationBoneSpace[1]);
     CalPlatform::writeFloat(file, rotationBoneSpace[2]);
@@ -881,7 +881,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         }
 
         TiXmlElement translation("TRANSLATION");
-        const CalVector& translationVector = pCoreBone->getTranslation();
+        const CalVector& translationVector = pCoreBone->relativeTransform.translation;
 
 
         str.str("");
@@ -896,7 +896,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
         TiXmlElement rotation("ROTATION");
-        const CalQuaternion& rotationQuad = pCoreBone->getRotation();
+        const CalQuaternion& rotationQuad = pCoreBone->relativeTransform.rotation;
 
 
         str.str("");
@@ -911,7 +911,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
         TiXmlElement localtranslation("LOCALTRANSLATION");
-        const CalVector& localtranslationVector = pCoreBone->getTranslationBoneSpace();
+        const CalVector& localtranslationVector = pCoreBone->boneSpaceTransform.translation;
 
         str.str("");
         str << localtranslationVector.x << " "
@@ -925,7 +925,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
         TiXmlElement localrotation("LOCALROTATION");
-        const CalQuaternion& localrotationQuad = pCoreBone->getRotationBoneSpace();
+        const CalQuaternion& localrotationQuad = pCoreBone->boneSpaceTransform.rotation;
 
         str.str("");
         str << localrotationQuad.x << " "
