@@ -492,9 +492,6 @@ CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
         pCoreSkeleton->addCoreBone(pCoreBone);
     }
 
-    // calculate state of the core skeleton
-    pCoreSkeleton->calculateState();
-
     return pCoreSkeleton;
 }
 

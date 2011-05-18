@@ -28,16 +28,6 @@ int CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone
     return boneId;
 }
 
-void CalCoreSkeleton::calculateState() {
-    for (
-        std::vector<int>::iterator i = rootBoneIds.begin();
-        i != rootBoneIds.end();
-        ++i
-    ) {
-        coreBones[*i]->calculateState(this);
-    }
-}
-
 CalCoreBone* CalCoreSkeleton::getCoreBone(const std::string& strName) {
     return coreBones[getCoreBoneId(strName)].get();
 }

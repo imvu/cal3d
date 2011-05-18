@@ -22,7 +22,6 @@ typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 class CAL3D_API CalCoreSkeleton {
 public:
     int addCoreBone(const CalCoreBonePtr& pCoreBone);
-    void calculateState();
     CalCoreBone* getCoreBone(const std::string& strName);
     void scale(float factor);
 

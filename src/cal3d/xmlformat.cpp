@@ -508,8 +508,6 @@ CalCoreSkeleton* CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
 
     doc.Clear();
 
-    pCoreSkeleton->calculateState();
-
     return pCoreSkeleton;
 }
 

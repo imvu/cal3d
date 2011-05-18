@@ -24,40 +24,8 @@ CalCoreBone::CalCoreBone(const std::string& n, int p)
     , name(n) {
 }
 
-
-/*****************************************************************************/
-/** Calculates the current state.
-  *
-  * This function calculates the current state (absolute translation and
-  * rotation) of the core bone instance and all its children.
-  *****************************************************************************/
-
-void CalCoreBone::calculateState(CalCoreSkeleton* skeleton) {
-    if (parentId == -1) {
-        // no parent, this means absolute state == relative state
-        absoluteTransform = relativeTransform;
-    } else {
-        CalCoreBone* pParent = skeleton->coreBones[parentId].get();
-
-        // transform relative state with the absolute state of the parent
-        absoluteTransform.translation = relativeTransform.translation;
-        absoluteTransform.translation *= pParent->absoluteTransform.rotation;
-        absoluteTransform.translation += pParent->absoluteTransform.translation;
-
-        absoluteTransform.rotation = relativeTransform.rotation;
-        absoluteTransform.rotation *= pParent->absoluteTransform.rotation;
-    }
-
-    // calculate all child bones
-    std::vector<int>::iterator iteratorChildId;
-    for (iteratorChildId = childIds.begin(); iteratorChildId != childIds.end(); ++iteratorChildId) {
-        skeleton->coreBones[*iteratorChildId]->calculateState(skeleton);
-    }
-}
-
 void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
     relativeTransform.translation *= factor;
-    absoluteTransform.translation *= factor;
     boneSpaceTransform.translation *= factor;
 
     // calculate all child bones
