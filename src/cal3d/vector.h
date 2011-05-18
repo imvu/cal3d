@@ -18,7 +18,7 @@ class CalQuaternion;
 
 class CAL3D_API CalVector {
 public:
-    float x , y , z;
+    float x, y, z;
 
     CalVector asCalVector() const {
         return *this;
@@ -32,11 +32,10 @@ public:
         *this = v;
     }
 
-    inline CalVector(): x(0.0f), y(0.0f), z(0.0f) {};
-    inline CalVector(const CalVector& v) : x(v.x), y(v.y), z(v.z) {};
-    inline CalVector(float vx, float vy, float vz): x(vx), y(vy), z(vz) {};
-    inline ~CalVector() {};
-
+    CalVector(): x(0.0f), y(0.0f), z(0.0f) {};
+    CalVector(const CalVector& v) : x(v.x), y(v.y), z(v.z) {};
+    CalVector(float vx, float vy, float vz): x(vx), y(vy), z(vz) {};
+    
     inline float& operator[](unsigned int i) {
         return (&x)[i];
     }
@@ -52,13 +51,13 @@ public:
     }
 
 
-    inline void operator-=(const CalVector& v) {
+    void operator-=(const CalVector& v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
 
-    inline void operator*=(float d) {
+    void operator*=(float d) {
         x *= d;
         y *= d;
         z *= d;
@@ -66,7 +65,7 @@ public:
 
     void operator*=(const CalQuaternion& q);
 
-    inline void operator/=(float d) {
+    void operator/=(float d) {
         assert(d != 0);
         float m = 1.0f / d;
         x *= m;
@@ -74,29 +73,29 @@ public:
         z *= m;
     }
 
-    inline bool operator==(const CalVector& v) const {
+    bool operator==(const CalVector& v) const {
         return (close(x, v.x) && close(y, v.y) && close(z, v.z));
     }
 
-    inline void blend(float d, const CalVector& v) {
+    void blend(float d, const CalVector& v) {
         x += d * (v.x - x);
         y += d * (v.y - y);
         z += d * (v.z - z);
     }
 
-    inline void clear() {
+    void clear() {
         x = 0.0f;
         y = 0.0f;
         z = 0.0f;
     }
 
-    inline float lengthSquared() const {
+    float lengthSquared() const {
         return (float)(x * x + y * y + z * z);
     }
-    inline float length() const {
+    float length() const {
         return sqrtf(lengthSquared());
     }
-    inline float normalize() {
+    float normalize() {
         // calculate the length of the vector
         float length = (float) sqrt(x * x + y * y + z * z);
         *this /= length;
@@ -111,30 +110,30 @@ public:
 
 };
 
-static inline CalVector operator+(const CalVector& v, const CalVector& u) {
+inline CalVector operator+(const CalVector& v, const CalVector& u) {
     return CalVector(v.x + u.x, v.y + u.y, v.z + u.z);
 }
 
-static inline CalVector operator-(const CalVector& v, const CalVector& u) {
+inline CalVector operator-(const CalVector& v, const CalVector& u) {
     return CalVector(v.x - u.x, v.y - u.y, v.z - u.z);
 }
 
-static inline CalVector operator*(const CalVector& v, const float d) {
+inline CalVector operator*(const CalVector& v, const float d) {
     return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
-static inline CalVector operator*(const float d, const CalVector& v) {
+inline CalVector operator*(const float d, const CalVector& v) {
     return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
-static inline CalVector operator/(const CalVector& v, const float d) {
+inline CalVector operator/(const CalVector& v, const float d) {
     return CalVector(v.x / d, v.y / d, v.z / d);
 }
 
-static inline float operator*(const CalVector& v, const CalVector& u) {
+inline float dot(const CalVector& v, const CalVector& u) {
     return v.x * u.x + v.y * u.y + v.z * u.z;
 }
 
-static inline CalVector operator%(const CalVector& v, const CalVector& u) {
-    return CalVector(v.y * u.z - v.z * u.y, v.z * u.x - v.x * u.z, v.x * u.y - v.y * u.x);
+inline CalVector cross(const CalVector& a, const CalVector& u) {
+    return CalVector(a.y * u.z - a.z * u.y, a.z * u.x - a.x * u.z, a.x * u.y - a.y * u.x);
 }

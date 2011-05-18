@@ -14,22 +14,16 @@
 #include "cal3d/vector.h"
 
 class CAL3D_API CalQuaternion {
-    // member variables
 public:
     float x;
     float y;
     float z;
     float w;
 
-    // constructors/destructor
-public:
     inline CalQuaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {};
     inline CalQuaternion(const CalQuaternion& q): x(q.x), y(q.y), z(q.z), w(q.w) {};
     inline CalQuaternion(float qx, float qy, float qz, float qw): x(qx), y(qy), z(qz), w(qw) {};
-    inline ~CalQuaternion() {};
 
-    // member functions
-public:
     inline float& operator[](unsigned int index) {
         return (&x)[index];
     }
@@ -70,23 +64,11 @@ public:
         z = qw * v.z + qx * v.y - qy * v.x;
         w =          - qx * v.x - qy * v.y - qz * v.z;
     }
-    /*
-    	static inline CalQuaternion operator*(const CalQuaternion& q, const CalQuaternion& r)
-    	{
-    		return CalQuaternion(
-    			r.w * q.x + r.x * q.w + r.y * q.z - r.z * q.y,
-    			r.w * q.y - r.x * q.z + r.y * q.w + r.z * q.x,
-    			r.w * q.z + r.x * q.y - r.y * q.x + r.z * q.w,
-    			r.w * q.w - r.x * q.x - r.y * q.y - r.z * q.z
-    			);
-    	}
-    */
-    inline void blend(float d, const CalQuaternion& q) {
-        float norm;
-        norm = x * q.x + y * q.y + z * q.z + w * q.w;
 
-        bool bFlip;
-        bFlip = false;
+    inline void blend(float d, const CalQuaternion& q) {
+        float norm = x * q.x + y * q.y + z * q.z + w * q.w;
+
+        bool bFlip = false;
 
         if (norm < 0.0f) {
             norm = -norm;
@@ -97,14 +79,11 @@ public:
         if (1.0f - norm < 0.000001f) {
             inv_d = 1.0f - d;
         } else {
-            float theta;
-            theta = (float) acos(norm);
+            float theta = acos(norm);
+            float s = 1.0f / sin(theta);
 
-            float s;
-            s = (float)(1.0f / sin(theta));
-
-            inv_d = (float) sin((1.0f - d) * theta) * s;
-            d = (float) sin(d * theta) * s;
+            inv_d = sin((1.0f - d) * theta) * s;
+            d = sin(d * theta) * s;
         }
 
         if (bFlip) {
@@ -150,23 +129,6 @@ public:
         z = qz;
         w = qw;
     }
-    /*
-    	static inline CalQuaternion shortestArc( const CalVector& from, const CalVector& to )
-    	{
-    		CalVector cross = from % to; //Compute vector cross product
-    		float dot = from * to ;      //Compute dot product
-
-    		dot = (float) sqrt( 2*(dot+1) ) ; //We will use this equation twice
-
-    		cross /= dot ; //Get the x, y, z components
-
-    		//Return with the w component (Note that w is inverted because Cal3D has
-    		// left-handed rotations )
-    		return CalQuaternion( cross[0], cross[1], cross[2], -dot/2 ) ;
-
-    	}
-
-      */
 };
 
 
@@ -180,12 +142,12 @@ static inline CalQuaternion operator*(const CalQuaternion& q, const CalQuaternio
 }
 
 static inline CalQuaternion shortestArc(const CalVector& from, const CalVector& to) {
-    CalVector cross = from % to; //Compute vector cross product
-    float dot = from * to ;      //Compute dot product
+    CalVector cross = ::cross(from, to);
+    float dot = ::dot(from, to);
 
-    dot = (float) sqrt(2 * (dot + 1)) ; //We will use this equation twice
+    dot = sqrtf(2 * (dot + 1)); //We will use this equation twice
 
-    cross /= dot ; //Get the x, y, z components
+    cross /= dot; //Get the x, y, z components
 
     //Return with the w component (Note that w is inverted because Cal3D has
     // left-handed rotations )
