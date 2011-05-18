@@ -77,11 +77,7 @@ public:
         return (close(x, v.x) && close(y, v.y) && close(z, v.z));
     }
 
-    void blend(float d, const CalVector& v) {
-        x += d * (v.x - x);
-        y += d * (v.y - y);
-        z += d * (v.z - z);
-    }
+    void blend(float d, const CalVector& v);
 
     void clear() {
         x = 0.0f;
@@ -95,11 +91,8 @@ public:
     float length() const {
         return sqrtf(lengthSquared());
     }
-    float normalize() {
-        // calculate the length of the vector
-        float length = (float) sqrt(x * x + y * y + z * z);
-        *this /= length;
-        return length;
+    void normalize() {
+        *this /= length();
     }
 
     void set(float vx, float vy, float vz) {
@@ -118,15 +111,15 @@ inline CalVector operator-(const CalVector& v, const CalVector& u) {
     return CalVector(v.x - u.x, v.y - u.y, v.z - u.z);
 }
 
-inline CalVector operator*(const CalVector& v, const float d) {
+inline CalVector operator*(const CalVector& v, float d) {
     return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
-inline CalVector operator*(const float d, const CalVector& v) {
+inline CalVector operator*(float d, const CalVector& v) {
     return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
-inline CalVector operator/(const CalVector& v, const float d) {
+inline CalVector operator/(const CalVector& v, float d) {
     return CalVector(v.x / d, v.y / d, v.z / d);
 }
 
@@ -136,4 +129,8 @@ inline float dot(const CalVector& v, const CalVector& u) {
 
 inline CalVector cross(const CalVector& a, const CalVector& u) {
     return CalVector(a.y * u.z - a.z * u.y, a.z * u.x - a.x * u.z, a.x * u.y - a.y * u.x);
+}
+
+inline void CalVector::blend(float d, const CalVector& v) {
+    (*this) = (1.0f - d) * (*this) + d * v;
 }
