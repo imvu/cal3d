@@ -71,8 +71,8 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
         // to be blended onto a pose.  If we scale the first state, the skeleton will look like
         // a crumpled spider.
         m_accumulatedWeightAbsolute = attenuatedWeight;
-        m_translationAbsolute = translation;
-        m_rotationAbsolute = rotation;
+        absoluteTransform.translation = translation;
+        absoluteTransform.rotation = rotation;
 
         // I would like to scale this blend, but I cannot since it is the initial pose.  Thus I
         // will store away this scale and compensate appropriately on the second blend.  See below.
@@ -143,8 +143,8 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
         //
         assert(factor <= 1.0f);
         factor = 1.0f - m_firstBlendScale * (1.0f - factor);
-        m_translationAbsolute = lerp(factor, m_translationAbsolute, translation);
-        m_rotationAbsolute = slerp(factor, m_rotationAbsolute, rotation);
+        absoluteTransform.translation = lerp(factor, absoluteTransform.translation, translation);
+        absoluteTransform.rotation = slerp(factor, absoluteTransform.rotation, rotation);
         m_accumulatedWeightAbsolute += attenuatedWeight;
         m_firstBlendScale = 1.0;
     }
@@ -172,19 +172,18 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     int parentId = m_coreBone.parentId;
     if (parentId == -1) {
         // no parent, this means absolute state == relative state
-        m_translationAbsolute = relativeTransform.translation;
-        m_rotationAbsolute = relativeTransform.rotation;
+        absoluteTransform = relativeTransform;
     } else {
         // get the parent bone
         CalBone& pParent = skeleton->bones[parentId];
 
         // transform relative state with the absolute state of the parent
-        m_translationAbsolute = relativeTransform.translation;
-        m_translationAbsolute *= pParent.getRotationAbsolute();
-        m_translationAbsolute += pParent.getTranslationAbsolute();
+        absoluteTransform.translation = relativeTransform.translation;
+        absoluteTransform.translation *= pParent.absoluteTransform.rotation;
+        absoluteTransform.translation += pParent.absoluteTransform.translation;
 
-        m_rotationAbsolute = relativeTransform.rotation;
-        m_rotationAbsolute *= pParent.getRotationAbsolute();
+        absoluteTransform.rotation = relativeTransform.rotation;
+        absoluteTransform.rotation *= pParent.absoluteTransform.rotation;
     }
 
     // calculate the bone space transformation
@@ -271,8 +270,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     } else {
         meshScalingOn = false;
     }
-    translationBoneSpace *= m_rotationAbsolute;
-    translationBoneSpace += m_translationAbsolute;
+    translationBoneSpace *= absoluteTransform.rotation;
+    translationBoneSpace += absoluteTransform.translation;
 
     CalMatrix transformMatrix = m_coreBone.boneSpaceTransform.rotation;
     if (meshScalingOn) {
@@ -291,7 +290,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         transformMatrix.dydz *= m_meshScaleAbsolute.z;
         transformMatrix.dzdz *= m_meshScaleAbsolute.z;
     }
-    transformMatrix *= m_rotationAbsolute;
+    transformMatrix *= absoluteTransform.rotation;
 
     BoneTransform& bt = skeleton->boneTransforms[myIndex];
     extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
@@ -319,14 +318,6 @@ void CalBone::clearState() {
     m_meshScaleAbsolute.set(1, 1, 1);
 }
 
-const CalQuaternion& CalBone::getRotationAbsolute() {
-    return m_rotationAbsolute;
-}
-
-const CalVector& CalBone::getTranslationAbsolute() {
-    return m_translationAbsolute;
-}
-
 void CalBone::lockState() {
     // clamp accumulated weight
     if (m_accumulatedWeightAbsolute > 1.0f - m_accumulatedWeight) {
@@ -336,16 +327,14 @@ void CalBone::lockState() {
     if (m_accumulatedWeightAbsolute > 0.0f) {
         if (m_accumulatedWeight == 0.0f) {
             // it is the first state, so we can just copy it into the bone state
-            relativeTransform.translation = m_translationAbsolute;
-            relativeTransform.rotation = m_rotationAbsolute;
-
+            relativeTransform = absoluteTransform;
             m_accumulatedWeight = m_accumulatedWeightAbsolute;
         } else {
             // it is not the first state, so blend all attributes
             float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
 
-            relativeTransform.translation = lerp(factor, relativeTransform.translation, m_translationAbsolute);
-            relativeTransform.rotation = slerp(factor, relativeTransform.rotation, m_rotationAbsolute);
+            relativeTransform.translation = lerp(factor, relativeTransform.translation, absoluteTransform.translation);
+            relativeTransform.rotation = slerp(factor, relativeTransform.rotation, absoluteTransform.rotation);
 
             m_accumulatedWeight += m_accumulatedWeightAbsolute;
         }
