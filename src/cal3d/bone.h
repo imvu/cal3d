@@ -35,11 +35,9 @@ public:
         return m_coreBone;
     }
 
-    void setRotation(const CalQuaternion& rotation);
     const CalQuaternion& getRotation();
     const CalQuaternion& getRotationAbsolute();
 
-    void setTranslation(const CalVector& translation);
     const CalVector& getTranslation();
     const CalVector& getTranslationAbsolute();
 

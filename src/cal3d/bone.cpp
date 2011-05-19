@@ -319,12 +319,6 @@ void CalBone::clearState() {
     m_meshScaleAbsolute.set(1, 1, 1);
 }
 
-void CalBone::setRotation(const CalQuaternion& rotation) {
-    m_rotation = rotation;
-    m_accumulatedWeightAbsolute = 1.0f;
-    m_accumulatedWeight = 1.0f ;
-}
-
 const CalQuaternion& CalBone::getRotation() {
     return m_rotation;
 }
@@ -339,20 +333,6 @@ const CalQuaternion& CalBone::getRotation() {
 
 const CalQuaternion& CalBone::getRotationAbsolute() {
     return m_rotationAbsolute;
-}
-
-/*****************************************************************************/
-/** Sets the current translation.
-  *
-  * This function sets the current relative translation of the bone instance.
-  * Caveat: For this change to appear, calculateState() must be called
-  * afterwards.
-  *****************************************************************************/
-
-void CalBone::setTranslation(const CalVector& translation) {
-    m_translation = translation;
-    m_accumulatedWeightAbsolute = 1.0f;
-    m_accumulatedWeight = 1.0f ;
 }
 
 /*****************************************************************************/
