@@ -165,25 +165,25 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     // check if the bone was not touched by any active animation
     if (m_accumulatedWeight == 0.0f) {
         // set the bone to the initial skeleton state
-        m_translation = m_coreBone.relativeTransform.translation;
-        m_rotation = m_coreBone.relativeTransform.rotation;
+        relativeTransform.translation = m_coreBone.relativeTransform.translation;
+        relativeTransform.rotation = m_coreBone.relativeTransform.rotation;
     }
 
     int parentId = m_coreBone.parentId;
     if (parentId == -1) {
         // no parent, this means absolute state == relative state
-        m_translationAbsolute = m_translation;
-        m_rotationAbsolute = m_rotation;
+        m_translationAbsolute = relativeTransform.translation;
+        m_rotationAbsolute = relativeTransform.rotation;
     } else {
         // get the parent bone
         CalBone& pParent = skeleton->bones[parentId];
 
         // transform relative state with the absolute state of the parent
-        m_translationAbsolute = m_translation;
+        m_translationAbsolute = relativeTransform.translation;
         m_translationAbsolute *= pParent.getRotationAbsolute();
         m_translationAbsolute += pParent.getTranslationAbsolute();
 
-        m_rotationAbsolute = m_rotation;
+        m_rotationAbsolute = relativeTransform.rotation;
         m_rotationAbsolute *= pParent.getRotationAbsolute();
     }
 
@@ -319,71 +319,13 @@ void CalBone::clearState() {
     m_meshScaleAbsolute.set(1, 1, 1);
 }
 
-const CalQuaternion& CalBone::getRotation() {
-    return m_rotation;
-}
-
-/*****************************************************************************/
-/** Returns the current absolute rotation.
-  *
-  * This function returns the current absolute rotation of the bone instance.
-  *
-  * @return The absolute rotation to the parent as quaternion.
-  *****************************************************************************/
-
 const CalQuaternion& CalBone::getRotationAbsolute() {
     return m_rotationAbsolute;
 }
 
-/*****************************************************************************/
-/** Returns the current translation.
-  *
-  * This function returns the current relative translation of the bone instance.
-  *
-  * @return The relative translation to the parent as quaternion.
-  *****************************************************************************/
-
-const CalVector& CalBone::getTranslation() {
-    return m_translation;
-}
-
-/*****************************************************************************/
-/** Returns the current absolute translation.
-  *
-  * This function returns the current absolute translation of the bone instance.
-  *
-  * @return The absolute translation to the parent as quaternion.
-  *****************************************************************************/
-
 const CalVector& CalBone::getTranslationAbsolute() {
     return m_translationAbsolute;
 }
-
-/*****************************************************************************/
-/** Returns the current bone space translation.
-  *
-  * This function returns the current translation to bring a point into the
-  *bone instance space.
-  *
-  * @return The translation to bring a point into bone space.
-  *****************************************************************************/
-
-/*****************************************************************************/
-/** Returns the current bone space translation.
-  *
-  * This function returns the current translation to bring a point into the
-  *bone instance space.
-  *
-  * @return The translation to bring a point into bone space.
-  *****************************************************************************/
-
-
-/*****************************************************************************/
-/** Locks the current state.
-  *
-  * This function locks the current state (absolute translation and rotation)
-  * of the bone instance and all its children.
-  *****************************************************************************/
 
 void CalBone::lockState() {
     // clamp accumulated weight
@@ -394,16 +336,16 @@ void CalBone::lockState() {
     if (m_accumulatedWeightAbsolute > 0.0f) {
         if (m_accumulatedWeight == 0.0f) {
             // it is the first state, so we can just copy it into the bone state
-            m_translation = m_translationAbsolute;
-            m_rotation = m_rotationAbsolute;
+            relativeTransform.translation = m_translationAbsolute;
+            relativeTransform.rotation = m_rotationAbsolute;
 
             m_accumulatedWeight = m_accumulatedWeightAbsolute;
         } else {
             // it is not the first state, so blend all attributes
             float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
 
-            m_translation = lerp(factor, m_translation, m_translationAbsolute);
-            m_rotation = slerp(factor, m_rotation, m_rotationAbsolute);
+            relativeTransform.translation = lerp(factor, relativeTransform.translation, m_translationAbsolute);
+            relativeTransform.rotation = slerp(factor, relativeTransform.rotation, m_rotationAbsolute);
 
             m_accumulatedWeight += m_accumulatedWeightAbsolute;
         }

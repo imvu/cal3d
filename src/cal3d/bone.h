@@ -20,6 +20,8 @@ class CalModel;
 
 class CAL3D_API CalBone {
 public:
+    cal3d::Transform relativeTransform;
+
     CalBone(CalCoreBone* pCoreBone);
 
     void blendState(
@@ -35,10 +37,7 @@ public:
         return m_coreBone;
     }
 
-    const CalQuaternion& getRotation();
     const CalQuaternion& getRotationAbsolute();
-
-    const CalVector& getTranslation();
     const CalVector& getTranslationAbsolute();
 
     void setMeshScaleAbsolute(const CalVector& sv) {
@@ -55,9 +54,6 @@ private:
     float m_accumulatedReplacementAttenuation;
     float m_firstBlendScale;
     CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
-
-    CalVector m_translation;
-    CalQuaternion m_rotation;
 
     CalVector m_translationAbsolute;
     CalQuaternion m_rotationAbsolute;
