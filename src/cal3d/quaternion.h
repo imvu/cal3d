@@ -100,14 +100,9 @@ public:
     }
 };
 
-
-static inline CalQuaternion operator*(const CalQuaternion& q, const CalQuaternion& r) {
-    return CalQuaternion(
-               r.w * q.x + r.x * q.w + r.y * q.z - r.z * q.y,
-               r.w * q.y - r.x * q.z + r.y * q.w + r.z * q.x,
-               r.w * q.z + r.x * q.y - r.y * q.x + r.z * q.w,
-               r.w * q.w - r.x * q.x - r.y * q.y - r.z * q.z
-           );
+inline CalQuaternion operator*(CalQuaternion q, const CalQuaternion& u) {
+    q *= u;
+    return q;
 }
 
 static inline CalQuaternion shortestArc(const CalVector& from, const CalVector& to) {

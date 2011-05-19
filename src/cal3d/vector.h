@@ -117,6 +117,11 @@ inline CalVector operator*(float d, const CalVector& v) {
     return CalVector(v.x * d, v.y * d, v.z * d);
 }
 
+inline CalVector operator*(CalVector v, const CalQuaternion& q) {
+    v *= q;
+    return v;
+}
+
 inline CalVector operator/(const CalVector& v, float d) {
     return CalVector(v.x / d, v.y / d, v.z / d);
 }

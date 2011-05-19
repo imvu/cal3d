@@ -178,12 +178,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         CalBone& pParent = skeleton->bones[parentId];
 
         // transform relative state with the absolute state of the parent
-        absoluteTransform.translation = relativeTransform.translation;
-        absoluteTransform.translation *= pParent.absoluteTransform.rotation;
-        absoluteTransform.translation += pParent.absoluteTransform.translation;
-
-        absoluteTransform.rotation = relativeTransform.rotation;
-        absoluteTransform.rotation *= pParent.absoluteTransform.rotation;
+        absoluteTransform.translation = relativeTransform.translation * pParent.absoluteTransform.rotation + pParent.absoluteTransform.translation;
+        absoluteTransform.rotation = relativeTransform.rotation * pParent.absoluteTransform.rotation;
     }
 
     // calculate the bone space transformation
