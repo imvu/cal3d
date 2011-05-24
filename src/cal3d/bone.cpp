@@ -165,8 +165,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     // check if the bone was not touched by any active animation
     if (m_accumulatedWeight == 0.0f) {
         // set the bone to the initial skeleton state
-        relativeTransform.translation = m_coreBone.relativeTransform.translation;
-        relativeTransform.rotation = m_coreBone.relativeTransform.rotation;
+        relativeTransform = m_coreBone.relativeTransform;
     }
 
     int parentId = m_coreBone.parentId;
@@ -186,11 +185,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     CalVector translationBoneSpace(m_coreBone.boneSpaceTransform.translation);
 
     // Must go before the *= m_rotationAbsolute.
-    bool meshScalingOn;
-    if (m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1) {
-        meshScalingOn = true;
-        CalVector scalevec;
-
+    bool meshScalingOn = m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1;
+    if (meshScalingOn) {
         // The mesh transformation is intended to apply to the vector from the
         // bone node to the vert, relative to the model's global coordinate system.
         // For example, even though the head node's X axis aims up, the model's
@@ -263,8 +259,6 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         translationBoneSpace.z *= m_meshScaleAbsolute.z;
         translationBoneSpace *= m_coreBone.boneSpaceTransform.rotation;
 
-    } else {
-        meshScalingOn = false;
     }
     translationBoneSpace *= absoluteTransform.rotation;
     translationBoneSpace += absoluteTransform.translation;
@@ -292,10 +286,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
 
     // calculate all child bones
-    std::vector<int>::const_iterator iteratorChildId;
-    for (iteratorChildId = m_coreBone.childIds.begin(); iteratorChildId != m_coreBone.childIds.end(); ++iteratorChildId) {
-        CalBone& bo = skeleton->bones[*iteratorChildId];
-        bo.calculateState(skeleton, *iteratorChildId);
+    for (size_t i = 0; i < m_coreBone.childIds.size(); ++i) {
+        skeleton->bones[m_coreBone.childIds[i]].calculateState(skeleton, m_coreBone.childIds[i]);
     }
 }
 
