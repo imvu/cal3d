@@ -132,7 +132,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			parentId = skeletonCandidate.GetParentSelectedId(boneCandidateId);
 
 			// set the parentId
-			pCoreBone->setParentId(parentId);
+			pCoreBone->parentId = (parentId);
 
 			// get the translation and the rotation of the bone candidate
 			CalVector translation;
@@ -140,8 +140,8 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			skeletonCandidate.GetTranslationAndRotation(boneCandidateId, -1.0f, translation, rotation);
 
 			// set the translation and rotation
-			pCoreBone->setTranslation(translation);
-			pCoreBone->setRotation(rotation);
+			pCoreBone->relativeTransform.translation = (translation);
+			pCoreBone->relativeTransform.rotation = (rotation);
 
 			// get the bone space translation and the rotation of the bone candidate
 			CalVector translationBoneSpace;
@@ -149,8 +149,8 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			skeletonCandidate.GetTranslationAndRotationBoneSpace(boneCandidateId, -1.0f, translationBoneSpace, rotationBoneSpace);
 
 			// set the bone space translation and rotation
-			pCoreBone->setTranslationBoneSpace(translationBoneSpace);
-			pCoreBone->setRotationBoneSpace(rotationBoneSpace);
+			pCoreBone->boneSpaceTransform.translation = translationBoneSpace;
+			pCoreBone->boneSpaceTransform.rotation = rotationBoneSpace;
 
 			// add the core bone to the core skeleton instance
 			int boneId;
@@ -159,17 +159,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			// adjust child list of parent bone
 			if(parentId != -1)
 			{
-				// get parent core bone
-				CalCoreBone *pParentCoreBone;
-				pParentCoreBone = coreSkeleton.getCoreBone(parentId);
-				if(pParentCoreBone == 0)
-				{
-					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-					return false;
-				}
-
-				// add this core bone to the child list of the parent bone
-				pParentCoreBone->addChildId(boneId);
+				coreSkeleton.coreBones[parentId]->childIds.push_back(boneId);
 			}
 		}
 	}

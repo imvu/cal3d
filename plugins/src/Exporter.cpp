@@ -135,8 +135,7 @@ bool CExporter::ExportAnimation(const std::string& strFilename)
 		// only create tracks for the selected bone candidates
 		if(pBoneCandidate->IsSelected())
 		{
-			CalCoreTrackPtr pCoreTrack(new CalCoreTrack(boneCandidateId, CalCoreTrack::KeyframeList()));
-			coreAnimation.tracks.push_back(pCoreTrack);
+			coreAnimation.tracks.push_back(CalCoreTrack(boneCandidateId, CalCoreTrack::KeyframeList()));
 		}
 	}
 
@@ -226,15 +225,12 @@ OutputDebugString(str);
 	{
 		CBoneCandidate *pBoneCandidate;
 		pBoneCandidate = vectorBoneCandidate[boneCandidateId];
-		CalCoreTrackPtr pCoreTrack = coreAnimation.getCoreTrack(pBoneCandidate->GetId());
-		static bool useCompression = true;
-        static double translationTolerance = 0.05;
+		CalCoreTrack pCoreTrack = coreAnimation.tracks[pBoneCandidate->GetId()];
+                static double translationTolerance = 0.05;
 		static double rotationToleranceDegrees = 0.1;
 		// there is no pCoreTrack for bones that are deselected
-		if( pCoreTrack && useCompression ) {
-                  CalCoreSkeleton * skelOrNull = skeletonCandidate.GetCoreSkeleton();
-		  pCoreTrack = pCoreTrack->compress(translationTolerance, rotationToleranceDegrees, skelOrNull );
-		}
+                CalCoreSkeleton * skelOrNull = skeletonCandidate.GetCoreSkeleton();
+		coreAnimation.tracks[pBoneCandidate->GetId()] = *pCoreTrack.compress(translationTolerance, rotationToleranceDegrees, skelOrNull );
 	}
 
 	// save core animation to the file
@@ -272,10 +268,7 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 	// create the core animation instance
 	CalCoreAnimatedMorph coreAnimation;
 
-	// set the duration of the animation
-	float duration;
-	duration = (float)(sheet.GetEndFrame() - sheet.GetStartFrame()) / (float)m_pInterface->GetFps();
-	coreAnimation.setDuration(duration);
+	coreAnimation.duration = (float)(sheet.GetEndFrame() - sheet.GetStartFrame()) / (float)m_pInterface->GetFps();
 
         
         // find the selected mesh
@@ -298,19 +291,15 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 	}
     int numMC = pMesh->numMorphChannels();
     for( int i = 0; i < numMC; i++ ) {
-      CalCoreMorphTrack * pTrack = new CalCoreMorphTrack();
-      if( !pTrack->create() ) {
-        SetLastError("Creation of CalCoreMorphTrack instance failed.", __FILE__, __LINE__);
-        return false;
-      }
+      CalCoreMorphTrack pTrack;
       CBaseMesh::MorphKeyFrame keyFrame = pMesh->frameForChannel(i, 0);
-      pTrack->setMorphName(keyFrame.name);
-      coreAnimation.addCoreTrack(pTrack);
+      pTrack.morphName = keyFrame.name;
+      coreAnimation.tracks.push_back(pTrack);
     }
 
 	// calculate the end frame
 	int endFrame;
-	endFrame = (int)(duration * (float)sheet.GetFps() + 0.5f);
+	endFrame = (int)(coreAnimation.duration * (float)sheet.GetFps() + 0.5f);
         
 	// calculate the displaced frame
         int displacedFrame;
@@ -348,18 +337,10 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
           for( int i = 0; i < numMC; i++ ) {
             CBaseMesh::MorphKeyFrame keyFrame = pMesh->frameForChannel(i, time);
             CalCoreMorphTrack * pTrack = coreAnimation.getCoreTrack(keyFrame.name);
-            CalCoreMorphKeyframe * pFrame = new CalCoreMorphKeyframe();
-            if(!pFrame->create()) {
-              SetLastError("Creation of CalCoreMorphKeyframe instance failed.", __FILE__, __LINE__);
-              return false;
-            }
-            pFrame->setTime(keyFrame.time);
-            pFrame->setWeight(keyFrame.weight / keyFrame.totalWeight);
-            if(!pTrack->addCoreMorphKeyframe(pFrame)) {
-              SetLastError(" addCoreMorphKeyframe failed.", __FILE__, __LINE__);
-			  pFrame->destroy();
-              return false;
-            }
+            CalCoreMorphKeyframe pFrame;
+            pFrame.time = keyFrame.time;
+            pFrame.weight = keyFrame.weight / keyFrame.totalWeight;
+            pTrack->keyframes.push_back(pFrame);
           }
 
           // calculate the next displaced frame and its frame time
@@ -440,34 +421,7 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
 	// create the core material instance
 	CalCoreMaterial coreMaterial;
 	// set the ambient color
-	CalCoreMaterial::Color coreColor;
-	float color[4];
-	pMaterialCandidate->GetAmbientColor(&color[0]);
-	coreColor.red = (unsigned char)(255.0f * color[0]);
-	coreColor.green = (unsigned char)(255.0f * color[1]);
-	coreColor.blue = (unsigned char)(255.0f * color[2]);
-	coreColor.alpha = (unsigned char)(255.0f * color[3]);
-	coreMaterial.ambientColor = coreColor;
 
-
-    // set the diffuse color
-    pMaterialCandidate->GetDiffuseColor(&color[0]);
-    coreColor.red = (unsigned char)(255.0f * color[0]);
-    coreColor.green = (unsigned char)(255.0f * color[1]);
-    coreColor.blue = (unsigned char)(255.0f * color[2]);
-    coreColor.alpha = (unsigned char)(255.0f * color[3]);
-    coreMaterial.diffuseColor = coreColor;
-
-    // set the specular color
-    pMaterialCandidate->GetSpecularColor(&color[0]);
-    coreColor.red = (unsigned char)(255.0f * color[0]);
-    coreColor.green = (unsigned char)(255.0f * color[1]);
-    coreColor.blue = (unsigned char)(255.0f * color[2]);
-    coreColor.alpha = (unsigned char)(255.0f * color[3]);
-    coreMaterial.specularColor = coreColor;
-
-    // set the shininess factor
-    coreMaterial.shininess = pMaterialCandidate->GetShininess();
 
 	// get the map vector of the material candidate
 	std::vector<CMaterialCandidate::Map>& vectorMap = pMaterialCandidate->GetVectorMap();
@@ -735,7 +689,7 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 
   CalVector sceneAmbientColor;
   m_pInterface->GetAmbientLight( sceneAmbientColor );
-  coreSkeleton.setSceneAmbientColor( sceneAmbientColor );
+  coreSkeleton.sceneAmbientColor = ( sceneAmbientColor );
   
 	// start the progress info
   CStackProgress progress(m_pInterface, "Exporting to skeleton file...");
@@ -763,7 +717,7 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
                         boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(pBoneCandidate->GetNode()->GetName()));
                         
 			// set the parentId
-			pCoreBone->setParentId(parentId);
+			pCoreBone->parentId = (parentId);
 
 			// get the translation and the rotation of the bone candidate
 			CalVector translation;
@@ -771,8 +725,8 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			skeletonCandidate.GetTranslationAndRotation(boneCandidateId, -1.0f, translation, rotation);
 
 			// set the translation and rotation
-			pCoreBone->setTranslation(translation);
-			pCoreBone->setRotation(rotation);
+			pCoreBone->relativeTransform.translation = translation;
+                        pCoreBone->relativeTransform.rotation = rotation;
 
 			// get the bone space translation and the rotation of the bone candidate
 			CalVector translationBoneSpace;
@@ -780,14 +734,14 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			skeletonCandidate.GetTranslationAndRotationBoneSpace(boneCandidateId, -1.0f, translationBoneSpace, rotationBoneSpace);
 
 			// set the bone space translation and rotation
-			pCoreBone->setTranslationBoneSpace(translationBoneSpace);
-			pCoreBone->setRotationBoneSpace(rotationBoneSpace);
+			pCoreBone->boneSpaceTransform.translation = translationBoneSpace;
+			pCoreBone->boneSpaceTransform.rotation = rotationBoneSpace;
 
       CBaseNode * pBoneNode = pBoneCandidate->GetNode();
-      pCoreBone->setLightType( pBoneNode->GetLightType() );
+      pCoreBone->lightType = ( pBoneNode->GetLightType() );
       CalVector color;
       pBoneNode->GetLightColor( color );
-      pCoreBone->setLightColor( color );
+      pCoreBone->lightColor = ( color );
                         
 			// add the core bone to the core skeleton instance
 			int boneId;
@@ -796,17 +750,7 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			// adjust child list of parent bone
 			if(parentId != -1)
 			{
-				// get parent core bone
-				CalCoreBone *pParentCoreBone;
-				pParentCoreBone = coreSkeleton.getCoreBone(parentId);
-				if(pParentCoreBone == 0)
-				{
-					SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
-					return false;
-				}
-
-				// add this core bone to the child list of the parent bone
-				pParentCoreBone->addChildId(boneId);
+				coreSkeleton.coreBones[parentId]->childIds.push_back(boneId);
 			}
 		}
 	}

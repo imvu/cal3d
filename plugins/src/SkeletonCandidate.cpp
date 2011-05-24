@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------//
 
 #include "StdAfx.h"
+#include <cal3d/buffersource.h>
 #include <cal3d/coreskeleton.h>
 #include <cal3d/loader.h>
 #include "Exporter.h"
@@ -140,7 +141,7 @@ bool CSkeletonCandidate::AddNode(CalCoreSkeleton *pCoreSkeleton, CalCoreBone *pC
 
 	// find the node with the name of the core bone
 	CBaseNode *pNode;
-	pNode = theExporter.GetInterface()->GetNode(pCoreBone->getName());
+	pNode = theExporter.GetInterface()->GetNode(pCoreBone->name);
 	if(pNode == 0)
 	{
 #define ALLOW_SKELETON_MISSING_BONES
@@ -195,11 +196,11 @@ bool CSkeletonCandidate::AddNode(CalCoreSkeleton *pCoreSkeleton, CalCoreBone *pC
 	}
 
 	// get core bone vector
-	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->getVectorCoreBone();
+	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->coreBones;
 
 	// handle all children of the core bone
 	std::vector<int>::const_iterator iteratorChildId;
-	for(iteratorChildId = pCoreBone->getListChildId().begin(); iteratorChildId != pCoreBone->getListChildId().end(); ++iteratorChildId)
+	for(iteratorChildId = pCoreBone->childIds.begin(); iteratorChildId != pCoreBone->childIds.end(); ++iteratorChildId)
 	{
             if(!AddNode(pCoreSkeleton, vectorCoreBone[*iteratorChildId].get(), pBoneCandidate->GetId())) return false;
 	}
@@ -278,9 +279,20 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 
 	m_strFilename = strFilename;
 
+        FILE* file = fopen(m_strFilename.c_str(), "rb");
+        fseek(file, 0, SEEK_END);
+        size_t length = ftell(file);
+        unsigned char* buffer = new unsigned char[length];
+        fseek(file, 0, SEEK_SET);
+        fread(buffer, 1, length, file);
+        fclose(file);
+
+        CalBufferSource source(buffer, length);
+
 	// load the core skeleton instance
 	// get core skeleton
-	m_skeleton.reset(CalLoader::loadCoreSkeleton(m_strFilename));
+	m_skeleton.reset(CalLoader::loadCoreSkeleton(source));
+        delete[] buffer;
 
         if(!m_skeleton)
 	{
@@ -289,11 +301,11 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	}
 
 	// get core bone vector
-	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = m_skeleton->getVectorCoreBone();
+	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = m_skeleton->coreBones;
 
 	// loop through all root core bones
 	std::vector<int>::const_iterator iteratorRootCoreBoneId;
-	for(iteratorRootCoreBoneId = m_skeleton->getListRootCoreBoneId().begin(); iteratorRootCoreBoneId != m_skeleton->getListRootCoreBoneId().end(); ++iteratorRootCoreBoneId)
+	for(iteratorRootCoreBoneId = m_skeleton->rootBoneIds.begin(); iteratorRootCoreBoneId != m_skeleton->rootBoneIds.end(); ++iteratorRootCoreBoneId)
 	{
 		// recursively add the core bone to the skeleton candidate
             if(!AddNode(m_skeleton.get(), vectorCoreBone[*iteratorRootCoreBoneId].get(), -1))

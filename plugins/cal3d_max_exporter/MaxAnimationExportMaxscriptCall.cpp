@@ -155,11 +155,7 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 		// only create tracks for the selected bone candidates
 		if(pBoneCandidate->IsSelected())
 		{
-			// allocate new core track instance
-			CalCoreTrackPtr pCoreTrack(new CalCoreTrack(boneCandidateId, CalCoreTrack::KeyframeList()));
-
-			// add the core track to the core animation instance
-			coreAnimation.tracks.push_back(pCoreTrack);
+			coreAnimation.tracks.push_back(CalCoreTrack(boneCandidateId, CalCoreTrack::KeyframeList()));
 		}
 	}
 

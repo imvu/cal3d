@@ -89,35 +89,6 @@ bool CExporter::ExportMaterialFromMaxscriptCall	(const std::string& strFilename)
 	// create the core material instance
 	CalCoreMaterial coreMaterial;
 
-	// set the ambient color
-	CalCoreMaterial::Color coreColor;
-	float color[4];
-	pMaterialCandidate->GetAmbientColor(&color[0]);
-	coreColor.red = (unsigned char)(255.0f * color[0]);
-	coreColor.green = (unsigned char)(255.0f * color[1]);
-	coreColor.blue = (unsigned char)(255.0f * color[2]);
-	coreColor.alpha = (unsigned char)(255.0f * color[3]);
-	coreMaterial.ambientColor = coreColor;
-
-	// set the diffuse color
-	pMaterialCandidate->GetDiffuseColor(&color[0]);
-	coreColor.red = (unsigned char)(255.0f * color[0]);
-	coreColor.green = (unsigned char)(255.0f * color[1]);
-	coreColor.blue = (unsigned char)(255.0f * color[2]);
-	coreColor.alpha = (unsigned char)(255.0f * color[3]);
-	coreMaterial.diffuseColor = coreColor;
-
-	// set the specular color
-	pMaterialCandidate->GetSpecularColor(&color[0]);
-	coreColor.red = (unsigned char)(255.0f * color[0]);
-	coreColor.green = (unsigned char)(255.0f * color[1]);
-	coreColor.blue = (unsigned char)(255.0f * color[2]);
-	coreColor.alpha = (unsigned char)(255.0f * color[3]);
-	coreMaterial.specularColor = coreColor;
-
-	// set the shininess factor
-	coreMaterial.shininess = pMaterialCandidate->GetShininess();
-
 	// get the map vector of the material candidate
 	std::vector<CMaterialCandidate::Map>& vectorMap = pMaterialCandidate->GetVectorMap();
 
