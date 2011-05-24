@@ -233,12 +233,12 @@ bool CSubmeshCandidate::CalculateLOD()
 
 		// create a lodder vertex
 		CLodder::Vertex vertex;
-		vertex.x = position[0];
-		vertex.y = position[1];
-		vertex.z = position[2];
-		vertex.nx = normal[0];
-		vertex.ny = normal[1];
-		vertex.nz = normal[2];
+		vertex.x = position.x;
+		vertex.y = position.y;
+		vertex.z = position.z;
+		vertex.nx = normal.x;
+		vertex.ny = normal.y;
+		vertex.nz = normal.z;
 
 		// add vertex to the lodder
 		if(!lodder.AddVertex(vertex)) return false;

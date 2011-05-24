@@ -49,9 +49,9 @@ CVertexCandidate::~CVertexCandidate()
 bool CVertexCandidate::operator==(CVertexCandidate& vertexCandidate)
 {
 	// compare the position
-	if((fabs(m_position[0] - vertexCandidate.m_position[0]) > EPSILON)
-		|| (fabs(m_position[1] - vertexCandidate.m_position[1]) > EPSILON)
-		|| (fabs(m_position[2] - vertexCandidate.m_position[2]) > EPSILON)) 
+	if((fabs(m_position.x - vertexCandidate.m_position.x) > EPSILON)
+		|| (fabs(m_position.y - vertexCandidate.m_position.y) > EPSILON)
+		|| (fabs(m_position.z - vertexCandidate.m_position.z) > EPSILON)) 
 		return false;
 #if 0
 	// compare the normal
@@ -344,9 +344,9 @@ void CVertexCandidate::SetLodId(int lodId)
 
 void CVertexCandidate::SetNormal(float nx, float ny, float nz)
 {
-	m_normal[0] = nx;
-	m_normal[1] = ny;
-	m_normal[2] = nz;
+	m_normal.x = nx;
+	m_normal.y = ny;
+	m_normal.z = nz;
 }
 
 //----------------------------------------------------------------------------//
@@ -366,9 +366,9 @@ void CVertexCandidate::SetPhysicalProperty(float weight, int springCount, int co
 
 void CVertexCandidate::SetPosition(float x, float y, float z)
 {
-	m_position[0] = x;
-	m_position[1] = y;
-	m_position[2] = z;
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
 }
 
 void 

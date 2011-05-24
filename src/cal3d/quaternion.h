@@ -115,7 +115,7 @@ static inline CalQuaternion shortestArc(const CalVector& from, const CalVector& 
 
     //Return with the w component (Note that w is inverted because Cal3D has
     // left-handed rotations )
-    return CalQuaternion(cross[0], cross[1], cross[2], -dot / 2) ;
+    return CalQuaternion(cross.x, cross.y, cross.z, -dot / 2) ;
 
 }
 

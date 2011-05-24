@@ -704,17 +704,17 @@ void CMaxInterface::GetTranslationAndRotation(CBaseNode *pNode, CBaseNode *pPare
 	Point3 p;
 	p = tm.GetTrans();
 
-	translation[0] = p[0];
-	translation[1] = p[1];
-	translation[2] = p[2];
+	translation.x = p[0];
+	translation.y = p[1];
+	translation.z = p[2];
 
 	// calculate the rotation component
 	Quat q(tm);
 
-	rotation[0] = q[0];
-	rotation[1] = q[1];
-	rotation[2] = q[2];
-	rotation[3] = q[3];
+	rotation.x = q[0];
+	rotation.y = q[1];
+	rotation.z = q[2];
+	rotation.w = q[3];
 }
 
 //----------------------------------------------------------------------------//
@@ -741,17 +741,17 @@ void CMaxInterface::GetTranslationAndRotationBoneSpace(CBaseNode *pNode, float t
 	Point3 p;
 	p = tm.GetTrans();
 
-	translation[0] = p[0];
-	translation[1] = p[1];
-	translation[2] = p[2];
+	translation.x = p[0];
+	translation.y = p[1];
+	translation.z = p[2];
 
 	// calculate the rotation component
 	Quat q(tm);
 
-	rotation[0] = q[0];
-	rotation[1] = q[1];
-	rotation[2] = q[2];
-	rotation[3] = q[3];
+	rotation.x = q[0];
+	rotation.y = q[1];
+	rotation.z = q[2];
+	rotation.w = q[3];
 }
 
 //----------------------------------------------------------------------------//

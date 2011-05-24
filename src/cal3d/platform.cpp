@@ -260,3 +260,16 @@ bool CalPlatform::writeString(std::ostream& output, const std::string& strValue)
 }
 
 //****************************************************************************//
+
+bool CalPlatform::writeVector(std::ostream& file, CalVector v) {
+    return CalPlatform::writeFloat(file, v.x)
+        && CalPlatform::writeFloat(file, v.y)
+        && CalPlatform::writeFloat(file, v.z);
+}
+
+bool CalPlatform::writeQuat(std::ostream& file, CalQuaternion q) {
+    return CalPlatform::writeFloat(file, q.x)
+        && CalPlatform::writeFloat(file, q.y)
+        && CalPlatform::writeFloat(file, q.z)
+        && CalPlatform::writeFloat(file, q.w);
+}

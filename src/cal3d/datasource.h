@@ -13,6 +13,8 @@
 #include <iosfwd>
 #include <string>
 #include "cal3d/global.h"
+#include "cal3d/vector.h"
+#include "cal3d/quaternion.h"
 
 namespace CalPlatform {
     CAL3D_API bool readBytes(char* input, void* pBuffer, int length);
@@ -24,4 +26,7 @@ namespace CalPlatform {
     CAL3D_API bool writeFloat(std::ostream& output, float value);
     CAL3D_API bool writeInteger(std::ostream& output, int value);
     CAL3D_API bool writeString(std::ostream& output, const std::string& strValue);
+
+    CAL3D_API bool writeVector(std::ostream& output, CalVector v);
+    CAL3D_API bool writeQuat(std::ostream& output, CalQuaternion q);
 };

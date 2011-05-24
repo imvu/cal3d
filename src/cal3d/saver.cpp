@@ -221,31 +221,10 @@ bool CalSaver::saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone) {
         return false;
     }
 
-    // write the translation of the bone
-    const CalVector& translation = pCoreBone->relativeTransform.translation;
-    CalPlatform::writeFloat(file, translation[0]);
-    CalPlatform::writeFloat(file, translation[1]);
-    CalPlatform::writeFloat(file, translation[2]);
-
-    // write the rotation of the bone
-    const CalQuaternion& rotation = pCoreBone->relativeTransform.rotation;
-    CalPlatform::writeFloat(file, rotation[0]);
-    CalPlatform::writeFloat(file, rotation[1]);
-    CalPlatform::writeFloat(file, rotation[2]);
-    CalPlatform::writeFloat(file, rotation[3]);
-
-    // write the translation of the bone
-    const CalVector& translationBoneSpace = pCoreBone->boneSpaceTransform.translation;
-    CalPlatform::writeFloat(file, translationBoneSpace[0]);
-    CalPlatform::writeFloat(file, translationBoneSpace[1]);
-    CalPlatform::writeFloat(file, translationBoneSpace[2]);
-
-    // write the rotation of the bone
-    const CalQuaternion& rotationBoneSpace = pCoreBone->boneSpaceTransform.rotation;
-    CalPlatform::writeFloat(file, rotationBoneSpace[0]);
-    CalPlatform::writeFloat(file, rotationBoneSpace[1]);
-    CalPlatform::writeFloat(file, rotationBoneSpace[2]);
-    CalPlatform::writeFloat(file, rotationBoneSpace[3]);
+    CalPlatform::writeVector(file, pCoreBone->relativeTransform.translation);
+    CalPlatform::writeQuat(file, pCoreBone->relativeTransform.rotation);
+    CalPlatform::writeVector(file, pCoreBone->boneSpaceTransform.translation);
+    CalPlatform::writeQuat(file, pCoreBone->boneSpaceTransform.rotation);
 
     // write the parent bone id
     if (!CalPlatform::writeInteger(file, pCoreBone->parentId)) {
@@ -255,10 +234,7 @@ bool CalSaver::saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone) {
 
     // write lighting data
     CalPlatform::writeInteger(file, pCoreBone->lightType);
-    CalVector c = pCoreBone->lightColor;
-    CalPlatform::writeFloat(file, c.x);
-    CalPlatform::writeFloat(file, c.y);
-    CalPlatform::writeFloat(file, c.z);
+    CalPlatform::writeVector(file, pCoreBone->lightColor);
 
     // get children list
     const std::vector<int>& listChildId = pCoreBone->childIds;
@@ -307,23 +283,10 @@ CalSaver::saveCoreKeyframe(
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, strFilename);
         return false;
     }
-    const CalVector& translation = pCoreKeyframe->translation;
-    const CalQuaternion& rotation = pCoreKeyframe->rotation;
-    float caltime = pCoreKeyframe->time;
 
-    // write the time of the keyframe
-    CalPlatform::writeFloat(file, caltime);
-
-    // write the translation of the keyframe
-    CalPlatform::writeFloat(file, translation[0]);
-    CalPlatform::writeFloat(file, translation[1]);
-    CalPlatform::writeFloat(file, translation[2]);
-
-    // write the rotation of the keyframe
-    CalPlatform::writeFloat(file, rotation[0]);
-    CalPlatform::writeFloat(file, rotation[1]);
-    CalPlatform::writeFloat(file, rotation[2]);
-    CalPlatform::writeFloat(file, rotation[3]);
+    CalPlatform::writeFloat(file, pCoreKeyframe->time);
+    CalPlatform::writeVector(file, pCoreKeyframe->translation);
+    CalPlatform::writeQuat(file, pCoreKeyframe->rotation);
 
     // check if an error happend
     if (!file) {
