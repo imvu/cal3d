@@ -181,7 +181,7 @@ size_t sizeInBytes(const SSEArray<T>& v) {
 
 template<typename T>
 size_t sizeInBytes(const std::vector<T>& v) {
-    size_t r = sizeof(T);// * (v.capacity() - v.size());
+    size_t r = sizeof(T) * (v.capacity() - v.size());
     for (typename std::vector<T>::const_iterator i = v.begin(); i != v.end(); ++i) {
         r += sizeInBytes(*i);
     }
