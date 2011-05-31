@@ -162,13 +162,6 @@ public:
     int getCoreSubMorphTargetCount();
     CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
     void scale(float factor);
-    void setSubMorphTargetGroupIndexArray(unsigned int len, unsigned int const* indexArray);
-    inline unsigned int subMorphTargetGroupIndex(int subMorphTargetId) {
-        if (size_t(subMorphTargetId) >= m_vectorSubMorphTargetGroupIndex.size()) {
-            return 0xffffffff;
-        }
-        return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
-    }
 
     bool isStatic() const;
     BoneTransform getStaticTransform(const BoneTransform* bones) const;
@@ -193,7 +186,6 @@ private:
 
     CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
     int m_coreMaterialThreadId;
-    std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
     bool m_hasNonWhiteVertexColors;
 
     bool m_isStatic;

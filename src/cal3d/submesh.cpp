@@ -197,54 +197,33 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
                 case CalMorphTargetTypeExclusive:
                 case CalMorphTargetTypeAverage: {
 
-                    unsigned int subMorphTargetGroupIndex = coreSubmesh->subMorphTargetGroupIndex(i);
                     float attenuatedWeight = unrampedWeight * rampValue;
 
-                    // If morph target is not in a group, then the group exclusivity doesn't apply.
-                    if (subMorphTargetGroupIndex == 0xffffffff) {
+                    // Each morph target is having multiple actions blended into it.  The composition mode (e.g., exclusive)
+                    // is a property of the morph target itself, so you don't ever get an exclusive blend competing with
+                    // an average blend, for example.  You get different actions all blending into the same morph target.
 
-                        // Each morph target is having multiple actions blended into it.  The composition mode (e.g., exclusive)
-                        // is a property of the morph target itself, so you don't ever get an exclusive blend competing with
-                        // an average blend, for example.  You get different actions all blending into the same morph target.
-
-                        // For morphs of the Exclusive type, I pick one of the Replace actions arbitrarily
-                        // and attenuate all the other actions' influence by the inverse of the Replace action's
-                        // rampValue.  If I don't have a Replace action, then the result is the same as the
-                        // Average type morph target.  This procedure is not exactly the same as the skeletal animation
-                        // Replace composition function.  The skeletal animation Replace function supports combined
-                        // attenuation of multiple Replace animations, whereas morph animation Exclusive type
-                        // supports only one Replace morph animation, arbitrarily chosen, to attenuate the other
-                        // animations.  The reason for the difference is that skeletal animations are sorted in
-                        // the mixer, and morph animations are in an arbitrary order.
-                        //
-                        // If I already have a Replace chosen, then I attenuate this action.
-                        // Otherwise, if this action is a Replace, then I record it and attenuate current scale.
-                        if (mtype == CalMorphTargetTypeExclusive) {
-                            if (m_vectorReplacementAttenuation[ i ] != ReplacementAttenuationNull) {
-                                attenuatedWeight *= m_vectorReplacementAttenuation[ i ];
-                            } else {
-                                if (replace) {
-                                    float attenuation = 1.0f - rampValue;
-                                    m_vectorReplacementAttenuation[ i ] = attenuation;
-                                    m_vectorMorphTargetWeight[ i ] *= attenuation;
-                                    m_vectorAccumulatedWeight[ i ] *= attenuation;
-                                }
-                            }
-                        }
-                    } else {
-                        int attenuator = m_vectorSubMorphTargetGroupAttenuator[ subMorphTargetGroupIndex ];
-                        if (attenuator != -1) {  // i.e., if group is exclusive
-                            if (attenuator != i) {  // If I'm not the attenuator, then I get attenuated.
-                                attenuatedWeight *= m_vectorSubMorphTargetGroupAttenuation[ subMorphTargetGroupIndex ];
-                            } else {
-
-                                // For group attenuation, I don't need to attenuate the earlier accumulation
-                                // (m_vectorMorphTargetWeight, m_vectorAccumulatedWeight) because the group's
-                                // attenuation is applied throughout the entire iteration.  Also, I don't
-                                // need to test for the "replace" flag because it has already been taken into account
-                                // in the decision of who the group attenuator is.
+                    // For morphs of the Exclusive type, I pick one of the Replace actions arbitrarily
+                    // and attenuate all the other actions' influence by the inverse of the Replace action's
+                    // rampValue.  If I don't have a Replace action, then the result is the same as the
+                    // Average type morph target.  This procedure is not exactly the same as the skeletal animation
+                    // Replace composition function.  The skeletal animation Replace function supports combined
+                    // attenuation of multiple Replace animations, whereas morph animation Exclusive type
+                    // supports only one Replace morph animation, arbitrarily chosen, to attenuate the other
+                    // animations.  The reason for the difference is that skeletal animations are sorted in
+                    // the mixer, and morph animations are in an arbitrary order.
+                    //
+                    // If I already have a Replace chosen, then I attenuate this action.
+                    // Otherwise, if this action is a Replace, then I record it and attenuate current scale.
+                    if (mtype == CalMorphTargetTypeExclusive) {
+                        if (m_vectorReplacementAttenuation[ i ] != ReplacementAttenuationNull) {
+                            attenuatedWeight *= m_vectorReplacementAttenuation[ i ];
+                        } else {
+                            if (replace) {
                                 float attenuation = 1.0f - rampValue;
                                 m_vectorReplacementAttenuation[ i ] = attenuation;
+                                m_vectorMorphTargetWeight[ i ] *= attenuation;
+                                m_vectorAccumulatedWeight[ i ] *= attenuation;
                             }
                         }
                     }

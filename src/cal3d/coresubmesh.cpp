@@ -33,15 +33,6 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
     m_vectorFace.resize(faceCount);
 }
 
-void CalCoreSubmesh::setSubMorphTargetGroupIndexArray(unsigned int len, unsigned int const* indexArray) {
-    m_vectorSubMorphTargetGroupIndex.reserve(len);
-    m_vectorSubMorphTargetGroupIndex.resize(len);
-    unsigned int i;
-    for (i = 0; i < len; i++) {
-        m_vectorSubMorphTargetGroupIndex[ i ] = indexArray[ i ];
-    }
-}
-
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Face);
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Influence);
 
@@ -54,7 +45,6 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     r += ::sizeInBytes(m_vertices);
     r += ::sizeInBytes(m_vertexColors);
     r += ::sizeInBytes(m_vectorFace);
-    r += ::sizeInBytes(m_vectorSubMorphTargetGroupIndex);
     r += ::sizeInBytes(m_staticInfluenceSet);
     r += ::sizeInBytes(m_influences);
     return r;
