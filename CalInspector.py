@@ -37,7 +37,6 @@ def getMeshInfo(meshBuffer):
         result[i] = {}
         result[i]['materialId'] = submesh.coreMaterialThreadId
         result[i]['faceCount'] = submesh.faceCount
-        result[i]['lodCount'] = submesh.lodCount
         result[i]['vertexCount'] = submesh.vertexCount
     return result
 

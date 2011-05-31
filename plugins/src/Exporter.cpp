@@ -575,7 +575,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 
 				CalCoreSubmesh::Vertex vertex;
                                 CalColor32 vertexColor;
-                                CalCoreSubmesh::LodData lodData;
 
 				// set the vertex position
                                 CalVector position;
@@ -592,12 +591,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				CalVector normal;
 				pVertexCandidate->GetNormal(normal);
                                 vertex.normal.setAsVector(normal);
-
-				// set the collapse id
-				lodData.collapseId = pVertexCandidate->GetCollapseId();
-
-				// set the face collapse count
-				lodData.faceCollapseCount = pVertexCandidate->GetFaceCollapseCount();
 
 				// get the texture coordinate vector
 				std::vector<CVertexCandidate::TextureCoordinate>& vectorTextureCoordinate = pVertexCandidate->GetVectorTextureCoordinate();
@@ -621,7 +614,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
                                 // Chad says that this might work. -- andy 4 June 2009
                                 //assert(false); // Not sure exactly how this call should work.
 				//pCoreSubmesh->setVertex(pVertexCandidate->GetLodId(), vertex, vertexColor, lodData, vectorInfluence);
-                                pCoreSubmesh->addVertex(vertex, vertexColor, lodData, vectorInfluence);
+                                pCoreSubmesh->addVertex(vertex, vertexColor, vectorInfluence);
 			}
 
 			size_t faceId;
@@ -638,10 +631,6 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				pCoreSubmesh->setFace(vectorFace[faceId].lodId, face);
 			}
 
-			// set the LOD step count
-			pCoreSubmesh->setLodCount(pSubmeshCandidate->GetLodCount());
-
-			// add the core submesh to the core mesh instance
 			coreMesh.addCoreSubmesh(pCoreSubmesh);
 		}
 	}

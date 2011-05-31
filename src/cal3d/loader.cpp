@@ -925,13 +925,11 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
     }
 
     CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
-    pCoreSubmesh->setLodCount(lodCount);
     pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
     pCoreSubmesh->setHasNonWhiteVertexColors(false);
     for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
         CalCoreSubmesh::Vertex vertex;
-        CalCoreSubmesh::LodData lodData;
         CalColor32 vertexColor;
 
         // load data of the vertex
@@ -954,8 +952,10 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
             }
             vertexColor = CalMakeColor(vc);
         }
-        dataSrc.readInteger(lodData.collapseId);
-        dataSrc.readInteger(lodData.faceCollapseCount);
+        int collapseId;
+        int faceCollapseCount;
+        dataSrc.readInteger(collapseId);
+        dataSrc.readInteger(faceCollapseCount);
 
         for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
             CalCoreSubmesh::TextureCoordinate textureCoordinate;
@@ -983,7 +983,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         }
 
         // set vertex in the core submesh instance
-        pCoreSubmesh->addVertex(vertex, vertexColor, lodData, influences);
+        pCoreSubmesh->addVertex(vertex, vertexColor, influences);
 
         // load the physical property of the vertex if there are springs in the core submesh
         if (springCount > 0) {

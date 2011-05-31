@@ -252,7 +252,7 @@ static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
         inf[0].boneId = 0;
         inf[0].weight = 1.0f;
         inf[0].lastInfluenceForThisVertex = true;
-        coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+        coreSubmesh->addVertex(v, 0, inf);
     }
     return coreSubmesh;
 }
@@ -347,9 +347,9 @@ TEST(single_morph_target) {
 
     v.position.setAsPoint(CalVector(0, 0, 0));
     v.normal.setAsVector(CalVector(0, 0, 0));
-    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
-    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
-    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    coreSubmesh->addVertex(v, 0, inf);
+    coreSubmesh->addVertex(v, 0, inf);
+    coreSubmesh->addVertex(v, 0, inf);
 
     CalCoreSubMorphTargetPtr morphTarget(new CalCoreSubMorphTarget("foo"));
     CalCoreSubMorphTarget::BlendVertex bv;
@@ -394,9 +394,9 @@ TEST(two_morph_targets) {
 
     v.position.setAsPoint(CalVector(0, 0, 0));
     v.normal.setAsVector(CalVector(0, 0, 0));
-    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
-    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
-    coreSubmesh->addVertex(v, 0, CalCoreSubmesh::LodData(), inf);
+    coreSubmesh->addVertex(v, 0, inf);
+    coreSubmesh->addVertex(v, 0, inf);
+    coreSubmesh->addVertex(v, 0, inf);
 
     CalCoreSubMorphTarget::BlendVertex bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));

@@ -580,13 +580,12 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     // get the vertex, face, physical property and spring vector
     const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
-    std::vector<CalCoreSubmesh::LodData>& lodData = pCoreSubmesh->getLodData();
     const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
 
     // write the number of vertices, faces, level-of-details and springs
     CalPlatform::writeInteger(os, vectorVertex.size());
     CalPlatform::writeInteger(os, vectorFace.size());
-    CalPlatform::writeInteger(os, pCoreSubmesh->getLodCount());
+    CalPlatform::writeInteger(os, 0); // lod count
     CalPlatform::writeInteger(os, 0); // spring count
 
     // get the texture coordinate vector vector
@@ -608,7 +607,6 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     // write all vertices
     for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
         const CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
-        CalCoreSubmesh::LodData& ld = lodData[vertexId];
         const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
 
         // write the vertex data
@@ -628,8 +626,8 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
             CalPlatform::writeFloat(os, 1);
             CalPlatform::writeFloat(os, 1);
         }
-        CalPlatform::writeInteger(os, ld.collapseId);
-        CalPlatform::writeInteger(os, ld.faceCollapseCount);
+        CalPlatform::writeInteger(os, -1); // collapseId
+        CalPlatform::writeInteger(os, 0); // faceCollapseCount
 
         // write all texture coordinates of this vertex
         int textureCoordinateId;
@@ -1164,7 +1162,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         submesh.SetAttribute("NUMVERTICES", pCoreSubmesh->getVertexCount());
         submesh.SetAttribute("NUMFACES", pCoreSubmesh->getFaceCount());
         submesh.SetAttribute("MATERIAL", pCoreSubmesh->getCoreMaterialThreadId());
-        submesh.SetAttribute("NUMLODSTEPS", pCoreSubmesh->getLodCount());
+        submesh.SetAttribute("NUMLODSTEPS", 0);
         submesh.SetAttribute("NUMSPRINGS", 0);
         submesh.SetAttribute("NUMMORPHS", pCoreSubmesh->getCoreSubMorphTargetCount());
 
@@ -1172,7 +1170,6 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
         const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
         std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
-        std::vector<CalCoreSubmesh::LodData>& allLodData = pCoreSubmesh->getLodData();
 
         const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
         CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
@@ -1183,7 +1180,6 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
             CalColor32& vertexColor = vertexColors[vertexId];
-            CalCoreSubmesh::LodData& lodData = allLodData[vertexId];
             const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
 
             TiXmlElement vertex("VERTEX");
@@ -1226,22 +1222,6 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
             vertColor.InsertEndChild(colordata);
             vertex.InsertEndChild(vertColor);
-
-            if (lodData.collapseId != -1) {
-                TiXmlElement collapse("COLLAPSEID");
-                str.str("");
-                str << lodData.collapseId;
-                TiXmlText collapseid(str.str());
-                collapse.InsertEndChild(collapseid);
-                vertex.InsertEndChild(collapse);
-
-                TiXmlElement collapsecount("COLLAPSECOUNT");
-                str.str("");
-                str << lodData.faceCollapseCount;
-                TiXmlText collapsecountdata(str.str());
-                collapsecount.InsertEndChild(collapsecountdata);
-                vertex.InsertEndChild(collapsecount);
-            }
 
             // write all texture coordinates of this vertex
             int textureCoordinateId;

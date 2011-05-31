@@ -12,22 +12,11 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
-/*****************************************************************************/
-/** Constructs the core submesh instance.
-  *
-  * This function is the default constructor of the core submesh instance.
-  *****************************************************************************/
-
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)
     : m_coreMaterialThreadId(0)
-    , m_lodCount(0)
     , m_isStatic(false)
     , m_currentVertexId(0) {
     m_hasNonWhiteVertexColors = false;
@@ -35,7 +24,6 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
     // reserve the space needed in all the vectors
     m_vertices.resize(vertexCount);
     m_vertexColors.resize(vertexCount);
-    m_lodData.resize(vertexCount);
     m_influenceRanges.resize(vertexCount);
 
     m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
@@ -58,7 +46,6 @@ void CalCoreSubmesh::setSubMorphTargetGroupIndexArray(unsigned int len, unsigned
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Face);
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Influence);
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::InfluenceRange);
-CAL3D_DEFINE_SIZE(CalCoreSubmesh::LodData);
 
 size_t sizeInBytes(const CalCoreSubmesh::InfluenceSet& is) {
     return sizeof(is) + sizeInBytes(is.influences);
@@ -68,7 +55,6 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     size_t r = sizeof(*this);
     r += ::sizeInBytes(m_vertices);
     r += ::sizeInBytes(m_vertexColors);
-    r += ::sizeInBytes(m_lodData);
     r += ::sizeInBytes(m_influenceRanges);
     r += ::sizeInBytes(m_vectorFace);
     r += ::sizeInBytes(m_vectorSubMorphTargetGroupIndex);
@@ -94,33 +80,6 @@ bool CalCoreSubmesh::setFace(int faceId, const Face& face) {
     return true;
 }
 
-/*****************************************************************************/
-/** Sets the number of LOD steps.
-  *
-  * This function sets the number of LOD steps of the core submesh instance.
-  *
-  * @param lodCount The number of LOD steps that should be set.
-  *****************************************************************************/
-
-void CalCoreSubmesh::setLodCount(int lodCount) {
-    m_lodCount = lodCount;
-}
-
-/*****************************************************************************/
-/** Sets a specified texture coordinate.
-  *
-  * This function sets a specified texture coordinate in the core submesh
-  * instance.
-  *
-  * @param vertexId  The ID of the vertex.
-  * @param textureCoordinateId  The ID of the texture coordinate.
-  * @param textureCoordinate The texture coordinate that should be set.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
 bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate) {
     if ((textureCoordinateId < 0) || (textureCoordinateId >= (int)m_vectorvectorTextureCoordinate.size())) {
         return false;
@@ -134,7 +93,7 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
     return true;
 }
 
-void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& inf_) {
+void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& inf_) {
     assert(m_currentVertexId < m_vertices.size());
 
     const int vertexId = m_currentVertexId++;
@@ -159,7 +118,6 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
 
     m_vertices[vertexId] = vertex;
     m_vertexColors[vertexId] = vertexColor;
-    m_lodData[vertexId] = lodData;
 
     // Each vertex needs at least one influence.
     std::vector<Influence> inf(inf_);

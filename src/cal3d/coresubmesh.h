@@ -112,11 +112,6 @@ public:
         CalIndex vertexId[3];
     };
 
-    struct LodData {
-        int collapseId;
-        int faceCollapseCount;
-    };
-
     typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
     typedef std::vector<Face> VectorFace;
     typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
@@ -132,9 +127,6 @@ public:
     }
     int getFaceCount() const {
         return m_vectorFace.size();
-    }
-    int getLodCount() const {
-        return m_lodCount;
     }
     bool hasNonWhiteVertexColors() const {
         return m_hasNonWhiteVertexColors;
@@ -155,18 +147,13 @@ public:
         return m_vertexColors;
     }
 
-    std::vector<LodData>& getLodData() {
-        return m_lodData;
-    }
-
     int getVertexCount() const {
         return m_vertices.size();
     }
     void setCoreMaterialThreadId(int coreMaterialThreadId);
     bool setFace(int faceId, const Face& face);
-    void setLodCount(int lodCount);
 
-    void addVertex(const Vertex& vertex, CalColor32 vertexColor, const LodData& lodData, const std::vector<Influence>& influences);
+    void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
     bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
     void setHasNonWhiteVertexColors(bool p) {
@@ -209,7 +196,6 @@ private:
     // The following arrays should always be the same size.
     SSEArray<Vertex> m_vertices;
     std::vector<CalColor32> m_vertexColors;
-    std::vector<LodData> m_lodData;
     std::vector<InfluenceRange> m_influenceRanges;
 
     std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
@@ -217,7 +203,6 @@ private:
 
     CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
     int m_coreMaterialThreadId;
-    int m_lodCount;
     std::vector<unsigned int> m_vectorSubMorphTargetGroupIndex;
     bool m_hasNonWhiteVertexColors;
 

@@ -27,22 +27,18 @@ class CalInspectorTest(imvu.test.TestCase):
     def assertMeshInfo(self, result):
         expected = {
             0: {'faceCount': 1430,
-                'lodCount': 0,
                 'materialId': 2,
                 'vertexCount': 959
             },
             1: {'faceCount': 336,
-                'lodCount': 0,
                 'materialId': 3,
                 'vertexCount': 172
             },
             2: {'faceCount': 66,
-                'lodCount': 0,
                 'materialId': 5,
                 'vertexCount': 66
             },
             3: {'faceCount': 64,
-                'lodCount': 0,
                 'materialId': 6,
                 'vertexCount': 48
             }

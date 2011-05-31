@@ -837,8 +837,6 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
         int faceCount = atoi(submesh->Attribute("NUMFACES"));
 
-        int lodCount = atoi(submesh->Attribute("NUMLODSTEPS"));
-
         int springCount = atoi(submesh->Attribute("NUMSPRINGS"));
 
         int textureCoordinateCount = atoi(submesh->Attribute("NUMTEXCOORDS"));
@@ -849,15 +847,9 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             morphCount = atoi(numMorphStr);
         }
 
-        // allocate a new core submesh instance
         boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
 
         pCoreSubmesh->setHasNonWhiteVertexColors(false);
-
-        // set the LOD step count
-        pCoreSubmesh->setLodCount(lodCount);
-
-        // set the core material id
         pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
 
         TiXmlElement* vertex = submesh->FirstChildElement();
@@ -868,7 +860,6 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             }
             CalCoreSubmesh::Vertex Vertex;
             CalColor32 vertexColor = 0;
-            CalCoreSubmesh::LodData lodData;
 
             TiXmlElement* pos = vertex->FirstChildElement();
             if (!ValidateTag(pos, "POS", pCoreMesh, pCoreSubmesh)) {
@@ -955,8 +946,6 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
-                lodData.collapseId = atoi(collapseid->Value());
-
                 TiXmlElement* collapseCount = collapse->NextSiblingElement();
                 if (!collapseCount || cal3d_stricmp(collapseCount->Value(), "COLLAPSECOUNT") != 0) {
                     delete pCoreMesh;
@@ -976,11 +965,7 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
-                lodData.faceCollapseCount = atoi(collapseCountdata->Value());
                 collapse = collapseCount->NextSiblingElement();
-            } else {
-                lodData.collapseId = -1;
-                lodData.faceCollapseCount = 0;
             }
 
 
@@ -1060,7 +1045,7 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 influence = influence->NextSiblingElement();
             }
 
-            pCoreSubmesh->addVertex(Vertex, vertexColor, lodData, influences);
+            pCoreSubmesh->addVertex(Vertex, vertexColor, influences);
             vertex = vertex->NextSiblingElement();
         }
 

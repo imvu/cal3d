@@ -25,7 +25,7 @@ TEST(is_static_if_all_vertices_are_influenced_by_same_bone) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
 
     BoneTransform bts[1];
     bts[0].rowx.x = 1.0f;
@@ -54,7 +54,7 @@ TEST(is_static_if_two_influences) {
     inf[0].weight = 0.5f;
     inf[1].boneId = 1;
     inf[1].weight = 0.5f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
 
     BoneTransform bts[2];
     bts[0].rowx.x = 1.0f;
@@ -89,10 +89,10 @@ TEST(not_static_if_two_vertices_are_influenced_by_different_bones) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
     inf[0].boneId = 1;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
 
     CHECK(!csm.isStatic());
 }
@@ -104,13 +104,13 @@ TEST(is_not_static_if_first_and_third_vertices_have_same_influence) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
     inf[0].boneId = 1;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
 
     CHECK(!csm.isStatic());
 }
@@ -124,12 +124,12 @@ TEST(is_static_if_two_vertices_have_influences_in_different_order) {
     inf[0].weight = 1.0f;
     inf[1].boneId = 1;
     inf[1].weight = 0.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
     inf[0].boneId = 1;
     inf[0].weight = 0.0f;
     inf[1].boneId = 0;
     inf[1].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
 
     CHECK(csm.isStatic());
 }
@@ -143,12 +143,12 @@ TEST(is_not_static_if_has_morph_targets) {
     inf[0].weight = 1.0f;
     inf[1].boneId = 1;
     inf[1].weight = 0.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
     inf[0].boneId = 1;
     inf[0].weight = 0.0f;
     inf[1].boneId = 0;
     inf[1].weight = 1.0f;
-    csm.addVertex(v, black, CalCoreSubmesh::LodData(), inf);
+    csm.addVertex(v, black, inf);
 
     boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(""));
     csm.addCoreSubMorphTarget(morphTarget);
@@ -208,7 +208,7 @@ TEST(aabox_is_single_point_with_one_vertex) {
 
     CalCoreSubmesh::Vertex v;
     v.position.setAsPoint(pos);
-    csm.addVertex(v, CalColor32(), CalCoreSubmesh::LodData(), std::vector<CalCoreSubmesh::Influence>());
+    csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
     CHECK_EQUAL(CalAABox(pos, pos), csm.getBoundingVolume());
 }
@@ -218,13 +218,13 @@ TEST(aabox_is_min_max_of_all_vertices) {
 
     CalCoreSubmesh::Vertex v;
     v.position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
-    csm.addVertex(v, CalColor32(), CalCoreSubmesh::LodData(), std::vector<CalCoreSubmesh::Influence>());
+    csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
     v.position.setAsPoint(CalVector(2.0f, 3.0f, 1.0f));
-    csm.addVertex(v, CalColor32(), CalCoreSubmesh::LodData(), std::vector<CalCoreSubmesh::Influence>());
+    csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
     v.position.setAsPoint(CalVector(3.0f, 1.0f, 2.0f));
-    csm.addVertex(v, CalColor32(), CalCoreSubmesh::LodData(), std::vector<CalCoreSubmesh::Influence>());
+    csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
     CHECK_EQUAL(
         CalAABox(CalVector(1.0f, 1.0f, 1.0f), CalVector(3.0f, 3.0f, 3.0f)),
