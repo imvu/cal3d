@@ -24,7 +24,6 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
     // reserve the space needed in all the vectors
     m_vertices.resize(vertexCount);
     m_vertexColors.resize(vertexCount);
-    m_influenceRanges.resize(vertexCount);
 
     m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
     for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
@@ -45,7 +44,6 @@ void CalCoreSubmesh::setSubMorphTargetGroupIndexArray(unsigned int len, unsigned
 
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Face);
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Influence);
-CAL3D_DEFINE_SIZE(CalCoreSubmesh::InfluenceRange);
 
 size_t sizeInBytes(const CalCoreSubmesh::InfluenceSet& is) {
     return sizeof(is) + sizeInBytes(is.influences);
@@ -55,7 +53,6 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     size_t r = sizeof(*this);
     r += ::sizeInBytes(m_vertices);
     r += ::sizeInBytes(m_vertexColors);
-    r += ::sizeInBytes(m_influenceRanges);
     r += ::sizeInBytes(m_vectorFace);
     r += ::sizeInBytes(m_vectorSubMorphTargetGroupIndex);
     r += ::sizeInBytes(m_staticInfluenceSet);
@@ -134,9 +131,6 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
         inf[i].lastInfluenceForThisVertex = 0;
     }
     inf[inf.size() - 1].lastInfluenceForThisVertex = 1;
-
-    m_influenceRanges[vertexId].influenceStart = m_influences.size();
-    m_influenceRanges[vertexId].influenceEnd   = m_influences.size() + inf.size();
 
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
 }

@@ -605,9 +605,9 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     }
 
     // write all vertices
+    const CalCoreSubmesh::Influence* currentInfluence = Cal::pointerFromVector(pCoreSubmesh->getInfluences());
     for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
         const CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
-        const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
 
         // write the vertex data
         CalPlatform::writeFloat(os, vertex.position.x);
@@ -645,19 +645,21 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
             }
         }
 
-        // write the number of influences
-        if (!CalPlatform::writeInteger(os, influenceRange.influenceEnd - influenceRange.influenceStart)) {
+        const CalCoreSubmesh::Influence* nextVertex = currentInfluence;
+        while (!nextVertex->lastInfluenceForThisVertex) {
+            ++nextVertex;
+        }
+        ++nextVertex;
+
+        if (!CalPlatform::writeInteger(os, nextVertex - currentInfluence)) {
             CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
             return false;
         }
 
         // write all influences of this vertex
-        for (unsigned influenceId = influenceRange.influenceStart; influenceId < influenceRange.influenceEnd; ++influenceId) {
-            const CalCoreSubmesh::Influence& influence = pCoreSubmesh->getInfluences()[influenceId];
-
-            // write the influence data
-            CalPlatform::writeInteger(os, influence.boneId);
-            CalPlatform::writeFloat(os, influence.weight);
+        for (; currentInfluence != nextVertex; ++currentInfluence) {
+            CalPlatform::writeInteger(os, currentInfluence->boneId);
+            CalPlatform::writeFloat(os, currentInfluence->weight);
 
             // check if an error happend
             if (!os) {
@@ -665,7 +667,6 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
                 return false;
             }
         }
-
     }
 
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
@@ -1176,15 +1177,20 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         // get the texture coordinate vector vector
         const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
-        // write all vertices
+        const CalCoreSubmesh::Influence* currentInfluence = Cal::pointerFromVector(pCoreSubmesh->getInfluences());
         for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
             CalColor32& vertexColor = vertexColors[vertexId];
-            const CalCoreSubmesh::InfluenceRange& influenceRange = pCoreSubmesh->getInfluenceRange(vertexId);
+
+            const CalCoreSubmesh::Influence* nextVertex = currentInfluence;
+            while (!nextVertex->lastInfluenceForThisVertex) {
+                ++nextVertex;
+            }
+            ++nextVertex;
 
             TiXmlElement vertex("VERTEX");
             vertex.SetAttribute("ID", vertexId);
-            vertex.SetAttribute("NUMINFLUENCES", influenceRange.influenceEnd - influenceRange.influenceStart);
+            vertex.SetAttribute("NUMINFLUENCES", nextVertex - currentInfluence);
 
             // write the vertex data
 
@@ -1241,16 +1247,13 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
                 vertex.InsertEndChild(tex);
             }
 
-            // write all influences of this vertex
-            for (unsigned influenceId = influenceRange.influenceStart; influenceId < influenceRange.influenceEnd; ++influenceId) {
-                const CalCoreSubmesh::Influence& Influence = pCoreSubmesh->getInfluences()[influenceId];
-
+            for (; currentInfluence != nextVertex; ++currentInfluence) {
                 TiXmlElement influence("INFLUENCE");
 
-                influence.SetAttribute("ID", Influence.boneId);
+                influence.SetAttribute("ID", currentInfluence->boneId);
 
                 str.str("");
-                str << Influence.weight;
+                str << currentInfluence->weight;
 
                 TiXmlText influencedata(str.str());
 

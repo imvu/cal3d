@@ -103,11 +103,6 @@ public:
     }
     CAL3D_ALIGN_TAIL(16);
 
-    struct InfluenceRange {
-        unsigned influenceStart;
-        unsigned influenceEnd;
-    };
-
     struct Face {
         CalIndex vertexId[3];
     };
@@ -175,10 +170,6 @@ public:
         return m_vectorSubMorphTargetGroupIndex[ subMorphTargetId ];
     }
 
-    const InfluenceRange& getInfluenceRange(size_t vertexId) {
-        return m_influenceRanges[vertexId];
-    }
-
     bool isStatic() const;
     BoneTransform getStaticTransform(const BoneTransform* bones) const;
 
@@ -196,8 +187,7 @@ private:
     // The following arrays should always be the same size.
     SSEArray<Vertex> m_vertices;
     std::vector<CalColor32> m_vertexColors;
-    std::vector<InfluenceRange> m_influenceRanges;
-
+ 
     std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
     std::vector<Face> m_vectorFace;
 
