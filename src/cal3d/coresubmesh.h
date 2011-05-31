@@ -215,8 +215,6 @@ private:
     std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
     std::vector<Face> m_vectorFace;
 
-    std::map<InfluenceSet, size_t> m_influenceSetIds;
-
     CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
     int m_coreMaterialThreadId;
     int m_lodCount;

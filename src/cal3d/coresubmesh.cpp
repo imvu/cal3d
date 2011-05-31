@@ -72,7 +72,6 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     r += ::sizeInBytes(m_influenceRanges);
     r += ::sizeInBytes(m_vectorFace);
     r += ::sizeInBytes(m_vectorSubMorphTargetGroupIndex);
-    r += ::sizeInBytes(m_influenceSetIds);
     r += ::sizeInBytes(m_staticInfluenceSet);
     r += ::sizeInBytes(m_influences);
     return r;
