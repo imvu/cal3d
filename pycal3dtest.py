@@ -79,6 +79,16 @@ class Test(imvu.test.TestCase):
         morph = cal3d.loadCoreAnimatedMorphFromBuffer(binaryData)
         self.assertGbHello2(morph)
 
+    def test_xml_to_binary_and_back_removes_keyframes_with_corrupt_data(self):
+        anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'HoserAnmationR.xaf')
+        origData = file(anim, 'rb').read()
+        data = self.cal3d_.convertToBinary(calCoreType="CoreAnimation", data=origData);
+        data = self.cal3d_.convertToXml(calCoreType="CoreAnimation", data=data);
+        data = re.sub("\s+", "", data)
+        origData = re.sub("\s+", "", origData)
+        self.assertNotEqual(len(data), len(origData));
+
+
     def assertGbHello2(self, morph):
         self.assertEqual(1, morph.duration)
         self.assertEqual(12, len(morph.tracks))
