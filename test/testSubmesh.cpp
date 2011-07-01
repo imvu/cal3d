@@ -167,9 +167,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->addCoreSubmesh(coreSubmesh);
 
-    boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
-
-    CalModel model(coreSkeleton);
+    CalModel model;
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();
@@ -185,14 +183,15 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
 
     boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
 
-    CalModel model(coreSkeleton);
+    CalSkeleton skeleton(coreSkeleton);
+    CalModel model;
     CHECK(model.attachMesh(coreMesh));
 
     CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();
     CHECK(submesh);
 
     CalPhysique::calculateVerticesAndNormals(
-        model.skeleton->boneTransforms.data,
+        skeleton.boneTransforms.data,
         submesh,
         0);
 }

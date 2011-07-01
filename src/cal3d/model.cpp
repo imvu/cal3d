@@ -27,10 +27,6 @@
 #include "cal3d/mesh.h"
 #include "cal3d/physique.h"
 
-CalModel::CalModel(const boost::shared_ptr<CalCoreSkeleton>& skeleton)
-    : skeleton(new CalSkeleton(skeleton)) {
-}
-
 CalMesh* CalModel::attachMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh) {
     // check if the mesh is already attached
     for (size_t meshId = 0; meshId < meshes.size(); ++meshId) {
