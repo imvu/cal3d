@@ -55,8 +55,7 @@ imvu_shared_library(
     sources + [PCH_OBJ])
 
 # Tests
-if not ARGUMENTS.get('skiptests', ''):
-    SConscript('test/shared.scons')
+SConscript('test/shared.scons')
 
 # Python bindings
 
