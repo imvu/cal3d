@@ -28,7 +28,7 @@ public:
         return m_vectorCoreSubmesh.size();
     }
     CalCoreSubmeshVector& getVectorCoreSubmesh();
-    int addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
+    size_t addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
     void scale(float factor);
 
     CalCoreSubmeshVector m_vectorCoreSubmesh;

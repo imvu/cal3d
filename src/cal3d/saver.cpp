@@ -595,7 +595,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     CalPlatform::writeInteger(os, vectorvectorTextureCoordinate.size());
 
     // write the number of morph targets
-    int morphCount = pCoreSubmesh->getCoreSubMorphTargetCount();
+    size_t morphCount = pCoreSubmesh->getCoreSubMorphTargetCount();
     CalPlatform::writeInteger(os, morphCount);
 
     // check if an error happend

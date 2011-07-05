@@ -840,6 +840,10 @@ public:
     */
     void SetAttribute(const char* name, int value);
 
+    inline void SetAttribute(const char* name, size_t value) {
+        return SetAttribute(name, static_cast<int>(value));
+    }
+
     /** Deletes an attribute with the given name.
     */
     void RemoveAttribute(const char* name);

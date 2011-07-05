@@ -32,10 +32,10 @@ public:
     bool getMorphTargetWeight(std::string const& morphName, float* weightOut) const;
     void getMorphIdAndWeightArray(
         MorphIdAndWeight* arrayResult,
-        unsigned int* numMiawsResult,
-        unsigned int maxMiaws) const;
+        size_t* numMiawsResult,
+        size_t maxMiaws) const;
     float getBaseWeight() const;
-    int getMorphTargetWeightCount() const {
+    size_t getMorphTargetWeightCount() const {
         return m_vectorMorphTargetWeight.size();
     }
     const std::vector<float>& getVectorMorphTargetWeight() {

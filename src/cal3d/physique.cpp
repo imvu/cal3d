@@ -28,8 +28,8 @@
 #include "cal3d/coresubmorphtarget.h"
 
 static MorphIdAndWeight* MiawCache = NULL;
-static unsigned int MiawCacheNumElements = 0;
-void EnlargeMiawCacheAsNecessary(unsigned int numElements) {
+static size_t MiawCacheNumElements = 0;
+void EnlargeMiawCacheAsNecessary(size_t numElements) {
     if (MiawCacheNumElements < numElements) {
         if (MiawCache) {
             delete [] MiawCache;
@@ -99,7 +99,7 @@ CAL3D_FORCEINLINE void TransformVector(CalVector4& result, const BoneTransform& 
 
 void CalPhysique::calculateVerticesAndNormals_x87(
     const BoneTransform* boneTransforms,
-    int vertexCount,
+    size_t vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertex
@@ -126,7 +126,7 @@ void CalPhysique::calculateVerticesAndNormals_x87(
 #ifndef IMVU_NO_INTRINSICS
 void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
     const BoneTransform* boneTransforms,
-    int vertexCount,
+    size_t vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertex
@@ -216,7 +216,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE_intrinsics(
 
 void CalPhysique::calculateVerticesAndNormals_SSE(
     const BoneTransform* boneTransforms,
-    int vertexCount,
+    size_t vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertices
@@ -369,7 +369,7 @@ void CalPhysique::calculateVerticesAndNormals_SSE(
 
 void automaticallyDetectSkinRoutine(
     const BoneTransform* boneTransforms,
-    int vertexCount,
+    size_t vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertices);
@@ -378,7 +378,7 @@ static CalPhysique::SkinRoutine optimizedSkinRoutine = automaticallyDetectSkinRo
 
 void automaticallyDetectSkinRoutine(
     const BoneTransform* boneTransforms,
-    int vertexCount,
+    size_t vertexCount,
     const CalCoreSubmesh::Vertex* vertices,
     const CalCoreSubmesh::Influence* influences,
     CalVector4* output_vertices
@@ -425,7 +425,7 @@ void CalPhysique::calculateVerticesAndNormals(
     float* pVertexBuffer
 ) {
     CalCoreSubmesh* coreSubmesh = pSubmesh->coreSubmesh.get();
-    const int vertexCount = coreSubmesh->getVertexCount();
+    const size_t vertexCount = coreSubmesh->getVertexCount();
     const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(coreSubmesh->getVectorVertex());
 
     if (pSubmesh->getMorphTargetWeightCount() && pSubmesh->getBaseWeight() != 1.0f) {
@@ -434,10 +434,10 @@ void CalPhysique::calculateVerticesAndNormals(
         }
 
         // get the sub morph target vector from the core sub mesh
-        int morphTargetCount = pSubmesh->getMorphTargetWeightCount();
+        size_t morphTargetCount = pSubmesh->getMorphTargetWeightCount();
         EnlargeMiawCacheAsNecessary(morphTargetCount);
-        unsigned int numMiaws;
-        pSubmesh->getMorphIdAndWeightArray(MiawCache, & numMiaws, (unsigned int) morphTargetCount);
+        size_t numMiaws;
+        pSubmesh->getMorphIdAndWeightArray(MiawCache, & numMiaws, morphTargetCount);
 
         const float originalBaseWeight = pSubmesh->getBaseWeight();
 

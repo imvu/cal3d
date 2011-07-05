@@ -28,9 +28,9 @@ CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
 
     SubmeshVector& m_vectorSubmesh = const_cast<SubmeshVector&>(submeshes); // Oh for a 'readonly' keyword like C#
 
-    int submeshCount = vectorCoreSubmesh.size();
+    size_t submeshCount = vectorCoreSubmesh.size();
     m_vectorSubmesh.reserve(submeshCount);
-    for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
+    for (size_t submeshId = 0; submeshId < submeshCount; ++submeshId) {
         m_vectorSubmesh.push_back(boost::shared_ptr<CalSubmesh>(new CalSubmesh(vectorCoreSubmesh[submeshId])));
     }
 }

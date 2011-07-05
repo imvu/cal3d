@@ -19,14 +19,14 @@ class CalSubmesh;
 namespace CalPhysique {
     typedef void (*SkinRoutine)(
         const BoneTransform*,
-        int,
+        size_t,
         const CalCoreSubmesh::Vertex*,
         const CalCoreSubmesh::Influence*,
         CalVector4*);
 
     CAL3D_API void calculateVerticesAndNormals_x87(
         const BoneTransform* boneTransforms,
-        int vertexCount,
+        size_t vertexCount,
         const CalCoreSubmesh::Vertex* vertices,
         const CalCoreSubmesh::Influence* influences,
         CalVector4* output_vertex);
@@ -34,7 +34,7 @@ namespace CalPhysique {
 #ifndef IMVU_NO_INTRINSICS
     CAL3D_API void calculateVerticesAndNormals_SSE_intrinsics(
         const BoneTransform* boneTransforms,
-        int vertexCount,
+        size_t vertexCount,
         const CalCoreSubmesh::Vertex* vertices,
         const CalCoreSubmesh::Influence* influences,
         CalVector4* output_vertex);
@@ -43,7 +43,7 @@ namespace CalPhysique {
 #ifndef IMVU_NO_ASM_BLOCKS
     CAL3D_API void calculateVerticesAndNormals_SSE(
         const BoneTransform* boneTransforms,
-        int vertexCount,
+        size_t vertexCount,
         const CalCoreSubmesh::Vertex* vertices,
         const CalCoreSubmesh::Influence* influences,
         CalVector4* output_vertices);

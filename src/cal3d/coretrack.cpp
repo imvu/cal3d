@@ -230,13 +230,12 @@ void CalCoreTrack::translationCompressibility(
 ) const {
     * transRequiredResult = false;
     * transDynamicResult = false;
-    int numFrames = keyframes.size();
+    size_t numFrames = keyframes.size();
     CalCoreBone* cb = skel->coreBones[coreBoneId].get();
     const CalVector& cbtrans = cb->relativeTransform.translation;
     CalVector trans0;
     float t2 = threshold * threshold;
-    unsigned int i;
-    for (i = 0; i < numFrames; i++) {
+    for (size_t i = 0; i < numFrames; i++) {
         const CalCoreKeyframe* keyframe = &keyframes[i];
         const CalVector& kftrans = keyframe->translation;
         if (i == 0) {
@@ -291,20 +290,23 @@ void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
     rotation = slerp(blendFactor, pCoreKeyframeBefore.rotation, pCoreKeyframeAfter.rotation);
 }
 
+struct TimeLessThanKeyframe {
+    TimeLessThanKeyframe(float t): time(t) {}
+
+    float time;
+};
+
+bool operator<(const CalCoreKeyframe& kf, TimeLessThanKeyframe pred) {
+    return kf.time < pred.time;
+}
+
+bool operator<(TimeLessThanKeyframe pred, const CalCoreKeyframe& kf) {
+    return pred.time < kf.time;
+}
+
 CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float time) const {
-    int lowerBound = 0;
-    int upperBound = keyframes.size() - 1;
-
-    while (lowerBound < upperBound - 1) {
-        int middle = (lowerBound + upperBound) / 2;
-
-        if (time >= keyframes[middle].time) {
-            lowerBound = middle;
-        } else {
-            upperBound = middle;
-        }
-    }
-
-    return keyframes.begin() + upperBound;
-
+    return std::upper_bound(
+        keyframes.begin(),
+        keyframes.end(),
+        TimeLessThanKeyframe(time));
 }

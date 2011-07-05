@@ -25,7 +25,7 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/physique.h"
 
-int CalRenderer::getMapCount(const CalSubmesh* submesh) {
+size_t CalRenderer::getMapCount(const CalSubmesh* submesh) {
     // get the core material
     const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->material;
     if (!pCoreMaterial) {

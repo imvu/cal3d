@@ -29,7 +29,7 @@ public:
     ~CalCoreSubMorphTarget();
 
     typedef std::vector<BlendVertex*> VectorBlendVertex;
-    unsigned int size() const;
+    size_t size() const;
     size_t getBlendVertexCount() const {
         return m_vectorBlendVertex.size();
     }

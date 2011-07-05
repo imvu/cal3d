@@ -242,11 +242,10 @@ bool CalPlatform::writeInteger(std::ostream& output, int value) {
 
 bool CalPlatform::writeString(std::ostream& output, const std::string& strValue) {
     // get the string length
-    int length;
-    length = strValue.size() + 1;
+    size_t length = strValue.size() + 1;
 
 #ifdef CAL3D_BIG_ENDIAN
-    int x = length ;
+    size_t x = length;
     ((char*)&length)[0] = ((char*)&x)[3] ;
     ((char*)&length)[1] = ((char*)&x)[2] ;
     ((char*)&length)[2] = ((char*)&x)[1] ;

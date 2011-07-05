@@ -36,7 +36,7 @@ CalCoreMesh::CalCoreSubmeshVector& CalCoreMesh::getVectorCoreSubmesh() {
     return m_vectorCoreSubmesh;
 }
 
-int CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName) {
+size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName) {
     //Check if the numbers of vertices allow a blending
     CalCoreMesh::CalCoreSubmeshVector& otherVectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
     if (m_vectorCoreSubmesh.size() != otherVectorCoreSubmesh.size()) {
@@ -49,7 +49,7 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& mor
     }
     CalCoreMesh::CalCoreSubmeshVector::iterator iteratorCoreSubmesh = m_vectorCoreSubmesh.begin();
     CalCoreMesh::CalCoreSubmeshVector::iterator otherIteratorCoreSubmesh = otherVectorCoreSubmesh.begin();
-    int subMorphTargetID = (*iteratorCoreSubmesh)->getCoreSubMorphTargetCount();
+    size_t subMorphTargetID = (*iteratorCoreSubmesh)->getCoreSubMorphTargetCount();
     while (iteratorCoreSubmesh != m_vectorCoreSubmesh.end()) {
         size_t count1 = (*iteratorCoreSubmesh)->getVertexCount();
         size_t count2 = (*otherIteratorCoreSubmesh)->getVertexCount();

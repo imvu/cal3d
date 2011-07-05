@@ -39,13 +39,13 @@ CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& n)
 }
 
 CalCoreSubMorphTarget::~CalCoreSubMorphTarget() {
-    for (int i = 0; i < m_vectorBlendVertex.size(); i++) {
+    for (size_t i = 0; i < m_vectorBlendVertex.size(); i++) {
         delete m_vectorBlendVertex[i];
     }
 }
 
-unsigned int CalCoreSubMorphTarget::size() const {
-    unsigned int r = sizeof(CalCoreSubMorphTarget);
+size_t CalCoreSubMorphTarget::size() const {
+    size_t r = sizeof(CalCoreSubMorphTarget);
     r += sizeof(CalMorphTargetType);
 
     // Assume single texture coordinate pair.

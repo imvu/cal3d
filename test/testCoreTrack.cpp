@@ -23,16 +23,20 @@ TEST_F(TrackFixture, getState_blends_keyframes) {
     keyframes.push_back(CalCoreKeyframe(1, CalVector(4, 4, 4), CalQuaternion()));
     CalCoreTrack track(0, keyframes);
 
-    // this behavior makes no sense.  why would it extrapolate off the end of the keyframes?
     track.getState(-1, t, q);
-    CHECK_EQUAL(CalVector(0, 0, 0), t);
+    CHECK_EQUAL(CalVector(2, 2, 2), t);
+
+    track.getState(0, t, q);
+    CHECK_EQUAL(CalVector(2, 2, 2), t);
 
     track.getState(0.5, t, q);
     CHECK_EQUAL(CalVector(3, 3, 3), t);
 
-    // this behavior makes no sense.  why would it extrapolate off the end of the keyframes?
+    track.getState(1, t, q);
+    CHECK_EQUAL(CalVector(4, 4, 4), t);
+
     track.getState(2, t, q);
-    CHECK_EQUAL(CalVector(6, 6, 6), t);
+    CHECK_EQUAL(CalVector(4, 4, 4), t);
 }
 
 TEST_F(TrackFixture, getState_with_two_keyframes_at_same_time) {
@@ -44,5 +48,5 @@ TEST_F(TrackFixture, getState_with_two_keyframes_at_same_time) {
 
     track.getState(1.5, t, q);
     CHECK_EQUAL(CalQuaternion(), q);
-    CHECK_EQUAL(CalVector(4, 4, 4), t);
+    CHECK_EQUAL(CalVector(6, 6, 6), t);
 }

@@ -154,12 +154,12 @@ public:
     void setHasNonWhiteVertexColors(bool p) {
         m_hasNonWhiteVertexColors = p;
     }
-    int addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
-    const boost::shared_ptr<CalCoreSubMorphTarget>& getCoreSubMorphTarget(unsigned id) {
+    size_t addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
+    const boost::shared_ptr<CalCoreSubMorphTarget>& getCoreSubMorphTarget(size_t id) {
         assert(id < m_vectorCoreSubMorphTarget.size());
         return m_vectorCoreSubMorphTarget[id];
     }
-    int getCoreSubMorphTargetCount();
+    size_t getCoreSubMorphTargetCount();
     CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
     void scale(float factor);
 

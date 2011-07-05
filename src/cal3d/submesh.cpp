@@ -109,8 +109,8 @@ void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight
   *****************************************************************************/
 void
 CalSubmesh::clearMorphTargetScales() {
-    int size = m_vectorMorphTargetWeight.size();
-    for (int i = 0; i < size; i++) {
+    size_t size = m_vectorMorphTargetWeight.size();
+    for (size_t i = 0; i < size; i++) {
         m_vectorMorphTargetWeight[i] = 0.0f;
         m_vectorAccumulatedWeight[ i ] = 0.0f;
         m_vectorReplacementAttenuation[ i ] = ReplacementAttenuationNull;
@@ -170,8 +170,8 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
                                   float unrampedWeight,
                                   float rampValue,
                                   bool replace) {
-    int size = m_vectorMorphTargetWeight.size();
-    for (int i = 0; i < size; i++) {
+    size_t size = m_vectorMorphTargetWeight.size();
+    for (size_t i = 0; i < size; i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
             CalMorphTargetType mtype = target->morphTargetType;
