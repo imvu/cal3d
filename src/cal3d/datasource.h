@@ -27,9 +27,11 @@ namespace CalPlatform {
     CAL3D_API bool writeInteger(std::ostream& output, int value);
     CAL3D_API bool writeString(std::ostream& output, const std::string& strValue);
 
+#ifndef _MSC_VER
     inline bool writeInteger(std::ostream& output, unsigned value) {
         return writeInteger(output, static_cast<int>(value));
     }
+#endif
     inline bool writeInteger(std::ostream& output, size_t value) {
         return writeInteger(output, static_cast<int>(value));
     }
