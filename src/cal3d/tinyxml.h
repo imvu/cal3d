@@ -840,6 +840,9 @@ public:
     */
     void SetAttribute(const char* name, int value);
 
+    inline void SetAttribute(const char* name, unsigned value) {
+        return SetAttribute(name, static_cast<int>(value));
+    }
     inline void SetAttribute(const char* name, size_t value) {
         return SetAttribute(name, static_cast<int>(value));
     }

@@ -54,16 +54,16 @@ float CalSubmesh::getMorphTargetWeight(int blendId) const {
 
 void CalSubmesh::getMorphIdAndWeightArray(
     MorphIdAndWeight* arrayResult,
-    unsigned int* numMiawsResult,
-    unsigned int maxMiaws
+    size_t* numMiawsResult,
+    size_t maxMiaws
 ) const {
     if (maxMiaws == 0) {
         * numMiawsResult = 0;
         return;
     }
-    unsigned int j = 0;
-    unsigned int morphTargetCount = (unsigned int) getMorphTargetWeightCount();
-    unsigned int i;
+    size_t j = 0;
+    size_t morphTargetCount = getMorphTargetWeightCount();
+    size_t i;
     for (i = 0; i < morphTargetCount; i++) {
         float weight = m_vectorMorphTargetWeight[ i ];
         if (weight != 0) {
