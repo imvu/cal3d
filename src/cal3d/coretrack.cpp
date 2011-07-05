@@ -290,23 +290,9 @@ void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
     rotation = slerp(blendFactor, pCoreKeyframeBefore.rotation, pCoreKeyframeAfter.rotation);
 }
 
-struct TimeLessThanKeyframe {
-    TimeLessThanKeyframe(float t): time(t) {}
-
-    float time;
-};
-
-bool operator<(const CalCoreKeyframe& kf, TimeLessThanKeyframe pred) {
-    return kf.time < pred.time;
-}
-
-bool operator<(TimeLessThanKeyframe pred, const CalCoreKeyframe& kf) {
-    return pred.time < kf.time;
-}
-
 CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float time) const {
     return std::upper_bound(
         keyframes.begin(),
         keyframes.end(),
-        TimeLessThanKeyframe(time));
+        CalCoreKeyframe(time, CalVector(), CalQuaternion()));
 }

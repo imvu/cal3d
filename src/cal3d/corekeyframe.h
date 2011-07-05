@@ -31,6 +31,10 @@ public:
     CalQuaternion rotation;
 };
 
+inline bool operator<(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
+    return lhs.time < rhs.time;
+}
+
 inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
     return close(lhs.time, rhs.time) &&
            lhs.translation == rhs.translation &&

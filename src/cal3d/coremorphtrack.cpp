@@ -68,25 +68,11 @@ float CalCoreMorphTrack::getState(float time) {
     return weight;
 }
 
-struct TimeLessThanKeyframe {
-    TimeLessThanKeyframe(float t): time(t) {}
-
-    float time;
-};
-
-bool operator<(const CalCoreMorphKeyframe& kf, TimeLessThanKeyframe pred) {
-    return kf.time < pred.time;
-}
-
-bool operator<(TimeLessThanKeyframe pred, const CalCoreMorphKeyframe& kf) {
-    return pred.time < kf.time;
-}
-
 std::vector<CalCoreMorphKeyframe>::iterator CalCoreMorphTrack::getUpperBound(float time) {
     return std::upper_bound(
         keyframes.begin(),
         keyframes.end(),
-        TimeLessThanKeyframe(time));
+        CalCoreMorphKeyframe(time, 0.0f));
 }
 
 void CalCoreMorphTrack::scale(float factor) {

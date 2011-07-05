@@ -19,6 +19,11 @@ public:
         time = 0;
         weight = 0;
     }
+
+    CalCoreMorphKeyframe(float t, float w)
+        : time(t)
+        , weight(w)
+    {}
 };
 
 inline bool operator<(CalCoreMorphKeyframe lhs, CalCoreMorphKeyframe rhs) {
