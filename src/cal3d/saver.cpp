@@ -651,7 +651,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
         }
         ++nextVertex;
 
-        if (!CalPlatform::writeInteger(os, nextVertex - currentInfluence)) {
+        if (!CalPlatform::writeInteger(os, size_t(nextVertex - currentInfluence))) {
             CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
             return false;
         }
@@ -1190,7 +1190,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
             TiXmlElement vertex("VERTEX");
             vertex.SetAttribute("ID", vertexId);
-            vertex.SetAttribute("NUMINFLUENCES", nextVertex - currentInfluence);
+            vertex.SetAttribute("NUMINFLUENCES", size_t(nextVertex - currentInfluence));
 
             // write the vertex data
 
