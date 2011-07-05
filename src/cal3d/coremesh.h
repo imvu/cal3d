@@ -20,7 +20,7 @@ public:
     typedef std::vector<CalCoreSubmeshPtr> CalCoreSubmeshVector;
 
     size_t sizeInBytes() const;
-    int addCoreSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
+    size_t addCoreSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
     const CalCoreSubmeshPtr& getCoreSubmesh(int id) const {
         return m_vectorCoreSubmesh[id];
     }

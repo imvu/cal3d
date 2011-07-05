@@ -120,7 +120,7 @@ public:
     int getCoreMaterialThreadId() const {
         return m_coreMaterialThreadId;
     }
-    int getFaceCount() const {
+    size_t getFaceCount() const {
         return m_vectorFace.size();
     }
     bool hasNonWhiteVertexColors() const {
@@ -142,7 +142,7 @@ public:
         return m_vertexColors;
     }
 
-    int getVertexCount() const {
+    size_t getVertexCount() const {
         return m_vertices.size();
     }
     void setCoreMaterialThreadId(int coreMaterialThreadId);

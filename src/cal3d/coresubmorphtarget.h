@@ -30,7 +30,7 @@ public:
 
     typedef std::vector<BlendVertex*> VectorBlendVertex;
     unsigned int size() const;
-    int getBlendVertexCount() const {
+    size_t getBlendVertexCount() const {
         return m_vectorBlendVertex.size();
     }
     const std::vector<BlendVertex*>& getVectorBlendVertex() const {
@@ -42,7 +42,7 @@ public:
     inline BlendVertex const* getBlendVertex(int blendVertexId) {
         return m_vectorBlendVertex[blendVertexId];
     }
-    void reserve(int blendVertexCount);
+    void reserve(size_t blendVertexCount);
     bool setBlendVertex(int vertexId, const BlendVertex& vertex);
 
 private:

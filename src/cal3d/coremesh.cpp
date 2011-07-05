@@ -26,8 +26,8 @@ size_t CalCoreMesh::sizeInBytes() const {
     return sizeof(*this) + ::sizeInBytes(m_vectorCoreSubmesh);
 }
 
-int CalCoreMesh::addCoreSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh) {
-    int submeshId = m_vectorCoreSubmesh.size();
+size_t CalCoreMesh::addCoreSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh) {
+    size_t submeshId = m_vectorCoreSubmesh.size();
     m_vectorCoreSubmesh.push_back(pCoreSubmesh);
     return submeshId;
 }
@@ -51,8 +51,8 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& mor
     CalCoreMesh::CalCoreSubmeshVector::iterator otherIteratorCoreSubmesh = otherVectorCoreSubmesh.begin();
     int subMorphTargetID = (*iteratorCoreSubmesh)->getCoreSubMorphTargetCount();
     while (iteratorCoreSubmesh != m_vectorCoreSubmesh.end()) {
-        int count1 = (*iteratorCoreSubmesh)->getVertexCount();
-        int count2 = (*otherIteratorCoreSubmesh)->getVertexCount();
+        size_t count1 = (*iteratorCoreSubmesh)->getVertexCount();
+        size_t count2 = (*otherIteratorCoreSubmesh)->getVertexCount();
 
         if (count1 != count2) {
             char buf[2048] = {0}; // zero-initialize
@@ -72,7 +72,7 @@ int CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& mor
     iteratorCoreSubmesh = m_vectorCoreSubmesh.begin();
     otherIteratorCoreSubmesh = otherVectorCoreSubmesh.begin();
     while (iteratorCoreSubmesh != m_vectorCoreSubmesh.end()) {
-        int vertexCount = (*otherIteratorCoreSubmesh)->getVertexCount();
+        size_t vertexCount = (*otherIteratorCoreSubmesh)->getVertexCount();
         boost::shared_ptr<CalCoreSubMorphTarget> pCalCoreSubMorphTarget(new CalCoreSubMorphTarget(morphTargetName));
         pCalCoreSubMorphTarget->reserve(vertexCount);
         const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();

@@ -21,18 +21,18 @@ typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 
 class CAL3D_API CalCoreSkeleton {
 public:
-    int addCoreBone(const CalCoreBonePtr& pCoreBone);
+    size_t addCoreBone(const CalCoreBonePtr& pCoreBone);
     CalCoreBone* getCoreBone(const std::string& strName);
     void scale(float factor);
 
     std::vector<CalCoreBonePtr> coreBones;
-    std::vector<int> rootBoneIds;
+    std::vector<size_t> rootBoneIds;
     CalVector sceneAmbientColor;
 
 private:
-    int getCoreBoneId(const std::string& strName);
-    bool mapCoreBoneName(int coreBoneId, const std::string& strName);
-    std::map<std::string, int> m_mapCoreBoneNames;
+    size_t getCoreBoneId(const std::string& strName);
+    bool mapCoreBoneName(size_t coreBoneId, const std::string& strName);
+    std::map<std::string, size_t> m_mapCoreBoneNames;
 };
 
 typedef boost::shared_ptr<CalCoreSkeleton> CalCoreSkeletonPtr;

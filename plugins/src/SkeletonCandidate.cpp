@@ -304,7 +304,7 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = m_skeleton->coreBones;
 
 	// loop through all root core bones
-	std::vector<int>::const_iterator iteratorRootCoreBoneId;
+	std::vector<size_t>::const_iterator iteratorRootCoreBoneId;
 	for(iteratorRootCoreBoneId = m_skeleton->rootBoneIds.begin(); iteratorRootCoreBoneId != m_skeleton->rootBoneIds.end(); ++iteratorRootCoreBoneId)
 	{
 		// recursively add the core bone to the skeleton candidate

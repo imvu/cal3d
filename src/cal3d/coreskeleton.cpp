@@ -16,8 +16,8 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-int CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone) {
-    int boneId = coreBones.size();
+size_t CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone) {
+    size_t boneId = coreBones.size();
     coreBones.push_back(pCoreBone);
 
     if (pCoreBone->parentId == -1) {
@@ -32,7 +32,7 @@ CalCoreBone* CalCoreSkeleton::getCoreBone(const std::string& strName) {
     return coreBones[getCoreBoneId(strName)].get();
 }
 
-int CalCoreSkeleton::getCoreBoneId(const std::string& strName) {
+size_t CalCoreSkeleton::getCoreBoneId(const std::string& strName) {
     //Check to make sure the mapping exists
     if (m_mapCoreBoneNames.count(strName) <= 0) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
@@ -40,12 +40,11 @@ int CalCoreSkeleton::getCoreBoneId(const std::string& strName) {
     }
 
     return m_mapCoreBoneNames[strName];
-
 }
 
-bool CalCoreSkeleton::mapCoreBoneName(int coreBoneId, const std::string& strName) {
+bool CalCoreSkeleton::mapCoreBoneName(size_t coreBoneId, const std::string& strName) {
     //Make sure the ID given is a valid corebone ID number
-    if ((coreBoneId < 0) || (coreBoneId >= (int)coreBones.size())) {
+    if (coreBoneId >= coreBones.size()) {
         return false;
     }
 
@@ -57,7 +56,7 @@ bool CalCoreSkeleton::mapCoreBoneName(int coreBoneId, const std::string& strName
 
 void CalCoreSkeleton::scale(float factor) {
     for (
-        std::vector<int>::const_iterator i = rootBoneIds.begin();
+        std::vector<size_t>::const_iterator i = rootBoneIds.begin();
         i != rootBoneIds.end();
         ++i
     ) {

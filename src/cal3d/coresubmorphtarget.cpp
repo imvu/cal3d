@@ -54,10 +54,10 @@ unsigned int CalCoreSubMorphTarget::size() const {
     return r;
 }
 
-void CalCoreSubMorphTarget::reserve(int blendVertexCount) {
+void CalCoreSubMorphTarget::reserve(size_t blendVertexCount) {
     // reserve the space needed in all the vectors
     m_vectorBlendVertex.resize(blendVertexCount);
-    for (int i = 0; i < m_vectorBlendVertex.size(); i++) {
+    for (size_t i = 0; i < m_vectorBlendVertex.size(); i++) {
         m_vectorBlendVertex[i] = NULL;
     }
 }
