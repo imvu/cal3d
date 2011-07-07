@@ -62,13 +62,16 @@ bool CalBufferSource::readInteger(int& value) {
 }
 
 bool CalBufferSource::readString(std::string& strValue) {
-    bool result = CalPlatform::readString(((char*)mInputBuffer + mOffset), strValue);
-
-    mOffset += (strValue.length() + 4 + 1); // +1 is for Null-terminator
-
-    // May still have read the string that read beyond the end.
-    if (mOffset > mLength) {
+    // Reading a string consists of first reading an integer to see how long the string is.
+    // Peak at this value before actually reading so that we don't end up reading off the end of our buffer.
+    int stringLength;
+    if (!readInteger(stringLength) || (stringLength + 4 + 1) > mLength){
         return false;
     }
+    mOffset -= 4;
+
+    bool result = CalPlatform::readString(((char*)mInputBuffer + mOffset), strValue);
+
+    mOffset += (strValue.length() + 4 + 1); // +1 is for Null-terminator, +4 is for the leading integer length
     return result;
 }

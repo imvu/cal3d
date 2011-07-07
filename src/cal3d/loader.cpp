@@ -360,10 +360,16 @@ CalCoreMaterial* CalLoader::loadBinaryCoreMaterial(CalBufferSource& dataSrc) {
     for (int mapId = 0; mapId < mapCount; ++mapId) {
         CalCoreMaterial::Map map;
 
-        dataSrc.readString(map.filename);
+        if (!dataSrc.readString(map.filename)){
+            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
+            return 0;
+        }
 
         if (hasMaterialTypes) {
-            dataSrc.readString(map.type);
+            if (!dataSrc.readString(map.type)){
+                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
+                return 0;
+            }
         } else {
             map.type = "";
         }
