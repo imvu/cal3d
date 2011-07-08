@@ -34,12 +34,3 @@ size_t CalRenderer::getMapCount(const CalSubmesh* submesh) {
 
     return pCoreMaterial->maps.size();
 }
-
-Cal::UserData* CalRenderer::getMaterialUserData(const CalSubmesh* submesh) {
-    // get the core material
-    const boost::shared_ptr<CalCoreMaterial>& pCoreMaterial = submesh->material;
-    if (!pCoreMaterial) {
-        return 0;
-    }
-    return pCoreMaterial->getUserData();
-}
