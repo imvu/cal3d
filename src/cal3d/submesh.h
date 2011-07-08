@@ -48,13 +48,9 @@ public:
                                float unrampedWeight,
                                float rampValue,
                                bool replace);
-    void setSubMorphTargetGroupAttenuatorArray(unsigned int len, int const* morphTargetIdArray);
-    void setSubMorphTargetGroupAttenuationArray(unsigned int len, float const* attenuationArray);
 
 private:
     std::vector<float> m_vectorMorphTargetWeight;
     std::vector<float> m_vectorAccumulatedWeight;
     std::vector<float> m_vectorReplacementAttenuation;
-    std::vector<int> m_vectorSubMorphTargetGroupAttenuator;
-    std::vector<float> m_vectorSubMorphTargetGroupAttenuation;
 };

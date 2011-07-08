@@ -35,13 +35,7 @@ CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
     m_vectorAccumulatedWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
     m_vectorReplacementAttenuation.resize(coreSubmesh->getCoreSubMorphTargetCount());
 
-    // Array is indexed by group, and there can't be more groups than there are morph targets.
-    m_vectorSubMorphTargetGroupAttenuator.resize(coreSubmesh->getCoreSubMorphTargetCount());
-    m_vectorSubMorphTargetGroupAttenuation.resize(coreSubmesh->getCoreSubMorphTargetCount());
-
     for (int morphTargetId = 0; morphTargetId < coreSubmesh->getCoreSubMorphTargetCount(); ++morphTargetId) {
-        m_vectorSubMorphTargetGroupAttenuator[ morphTargetId ] = -1; // No attenuator by default.
-        m_vectorSubMorphTargetGroupAttenuation[ morphTargetId ] = 0.0f; // No attenuation by default.
         m_vectorMorphTargetWeight[morphTargetId] = 0.0f;
         m_vectorAccumulatedWeight[morphTargetId] = 0.0f;
         m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
@@ -131,28 +125,6 @@ CalSubmesh::clearMorphTargetState(std::string const& morphName) {
     }
 }
 
-
-void
-CalSubmesh::setSubMorphTargetGroupAttenuatorArray(unsigned int len, int const* morphTargetIdArray) {
-
-    // Array is indexed by group, and there can't be more groups than there are morph targets.
-    assert(len <= m_vectorSubMorphTargetGroupAttenuator.size());
-    unsigned int i;
-    for (i = 0; i < len; i++) {
-        m_vectorSubMorphTargetGroupAttenuator[ i ] = morphTargetIdArray[ i ];
-    }
-}
-
-void
-CalSubmesh::setSubMorphTargetGroupAttenuationArray(unsigned int len, float const* attenuationArray) {
-
-    // Array is indexed by group, and there can't be more groups than there are morph targets.
-    assert(len <= m_vectorSubMorphTargetGroupAttenuation.size());
-    unsigned int i;
-    for (i = 0; i < len; i++) {
-        m_vectorSubMorphTargetGroupAttenuation[ i ] = attenuationArray[ i ];
-    }
-}
 
 /*****************************************************************************/
 /** Sets weight of a morph target with the given name
