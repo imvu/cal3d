@@ -28,7 +28,6 @@ sources = Split('''
     physique.cpp
     platform.cpp
     quaternion.cpp
-    renderer.cpp
     saver.cpp
     skeleton.cpp
     submesh.cpp

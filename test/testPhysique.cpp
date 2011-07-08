@@ -1,5 +1,4 @@
 #include "TestPrologue.h"
-#include <cal3d/renderer.h>
 #include <cal3d/bone.h>
 #include <cal3d/coresubmorphtarget.h>
 #include <cal3d/model.h>

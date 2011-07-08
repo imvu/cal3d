@@ -20,7 +20,6 @@
 #include "cal3d/model.h"
 #include "cal3d/skeleton.h"
 #include "cal3d/bone.h"
-#include "cal3d/renderer.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
