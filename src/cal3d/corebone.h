@@ -18,6 +18,7 @@
 
 class CalCoreSkeleton;
 
+// these values are important - we use c-style casts to them :x
 enum CalLightType {
     LIGHT_TYPE_NONE,
     LIGHT_TYPE_OMNI,
