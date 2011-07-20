@@ -17,8 +17,6 @@
 
 typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
-struct MorphIdAndWeight;
-
 class CAL3D_API CalSubmesh : public Cal::UserDataHolder {
 public:
     const CalCoreSubmeshPtr coreSubmesh;
@@ -29,11 +27,6 @@ public:
 
     std::vector<float>& getVectorWeight();
     void setMorphTargetWeight(std::string const& morphName, float weight);
-    void getMorphIdAndWeightArray(
-        MorphIdAndWeight* arrayResult,
-        size_t* numMiawsResult,
-        size_t maxMiaws) const;
-    float getBaseWeight() const;
     void clearMorphTargetScales();
     void clearMorphTargetState(std::string const& morphName);
     void blendMorphTargetScale(std::string const& morphName,

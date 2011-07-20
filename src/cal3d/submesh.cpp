@@ -41,38 +41,6 @@ CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
     }
 }
 
-void CalSubmesh::getMorphIdAndWeightArray(
-    MorphIdAndWeight* arrayResult,
-    size_t* numMiawsResult,
-    size_t maxMiaws
-) const {
-    if (maxMiaws == 0) {
-        * numMiawsResult = 0;
-        return;
-    }
-    size_t j = 0;
-    size_t morphTargetCount = morphTargetWeights.size();
-    for (size_t i = 0; i < morphTargetCount; ++i) {
-        float weight = morphTargetWeights[i];
-        if (weight != 0) {
-            arrayResult[ j ].blendVertices = Cal::pointerFromVector(coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
-            arrayResult[ j ].weight_ = weight;
-            j++;
-            if (j == maxMiaws) {
-                break;
-            }
-        }
-    }
-    * numMiawsResult = j;
-}
-
-/*****************************************************************************/
-/** Sets weight of a morph target with the given name
-  *
-  * @param morphName The morph target name.
-  * @param weight The weight to be set.
-  *****************************************************************************/
-
 void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight) {
     for (size_t i = 0; i < morphTargetWeights.size(); i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
@@ -83,20 +51,7 @@ void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight
     }
 }
 
-
-/*****************************************************************************/
-/** Clears the scale of each morph target.
-  *
-  * Call this in preparation for calling blendMorphTargetScale() on the individual
-  * morph targets.  As a side effect, this also clears the "weight" that
-  * setMorphTargetWeight() sets.  The functions clear/blendMorphTargetScale()
-  * and setMorphTargetWeight() both set the influence of the morph target, but
-  * call it by different names (scale vs. weight) and have different composition
-  * behavior.  Call one set of functions or the other.
-  *
-  *****************************************************************************/
-void
-CalSubmesh::clearMorphTargetScales() {
+void CalSubmesh::clearMorphTargetScales() {
     size_t size = morphTargetWeights.size();
     for (size_t i = 0; i < size; i++) {
         morphTargetWeights[i] = 0.0f;
@@ -106,9 +61,7 @@ CalSubmesh::clearMorphTargetScales() {
 }
 
 
-void
-CalSubmesh::clearMorphTargetState(std::string const& morphName) {
-    // TODO: this is very inefficient. we should probably use a map instead
+void CalSubmesh::clearMorphTargetState(std::string const& morphName) {
     for (size_t i = 0; i < morphTargetWeights.size(); i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
@@ -120,22 +73,13 @@ CalSubmesh::clearMorphTargetState(std::string const& morphName) {
 }
 
 
-/*****************************************************************************/
-/** Sets weight of a morph target with the given name
-  *
-  * @param morphName The morph target name.
-  * @param scale Scale from -inf to inf scales magnitude.
-  * @param unrampedWeight The blending weight, not incorporating ramp value
-  * @param rampValue Amount to attenuate weight when ramping in/out the animation.
-  * @param replace If true, all blends except one Replace blend will have their weight
-  *  attenuated by 1 - rampValue of that Replace blend.
-  *****************************************************************************/
-void
-CalSubmesh::blendMorphTargetScale(std::string const& morphName,
-                                  float scale,
-                                  float unrampedWeight,
-                                  float rampValue,
-                                  bool replace) {
+void CalSubmesh::blendMorphTargetScale(
+    std::string const& morphName,
+    float scale,
+    float unrampedWeight,
+    float rampValue,
+    bool replace
+) {
     size_t size = morphTargetWeights.size();
     for (size_t i = 0; i < size; i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
@@ -225,15 +169,4 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
             return;
         }
     }
-}
-
-float CalSubmesh::getBaseWeight() const {
-    const float* weights = Cal::pointerFromVector(morphTargetWeights);
-    size_t count = morphTargetWeights.size();
-
-    float baseWeight = 1.0f;
-    while (count--) {
-        baseWeight -= *weights++;
-    }
-    return baseWeight;
 }

@@ -27,20 +27,6 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
-static MorphIdAndWeight* MiawCache = NULL;
-static size_t MiawCacheNumElements = 0;
-void EnlargeMiawCacheAsNecessary(size_t numElements) {
-    if (MiawCacheNumElements < numElements) {
-        if (MiawCache) {
-            delete [] MiawCache;
-        }
-
-        // Step up exponentially to reduce number of steps.
-        MiawCacheNumElements = numElements * 2;
-        MiawCache = new(MorphIdAndWeight [ MiawCacheNumElements ]);
-    }
-}
-
 SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
 
 // calculateVerticesAndNormals_{x87,SSE_intrinsics,SSE} are:
@@ -419,44 +405,63 @@ void automaticallyDetectSkinRoutine(
     return optimizedSkinRoutine(boneTransforms, vertexCount, vertices, influences, output_vertices);
 }
 
+struct EnabledMorph {
+    float weight;
+    const CalCoreSubMorphTarget::BlendVertex* const* blendVertices;
+};
+
+static std::vector<EnabledMorph> enabledMorphCache;
+
+static size_t getEnabledMorphs(const CalSubmesh* submesh) {
+    const size_t morphTargetCount = submesh->morphTargetWeights.size();
+    if (enabledMorphCache.size() < morphTargetCount) {
+        enabledMorphCache.resize(morphTargetCount);
+    }
+
+    size_t enabledMorphTargetCount = 0;
+    for (size_t i = 0; i < morphTargetCount; ++i) {
+        float weight = submesh->morphTargetWeights[i];
+        if (weight != 0.0) {
+            enabledMorphCache[enabledMorphTargetCount].weight = weight;
+            enabledMorphCache[enabledMorphTargetCount].blendVertices = Cal::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
+            ++enabledMorphTargetCount;
+        }
+    }
+    return enabledMorphTargetCount;
+}
+
 void CalPhysique::calculateVerticesAndNormals(
     const BoneTransform* boneTransforms,
-    const CalSubmesh* pSubmesh,
+    const CalSubmesh* submesh,
     float* pVertexBuffer
 ) {
-    CalCoreSubmesh* coreSubmesh = pSubmesh->coreSubmesh.get();
+    CalCoreSubmesh* coreSubmesh = submesh->coreSubmesh.get();
     const size_t vertexCount = coreSubmesh->getVertexCount();
     const CalCoreSubmesh::Vertex* sourceVertices = Cal::pointerFromVector(coreSubmesh->getVectorVertex());
 
-    const size_t morphTargetCount = pSubmesh->morphTargetWeights.size();
-    if (morphTargetCount && pSubmesh->getBaseWeight() != 1.0f) {
+    const size_t enabledMorphCount = getEnabledMorphs(submesh);
+    if (enabledMorphCount) {
+        EnabledMorph* enabledMorphs = Cal::pointerFromVector(enabledMorphCache);
+
         if (vertexCount > MorphSubmeshCache.size()) {
             MorphSubmeshCache.resize(vertexCount);
         }
-
-        // get the sub morph target vector from the core sub mesh
-        EnlargeMiawCacheAsNecessary(morphTargetCount);
-        size_t numMiaws;
-        pSubmesh->getMorphIdAndWeightArray(MiawCache, & numMiaws, morphTargetCount);
-
-        const float originalBaseWeight = pSubmesh->getBaseWeight();
 
         // Fill MorphSubmeshCache w/ outputs of morph target calculation
         for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
             const CalCoreSubmesh::Vertex& sourceVertex = sourceVertices[vertexId];
 
-            float baseWeight = originalBaseWeight;
+            float baseWeight = 1.0f;
+
             CalVector4 position;
             CalVector4 normal;
-            for (unsigned i = 0; i < numMiaws; i++) {
-                MorphIdAndWeight& miaw = MiawCache[i];
-                const CalCoreSubMorphTarget::BlendVertex* blendVertex = miaw.blendVertices[vertexId];
-                const float currentWeight = miaw.weight_;
+            for (unsigned i = 0; i < enabledMorphCount; i++) {
+                const CalCoreSubMorphTarget::BlendVertex* blendVertex = enabledMorphs[i].blendVertices[vertexId];
                 if (blendVertex) {
+                    float currentWeight = enabledMorphs[i].weight;
                     position += currentWeight * blendVertex->position;
                     normal   += currentWeight * blendVertex->normal;
-                } else {
-                    baseWeight += currentWeight;
+                    baseWeight -= currentWeight;
                 }
             }
             position += baseWeight * sourceVertex.position;

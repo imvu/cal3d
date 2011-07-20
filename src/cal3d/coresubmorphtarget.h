@@ -50,9 +50,3 @@ private:
     CalMorphTargetType m_morphTargetType;
 };
 typedef boost::shared_ptr<CalCoreSubMorphTarget> CalCoreSubMorphTargetPtr;
-
-// Structure used to return an array of the morphs that have non-zero weights.
-struct MorphIdAndWeight {
-    float weight_;
-    const CalCoreSubMorphTarget::BlendVertex* const* blendVertices;
-};
