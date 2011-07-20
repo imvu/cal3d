@@ -445,13 +445,13 @@ void CalPhysique::calculateVerticesAndNormals(
         for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
             const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
 
-            CalVector4 baseWeight(originalBaseWeight);
+            float baseWeight = originalBaseWeight;
             CalVector4 position;
             CalVector4 normal;
             for (unsigned i = 0; i < numMiaws; i++) {
                 MorphIdAndWeight& miaw = MiawCache[i];
                 const CalCoreSubMorphTarget::BlendVertex* blendVertex = miaw.blendVertices[vertexId];
-                CalVector4 currentWeight(miaw.weight_);
+                const float currentWeight = miaw.weight_;
                 if (blendVertex) {
                     position += currentWeight * blendVertex->position;
                     normal   += currentWeight * blendVertex->normal;
