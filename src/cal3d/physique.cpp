@@ -426,15 +426,15 @@ void CalPhysique::calculateVerticesAndNormals(
 ) {
     CalCoreSubmesh* coreSubmesh = pSubmesh->coreSubmesh.get();
     const size_t vertexCount = coreSubmesh->getVertexCount();
-    const CalCoreSubmesh::Vertex* vertices = Cal::pointerFromVector(coreSubmesh->getVectorVertex());
+    const CalCoreSubmesh::Vertex* sourceVertices = Cal::pointerFromVector(coreSubmesh->getVectorVertex());
 
-    if (pSubmesh->getMorphTargetWeightCount() && pSubmesh->getBaseWeight() != 1.0f) {
+    const size_t morphTargetCount = pSubmesh->morphTargetWeights.size();
+    if (morphTargetCount && pSubmesh->getBaseWeight() != 1.0f) {
         if (vertexCount > MorphSubmeshCache.size()) {
             MorphSubmeshCache.resize(vertexCount);
         }
 
         // get the sub morph target vector from the core sub mesh
-        size_t morphTargetCount = pSubmesh->getMorphTargetWeightCount();
         EnlargeMiawCacheAsNecessary(morphTargetCount);
         size_t numMiaws;
         pSubmesh->getMorphIdAndWeightArray(MiawCache, & numMiaws, morphTargetCount);
@@ -443,7 +443,7 @@ void CalPhysique::calculateVerticesAndNormals(
 
         // Fill MorphSubmeshCache w/ outputs of morph target calculation
         for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
-            const CalCoreSubmesh::Vertex& sourceVertex = vertices[vertexId];
+            const CalCoreSubmesh::Vertex& sourceVertex = sourceVertices[vertexId];
 
             float baseWeight = originalBaseWeight;
             CalVector4 position;
@@ -467,13 +467,13 @@ void CalPhysique::calculateVerticesAndNormals(
             destVertex.normal = normal;
         }
 
-        vertices = MorphSubmeshCache.data;
+        sourceVertices = MorphSubmeshCache.data;
     }
 
     return optimizedSkinRoutine(
         boneTransforms,
         vertexCount,
-        vertices,
+        sourceVertices,
         Cal::pointerFromVector(coreSubmesh->getInfluences()),
         reinterpret_cast<CalVector4*>(pVertexBuffer));
 }

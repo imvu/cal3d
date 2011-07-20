@@ -30,20 +30,15 @@ CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
     : coreSubmesh(pCoreSubmesh) {
     assert(pCoreSubmesh);
 
-    //Setting the morph target weights
-    m_vectorMorphTargetWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
+    morphTargetWeights.resize(coreSubmesh->getCoreSubMorphTargetCount());
     m_vectorAccumulatedWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
     m_vectorReplacementAttenuation.resize(coreSubmesh->getCoreSubMorphTargetCount());
 
     for (int morphTargetId = 0; morphTargetId < coreSubmesh->getCoreSubMorphTargetCount(); ++morphTargetId) {
-        m_vectorMorphTargetWeight[morphTargetId] = 0.0f;
+        morphTargetWeights[morphTargetId] = 0.0f;
         m_vectorAccumulatedWeight[morphTargetId] = 0.0f;
         m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
     }
-}
-
-float CalSubmesh::getMorphTargetWeight(int blendId) const {
-    return m_vectorMorphTargetWeight[blendId];
 }
 
 void CalSubmesh::getMorphIdAndWeightArray(
@@ -56,10 +51,9 @@ void CalSubmesh::getMorphIdAndWeightArray(
         return;
     }
     size_t j = 0;
-    size_t morphTargetCount = getMorphTargetWeightCount();
-    size_t i;
-    for (i = 0; i < morphTargetCount; i++) {
-        float weight = m_vectorMorphTargetWeight[ i ];
+    size_t morphTargetCount = morphTargetWeights.size();
+    for (size_t i = 0; i < morphTargetCount; ++i) {
+        float weight = morphTargetWeights[i];
         if (weight != 0) {
             arrayResult[ j ].blendVertices = Cal::pointerFromVector(coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
             arrayResult[ j ].weight_ = weight;
@@ -80,10 +74,10 @@ void CalSubmesh::getMorphIdAndWeightArray(
   *****************************************************************************/
 
 void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight) {
-    for (size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++) {
+    for (size_t i = 0; i < morphTargetWeights.size(); i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
-            m_vectorMorphTargetWeight[i] = weight;
+            morphTargetWeights[i] = weight;
             return;
         }
     }
@@ -103,9 +97,9 @@ void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight
   *****************************************************************************/
 void
 CalSubmesh::clearMorphTargetScales() {
-    size_t size = m_vectorMorphTargetWeight.size();
+    size_t size = morphTargetWeights.size();
     for (size_t i = 0; i < size; i++) {
-        m_vectorMorphTargetWeight[i] = 0.0f;
+        morphTargetWeights[i] = 0.0f;
         m_vectorAccumulatedWeight[ i ] = 0.0f;
         m_vectorReplacementAttenuation[ i ] = ReplacementAttenuationNull;
     }
@@ -115,10 +109,10 @@ CalSubmesh::clearMorphTargetScales() {
 void
 CalSubmesh::clearMorphTargetState(std::string const& morphName) {
     // TODO: this is very inefficient. we should probably use a map instead
-    for (size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++) {
+    for (size_t i = 0; i < morphTargetWeights.size(); i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
-            m_vectorMorphTargetWeight[i] = 0.0f;
+            morphTargetWeights[i] = 0.0f;
             m_vectorAccumulatedWeight[ i ] = 0.0f;
             m_vectorReplacementAttenuation[ i ] = ReplacementAttenuationNull;
         }
@@ -142,7 +136,7 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
                                   float unrampedWeight,
                                   float rampValue,
                                   bool replace) {
-    size_t size = m_vectorMorphTargetWeight.size();
+    size_t size = morphTargetWeights.size();
     for (size_t i = 0; i < size; i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
@@ -154,15 +148,15 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
                     // if the channel is Additive.  The unrampedWeight parameter is ignored
                     // because the actions are not affecting each other so there is no need
                     // to assign them a relative weight.
-                    m_vectorMorphTargetWeight[ i ] += scale * rampValue;
+                    morphTargetWeights[ i ] += scale * rampValue;
                     break;
                 }
                 case CalMorphTargetTypeClamped: {
 
                     // Like Additive, but clamped to 1.0.
-                    m_vectorMorphTargetWeight[ i ] += scale * rampValue;
-                    if (m_vectorMorphTargetWeight[ i ] > 1.0) {
-                        m_vectorMorphTargetWeight[ i ] = 1.0;
+                    morphTargetWeights[ i ] += scale * rampValue;
+                    if (morphTargetWeights[ i ] > 1.0) {
+                        morphTargetWeights[ i ] = 1.0;
                     }
                     break;
                 }
@@ -194,7 +188,7 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
                             if (replace) {
                                 float attenuation = 1.0f - rampValue;
                                 m_vectorReplacementAttenuation[ i ] = attenuation;
-                                m_vectorMorphTargetWeight[ i ] *= attenuation;
+                                morphTargetWeights[ i ] *= attenuation;
                                 m_vectorAccumulatedWeight[ i ] *= attenuation;
                             }
                         }
@@ -215,10 +209,10 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
                     // is a ratio that doesn't have any units.
                     float rampedScale = scale * rampValue;
                     if (m_vectorAccumulatedWeight[ i ] == 0.0f) {
-                        m_vectorMorphTargetWeight[ i ] = rampedScale;
+                        morphTargetWeights[ i ] = rampedScale;
                     } else {
                         float factor = attenuatedWeight / (m_vectorAccumulatedWeight[ i ] + attenuatedWeight);
-                        m_vectorMorphTargetWeight[ i ] = m_vectorMorphTargetWeight[ i ] * (1.0f - factor) + rampedScale * factor;
+                        morphTargetWeights[ i ] = morphTargetWeights[ i ] * (1.0f - factor) + rampedScale * factor;
                     }
                     m_vectorAccumulatedWeight[ i ] += attenuatedWeight;
                     break;
@@ -233,35 +227,9 @@ CalSubmesh::blendMorphTargetScale(std::string const& morphName,
     }
 }
 
-
-/*****************************************************************************/
-/** Gets weight of a morph target with the given name
-  *
-  * @param morphName The morph target name
-  * @param weightOut fills in the weight on success
-  * @return true on success, false otherwise
-  *****************************************************************************/
-
-bool CalSubmesh::getMorphTargetWeight(std::string const& morphName, float* weightOut) const {
-    for (size_t i = 0; i < m_vectorMorphTargetWeight.size(); i++) {
-        const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
-        if (target->name == morphName) {
-            *weightOut = m_vectorMorphTargetWeight[i];
-            return true;
-        }
-    }
-    return false;
-}
-
-/*****************************************************************************/
-/** Gets weight of the base vertices.
-  *
-  * @return The weight of the base vertices.
-  *****************************************************************************/
-
 float CalSubmesh::getBaseWeight() const {
-    const float* weights = Cal::pointerFromVector(m_vectorMorphTargetWeight);
-    size_t count = m_vectorMorphTargetWeight.size();
+    const float* weights = Cal::pointerFromVector(morphTargetWeights);
+    size_t count = morphTargetWeights.size();
 
     float baseWeight = 1.0f;
     while (count--) {

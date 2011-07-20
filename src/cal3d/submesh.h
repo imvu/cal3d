@@ -23,24 +23,17 @@ class CAL3D_API CalSubmesh : public Cal::UserDataHolder {
 public:
     const CalCoreSubmeshPtr coreSubmesh;
     CalCoreMaterialPtr material;
+    std::vector<float> morphTargetWeights;
 
     CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
 
     std::vector<float>& getVectorWeight();
-    float getMorphTargetWeight(int blendId) const;
     void setMorphTargetWeight(std::string const& morphName, float weight);
-    bool getMorphTargetWeight(std::string const& morphName, float* weightOut) const;
     void getMorphIdAndWeightArray(
         MorphIdAndWeight* arrayResult,
         size_t* numMiawsResult,
         size_t maxMiaws) const;
     float getBaseWeight() const;
-    size_t getMorphTargetWeightCount() const {
-        return m_vectorMorphTargetWeight.size();
-    }
-    const std::vector<float>& getVectorMorphTargetWeight() {
-        return m_vectorMorphTargetWeight;
-    }
     void clearMorphTargetScales();
     void clearMorphTargetState(std::string const& morphName);
     void blendMorphTargetScale(std::string const& morphName,
@@ -50,7 +43,6 @@ public:
                                bool replace);
 
 private:
-    std::vector<float> m_vectorMorphTargetWeight;
     std::vector<float> m_vectorAccumulatedWeight;
     std::vector<float> m_vectorReplacementAttenuation;
 };
