@@ -149,7 +149,7 @@ TEST(LoadSimpleXmlAnimation) {
     CalBufferSource cbs(fromString(animationText));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
     CHECK(anim);
-    CHECK_EQUAL(anim->tracks.size(), 1);
+    CHECK_EQUAL(anim->tracks.size(), 1u);
     CHECK_EQUAL(anim->duration, 40);
 
     const CalCoreTrack* track1 = &anim->tracks[0];
@@ -159,7 +159,7 @@ TEST(LoadSimpleXmlAnimation) {
 
     CHECK_EQUAL(track1->translationRequired, false);
     CHECK_EQUAL(track1->translationIsDynamic, false);
-    CHECK_EQUAL(track1->keyframes.size(), 2);
+    CHECK_EQUAL(track1->keyframes.size(), 2u);
 
     std::ostringstream ss;
     CalSaver::saveXmlCoreAnimation(ss, anim.get());
@@ -186,11 +186,11 @@ TEST(sorts_keyframes_upon_load) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
     CHECK(anim);
 
-    CHECK_EQUAL(anim->tracks.size(), 1);
+    CHECK_EQUAL(anim->tracks.size(), 1u);
     CHECK_EQUAL(anim->duration, 40);
 
     CalCoreTrack* track = &anim->tracks[0];
-    CHECK_EQUAL(track->keyframes.size(), 2);
+    CHECK_EQUAL(track->keyframes.size(), 2u);
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
@@ -220,11 +220,11 @@ TEST(load_animation_with_translation) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
     CHECK(anim);
 
-    CHECK_EQUAL(anim->tracks.size(), 1);
+    CHECK_EQUAL(anim->tracks.size(), 1u);
     CHECK_EQUAL(anim->duration, 40);
 
     CalCoreTrack* track = &anim->tracks[0];
-    CHECK_EQUAL(track->keyframes.size(), 2);
+    CHECK_EQUAL(track->keyframes.size(), 2u);
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
@@ -257,11 +257,11 @@ TEST(load_animation_with_static_translations) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
     CHECK(anim);
 
-    CHECK_EQUAL(anim->tracks.size(), 1);
+    CHECK_EQUAL(anim->tracks.size(), 1u);
     CHECK_EQUAL(anim->duration, 40);
 
     CalCoreTrack* track = &anim->tracks[0];
-    CHECK_EQUAL(track->keyframes.size(), 2);
+    CHECK_EQUAL(track->keyframes.size(), 2u);
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
@@ -294,11 +294,11 @@ TEST(load_animation_with_mismatched_counts) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
     CHECK(anim);
 
-    CHECK_EQUAL(anim->tracks.size(), 1);
+    CHECK_EQUAL(anim->tracks.size(), 1u);
     CHECK_EQUAL(anim->duration, 40);
 
     CalCoreTrack* track = &anim->tracks[0];
-    CHECK_EQUAL(track->keyframes.size(), 2);
+    CHECK_EQUAL(track->keyframes.size(), 2u);
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
@@ -338,7 +338,7 @@ TEST(simple_two_bone_skeleton) {
     CalBufferSource cbs(fromString(simple_two_bone_skeleton));
     boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadCoreSkeleton(cbs));
     CHECK(skel);
-    CHECK_EQUAL(skel->coreBones.size(), 2);
+    CHECK_EQUAL(skel->coreBones.size(), 2u);
     CalVector sceneAmbientClr = skel->sceneAmbientColor;
     CHECK_EQUAL(CalVector(0.5f, 0.5f, 0.5f), sceneAmbientClr);
     CalCoreBone* rootBone = skel->coreBones[0].get();
@@ -346,7 +346,7 @@ TEST(simple_two_bone_skeleton) {
     const std::string rootBoneName = rootBone->name;
     CHECK_EQUAL(rootBoneName.c_str(), "AttachmentRoot");
     const std::vector<int>& childrenOfRootBone = rootBone->childIds;
-    CHECK_EQUAL(childrenOfRootBone.size(), 1);
+    CHECK_EQUAL(childrenOfRootBone.size(), 1u);
     int parentIdOfRootBone = rootBone->parentId;
     CHECK_EQUAL(parentIdOfRootBone, -1);
     const CalQuaternion& rot = rootBone->relativeTransform.rotation;
@@ -489,7 +489,7 @@ TEST(load_hmmm) {
     };
 
     CalCoreTrack* track2 = &anim->tracks[2];
-    CHECK_EQUAL(14, track2->keyframes.size());
+    CHECK_EQUAL(14u, track2->keyframes.size());
     for (size_t i = 0; i < 14; ++i) {
         CHECK_EQUAL(expected[i], track2->keyframes[i]);
     }
@@ -522,8 +522,8 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalBufferSource cbs(str.data(), str.size());
     CalCoreMesh* loaded = CalLoader::loadCoreMesh(cbs);
     CHECK(loaded);
-    CHECK_EQUAL(1, cm.getCoreSubmeshCount());
-    CHECK_EQUAL(1, loaded->getCoreSubmeshCount());
+    CHECK_EQUAL(1u, cm.getCoreSubmeshCount());
+    CHECK_EQUAL(1u, loaded->getCoreSubmeshCount());
 
     CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
                 loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());

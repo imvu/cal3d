@@ -136,7 +136,7 @@ bool CSubmeshCandidate::AddSpring(int vertexId1, int vertexId2)
 int CSubmeshCandidate::AddVertexCandidate(CVertexCandidate *pVertexCandidate)
 {
 	// check if the vertex candidate has the same number of maps as this submesh candidate
-	if(pVertexCandidate->GetVectorTextureCoordinate().size() != m_mapCount)
+	if(pVertexCandidate->GetVectorTextureCoordinate().size() != unsigned(m_mapCount))
 	{
 		theExporter.SetLastError("Map count mismatch (vertex <-> submesh)!", __FILE__, __LINE__);
 		return -1;

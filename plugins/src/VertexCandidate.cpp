@@ -106,7 +106,7 @@ void CVertexCandidate::AddInfluence(int boneId, float weight)
 	for(influenceId = 0; influenceId < m_vectorInfluence.size(); influenceId++)
 	{
 		// compare bone id
-		if(m_vectorInfluence[influenceId].boneId == boneId)
+		if(m_vectorInfluence[influenceId].boneId == unsigned(boneId))
 		{
 			// just add the weights
 			m_vectorInfluence[influenceId].weight += weight;
