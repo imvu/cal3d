@@ -21,7 +21,9 @@
 
 CalCoreBone::CalCoreBone(const std::string& n, int p)
     : parentId(p)
-    , name(n) {
+    , name(n)
+    , lightType(LIGHT_TYPE_NONE)
+{
 }
 
 void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
