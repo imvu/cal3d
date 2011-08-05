@@ -40,7 +40,7 @@ public:
     CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
     void translationCompressibility(
         bool* transRequiredResult, bool* transDynamicResult,
-        float threshold, float highRangeThreshold, CalCoreSkeleton* skel
+        float threshold, CalCoreSkeleton* skel
     ) const;
 
 private:

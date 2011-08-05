@@ -213,7 +213,7 @@ CalCoreTrackPtr CalCoreTrack::compress(
         result->translationCompressibility(
             &result->translationRequired,
             &result->translationIsDynamic,
-            translationTolerance, CalLoader::keyframePosRangeSmall, skelOrNull);
+            translationTolerance, skelOrNull);
     }
 
     return result;
@@ -225,7 +225,6 @@ void CalCoreTrack::translationCompressibility(
     bool* transRequiredResult,
     bool* transDynamicResult,
     float threshold,
-    float highRangeThreshold,
     CalCoreSkeleton* skel
 ) const {
     * transRequiredResult = false;
