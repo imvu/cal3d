@@ -111,8 +111,7 @@ if 'exp' not in env.get('MSVS_VERSION', '').lower():
     res = exporter_env.RES('plugins/cal3d_max_exporter/cal3d_max_exporter.rc')
     exporter_env.SharedLibrary(
         '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter',
-        exporter_sources + exporter_src_sources + exporter_win32_sources + [res, PCH_OBJ, 
-          manifest_resource(exporter_env, is_dll=True, include_mfc=True)])
+        exporter_sources + exporter_src_sources + exporter_win32_sources + [res, PCH_OBJ])
     exporter_env.InstallAs(
         '#/Binaries/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dle',
         '../bin/${IMVU_BUILDDIR_NAME}/cal3d_max_exporter.dll')
