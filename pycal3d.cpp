@@ -111,9 +111,30 @@ BOOST_PYTHON_MODULE(_cal3d_debug)
 BOOST_PYTHON_MODULE(_cal3d)
 #endif
 {
+    class_<CalVector>("Vector")
+        .def_readwrite("x", &CalVector::x)
+        .def_readwrite("y", &CalVector::y)
+        .def_readwrite("z", &CalVector::z)
+        ;
+
+    class_<CalQuaternion>("Quaternion")
+        .def_readwrite("x", &CalQuaternion::x)
+        .def_readwrite("y", &CalQuaternion::y)
+        .def_readwrite("z", &CalQuaternion::z)
+        .def_readwrite("w", &CalQuaternion::w)
+        ;
+
+    class_<cal3d::Transform>("Transform")
+        .def_readwrite("translation", &cal3d::Transform::translation)
+        .def_readwrite("rotation", &cal3d::Transform::rotation)
+        ;
+
     class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone", no_init)
         .def(init<std::string>())
-        .add_property("name", &CalCoreBone::name)
+        .def_readwrite("parentIndex", &CalCoreBone::parentId)
+        .def_readwrite("name", &CalCoreBone::name)
+        .def_readwrite("relativeTransform", &CalCoreBone::relativeTransform)
+        .def_readwrite("boneSpaceTransform", &CalCoreBone::boneSpaceTransform)
         ;
     class_< std::vector<boost::shared_ptr<CalCoreBone> > >("BoneVector")
         .def(vector_indexing_suite< std::vector<boost::shared_ptr<CalCoreBone> >, true >())
