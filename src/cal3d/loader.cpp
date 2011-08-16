@@ -447,8 +447,6 @@ CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
  *****************************************************************************/
 
 CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
-
-    // check if this is a valid file
     char magic[4];
     if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::SKELETON_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
@@ -466,17 +464,12 @@ CalCoreSkeleton* CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
 
     // read the number of bones
     int boneCount;
-    if (!dataSrc.readInteger(boneCount) || (boneCount <= 0)) {
+    if (!dataSrc.readInteger(boneCount) || (boneCount < 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return 0;
     }
 
-    // allocate a new core skeleton instance
-    CalCoreSkeleton* pCoreSkeleton = new CalCoreSkeleton();
-    if (pCoreSkeleton == 0) {
-        CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-        return 0;
-    }
+    CalCoreSkeleton* pCoreSkeleton = new CalCoreSkeleton;
 
     // load the scene ambient
     if (hasNodeLights) {

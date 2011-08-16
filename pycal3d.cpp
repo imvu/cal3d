@@ -60,13 +60,23 @@ bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animat
     return CalSaver::saveCoreAnimatedMorph(path, animatedMorph.get());
 }
 
-tuple getCoreSkeletonSceneAmbientColor(boost::shared_ptr<CalCoreSkeleton> skel) {
+tuple getCoreSkeletonSceneAmbientColor(const CalCoreSkeletonPtr& skel) {
     CalVector sceneAmbient = skel->sceneAmbientColor;
     return make_tuple(
         sceneAmbient.x,
         sceneAmbient.y,
         sceneAmbient.z
     );
+}
+
+void setCoreSkeletonSceneAmbientColor(const CalCoreSkeletonPtr& skel, tuple c) {
+    if (len(c) != 3) {
+        PyErr_SetString(PyExc_ValueError, "sceneAmbientColor must be a triple");
+        throw_error_already_set();
+    }
+    skel->sceneAmbientColor.x = extract<float>(c[0]);
+    skel->sceneAmbientColor.y = extract<float>(c[1]);
+    skel->sceneAmbientColor.z = extract<float>(c[2]);
 }
 
 list getKeyframes(const CalCoreMorphTrack* t) {
@@ -111,7 +121,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
-        .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor)
+        .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
         .add_property("bones", &CalCoreSkeleton::coreBones)
         ;
 
