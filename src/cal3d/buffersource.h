@@ -43,3 +43,19 @@ private:
 
     CalBufferSource(); //Can't use this
 };
+
+namespace cal3d {
+
+    // This interface provides some bytes and a length.
+    class Buffer {
+    public:
+        virtual size_t size() const = 0;
+        virtual const void* data() const = 0;
+
+        virtual ~Buffer() {}
+
+    protected:
+        void* _; // so sizeof(Buffer) == sizeof(PythonBuffer)
+    };
+
+}

@@ -15,7 +15,7 @@
 
 using namespace boost::python;
 
-CalCoreAnimationPtr loadCoreAnimationFromBuffer(const std::string& buffer) {
+CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalCoreAnimationPtr(CalLoader::loadCoreAnimation(cbs));
 }
@@ -24,7 +24,7 @@ bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, con
     return CalSaver::saveCoreAnimation(path, animation.get());
 }
 
-CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const std::string& buffer) {
+CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalCoreSkeletonPtr(CalLoader::loadCoreSkeleton(cbs));
 }
@@ -33,7 +33,7 @@ bool saveCoreSkeleton(const boost::shared_ptr<CalCoreSkeleton>& skeleton, const 
     return CalSaver::saveCoreSkeleton(path, skeleton.get());
 }
 
-CalCoreMaterialPtr loadCoreMaterialFromBuffer(const std::string& buffer) {
+CalCoreMaterialPtr loadCoreMaterialFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalCoreMaterialPtr(CalLoader::loadCoreMaterial(cbs));
 }
@@ -42,7 +42,7 @@ bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const 
     return CalSaver::saveCoreMaterial(path, material.get());
 }
 
-CalCoreMeshPtr loadCoreMeshFromBuffer(const std::string& buffer) {
+CalCoreMeshPtr loadCoreMeshFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalCoreMeshPtr(CalLoader::loadCoreMesh(cbs));
 }
@@ -51,7 +51,7 @@ bool saveCoreMesh(const boost::shared_ptr<CalCoreMesh>& mesh, const std::string&
     return CalSaver::saveCoreMesh(path, mesh.get());
 }
 
-CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const std::string& buffer) {
+CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalCoreAnimatedMorphPtr(CalLoader::loadCoreAnimatedMorph(cbs));
 }
@@ -105,12 +105,82 @@ list getTracks(const CalCoreAnimatedMorph* m) {
     return rv;
 }
 
+namespace cal3d {
+    struct PythonBuffer : public Buffer {
+    public:
+        PythonBuffer(PyObject* p) {
+            _ = p;
+            incref(get());
+        }
+
+        ~PythonBuffer() {
+            boost::python::PyGILState_AssertIsCurrent();
+            decref(get());
+        }
+
+        size_t size() const {
+            void* data;
+            return get()->ob_type->tp_as_buffer->bf_getreadbuffer(get(), 0, &data);
+        }
+
+        const void* data() const {
+            void* data;
+            get()->ob_type->tp_as_buffer->bf_getreadbuffer(get(), 0, &data);
+            return data;
+        }
+
+        boost::shared_ptr<Buffer> clone() const {
+            return boost::shared_ptr<Buffer>(new PythonBuffer(get()));
+        }
+    private:
+        PyObject* get() const {
+            return static_cast<PyObject*>(_);
+        }
+    };
+
+    struct BufferFromPythonObject {
+        BufferFromPythonObject() {
+            converter::registry::push_back(
+                &convertible,
+                &construct,
+                boost::python::type_id<Buffer>()
+            );
+        }
+
+        static void* convertible(PyObject* obj_ptr) {
+            return (obj_ptr->ob_type->tp_as_buffer &&
+                    obj_ptr->ob_type->tp_as_buffer->bf_getreadbuffer)
+                   ? obj_ptr
+                   : 0;
+        }
+
+        static void construct(
+            PyObject* obj_ptr,
+            boost::python::converter::rvalue_from_python_stage1_data* data
+        ) {
+            // Note that we're registered as a converter to the Buffer interface,
+            // so Boost has already allocated sizeof(Buffer) for us.  Since we're
+            // constructing PythonStringBuffer into that memory, assert that
+            // PythonStringBuffer and Buffer have the same size.
+            BOOST_STATIC_ASSERT(sizeof(Buffer) == sizeof(PythonBuffer));
+
+            void* storage = ((boost::python::converter::rvalue_from_python_storage<PythonBuffer>*)data)->storage.bytes;
+
+            new(storage) PythonBuffer(obj_ptr);
+
+            data->convertible = storage;
+        }
+    };
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
 BOOST_PYTHON_MODULE(_cal3d)
 #endif
 {
+    cal3d::BufferFromPythonObject();
+
     class_<CalVector>("Vector")
         .def_readwrite("x", &CalVector::x)
         .def_readwrite("y", &CalVector::y)
