@@ -21,16 +21,10 @@ public:
 
     size_t sizeInBytes() const;
     size_t addCoreSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
-    const CalCoreSubmeshPtr& getCoreSubmesh(int id) const {
-        return m_vectorCoreSubmesh[id];
-    }
-    size_t getCoreSubmeshCount() const {
-        return m_vectorCoreSubmesh.size();
-    }
-    CalCoreSubmeshVector& getVectorCoreSubmesh();
     size_t addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
+    
     void scale(float factor);
 
-    CalCoreSubmeshVector m_vectorCoreSubmesh;
+    CalCoreSubmeshVector submeshes;
 };
 typedef boost::shared_ptr<CalCoreMesh> CalCoreMeshPtr;

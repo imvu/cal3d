@@ -23,34 +23,30 @@ size_t sizeInBytes(const CalCoreSubmeshPtr& submesh) {
 }
 
 size_t CalCoreMesh::sizeInBytes() const {
-    return sizeof(*this) + ::sizeInBytes(m_vectorCoreSubmesh);
+    return sizeof(*this) + ::sizeInBytes(submeshes);
 }
 
 size_t CalCoreMesh::addCoreSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh) {
-    size_t submeshId = m_vectorCoreSubmesh.size();
-    m_vectorCoreSubmesh.push_back(pCoreSubmesh);
+    size_t submeshId = submeshes.size();
+    submeshes.push_back(pCoreSubmesh);
     return submeshId;
-}
-
-CalCoreMesh::CalCoreSubmeshVector& CalCoreMesh::getVectorCoreSubmesh() {
-    return m_vectorCoreSubmesh;
 }
 
 size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName) {
     //Check if the numbers of vertices allow a blending
-    CalCoreMesh::CalCoreSubmeshVector& otherVectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
-    if (m_vectorCoreSubmesh.size() != otherVectorCoreSubmesh.size()) {
+    CalCoreMesh::CalCoreSubmeshVector& otherVectorCoreSubmesh = pCoreMesh->submeshes;
+    if (submeshes.size() != otherVectorCoreSubmesh.size()) {
         CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, "This mesh has children with different numbers of materials");
         return -1;
     }
-    if (m_vectorCoreSubmesh.size() == 0) {
+    if (submeshes.size() == 0) {
         CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, "Mesh has no submeshes");
         return -1;
     }
-    CalCoreMesh::CalCoreSubmeshVector::iterator iteratorCoreSubmesh = m_vectorCoreSubmesh.begin();
+    CalCoreMesh::CalCoreSubmeshVector::iterator iteratorCoreSubmesh = submeshes.begin();
     CalCoreMesh::CalCoreSubmeshVector::iterator otherIteratorCoreSubmesh = otherVectorCoreSubmesh.begin();
     size_t subMorphTargetID = (*iteratorCoreSubmesh)->getCoreSubMorphTargetCount();
-    while (iteratorCoreSubmesh != m_vectorCoreSubmesh.end()) {
+    while (iteratorCoreSubmesh != submeshes.end()) {
         size_t count1 = (*iteratorCoreSubmesh)->getVertexCount();
         size_t count2 = (*otherIteratorCoreSubmesh)->getVertexCount();
 
@@ -69,9 +65,9 @@ size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& 
         ++otherIteratorCoreSubmesh;
     }
     //Adding the blend targets to each of the core sub meshes
-    iteratorCoreSubmesh = m_vectorCoreSubmesh.begin();
+    iteratorCoreSubmesh = submeshes.begin();
     otherIteratorCoreSubmesh = otherVectorCoreSubmesh.begin();
-    while (iteratorCoreSubmesh != m_vectorCoreSubmesh.end()) {
+    while (iteratorCoreSubmesh != submeshes.end()) {
         size_t vertexCount = (*otherIteratorCoreSubmesh)->getVertexCount();
         boost::shared_ptr<CalCoreSubMorphTarget> pCalCoreSubMorphTarget(new CalCoreSubMorphTarget(morphTargetName));
         pCalCoreSubMorphTarget->reserve(vertexCount);
@@ -100,7 +96,7 @@ size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& 
 
 void CalCoreMesh::scale(float factor) {
     CalCoreMesh::CalCoreSubmeshVector::iterator iteratorCoreSubmesh;
-    for (iteratorCoreSubmesh = m_vectorCoreSubmesh.begin(); iteratorCoreSubmesh != m_vectorCoreSubmesh.end(); ++iteratorCoreSubmesh) {
+    for (iteratorCoreSubmesh = submeshes.begin(); iteratorCoreSubmesh != submeshes.end(); ++iteratorCoreSubmesh) {
         (*iteratorCoreSubmesh)->scale(factor);
     }
 }

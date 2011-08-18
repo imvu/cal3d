@@ -243,7 +243,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     class_<CalCoreMesh, boost::shared_ptr<CalCoreMesh> >("CoreMesh")
-        .def_readwrite("submeshes", &CalCoreMesh::m_vectorCoreSubmesh)
+        .def_readwrite("submeshes", &CalCoreMesh::submeshes)
         ;
 
     class_<CalCoreAnimation, boost::shared_ptr<CalCoreAnimation> >("CoreAnimation")

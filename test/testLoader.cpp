@@ -66,7 +66,7 @@ CalBufferSource fromString(const unsigned char(&p)[Length]) {
 TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
     CalBufferSource cbs(fromString(goodMeshData));
     CalCoreMeshPtr goodMesh(CalLoader::loadCoreMesh(cbs));
-    CalCoreSubmeshPtr subMesh(goodMesh->getCoreSubmesh(0));
+    CalCoreSubmeshPtr subMesh(goodMesh->submeshes[0]);
     std::ostringstream ssm;
     bool bRet = true;
     bRet = CalSaver::saveCoreMesh(ssm, goodMesh.get());
@@ -522,11 +522,11 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CalBufferSource cbs(str.data(), str.size());
     CalCoreMesh* loaded = CalLoader::loadCoreMesh(cbs);
     CHECK(loaded);
-    CHECK_EQUAL(1u, cm.getCoreSubmeshCount());
-    CHECK_EQUAL(1u, loaded->getCoreSubmeshCount());
+    CHECK_EQUAL(1u, cm.submeshes.size());
+    CHECK_EQUAL(1u, loaded->submeshes.size());
 
-    CHECK_EQUAL(cm.getCoreSubmesh(0)->hasNonWhiteVertexColors(),
-                loaded->getCoreSubmesh(0)->hasNonWhiteVertexColors());
+    CHECK_EQUAL(cm.submeshes[0]->hasNonWhiteVertexColors(),
+                loaded->submeshes[0]->hasNonWhiteVertexColors());
 
     delete loaded;
 }

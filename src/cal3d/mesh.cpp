@@ -24,7 +24,7 @@ CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
     assert(pCoreMesh);
 
     // clone the mesh structure of the core mesh
-    CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->getVectorCoreSubmesh();
+    CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->submeshes;
 
     SubmeshVector& m_vectorSubmesh = const_cast<SubmeshVector&>(submeshes); // Oh for a 'readonly' keyword like C#
 
