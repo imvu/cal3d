@@ -117,9 +117,9 @@ public:
     CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
 
     size_t sizeInBytes() const;
-    int getCoreMaterialThreadId() const {
-        return m_coreMaterialThreadId;
-    }
+
+    int coreMaterialThreadId;
+
     size_t getFaceCount() const {
         return m_vectorFace.size();
     }
@@ -145,7 +145,6 @@ public:
     size_t getVertexCount() const {
         return m_vertices.size();
     }
-    void setCoreMaterialThreadId(int coreMaterialThreadId);
     bool setFace(int faceId, const Face& face);
 
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
@@ -185,7 +184,6 @@ private:
     std::vector<Face> m_vectorFace;
 
     CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
-    int m_coreMaterialThreadId;
     bool m_hasNonWhiteVertexColors;
 
     bool m_isStatic;

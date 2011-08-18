@@ -572,7 +572,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     }
 
     // write the core material thread id
-    if (!CalPlatform::writeInteger(os, pCoreSubmesh->getCoreMaterialThreadId())) {
+    if (!CalPlatform::writeInteger(os, pCoreSubmesh->coreMaterialThreadId)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
@@ -1162,7 +1162,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
         submesh.SetAttribute("NUMVERTICES", pCoreSubmesh->getVertexCount());
         submesh.SetAttribute("NUMFACES", pCoreSubmesh->getFaceCount());
-        submesh.SetAttribute("MATERIAL", pCoreSubmesh->getCoreMaterialThreadId());
+        submesh.SetAttribute("MATERIAL", pCoreSubmesh->coreMaterialThreadId);
         submesh.SetAttribute("NUMLODSTEPS", 0);
         submesh.SetAttribute("NUMSPRINGS", 0);
         submesh.SetAttribute("NUMMORPHS", pCoreSubmesh->getCoreSubMorphTargetCount());

@@ -564,7 +564,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
                     vectorFace.size()));
 
 			// set the core material id
-			pCoreSubmesh->setCoreMaterialThreadId(pSubmeshCandidate->GetMaterialThreadId());
+			pCoreSubmesh->coreMaterialThreadId = pSubmeshCandidate->GetMaterialThreadId();
 
 			size_t vertexCandidateId;
 			for(vertexCandidateId = 0; vertexCandidateId < vectorVertexCandidate.size(); vertexCandidateId++)

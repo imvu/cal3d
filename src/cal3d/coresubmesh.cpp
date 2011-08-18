@@ -16,7 +16,7 @@
 #include "cal3d/coresubmorphtarget.h"
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)
-    : m_coreMaterialThreadId(0)
+    : coreMaterialThreadId(0)
     , m_isStatic(false)
     , m_currentVertexId(0) {
     m_hasNonWhiteVertexColors = false;
@@ -52,10 +52,6 @@ size_t CalCoreSubmesh::sizeInBytes() const {
 
 const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const {
     return m_vectorFace;
-}
-
-void CalCoreSubmesh::setCoreMaterialThreadId(int coreMaterialThreadId) {
-    m_coreMaterialThreadId = coreMaterialThreadId;
 }
 
 bool CalCoreSubmesh::setFace(int faceId, const Face& face) {

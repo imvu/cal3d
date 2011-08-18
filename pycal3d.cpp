@@ -233,7 +233,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     }
 
     class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
-        .add_property("coreMaterialThreadId", &CalCoreSubmesh::getCoreMaterialThreadId)
+        .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .add_property("faceCount", &CalCoreSubmesh::getFaceCount)
         .add_property("vertexCount", &CalCoreSubmesh::getVertexCount)
         ;

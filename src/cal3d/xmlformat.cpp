@@ -850,7 +850,7 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
         boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
 
         pCoreSubmesh->setHasNonWhiteVertexColors(false);
-        pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
+        pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
         TiXmlElement* vertex = submesh->FirstChildElement();
 

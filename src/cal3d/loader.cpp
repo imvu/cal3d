@@ -924,7 +924,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
     }
 
     CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
-    pCoreSubmesh->setCoreMaterialThreadId(coreMaterialThreadId);
+    pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
     pCoreSubmesh->setHasNonWhiteVertexColors(false);
     for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
