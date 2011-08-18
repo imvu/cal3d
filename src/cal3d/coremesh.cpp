@@ -26,12 +26,6 @@ size_t CalCoreMesh::sizeInBytes() const {
     return sizeof(*this) + ::sizeInBytes(submeshes);
 }
 
-size_t CalCoreMesh::addCoreSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh) {
-    size_t submeshId = submeshes.size();
-    submeshes.push_back(pCoreSubmesh);
-    return submeshId;
-}
-
 size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName) {
     //Check if the numbers of vertices allow a blending
     CalCoreMesh::CalCoreSubmeshVector& otherVectorCoreSubmesh = pCoreMesh->submeshes;

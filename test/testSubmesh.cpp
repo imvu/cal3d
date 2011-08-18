@@ -159,7 +159,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     boost::shared_ptr<CalCoreSubmesh> coreSubmesh(new CalCoreSubmesh(0, 1, 0));
 
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
-    coreMesh->addCoreSubmesh(coreSubmesh);
+    coreMesh->submeshes.push_back(coreSubmesh);
 
     CalModel model;
     CHECK(model.attachMesh(coreMesh));
@@ -173,7 +173,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     boost::shared_ptr<CalCoreSubmesh> coreSubmesh(new CalCoreSubmesh(0, 0, 0));
 
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
-    coreMesh->addCoreSubmesh(coreSubmesh);
+    coreMesh->submeshes.push_back(coreSubmesh);
 
     boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
 

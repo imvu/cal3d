@@ -631,7 +631,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				pCoreSubmesh->faces[vectorFace[faceId].lodId] = face;
 			}
 
-			coreMesh.addCoreSubmesh(pCoreSubmesh);
+			coreMesh.submeshes.push_back(pCoreSubmesh);
 		}
 	}
 

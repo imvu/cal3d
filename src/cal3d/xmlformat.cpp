@@ -1170,7 +1170,7 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
         submesh = submesh->NextSiblingElement();
 
         // add the core submesh to the core mesh instance
-        pCoreMesh->addCoreSubmesh(pCoreSubmesh);
+        pCoreMesh->submeshes.push_back(pCoreSubmesh);
 
     }
 

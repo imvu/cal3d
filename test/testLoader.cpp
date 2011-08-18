@@ -513,7 +513,7 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     sm->setHasNonWhiteVertexColors(false);
 
     CalCoreMesh cm;
-    cm.addCoreSubmesh(sm);
+    cm.submeshes.push_back(sm);
 
     std::ostringstream os;
     CalSaver::saveCoreMesh(os, &cm);

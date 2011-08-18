@@ -246,7 +246,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				pCoreSubmesh->faces[vectorFace[faceId].lodId] = face;
 			}
 
-			coreMesh.addCoreSubmesh(pCoreSubmesh);
+			coreMesh.submeshes.push_back(pCoreSubmesh);
 		}
 	}
 

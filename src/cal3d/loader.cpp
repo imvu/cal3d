@@ -428,7 +428,7 @@ CalCoreMesh* CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
         }
 
         // add the core submesh to the core mesh instance
-        pCoreMesh->addCoreSubmesh(pCoreSubmesh);
+        pCoreMesh->submeshes.push_back(pCoreSubmesh);
     }
 
     return pCoreMesh;
