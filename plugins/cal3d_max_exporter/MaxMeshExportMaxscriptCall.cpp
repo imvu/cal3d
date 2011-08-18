@@ -243,7 +243,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				face.vertexId[2] = vectorFace[faceId].vertexLodId[2];
 
 				// set face in the core submesh instance
-				pCoreSubmesh->setFace(vectorFace[faceId].lodId, face);
+				pCoreSubmesh->faces[vectorFace[faceId].lodId] = face;
 			}
 
 			coreMesh.addCoreSubmesh(pCoreSubmesh);

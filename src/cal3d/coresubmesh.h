@@ -105,6 +105,10 @@ public:
 
     struct Face {
         CalIndex vertexId[3];
+
+        bool operator==(const Face& rhs) const {
+            return std::equal(vertexId, vertexId + 3, rhs.vertexId);
+        }
     };
 
     typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
@@ -119,14 +123,11 @@ public:
     size_t sizeInBytes() const;
 
     int coreMaterialThreadId;
+    std::vector<Face> faces;
 
-    size_t getFaceCount() const {
-        return m_vectorFace.size();
-    }
     bool hasNonWhiteVertexColors() const {
         return m_hasNonWhiteVertexColors;
     }
-    const std::vector<Face>& getVectorFace() const;
     const std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate() const {
         return m_vectorvectorTextureCoordinate;
     }
@@ -145,7 +146,6 @@ public:
     size_t getVertexCount() const {
         return m_vertices.size();
     }
-    bool setFace(int faceId, const Face& face);
 
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
     bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
@@ -181,7 +181,6 @@ private:
     std::vector<CalColor32> m_vertexColors;
  
     std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
-    std::vector<Face> m_vectorFace;
 
     CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
     bool m_hasNonWhiteVertexColors;

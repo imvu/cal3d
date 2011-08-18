@@ -1052,7 +1052,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         face.vertexId[2] = tmp[2];
 
         // set face in the core submesh instance
-        pCoreSubmesh->setFace(faceId, face);
+        pCoreSubmesh->faces[faceId] = face;
     }
 
     return pCoreSubmesh;

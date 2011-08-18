@@ -580,7 +580,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     // get the vertex, face, physical property and spring vector
     const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
-    const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
+    const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
 
     // write the number of vertices, faces, level-of-details and springs
     CalPlatform::writeInteger(os, vectorVertex.size());
@@ -1161,7 +1161,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         TiXmlElement submesh("SUBMESH");
 
         submesh.SetAttribute("NUMVERTICES", pCoreSubmesh->getVertexCount());
-        submesh.SetAttribute("NUMFACES", pCoreSubmesh->getFaceCount());
+        submesh.SetAttribute("NUMFACES", pCoreSubmesh->faces.size());
         submesh.SetAttribute("MATERIAL", pCoreSubmesh->coreMaterialThreadId);
         submesh.SetAttribute("NUMLODSTEPS", 0);
         submesh.SetAttribute("NUMSPRINGS", 0);
@@ -1172,7 +1172,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
         std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
-        const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getVectorFace();
+        const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
         CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
         // get the texture coordinate vector vector
         const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();

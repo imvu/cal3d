@@ -30,7 +30,7 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
         m_vectorvectorTextureCoordinate[textureCoordinateId].resize(vertexCount);
     }
 
-    m_vectorFace.resize(faceCount);
+    faces.resize(faceCount);
 }
 
 CAL3D_DEFINE_SIZE(CalCoreSubmesh::Face);
@@ -44,23 +44,10 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     size_t r = sizeof(*this);
     r += ::sizeInBytes(m_vertices);
     r += ::sizeInBytes(m_vertexColors);
-    r += ::sizeInBytes(m_vectorFace);
+    r += ::sizeInBytes(faces);
     r += ::sizeInBytes(m_staticInfluenceSet);
     r += ::sizeInBytes(m_influences);
     return r;
-}
-
-const std::vector<CalCoreSubmesh::Face>& CalCoreSubmesh::getVectorFace() const {
-    return m_vectorFace;
-}
-
-bool CalCoreSubmesh::setFace(int faceId, const Face& face) {
-    if ((faceId < 0) || (faceId >= (int)m_vectorFace.size())) {
-        return false;
-    }
-
-    m_vectorFace[faceId] = face;
-    return true;
 }
 
 bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate) {

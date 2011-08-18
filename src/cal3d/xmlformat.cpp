@@ -1163,7 +1163,7 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             Face.vertexId[1] = tmp[1];
             Face.vertexId[2] = tmp[2];
 
-            pCoreSubmesh->setFace(faceId, Face);
+            pCoreSubmesh->faces[faceId] = Face;
 
             face = face->NextSiblingElement();
         }

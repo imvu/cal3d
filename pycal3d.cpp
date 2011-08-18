@@ -173,6 +173,11 @@ namespace cal3d {
     };
 }
 
+template<unsigned i>
+CalIndex getFaceIndex(const CalCoreSubmesh::Face& f) {
+    return f.vertexId[i];
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -232,9 +237,19 @@ BOOST_PYTHON_MODULE(_cal3d)
             ;
     }
 
+    class_<CalCoreSubmesh::Face>("Triangle")
+        .add_property("v1", &getFaceIndex<0>)
+        .add_property("v2", &getFaceIndex<1>)
+        .add_property("v3", &getFaceIndex<2>)
+        ;
+
+    class_< std::vector<CalCoreSubmesh::Face> >("TriangleVector")
+        .def(vector_indexing_suite< std::vector<CalCoreSubmesh::Face>, true >())
+        ;
+
     class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
-        .add_property("faceCount", &CalCoreSubmesh::getFaceCount)
+        .def_readwrite("faces", &CalCoreSubmesh::faces)
         .add_property("vertexCount", &CalCoreSubmesh::getVertexCount)
         ;
 
