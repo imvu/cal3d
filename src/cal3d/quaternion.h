@@ -105,20 +105,6 @@ inline CalQuaternion operator*(CalQuaternion q, const CalQuaternion& u) {
     return q;
 }
 
-static inline CalQuaternion shortestArc(const CalVector& from, const CalVector& to) {
-    CalVector cross = ::cross(from, to);
-    float dot = ::dot(from, to);
-
-    dot = sqrtf(2 * (dot + 1)); //We will use this equation twice
-
-    cross /= dot; //Get the x, y, z components
-
-    //Return with the w component (Note that w is inverted because Cal3D has
-    // left-handed rotations )
-    return CalQuaternion(cross.x, cross.y, cross.z, -dot / 2) ;
-
-}
-
 inline bool operator==(const CalQuaternion& lhs, const CalQuaternion& rhs) {
     return close(lhs.x, rhs.x)
            && close(lhs.y, rhs.y)

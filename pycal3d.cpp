@@ -178,6 +178,31 @@ CalIndex getFaceIndex(const CalCoreSubmesh::Face& f) {
     return f.vertexId[i];
 }
 
+struct PythonVertex {
+    PythonVertex() {}
+    PythonVertex(const CalCoreSubmesh::Vertex& v) {
+        position.x = v.position.x;
+        position.y = v.position.y;
+        position.z = v.position.z;
+
+        normal.x = v.normal.x;
+        normal.y = v.normal.y;
+        normal.z = v.normal.z;
+    }
+    CalVector position;
+    CalVector normal;
+
+    bool operator==(const PythonVertex& rhs) const {
+        return position == rhs.position && normal == rhs.normal;
+    }
+};
+
+std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
+    return std::vector<PythonVertex>(
+        submesh.getVectorVertex().begin(),
+        submesh.getVectorVertex().end());
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -247,10 +272,19 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def(vector_indexing_suite< std::vector<CalCoreSubmesh::Face>, true >())
         ;
 
+    class_<PythonVertex>("Vertex")
+        .def_readwrite("position", &PythonVertex::position)
+        .def_readwrite("normal", &PythonVertex::normal)
+        ;
+
+    class_< std::vector<PythonVertex> >("VertexVector")
+        .def(vector_indexing_suite< std::vector<PythonVertex>, true >())
+        ;
+
     class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
-        .def_readwrite("faces", &CalCoreSubmesh::faces)
-        .add_property("vertexCount", &CalCoreSubmesh::getVertexCount)
+        .def_readwrite("triangles", &CalCoreSubmesh::faces)
+        .add_property("vertices", &getVertices)
         ;
 
     class_< CalCoreMesh::CalCoreSubmeshVector >("CalCoreSubmeshVector")

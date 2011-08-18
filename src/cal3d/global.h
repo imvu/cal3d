@@ -34,6 +34,13 @@ void* allocate_aligned_data(size_t size);
 // http://social.msdn.microsoft.com/Forums/en-US/vclanguage/thread/0adabdb5-f732-4db7-a8de-e3e83af0e147/
 template<typename T>
 struct SSEArray : boost::noncopyable {
+    typedef T value_type;
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+
+    typedef T* iterator;
+    typedef T const* const_iterator;
+
     SSEArray()
         : data(0)
         , _size(0)
@@ -67,6 +74,11 @@ struct SSEArray : boost::noncopyable {
     size_t size() const {
         return _size;
     }
+
+    iterator begin() { return data; }
+    const_iterator begin() const { return data; }
+    iterator end() { return data + _size; }
+    const_iterator end() const { return data + _size; }
 
     T* data;
 

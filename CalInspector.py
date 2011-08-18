@@ -36,8 +36,8 @@ def getMeshInfo(meshBuffer):
     for i, submesh in enumerate(mesh.submeshes):
         result[i] = {}
         result[i]['materialId'] = submesh.coreMaterialThreadId
-        result[i]['faceCount'] = len(submesh.faces)
-        result[i]['vertexCount'] = submesh.vertexCount
+        result[i]['faceCount'] = len(submesh.triangles)
+        result[i]['vertexCount'] = len(submesh.vertices)
     return result
 
 def getSkeletonInfo(skeletonBuffer):
