@@ -18,10 +18,9 @@
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)
     : coreMaterialThreadId(0)
     , m_isStatic(false)
-    , m_currentVertexId(0) {
-    m_hasNonWhiteVertexColors = false;
-
-    // reserve the space needed in all the vectors
+    , m_currentVertexId(0)
+    , m_hasVertexColors(false)
+{
     m_vertices.resize(vertexCount);
     m_vertexColors.resize(vertexCount);
 
@@ -88,6 +87,8 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
 
     m_vertices[vertexId] = vertex;
     m_vertexColors[vertexId] = vertexColor;
+
+    m_hasVertexColors |= (vertexColor != CalMakeColor(CalVector(1.0f, 1.0f, 1.0f)));
 
     // Each vertex needs at least one influence.
     std::vector<Influence> inf(inf_);

@@ -509,8 +509,7 @@ TEST(CalVectorFromDataSrc) {
 TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     boost::shared_ptr<CalCoreSubmesh> sm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex v;
-    sm->addVertex(v, CalMakeColor(CalVector(0, 0, 0)), std::vector<CalCoreSubmesh::Influence>());
-    sm->setHasNonWhiteVertexColors(false);
+    sm->addVertex(v, CalMakeColor(CalVector(1, 1, 1)), std::vector<CalCoreSubmesh::Influence>());
 
     CalCoreMesh cm;
     cm.submeshes.push_back(sm);
@@ -525,8 +524,8 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
     CHECK_EQUAL(1u, cm.submeshes.size());
     CHECK_EQUAL(1u, loaded->submeshes.size());
 
-    CHECK_EQUAL(cm.submeshes[0]->hasNonWhiteVertexColors(),
-                loaded->submeshes[0]->hasNonWhiteVertexColors());
+    CHECK_EQUAL(cm.submeshes[0]->hasVertexColors(),
+                loaded->submeshes[0]->hasVertexColors());
 
     delete loaded;
 }

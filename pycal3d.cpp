@@ -203,6 +203,10 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
         submesh.getVectorVertex().end());
 }
 
+std::vector<CalColor32> getVertexColors(const CalCoreSubmesh& submesh) {
+    return std::vector<CalColor32>(submesh.getVertexColors().begin(), submesh.getVertexColors().end());
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -285,6 +289,8 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .def_readwrite("triangles", &CalCoreSubmesh::faces)
         .add_property("vertices", &getVertices)
+        .add_property("hasVertexColors", &CalCoreSubmesh::hasVertexColors)
+        .add_property("colors", &getVertexColors)
         ;
 
     class_< CalCoreMesh::CalCoreSubmeshVector >("CalCoreSubmeshVector")

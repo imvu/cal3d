@@ -926,7 +926,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
     CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
     pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
-    pCoreSubmesh->setHasNonWhiteVertexColors(false);
     for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
         CalCoreSubmesh::Vertex vertex;
         CalColor32 vertexColor;
@@ -944,11 +943,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
             dataSrc.readFloat(vc.x);
             dataSrc.readFloat(vc.y);
             dataSrc.readFloat(vc.z);
-            if (vc.x != 1.0f
-                    || vc.y != 1.0f
-                    || vc.z != 1.0f) {
-                pCoreSubmesh->setHasNonWhiteVertexColors(true);
-            }
             vertexColor = CalMakeColor(vc);
         }
         int collapseId;

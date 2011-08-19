@@ -849,7 +849,6 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
         boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
 
-        pCoreSubmesh->setHasNonWhiteVertexColors(false);
         pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
         TiXmlElement* vertex = submesh->FirstChildElement();
@@ -859,7 +858,7 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 return 0;
             }
             CalCoreSubmesh::Vertex Vertex;
-            CalColor32 vertexColor = 0;
+            CalColor32 vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
 
             TiXmlElement* pos = vertex->FirstChildElement();
             if (!ValidateTag(pos, "POS", pCoreMesh, pCoreSubmesh)) {
@@ -917,13 +916,8 @@ CalCoreMesh* CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return 0;
                 }
-                CalVector vc;
+                CalVector vc(1.0f, 1.0f, 1.0f);
                 ReadTripleFloat(vcdata->Value(), &vc.x, &vc.y, &vc.z);
-                if (vc.x != 1.0f
-                        || vc.y != 1.0f
-                        || vc.z != 1.0f) {
-                    pCoreSubmesh->setHasNonWhiteVertexColors(true);
-                }
                 vertexColor = CalMakeColor(vc);
 
                 collapse = vertColor->NextSiblingElement();

@@ -579,7 +579,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
 
     // get the vertex, face, physical property and spring vector
     const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
-    std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
+    const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
     const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
 
     // write the number of vertices, faces, level-of-details and springs
@@ -616,7 +616,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
         CalPlatform::writeFloat(os, vertex.normal.x);
         CalPlatform::writeFloat(os, vertex.normal.y);
         CalPlatform::writeFloat(os, vertex.normal.z);
-        if (pCoreSubmesh->hasNonWhiteVertexColors()) {
+        if (pCoreSubmesh->hasVertexColors()) {
             CalVector vc(CalVectorFromColor(vertexColors[vertexId]));
             CalPlatform::writeFloat(os, vc.x);
             CalPlatform::writeFloat(os, vc.y);
@@ -1170,7 +1170,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         submesh.SetAttribute("NUMTEXCOORDS", pCoreSubmesh->getVectorVectorTextureCoordinate().size());
 
         const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
-        std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
+        const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
         const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
         CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
@@ -1180,7 +1180,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         const CalCoreSubmesh::Influence* currentInfluence = Cal::pointerFromVector(pCoreSubmesh->getInfluences());
         for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
-            CalColor32& vertexColor = vertexColors[vertexId];
+            CalColor32 vertexColor = vertexColors[vertexId];
 
             const CalCoreSubmesh::Influence* nextVertex = currentInfluence;
             while (!nextVertex->lastInfluenceForThisVertex) {

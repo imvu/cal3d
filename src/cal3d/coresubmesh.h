@@ -125,8 +125,8 @@ public:
     int coreMaterialThreadId;
     std::vector<Face> faces;
 
-    bool hasNonWhiteVertexColors() const {
-        return m_hasNonWhiteVertexColors;
+    bool hasVertexColors() const {
+        return m_hasVertexColors;
     }
     const std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate() const {
         return m_vectorvectorTextureCoordinate;
@@ -136,9 +136,6 @@ public:
         return m_vertices;
     }
 
-    std::vector<CalColor32>& getVertexColors() {
-        return m_vertexColors;
-    }
     const std::vector<CalColor32>& getVertexColors() const {
         return m_vertexColors;
     }
@@ -150,9 +147,6 @@ public:
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
     bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
-    void setHasNonWhiteVertexColors(bool p) {
-        m_hasNonWhiteVertexColors = p;
-    }
     size_t addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
     const boost::shared_ptr<CalCoreSubMorphTarget>& getCoreSubMorphTarget(size_t id) {
         assert(id < m_vectorCoreSubMorphTarget.size());
@@ -178,12 +172,13 @@ private:
 
     // The following arrays should always be the same size.
     SSEArray<Vertex> m_vertices;
+
+    bool m_hasVertexColors;    
     std::vector<CalColor32> m_vertexColors;
  
     std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
 
     CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
-    bool m_hasNonWhiteVertexColors;
 
     bool m_isStatic;
     InfluenceSet m_staticInfluenceSet;
