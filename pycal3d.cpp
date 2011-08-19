@@ -203,10 +203,6 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
         submesh.getVectorVertex().end());
 }
 
-std::vector<CalColor32> getVertexColors(const CalCoreSubmesh& submesh) {
-    return std::vector<CalColor32>(submesh.getVertexColors().begin(), submesh.getVertexColors().end());
-}
-
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -285,12 +281,26 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def(vector_indexing_suite< std::vector<PythonVertex>, true >())
         ;
 
+    class_<CalCoreSubmesh::TextureCoordinate>("TextureCoordinate")
+        .def_readwrite("u", &CalCoreSubmesh::TextureCoordinate::u)
+        .def_readwrite("v", &CalCoreSubmesh::TextureCoordinate::v)
+        ;
+
+    class_< std::vector<CalCoreSubmesh::TextureCoordinate> >("TextureCoordinateVector")
+        .def(vector_indexing_suite<std::vector<CalCoreSubmesh::TextureCoordinate>, true>())
+        ;
+
+    class_< std::vector< std::vector<CalCoreSubmesh::TextureCoordinate> > >("TextureCoordinateVectorVector")
+        .def(vector_indexing_suite<std::vector< std::vector<CalCoreSubmesh::TextureCoordinate> >, true>())
+        ;
+
     class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .def_readwrite("triangles", &CalCoreSubmesh::faces)
         .add_property("vertices", &getVertices)
         .add_property("hasVertexColors", &CalCoreSubmesh::hasVertexColors)
-        .add_property("colors", &getVertexColors)
+        .add_property("colors", make_function(&CalCoreSubmesh::getVertexColors, return_value_policy<return_by_value>()))
+        .add_property("texcoords", make_function(&CalCoreSubmesh::getVectorVectorTextureCoordinate, return_value_policy<return_by_value>()))
         ;
 
     class_< CalCoreMesh::CalCoreSubmeshVector >("CalCoreSubmeshVector")

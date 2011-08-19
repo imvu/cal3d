@@ -34,6 +34,10 @@ class CAL3D_API CalCoreSubmesh {
 public:
     struct TextureCoordinate {
         float u, v;
+
+        bool operator==(const TextureCoordinate& rhs) const {
+            return u == rhs.u && v == rhs.v;
+        }
     };
 
     struct Influence {
