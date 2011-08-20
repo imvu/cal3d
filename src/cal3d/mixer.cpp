@@ -18,7 +18,6 @@
 #include "cal3d/coreanimation.h"
 #include "cal3d/coretrack.h"
 #include "cal3d/corekeyframe.h"
-#include "cal3d/model.h"
 #include "cal3d/skeleton.h"
 #include "cal3d/bone.h"
 #include "cal3d/animation.h"

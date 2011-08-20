@@ -1,7 +1,6 @@
 #include "TestPrologue.h"
 #include <cal3d/bone.h>
 #include <cal3d/coresubmorphtarget.h>
-#include <cal3d/model.h>
 #include <cal3d/submesh.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/physique.h>

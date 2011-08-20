@@ -24,7 +24,6 @@ sources = Split('''
     matrix.cpp
     mesh.cpp
     mixer.cpp
-    model.cpp
     physique.cpp
     platform.cpp
     quaternion.cpp

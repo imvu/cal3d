@@ -1,7 +1,6 @@
 #include "TestPrologue.h"
 #include <cal3d/coremesh.h>
 #include <cal3d/mesh.h>
-#include <cal3d/model.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/submesh.h>
 #include <cal3d/physique.h>
@@ -161,10 +160,9 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
     coreMesh->submeshes.push_back(coreSubmesh);
 
-    CalModel model;
-    CHECK(model.attachMesh(coreMesh));
+    CalMesh mesh(coreMesh);
 
-    CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();
+    CalSubmesh* submesh = mesh.submeshes[0].get();
     const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->coreSubmesh->getVectorVectorTextureCoordinate()[0];
     CHECK_EQUAL(0, texCoords.size());
 }
@@ -178,10 +176,9 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
 
     CalSkeleton skeleton(coreSkeleton);
-    CalModel model;
-    CHECK(model.attachMesh(coreMesh));
+    CalMesh mesh(coreMesh);
 
-    CalSubmesh* submesh = model.getMesh(coreMesh)->submeshes[0].get();
+    CalSubmesh* submesh = mesh.submeshes[0].get();
     CHECK(submesh);
 
     CalPhysique::calculateVerticesAndNormals(

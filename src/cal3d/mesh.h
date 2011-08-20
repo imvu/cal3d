@@ -25,3 +25,4 @@ public:
     const boost::shared_ptr<CalCoreMesh> coreMesh;
     const SubmeshVector submeshes;
 };
+typedef boost::shared_ptr<CalMesh> CalMeshPtr;
