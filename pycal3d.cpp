@@ -203,6 +203,13 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
         submesh.getVectorVertex().end());
 }
 
+template<typename T>
+void exportVector(const char* name) {
+    class_<std::vector<typename T> >(name)
+        .def(vector_indexing_suite< std::vector<typename T>, true>())
+        ;
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -236,9 +243,8 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("relativeTransform", &CalCoreBone::relativeTransform)
         .def_readwrite("boneSpaceTransform", &CalCoreBone::boneSpaceTransform)
         ;
-    class_< std::vector<boost::shared_ptr<CalCoreBone> > >("BoneVector")
-        .def(vector_indexing_suite< std::vector<boost::shared_ptr<CalCoreBone> >, true >())
-        ;
+
+    exportVector<CalCoreBonePtr>("BoneVector");
 
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
@@ -252,9 +258,7 @@ BOOST_PYTHON_MODULE(_cal3d)
                 .def_readwrite("maps", &CalCoreMaterial::maps)
         );
 
-        class_< std::vector<CalCoreMaterial::Map> >("MapVector")
-            .def(vector_indexing_suite<std::vector<CalCoreMaterial::Map> >())
-            ;
+        exportVector<CalCoreMaterial::Map>("MapVector");
 
         class_<CalCoreMaterial::Map>("Map")
             .def_readwrite("filename", &CalCoreMaterial::Map::filename)
@@ -268,31 +272,30 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("v3", &getFaceIndex<2>)
         ;
 
-    class_< std::vector<CalCoreSubmesh::Face> >("TriangleVector")
-        .def(vector_indexing_suite< std::vector<CalCoreSubmesh::Face>, true >())
-        ;
+    exportVector<CalCoreSubmesh::Face>("TriangleVector");
 
     class_<PythonVertex>("Vertex")
         .def_readwrite("position", &PythonVertex::position)
         .def_readwrite("normal", &PythonVertex::normal)
         ;
 
-    class_< std::vector<PythonVertex> >("VertexVector")
-        .def(vector_indexing_suite< std::vector<PythonVertex>, true >())
-        ;
+    exportVector<PythonVertex>("VertexVector");
 
     class_<CalCoreSubmesh::TextureCoordinate>("TextureCoordinate")
         .def_readwrite("u", &CalCoreSubmesh::TextureCoordinate::u)
         .def_readwrite("v", &CalCoreSubmesh::TextureCoordinate::v)
         ;
 
-    class_< std::vector<CalCoreSubmesh::TextureCoordinate> >("TextureCoordinateVector")
-        .def(vector_indexing_suite<std::vector<CalCoreSubmesh::TextureCoordinate>, true>())
+    exportVector<CalCoreSubmesh::TextureCoordinate>("TextureCoordinateVector");
+    exportVector<std::vector<CalCoreSubmesh::TextureCoordinate> >("TextureCoordinateVectorVector");
+
+    class_<CalCoreSubmesh::Influence>("Influence")
+        .def_readwrite("boneId", &CalCoreSubmesh::Influence::boneId)
+        .def_readwrite("weight", &CalCoreSubmesh::Influence::weight)
+        .def_readwrite("isLast", &CalCoreSubmesh::Influence::lastInfluenceForThisVertex)
         ;
 
-    class_< std::vector< std::vector<CalCoreSubmesh::TextureCoordinate> > >("TextureCoordinateVectorVector")
-        .def(vector_indexing_suite<std::vector< std::vector<CalCoreSubmesh::TextureCoordinate> >, true>())
-        ;
+    exportVector<CalCoreSubmesh::Influence>("InfluenceVector");
 
     class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
@@ -301,6 +304,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("hasVertexColors", &CalCoreSubmesh::hasVertexColors)
         .add_property("colors", make_function(&CalCoreSubmesh::getVertexColors, return_value_policy<return_by_value>()))
         .add_property("texcoords", make_function(&CalCoreSubmesh::getVectorVectorTextureCoordinate, return_value_policy<return_by_value>()))
+        .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
         ;
 
     class_< CalCoreMesh::CalCoreSubmeshVector >("CalCoreSubmeshVector")
