@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
@@ -205,8 +207,8 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
 
 template<typename T>
 void exportVector(const char* name) {
-    class_<std::vector<typename T> >(name)
-        .def(vector_indexing_suite< std::vector<typename T>, true>())
+    class_<std::vector<T> >(name)
+        .def(vector_indexing_suite< std::vector<T>, true>())
         ;
 }
 
