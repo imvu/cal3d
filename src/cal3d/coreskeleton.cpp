@@ -56,10 +56,10 @@ bool CalCoreSkeleton::mapCoreBoneName(size_t coreBoneId, const std::string& strN
 
 void CalCoreSkeleton::scale(float factor) {
     for (
-        std::vector<size_t>::const_iterator i = rootBoneIds.begin();
-        i != rootBoneIds.end();
+        std::vector<CalCoreBonePtr>::const_iterator i = coreBones.begin();
+        i != coreBones.end();
         ++i
     ) {
-        coreBones[*i]->scale(factor, this);
+        (*i)->scale(factor);
     }
 }

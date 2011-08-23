@@ -26,15 +26,9 @@ CalCoreBone::CalCoreBone(const std::string& n, int p)
 {
 }
 
-void CalCoreBone::scale(float factor, CalCoreSkeleton* skeleton) {
+void CalCoreBone::scale(float factor) {
     relativeTransform.translation *= factor;
     boneSpaceTransform.translation *= factor;
-
-    // calculate all child bones
-    std::vector<int>::const_iterator iteratorChildId;
-    for (iteratorChildId = childIds.begin(); iteratorChildId != childIds.end(); ++iteratorChildId) {
-        skeleton->coreBones[*iteratorChildId]->scale(factor, skeleton);
-    }
 }
 
 

@@ -250,6 +250,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton> >("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
+        .def("scale", &CalCoreSkeleton::scale)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
         .add_property("bones", &CalCoreSkeleton::coreBones)
         ;
@@ -315,9 +316,11 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreMesh, boost::shared_ptr<CalCoreMesh> >("CoreMesh")
         .def_readwrite("submeshes", &CalCoreMesh::submeshes)
+        .def("scale", &CalCoreMesh::scale)
         ;
 
     class_<CalCoreAnimation, boost::shared_ptr<CalCoreAnimation> >("CoreAnimation")
+        .def("scale", &CalCoreAnimation::scale)
         ;
 
     class_<CalCoreMorphKeyframe>("CoreMorphKeyframe")
@@ -332,6 +335,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreAnimatedMorph, boost::shared_ptr<CalCoreAnimatedMorph> >("CoreAnimatedMorph")
         .def("removeZeroScaleTracks", &CalCoreAnimatedMorph::removeZeroScaleTracks)
+        .def("scale", &CalCoreAnimatedMorph::scale)
         .def_readonly("duration", &CalCoreAnimatedMorph::duration)
         .add_property("tracks", &getTracks)
         ;

@@ -16,8 +16,6 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-class CalCoreSkeleton;
-
 // these values are important - we use c-style casts to them :x
 enum CalLightType {
     LIGHT_TYPE_NONE,
@@ -48,7 +46,7 @@ public:
     std::vector<int> childIds;
 
     CalCoreBone(const std::string& name, int parentId = -1);
-    void scale(float factor, CalCoreSkeleton* skeleton);
+    void scale(float factor);
 
     bool hasLightingData() const {
         return lightType != LIGHT_TYPE_NONE;
