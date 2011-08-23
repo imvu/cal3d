@@ -43,6 +43,10 @@ size_t CalCoreTrack::sizeInBytes() const {
     return sizeof(CalCoreTrack) + ::sizeInBytes(keyframes);
 }
 
+void CalCoreTrack::scale(float factor) {
+    std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
+}
+
 inline float DistanceSquared(CalVector const& v1, CalVector const& v2) {
     float dx = (v1.x - v2.x);
     float dy = (v1.y - v2.y);

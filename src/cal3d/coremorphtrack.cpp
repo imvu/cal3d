@@ -64,8 +64,11 @@ float CalCoreMorphTrack::getState(float time) {
     // blend between the two keyframes
     float weight = pCoreMorphKeyframeBefore->weight;
     float otherWeight = pCoreMorphKeyframeAfter->weight;
-    weight += blendFactor * (otherWeight - weight);
-    return weight;
+    return weight + blendFactor * (otherWeight - weight);
+}
+
+void CalCoreMorphTrack::scale(float factor) {
+    std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreMorphKeyframe::scale), factor));
 }
 
 std::vector<CalCoreMorphKeyframe>::iterator CalCoreMorphTrack::getUpperBound(float time) {

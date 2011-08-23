@@ -34,6 +34,7 @@ public:
     CalCoreTrack(int coreBoneId, const KeyframeList& keyframes);
 
     size_t sizeInBytes() const;
+    void scale(float factor);
 
     void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
 

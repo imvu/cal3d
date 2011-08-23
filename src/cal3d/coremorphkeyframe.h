@@ -24,6 +24,9 @@ public:
         : time(t)
         , weight(w)
     {}
+
+    void scale(float factor) {
+    }
 };
 
 inline bool operator<(CalCoreMorphKeyframe lhs, CalCoreMorphKeyframe rhs) {

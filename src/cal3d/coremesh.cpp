@@ -89,8 +89,7 @@ size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& 
 }
 
 void CalCoreMesh::scale(float factor) {
-    CalCoreMesh::CalCoreSubmeshVector::iterator iteratorCoreSubmesh;
-    for (iteratorCoreSubmesh = submeshes.begin(); iteratorCoreSubmesh != submeshes.end(); ++iteratorCoreSubmesh) {
-        (*iteratorCoreSubmesh)->scale(factor);
+    for (CalCoreSubmeshVector::iterator i = submeshes.begin(); i != submeshes.end(); ++i) {
+        (*i)->scale(factor);
     }
 }

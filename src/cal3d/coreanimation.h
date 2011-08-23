@@ -19,6 +19,8 @@ public:
     size_t sizeInBytes() const;
     const CalCoreTrack* getCoreTrack(int coreBoneId) const;
 
+    void scale(float factor);
+
     float duration;
     typedef std::vector<CalCoreTrack> TrackList;
     TrackList tracks;

@@ -29,6 +29,7 @@ public:
     CalCoreMorphTrack* getCoreTrack(const std::string& trackId);
 
     void removeZeroScaleTracks();
+    void scale(float factor);
 
     size_t sizeInBytes() const;
 };

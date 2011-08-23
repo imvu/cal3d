@@ -26,6 +26,10 @@ public:
         , rotation(ro)
     {}
 
+    void scale(float factor) {
+        translation *= factor;
+    }
+
     float time;
     CalVector translation;
     CalQuaternion rotation;
