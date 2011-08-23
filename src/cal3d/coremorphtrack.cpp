@@ -74,9 +74,3 @@ std::vector<CalCoreMorphKeyframe>::iterator CalCoreMorphTrack::getUpperBound(flo
         keyframes.end(),
         CalCoreMorphKeyframe(time, 0.0f));
 }
-
-void CalCoreMorphTrack::scale(float factor) {
-    for (size_t keyframeId = 0; keyframeId < keyframes.size(); keyframeId++) {
-        keyframes[keyframeId].weight *= factor;
-    }
-}

@@ -72,11 +72,3 @@ CalCoreMorphTrack* CalCoreAnimatedMorph::getCoreTrack(std::string const& name) {
     // no match found
     return 0;
 }
-
-void CalCoreAnimatedMorph::scale(float factor) {
-    // loop through all core track
-    std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
-    for (iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack) {
-        iteratorCoreTrack->scale(factor);
-    }
-}
