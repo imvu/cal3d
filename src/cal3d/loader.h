@@ -51,7 +51,7 @@ public:
     static float const keyframePosRangeSmall;
     static unsigned int const keyframePosBytesSmall;
 
-    static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton* skel = 0);
+    static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc, const CalCoreSkeletonPtr& skel = CalCoreSkeletonPtr());
     static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(CalBufferSource& inputSrc);
     static CalCoreMaterialPtr loadCoreMaterial(CalBufferSource& inputSrc);
     static CalCoreMeshPtr loadCoreMesh(CalBufferSource& inputSrc);

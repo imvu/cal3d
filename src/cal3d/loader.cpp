@@ -114,12 +114,12 @@ bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, CalCoreSkeleton* skel) {
-    if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc, skel)) {
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, const CalCoreSkeletonPtr& skel) {
+    if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc, skel.get())) {
         return anim;
     }
     std::string data((const char*)inputSrc.data(), inputSrc.size());
-    return loadXmlCoreAnimation(data.c_str(), skel);
+    return loadXmlCoreAnimation(data.c_str(), skel.get());
 }
 
 template<typename RV>

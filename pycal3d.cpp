@@ -17,9 +17,9 @@
 
 using namespace boost::python;
 
-CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer) {
+CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer, const CalCoreSkeletonPtr& skeleton) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalLoader::loadCoreAnimation(cbs);
+    return CalLoader::loadCoreAnimation(cbs, skeleton);
 }
 
 bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, const std::string& path) {
@@ -340,7 +340,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("tracks", &getTracks)
         ;
 
-    def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
+    def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer, (arg("buffer"), arg("skeleton") = object()));
     def("saveCoreAnimation", &saveCoreAnimation);
     def("saveCoreAnimationToBuffer", &CalSaver::saveCoreAnimationToBuffer);
 

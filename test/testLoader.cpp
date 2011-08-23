@@ -147,7 +147,7 @@ const char animationText[] =
 
 TEST(LoadSimpleXmlAnimation) {
     CalBufferSource cbs(fromString(animationText));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
     CHECK_EQUAL(anim->tracks.size(), 1u);
     CHECK_EQUAL(anim->duration, 40);
@@ -183,7 +183,7 @@ const char animation_with_out_of_order_keyframes[] =
 
 TEST(sorts_keyframes_upon_load) {
     CalBufferSource cbs(fromString(animation_with_out_of_order_keyframes));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -217,7 +217,7 @@ const char animation_with_translations[] =
 
 TEST(load_animation_with_translation) {
     CalBufferSource cbs(fromString(animation_with_translations));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -254,7 +254,7 @@ const char animation_with_static_translations[] =
 
 TEST(load_animation_with_static_translations) {
     CalBufferSource cbs(fromString(animation_with_static_translations));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -291,7 +291,7 @@ const char animation_with_mismatched_track_and_keyframe_count[] =
 
 TEST(load_animation_with_mismatched_counts) {
     CalBufferSource cbs(fromString(animation_with_mismatched_track_and_keyframe_count));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, 0);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -406,7 +406,7 @@ TEST(load_animation_for_non_existent_bone) {
     CHECK(skel);
 
     CalBufferSource cbs2(fromString(animation_for_a_nonexistent_bone));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs2, skel.get());
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs2, skel);
     CHECK(anim);
     CHECK_EQUAL(anim->tracks.size(), 0);
 }
