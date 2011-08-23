@@ -519,15 +519,13 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
 
     std::string str = os.str();
     CalBufferSource cbs(str.data(), str.size());
-    CalCoreMesh* loaded = CalLoader::loadCoreMesh(cbs);
+    CalCoreMeshPtr loaded = CalLoader::loadCoreMesh(cbs);
     CHECK(loaded);
     CHECK_EQUAL(1u, cm.submeshes.size());
     CHECK_EQUAL(1u, loaded->submeshes.size());
 
     CHECK_EQUAL(cm.submeshes[0]->hasVertexColors(),
                 loaded->submeshes[0]->hasVertexColors());
-
-    delete loaded;
 }
 
 TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {

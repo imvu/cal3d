@@ -19,7 +19,7 @@ using namespace boost::python;
 
 CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalCoreAnimationPtr(CalLoader::loadCoreAnimation(cbs));
+    return CalLoader::loadCoreAnimation(cbs);
 }
 
 bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, const std::string& path) {
@@ -28,7 +28,7 @@ bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, con
 
 CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalCoreSkeletonPtr(CalLoader::loadCoreSkeleton(cbs));
+    return CalLoader::loadCoreSkeleton(cbs);
 }
 
 bool saveCoreSkeleton(const boost::shared_ptr<CalCoreSkeleton>& skeleton, const std::string& path) {
@@ -37,7 +37,7 @@ bool saveCoreSkeleton(const boost::shared_ptr<CalCoreSkeleton>& skeleton, const 
 
 CalCoreMaterialPtr loadCoreMaterialFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalCoreMaterialPtr(CalLoader::loadCoreMaterial(cbs));
+    return CalLoader::loadCoreMaterial(cbs);
 }
 
 bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const std::string& path) {
@@ -46,7 +46,7 @@ bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const 
 
 CalCoreMeshPtr loadCoreMeshFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalCoreMeshPtr(CalLoader::loadCoreMesh(cbs));
+    return CalLoader::loadCoreMesh(cbs);
 }
 
 bool saveCoreMesh(const boost::shared_ptr<CalCoreMesh>& mesh, const std::string& path) {
@@ -55,7 +55,7 @@ bool saveCoreMesh(const boost::shared_ptr<CalCoreMesh>& mesh, const std::string&
 
 CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalCoreAnimatedMorphPtr(CalLoader::loadCoreAnimatedMorph(cbs));
+    return CalLoader::loadCoreAnimatedMorph(cbs);
 }
 
 bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animatedMorph, const std::string& path) {

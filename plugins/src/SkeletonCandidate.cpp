@@ -291,7 +291,7 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 
 	// load the core skeleton instance
 	// get core skeleton
-	m_skeleton.reset(CalLoader::loadCoreSkeleton(source));
+	m_skeleton = CalLoader::loadCoreSkeleton(source);
         delete[] buffer;
 
         if(!m_skeleton)
