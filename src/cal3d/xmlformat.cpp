@@ -1183,10 +1183,6 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
 
 
     CalCoreMaterialPtr pCoreMaterial(new CalCoreMaterial);
-    if (pCoreMaterial == 0) {
-        CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-        return null;
-    }
 
     TiXmlElement* ambient = material->FirstChildElement();
     if (!ambient || cal3d_stricmp(ambient->Value(), "AMBIENT") != 0) {
