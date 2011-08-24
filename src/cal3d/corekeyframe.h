@@ -14,6 +14,8 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
+extern CalVector InvalidTranslation;
+
 class CalCoreKeyframe {
 public:
     CalCoreKeyframe() {
@@ -27,7 +29,10 @@ public:
     {}
 
     void scale(float factor) {
-        translation *= factor;
+        // don't scale the 'invalid translation' sentinel
+        if (!exactlyEqual(translation, InvalidTranslation)) {
+            translation *= factor;
+        }
     }
 
     float time;

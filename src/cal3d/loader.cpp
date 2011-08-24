@@ -114,14 +114,6 @@ bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc) {
-    if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc)) {
-        return anim;
-    }
-    std::string data((const char*)inputSrc.data(), inputSrc.size());
-    return loadXmlCoreAnimation(data.c_str());
-}
-
 template<typename RV>
 RV tryBothLoaders(
     CalBufferSource& inputSource,
@@ -138,6 +130,10 @@ RV tryBothLoaders(
     } catch (const CalError&) {
         return RV();
     }
+}
+
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc) {
+    return tryBothLoaders(inputSrc, &loadBinaryCoreAnimation, &loadXmlCoreAnimation);
 }
 
 CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalBufferSource& inputSrc) {
