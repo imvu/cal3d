@@ -90,8 +90,11 @@ public:
         y = vy;
         z = vz;
     }
-
 };
+
+inline bool exactlyEqual(const CalVector& lhs, const CalVector& rhs) {
+    return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+}
 
 inline CalVector operator+(const CalVector& v, const CalVector& u) {
     return CalVector(v.x + u.x, v.y + u.y, v.z + u.z);

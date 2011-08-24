@@ -612,23 +612,16 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCo
             // Then if I have an XML translation entry, I fill it with the value from that entry.
             TiXmlElement* translation = keyframe->FirstChildElement();
             TiXmlElement* rotation = translation;
-            float tx, ty, tz;
-            SetTranslationInvalid(& tx, & ty, & tz);
+            CalVector t = InvalidTranslation;
             if (cb) {
-                CalVector const& cbtrans = cb->relativeTransform.translation;
-                tx = cbtrans.x;
-                ty = cbtrans.y;
-                tz = cbtrans.z;
+                t = cb->relativeTransform.translation;
             }
 
             // If translation is required but not dynamic, then I may elide the translation
             // values for all but the first frame, and for each frame's translation I will
             // copy the translation from the previous frame.
             if (hasLastKeyframe && !translationIsDynamic && translationRequired) {
-                CalVector const& vec = prevCoreKeyframe.translation;
-                tx = vec.x;
-                ty = vec.y;
-                tz = vec.z;
+                t = prevCoreKeyframe.translation;
             }
 
             if (!translation) {
@@ -647,7 +640,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCo
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
                 }
-                ReadTripleFloat(translationdata->Value(), &tx, &ty, &tz);
+                ReadTripleFloat(translationdata->Value(), &t.x, &t.y, &t.z);
                 rotation = rotation->NextSiblingElement();
             }
 
@@ -670,7 +663,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCo
             }
             ReadQuadFloat(rotationdata->Value(), &rx, &ry, &rz, &rw);
 
-            CalCoreKeyframe pCoreKeyframe(time, CalVector(tx, ty, tz), CalQuaternion(rx, ry, rz, rw));
+            CalCoreKeyframe pCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw));
             hasLastKeyframe = true;
             prevCoreKeyframe = pCoreKeyframe;
 

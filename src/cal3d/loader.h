@@ -177,6 +177,4 @@ ReadQuatAndExtra(unsigned char const* data, float* valsResult, unsigned int* ext
     return br.bytesRead();
 }
 
-void SetTranslationInvalid(float* xResult, float* yResult, float* zResult);
-void SetTranslationInvalid(CalVector* result);
-bool TranslationInvalid(CalVector const& result);
+extern CalVector InvalidTranslation;

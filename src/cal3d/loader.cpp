@@ -599,7 +599,7 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
     const CalCoreKeyframePtr null;
 
     float time;
-    float tx, ty, tz;
+    CalVector t;
     float rx, ry, rz, rw;
     if (useAnimationCompression) {
         unsigned int bytesRequired = compressedKeyframeRequiredBytes(prevCoreKeyframe, translationRequired, highRangeRequired, translationIsDynamic);
@@ -619,9 +619,7 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return null;
         }
-        tx = vec.x;
-        ty = vec.y;
-        tz = vec.z;
+        t = vec;
         rx = quat.x;
         ry = quat.y;
         rz = quat.z;
@@ -630,9 +628,9 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
             if (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION4) {
                 if (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION5) {
                     if (TranslationWritten(prevCoreKeyframe, translationRequired, translationIsDynamic)) {
-                        dataSrc.readFloat(tx);
-                        dataSrc.readFloat(ty);
-                        dataSrc.readFloat(tz);
+                        dataSrc.readFloat(t.x);
+                        dataSrc.readFloat(t.y);
+                        dataSrc.readFloat(t.z);
                     }
                 }
 
@@ -647,15 +645,12 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(time);
 
         // get the translation of the bone
-        dataSrc.readFloat(tx);
-        dataSrc.readFloat(ty);
-        dataSrc.readFloat(tz);
+        dataSrc.readFloat(t.x);
+        dataSrc.readFloat(t.y);
+        dataSrc.readFloat(t.z);
 
-        if (coreboneOrNull && TranslationInvalid(CalVector(tx, ty, tz))) {
-            CalVector tv = coreboneOrNull->relativeTransform.translation;
-            tx = tv.x;
-            ty = tv.y;
-            tz = tv.z;
+        if (coreboneOrNull && exactlyEqual(t, InvalidTranslation)) {
+            t = coreboneOrNull->relativeTransform.translation;
         }
 
         // get the rotation of the bone
@@ -671,7 +666,7 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
 
     // set all attributes of the keyframe
     pCoreKeyframe->time = time;
-    pCoreKeyframe->translation = CalVector(tx, ty, tz);
+    pCoreKeyframe->translation = t;
     pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
 
     return pCoreKeyframe;
@@ -703,32 +698,7 @@ CalLoader::compressedKeyframeRequiredBytes(CalCoreKeyframe* lastCoreKeyframe, bo
 
 
 static float const InvalidCoord = 1e10;
-
-void
-SetTranslationInvalid(float* xResult, float* yResult, float* zResult) {
-    * xResult = InvalidCoord;
-    * yResult = InvalidCoord;
-    * zResult = InvalidCoord;
-}
-
-void
-SetTranslationInvalid(CalVector* result) {
-    result->set(InvalidCoord, InvalidCoord, InvalidCoord);
-}
-
-bool
-TranslationInvalid(float x, float y, float z) {
-    return x == InvalidCoord
-           && y == InvalidCoord
-           && z == InvalidCoord;
-}
-
-bool
-TranslationInvalid(CalVector const& result) {
-    return result.x == InvalidCoord
-           && result.y == InvalidCoord
-           && result.z == InvalidCoord;
-}
+CalVector InvalidTranslation(InvalidCoord, InvalidCoord, InvalidCoord);
 
 
 // Pass in the number of bytes that are valid.
@@ -818,7 +788,7 @@ CalLoader::readCompressedKeyframe(
             vecResult->set(tx, ty, tz);
         }
     } else {
-        SetTranslationInvalid(vecResult);
+        *vecResult = InvalidTranslation;
         if (coreboneOrNull) {
             *vecResult = coreboneOrNull->relativeTransform.translation;
         }
