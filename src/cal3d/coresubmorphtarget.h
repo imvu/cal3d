@@ -45,6 +45,8 @@ public:
     void reserve(size_t blendVertexCount);
     bool setBlendVertex(int vertexId, const BlendVertex& vertex);
 
+    void scale(float factor);
+
 private:
     std::vector<BlendVertex*> m_vectorBlendVertex;
     CalMorphTargetType m_morphTargetType;

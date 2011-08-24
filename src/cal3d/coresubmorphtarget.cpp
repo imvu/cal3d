@@ -80,3 +80,14 @@ bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex&
 
     return true;
 }
+
+void CalCoreSubMorphTarget::scale(float factor) {
+    for (std::vector<BlendVertex*>::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
+        BlendVertex* v = *i;
+        if (v) {
+            v->position.x *= factor;
+            v->position.y *= factor;
+            v->position.z *= factor;
+        }
+    }
+}

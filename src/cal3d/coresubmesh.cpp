@@ -127,6 +127,10 @@ void CalCoreSubmesh::scale(float factor) {
     for (int vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
         m_vertices[vertexId].position *= factor;
     }
+
+    for (CoreSubMorphTargetVector::iterator i = m_vectorCoreSubMorphTarget.begin(); i != m_vectorCoreSubMorphTarget.end(); ++i) {
+        (*i)->scale(factor);
+    }
 }
 
 bool CalCoreSubmesh::isStatic() const {
