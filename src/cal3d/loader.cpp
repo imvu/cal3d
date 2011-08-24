@@ -114,12 +114,12 @@ bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, const CalCoreSkeletonPtr& skel) {
-    if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc, skel.get())) {
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc) {
+    if (CalCoreAnimationPtr anim = loadBinaryCoreAnimation(inputSrc)) {
         return anim;
     }
     std::string data((const char*)inputSrc.data(), inputSrc.size());
-    return loadXmlCoreAnimation(data.c_str(), skel.get());
+    return loadXmlCoreAnimation(data.c_str());
 }
 
 template<typename RV>
@@ -156,7 +156,7 @@ CalCoreSkeletonPtr CalLoader::loadCoreSkeleton(CalBufferSource& inputSrc) {
     return tryBothLoaders(inputSrc, &loadBinaryCoreSkeleton, &loadXmlCoreSkeleton);
 }
 
-CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc, CalCoreSkeleton* skel) {
+CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc) {
     const CalCoreAnimationPtr null;
 
     // check if this is a valid file
@@ -211,7 +211,7 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc,
     // load all core bones
     for (int trackId = 0; trackId < trackCount; ++trackId) {
         // load the core track
-        CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc, skel, version, useAnimationCompression));
+        CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc, version, useAnimationCompression));
         if (!pCoreTrack) {
             return null;
         }
@@ -591,7 +591,7 @@ CalLoader::usesAnimationCompression(int version) {
 
 
 CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
-    CalBufferSource& dataSrc, CalCoreBone* coreboneOrNull, int version,
+    CalBufferSource& dataSrc, int version,
     CalCoreKeyframe* prevCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
     bool useAnimationCompression
@@ -612,9 +612,9 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         CalVector vec;
         CalQuaternion quat;
         unsigned int bytesRead = readCompressedKeyframe(
-                                     buf, coreboneOrNull,
-                                     & vec, & quat, & time, prevCoreKeyframe,
-                                     translationRequired, highRangeRequired, translationIsDynamic);
+            buf,
+            & vec, & quat, & time, prevCoreKeyframe,
+            translationRequired, highRangeRequired, translationIsDynamic);
         if (bytesRead != bytesRequired) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return null;
@@ -648,10 +648,6 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(t.x);
         dataSrc.readFloat(t.y);
         dataSrc.readFloat(t.z);
-
-        if (coreboneOrNull && exactlyEqual(t, InvalidTranslation)) {
-            t = coreboneOrNull->relativeTransform.translation;
-        }
 
         // get the rotation of the bone
         dataSrc.readFloat(rx);
@@ -700,12 +696,11 @@ CalLoader::compressedKeyframeRequiredBytes(CalCoreKeyframe* lastCoreKeyframe, bo
 static float const InvalidCoord = 1e10;
 CalVector InvalidTranslation(InvalidCoord, InvalidCoord, InvalidCoord);
 
-
 // Pass in the number of bytes that are valid.
 // Returns number of byts read.
 unsigned int
 CalLoader::readCompressedKeyframe(
-    unsigned char* buf, CalCoreBone* coreboneOrNull,
+    unsigned char* buf,
     CalVector* vecResult, CalQuaternion* quatResult, float* timeResult,
     CalCoreKeyframe* lastCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic) {
@@ -789,9 +784,6 @@ CalLoader::readCompressedKeyframe(
         }
     } else {
         *vecResult = InvalidTranslation;
-        if (coreboneOrNull) {
-            *vecResult = coreboneOrNull->relativeTransform.translation;
-        }
     }
 
     // Read in the quat and time.
@@ -1001,7 +993,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
 
 CalCoreTrackPtr CalLoader::loadCoreTrack(
     CalBufferSource& dataSrc,
-    CalCoreSkeleton* skel,
     int version,
     bool useAnimationCompression
 ) {
@@ -1044,28 +1035,19 @@ CalCoreTrackPtr CalLoader::loadCoreTrack(
 
     CalCoreTrack::KeyframeList keyframes;
 
-    CalCoreBone* cb = NULL;
-    if (skel) {
-        if (coreBoneId < skel->coreBones.size()) {
-            cb = skel->coreBones[coreBoneId].get();
-        }
-    }
-
-
     // load all core keyframes
     bool hasLastKeyframe = false;
     CalCoreKeyframe lastCoreKeyframe;
     for (int keyframeId = 0; keyframeId < keyframeCount; ++keyframeId) {
         // load the core keyframe
         CalCoreKeyframePtr pCoreKeyframe = loadCoreKeyframe(
-                                             dataSrc,
-                                             cb,
-                                             version,
-                                             (hasLastKeyframe ? &lastCoreKeyframe : 0),
-                                             translationRequired,
-                                             highRangeRequired,
-                                             translationIsDynamic,
-                                             useAnimationCompression);
+            dataSrc,
+            version,
+            (hasLastKeyframe ? &lastCoreKeyframe : 0),
+            translationRequired,
+            highRangeRequired,
+            translationIsDynamic,
+            useAnimationCompression);
         if (!pCoreKeyframe) {
             return null;
         }

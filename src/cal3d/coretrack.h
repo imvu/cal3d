@@ -16,7 +16,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-class CalCoreBone;
+typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 class CalCoreSkeleton;
 typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 
@@ -35,6 +35,7 @@ public:
 
     size_t sizeInBytes() const;
     void scale(float factor);
+    void fixup(const CalCoreBonePtr& bone);
 
     void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
 

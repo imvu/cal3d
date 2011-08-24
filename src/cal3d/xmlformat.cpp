@@ -226,7 +226,7 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(const char* dataSrc) {
     return loadXmlCoreMaterialDoc(doc);
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCoreSkeleton* skel) {
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc) {
     TiXmlDocument doc;
     doc.Clear();
 
@@ -236,7 +236,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc, CalCore
         return CalCoreAnimationPtr();
     }
 
-    return loadXmlCoreAnimationDoc(doc, skel);
+    return loadXmlCoreAnimationDoc(doc);
 }
 
 
@@ -486,7 +486,7 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
     return pCoreSkeleton;
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCoreSkeleton* skel) {
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
     const CalCoreAnimationPtr null;
     std::stringstream str;
 
@@ -545,14 +545,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCo
         }
 
         int coreBoneId = atoi(track->Attribute("BONEID"));
-
-        CalCoreBone* cb = NULL;
-        if (skel) {
-            if (coreBoneId >= skel->coreBones.size()) {
-                continue;
-            }
-            cb = skel->coreBones[coreBoneId].get();
-        }
 
         CalCoreTrack::KeyframeList keyframes;
 
@@ -613,9 +605,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc, CalCo
             TiXmlElement* translation = keyframe->FirstChildElement();
             TiXmlElement* rotation = translation;
             CalVector t = InvalidTranslation;
-            if (cb) {
-                t = cb->relativeTransform.translation;
-            }
 
             // If translation is required but not dynamic, then I may elide the translation
             // values for all but the first frame, and for each frame's translation I will

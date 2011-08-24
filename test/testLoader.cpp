@@ -406,8 +406,9 @@ TEST(load_animation_for_non_existent_bone) {
     CHECK(skel);
 
     CalBufferSource cbs2(fromString(animation_for_a_nonexistent_bone));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs2, skel);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs2);
     CHECK(anim);
+    anim->fixup(skel);
     CHECK_EQUAL(anim->tracks.size(), 0);
 }
 

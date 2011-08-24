@@ -19,7 +19,11 @@ using namespace boost::python;
 
 CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer, const CalCoreSkeletonPtr& skeleton) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalLoader::loadCoreAnimation(cbs, skeleton);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
+    if (anim && skeleton) {
+        anim->fixup(skeleton);
+    }
+    return anim;
 }
 
 bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, const std::string& path) {

@@ -47,6 +47,14 @@ void CalCoreTrack::scale(float factor) {
     std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
 }
 
+void CalCoreTrack::fixup(const CalCoreBonePtr& bone) {
+    for (KeyframeList::iterator i = keyframes.begin(); i != keyframes.end(); ++i) {
+        if (exactlyEqual(i->translation, InvalidTranslation)) {
+            i->translation = bone->relativeTransform.translation;
+        }
+    }
+}
+
 inline float DistanceSquared(CalVector const& v1, CalVector const& v2) {
     float dx = (v1.x - v2.x);
     float dy = (v1.y - v2.y);
