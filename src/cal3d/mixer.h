@@ -33,19 +33,15 @@ struct CalMixerManualAnimationAttributes {
     CalAnimation::CompositionFunction compositionFunction_;
 };
 
-struct CalMixerBoneAdjustment {
+struct BoneTransformAdjustment {
+    unsigned boneId;
+
     // Relative to the parent frame of reference.
-    CalVector localPos_;
-    CalQuaternion localOri_;
+    CalQuaternion localOri;
 
     // The adjustment is a highest priority "replace" animation for the bone.  Lower priority
     // animations for the bone, including other replace animations, will be attenuated by 1 - rampValue.
-    float rampValue_;
-};
-
-struct BoneTransformAdjustment {
-    unsigned boneId;
-    CalMixerBoneAdjustment boneAdjustment_;
+    float rampValue;
 };
 
 struct BoneScaleAdjustment {

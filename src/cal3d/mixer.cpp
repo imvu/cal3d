@@ -154,25 +154,23 @@ void CalMixer::applyBoneAdjustments(
     const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
     const std::vector<BoneScaleAdjustment>& boneScaleAdjustments
 ) {
-    std::vector<CalBone>& vectorBone = skeleton->bones;
+    std::vector<CalBone>& bones = skeleton->bones;
 
     for (size_t i = 0; i < boneTransformAdjustments.size(); ++i) {
         const BoneTransformAdjustment& ba = boneTransformAdjustments[i];
-        CalBone& bo = vectorBone[ba.boneId];
+        CalBone& bo = bones[ba.boneId];
         CalVector adjustedLocalPos = bo.getCoreBone().relativeTransform.translation;
-        CalQuaternion adjustedLocalOri = ba.boneAdjustment_.localOri_;
         bo.blendState(
             1.0f, /* unrampedWeight */
             adjustedLocalPos,
-            adjustedLocalOri,
+            ba.localOri,
             1.0f, /* scale */
             true, /* replace */
-            ba.boneAdjustment_.rampValue_ /* rampValue */);
+            ba.rampValue /* rampValue */);
     }
 
     for (size_t i = 0; i < boneScaleAdjustments.size(); i++) {
         const BoneScaleAdjustment& ba = boneScaleAdjustments[i];
-        CalBone& bo = vectorBone[ba.boneId];
-        bo.setMeshScaleAbsolute(ba.meshScaleAbsolute);
+        bones[ba.boneId].setMeshScaleAbsolute(ba.meshScaleAbsolute);
     }
 }
