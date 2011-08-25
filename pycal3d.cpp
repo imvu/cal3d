@@ -241,7 +241,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone", no_init)
         .def(init<std::string>())
         .def_readwrite("parentIndex", &CalCoreBone::parentId)
-        .def_readwrite("name", &CalCoreBone::name)
+        .def_readonly("name", &CalCoreBone::name)
         .def_readwrite("relativeTransform", &CalCoreBone::relativeTransform)
         .def_readwrite("boneSpaceTransform", &CalCoreBone::boneSpaceTransform)
         ;
