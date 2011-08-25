@@ -97,11 +97,11 @@ void CalMixer::setManualAnimationAttributes(
 }
 
 
-void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
+void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton, const std::vector<BoneAdjustment>& boneAdjustments) {
     std::vector<CalBone>& vectorBone = pSkeleton->bones;
 
-    for (size_t i = 0; i < m_boneAdjustmentAndBoneIdArray.size(); i++) {
-        CalMixerBoneAdjustmentAndBoneId& ba = m_boneAdjustmentAndBoneIdArray[ i ];
+    for (size_t i = 0; i < boneAdjustments.size(); i++) {
+        const BoneAdjustment& ba = boneAdjustments[i];
         CalBone* bo = &vectorBone[ ba.boneId_ ];
         const CalCoreBone& cbo = bo->getCoreBone();
         if (ba.boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale) {
@@ -126,19 +126,7 @@ void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
     }
 }
 
-void CalMixer::addBoneAdjustment(int boneId, CalMixerBoneAdjustment const& ba) {
-    CalMixerBoneAdjustmentAndBoneId baid;
-    baid.boneAdjustment_ = ba;
-    baid.boneId_ = boneId;
-    m_boneAdjustmentAndBoneIdArray.push_back(baid);
-}
-
-void CalMixer::removeAllBoneAdjustments() {
-    m_boneAdjustmentAndBoneIdArray.clear();
-}
-
-
-void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
+void CalMixer::updateSkeleton(CalSkeleton* pSkeleton, const std::vector<BoneAdjustment>& boneAdjustments) {
     pSkeleton->clearState();
 
     std::vector<CalBone>& vectorBone = pSkeleton->bones;
@@ -146,7 +134,7 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton) {
     // The bone adjustments are "replace" so they have to go first, giving them
     // highest priority and full influence.  Subsequent animations affecting the same bones,
     // including subsequent replace animations, will have their incluence attenuated appropriately.
-    applyBoneAdjustments(pSkeleton);
+    applyBoneAdjustments(pSkeleton, boneAdjustments);
 
     // loop through all animation actions
     std::list<boost::shared_ptr<CalAnimation> >::iterator itaa;

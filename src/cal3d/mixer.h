@@ -59,7 +59,7 @@ struct CalMixerBoneAdjustment {
 };
 
 
-struct CalMixerBoneAdjustmentAndBoneId {
+struct BoneAdjustment {
     CalMixerBoneAdjustment boneAdjustment_;
     int boneId_;
 };
@@ -70,14 +70,10 @@ public:
     void removeManualAnimation(const boost::shared_ptr<CalAnimation>& coreAnimation);
     void setManualAnimationAttributes(const boost::shared_ptr<CalAnimation>& coreAnimation, CalMixerManualAnimationAttributes const& p);
 
-    void updateSkeleton(CalSkeleton* skeleton);
-
-    void addBoneAdjustment(int boneId, CalMixerBoneAdjustment const&);
-    void removeAllBoneAdjustments();
-
-    void applyBoneAdjustments(CalSkeleton* skeleton);
+    void updateSkeleton(CalSkeleton* skeleton, const std::vector<BoneAdjustment>& boneAdjustments);
 
 private:
+    void applyBoneAdjustments(CalSkeleton* skeleton, const std::vector<BoneAdjustment>& boneAdjustments);
+
     std::list< boost::shared_ptr<CalAnimation> > m_listAnimationAction;
-    std::vector<CalMixerBoneAdjustmentAndBoneId> m_boneAdjustmentAndBoneIdArray;
 };
