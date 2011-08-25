@@ -27,7 +27,7 @@ enum CalLightType {
 class CAL3D_API CalCoreBone {
 public:
     int parentId;
-    const std::string name;
+    std::string name;
 
     CalVector lightColor;
     CalLightType lightType;
