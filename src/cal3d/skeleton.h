@@ -30,10 +30,6 @@ public:
     std::vector<CalBone> bones;
     SSEArray<BoneTransform> boneTransforms;
 
-    const CalCoreSkeletonPtr& getCoreSkeleton() const {
-        return m_coreSkeleton;
-    }
-
 private:
     CalCoreSkeletonPtr m_coreSkeleton;
 };
