@@ -13,8 +13,7 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
-#include "cal3d/vector.h"
-#include "cal3d/quaternion.h"
+#include "cal3d/transform.h"
 
 // these values are important - we use c-style casts to them :x
 enum CalLightType {
@@ -24,13 +23,6 @@ enum CalLightType {
     LIGHT_TYPE_TARGET,
     LIGHT_TYPE_AMBIENT
 };
-
-namespace cal3d {
-    struct Transform {
-        CalVector translation;
-        CalQuaternion rotation;
-    };
-}
 
 class CAL3D_API CalCoreBone {
 public:
