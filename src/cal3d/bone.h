@@ -23,7 +23,7 @@ public:
     cal3d::Transform relativeTransform;
     cal3d::Transform absoluteTransform;
 
-    CalBone(CalCoreBone* pCoreBone);
+    CalBone(const CalCoreBone& coreBone);
 
     void blendState(
         float unrampedWeight,
@@ -34,8 +34,8 @@ public:
         float rampValue = 1.0f);
     void calculateState(CalSkeleton* skeleton, unsigned myIndex);
     void clearState();
-    const CalCoreBone& getCoreBone() {
-        return m_coreBone;
+    const CalVector& getOriginalTranslation() const {
+        return m_coreBone.relativeTransform.translation;
     }
 
     void setMeshScaleAbsolute(const CalVector& sv) {

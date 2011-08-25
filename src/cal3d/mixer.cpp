@@ -159,10 +159,9 @@ void CalMixer::applyBoneAdjustments(
     for (size_t i = 0; i < boneTransformAdjustments.size(); ++i) {
         const BoneTransformAdjustment& ba = boneTransformAdjustments[i];
         CalBone& bo = bones[ba.boneId];
-        CalVector adjustedLocalPos = bo.getCoreBone().relativeTransform.translation;
         bo.blendState(
             1.0f, /* unrampedWeight */
-            adjustedLocalPos,
+            bo.getOriginalTranslation(), /* adjustedLocalPos */
             ba.localOri,
             1.0f, /* scale */
             true, /* replace */

@@ -17,11 +17,11 @@
 #include "cal3d/vector.h"
 #include "cal3d/vector4.h"
 
-class CalCoreSkeleton;
+typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 
 class CAL3D_API CalSkeleton {
 public:
-    CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton);
+    CalSkeleton(const CalCoreSkeletonPtr& coreSkeleton);
 
     void calculateState();
     void clearState();
@@ -30,6 +30,10 @@ public:
     std::vector<CalBone> bones;
     SSEArray<BoneTransform> boneTransforms;
 
+    const CalCoreSkeletonPtr& getCoreSkeleton() const {
+        return m_coreSkeleton;
+    }
+
 private:
-    boost::shared_ptr<CalCoreSkeleton> m_pCoreSkeleton;
+    CalCoreSkeletonPtr m_coreSkeleton;
 };

@@ -20,8 +20,9 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h" // DEBUG
 
-CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton)
-    : m_pCoreSkeleton(pCoreSkeleton) {
+CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton)
+: m_coreSkeleton(pCoreSkeleton)
+{
     assert(pCoreSkeleton);
 
     // clone the skeleton structure of the core skeleton
@@ -31,7 +32,7 @@ CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton
     bones.reserve(boneCount);
 
     for (size_t boneId = 0; boneId < boneCount; ++boneId) {
-        bones.push_back(CalBone(vectorCoreBone[boneId].get()));
+        bones.push_back(CalBone(*vectorCoreBone[boneId]));
     }
 
     boneTransforms.resize(boneCount);
@@ -39,7 +40,7 @@ CalSkeleton::CalSkeleton(const boost::shared_ptr<CalCoreSkeleton>& pCoreSkeleton
 
 void CalSkeleton::calculateState() {
     // calculate all bone states of the skeleton
-    const std::vector<size_t>& listRootCoreBoneId = m_pCoreSkeleton->rootBoneIds;
+    const std::vector<size_t>& listRootCoreBoneId = m_coreSkeleton->rootBoneIds;
 
     std::vector<size_t>::const_iterator iteratorRootBoneId;
     for (iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId) {

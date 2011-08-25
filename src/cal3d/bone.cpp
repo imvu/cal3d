@@ -21,9 +21,9 @@
 #include "cal3d/coreskeleton.h"
 
 
-CalBone::CalBone(CalCoreBone* pCoreBone)
-    : m_coreBone(*pCoreBone) {
-}
+CalBone::CalBone(const CalCoreBone& coreBone)
+: m_coreBone(coreBone)
+{ }
 
 /*****************************************************************************/
 /** Interpolates the current state to another state.
