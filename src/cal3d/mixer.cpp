@@ -97,28 +97,24 @@ void CalMixer::setManualAnimationAttributes(
 }
 
 
-CalMixer::CalMixer() {
-    m_numBoneAdjustments = 0;
-}
-
 void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
     std::vector<CalBone>& vectorBone = pSkeleton->bones;
 
-    for (unsigned i = 0; i < m_numBoneAdjustments; i++) {
-        CalMixerBoneAdjustmentAndBoneId* ba = & m_boneAdjustmentAndBoneIdArray[ i ];
-        CalBone* bo = &vectorBone[ ba->boneId_ ];
+    for (size_t i = 0; i < m_boneAdjustmentAndBoneIdArray.size(); i++) {
+        CalMixerBoneAdjustmentAndBoneId& ba = m_boneAdjustmentAndBoneIdArray[ i ];
+        CalBone* bo = &vectorBone[ ba.boneId_ ];
         const CalCoreBone& cbo = bo->getCoreBone();
-        if (ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale) {
-            bo->setMeshScaleAbsolute(ba->boneAdjustment_.meshScaleAbsolute_);
+        if (ba.boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale) {
+            bo->setMeshScaleAbsolute(ba.boneAdjustment_.meshScaleAbsolute_);
         }
-        if (ba->boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot) {
+        if (ba.boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot) {
             const CalVector& localPos = cbo.relativeTransform.translation;
             CalVector adjustedLocalPos = localPos;
-            CalQuaternion adjustedLocalOri = ba->boneAdjustment_.localOri_;
-            static float const scale = 1.0f;
-            float rampValue = ba->boneAdjustment_.rampValue_;
-            static bool const replace = true;
-            static float const unrampedWeight = 1.0f;
+            CalQuaternion adjustedLocalOri = ba.boneAdjustment_.localOri_;
+            float const scale = 1.0f;
+            float rampValue = ba.boneAdjustment_.rampValue_;
+            bool const replace = true;
+            float const unrampedWeight = 1.0f;
             bo->blendState(
                 unrampedWeight,
                 adjustedLocalPos,
@@ -130,41 +126,15 @@ void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton) {
     }
 }
 
-bool
-CalMixer::addBoneAdjustment(int boneId, CalMixerBoneAdjustment const& ba) {
-    if (m_numBoneAdjustments == CalMixerBoneAdjustmentsMax) {
-        return false;
-    }
-    m_boneAdjustmentAndBoneIdArray[ m_numBoneAdjustments ].boneAdjustment_ = ba;
-    m_boneAdjustmentAndBoneIdArray[ m_numBoneAdjustments ].boneId_ = boneId;
-    m_numBoneAdjustments++;
-    return true;
+void CalMixer::addBoneAdjustment(int boneId, CalMixerBoneAdjustment const& ba) {
+    CalMixerBoneAdjustmentAndBoneId baid;
+    baid.boneAdjustment_ = ba;
+    baid.boneId_ = boneId;
+    m_boneAdjustmentAndBoneIdArray.push_back(baid);
 }
 
-void
-CalMixer::removeAllBoneAdjustments() {
-    m_numBoneAdjustments = 0;
-}
-
-bool
-CalMixer::removeBoneAdjustment(int boneId) {
-    unsigned int i;
-    for (i = 0; i < m_numBoneAdjustments; i++) {
-        CalMixerBoneAdjustmentAndBoneId* ba = & m_boneAdjustmentAndBoneIdArray[ i ];
-        if (ba->boneId_ == boneId) {
-            break;
-        }
-    }
-    if (i == m_numBoneAdjustments) {
-        return false;    // Couldn't find it.
-    }
-    i++;
-    while (i < m_numBoneAdjustments) {
-        m_boneAdjustmentAndBoneIdArray[ i - 1 ] = m_boneAdjustmentAndBoneIdArray[ i ];
-        i++;
-    }
-    m_numBoneAdjustments--;
-    return true;
+void CalMixer::removeAllBoneAdjustments() {
+    m_boneAdjustmentAndBoneIdArray.clear();
 }
 
 

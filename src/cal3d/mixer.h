@@ -64,28 +64,20 @@ struct CalMixerBoneAdjustmentAndBoneId {
     int boneId_;
 };
 
-// Total number of bone adjustments per mixer.
-#define CalMixerBoneAdjustmentsMax ( 20 ) // Arbitrary.
-
-
 class CAL3D_API CalMixer {
 public:
-    CalMixer();
-
     boost::shared_ptr<CalAnimation> addManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
     void removeManualAnimation(const boost::shared_ptr<CalAnimation>& coreAnimation);
     void setManualAnimationAttributes(const boost::shared_ptr<CalAnimation>& coreAnimation, CalMixerManualAnimationAttributes const& p);
 
     void updateSkeleton(CalSkeleton* skeleton);
 
-    bool addBoneAdjustment(int boneId, CalMixerBoneAdjustment const&);
-    bool removeBoneAdjustment(int boneId);
+    void addBoneAdjustment(int boneId, CalMixerBoneAdjustment const&);
     void removeAllBoneAdjustments();
 
     void applyBoneAdjustments(CalSkeleton* skeleton);
 
 private:
     std::list< boost::shared_ptr<CalAnimation> > m_listAnimationAction;
-    unsigned int m_numBoneAdjustments;
-    CalMixerBoneAdjustmentAndBoneId m_boneAdjustmentAndBoneIdArray[ CalMixerBoneAdjustmentsMax ];
+    std::vector<CalMixerBoneAdjustmentAndBoneId> m_boneAdjustmentAndBoneIdArray;
 };
