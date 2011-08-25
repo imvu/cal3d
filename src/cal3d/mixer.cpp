@@ -97,44 +97,19 @@ void CalMixer::setManualAnimationAttributes(
 }
 
 
-void CalMixer::applyBoneAdjustments(CalSkeleton* pSkeleton, const std::vector<BoneAdjustment>& boneAdjustments) {
-    std::vector<CalBone>& vectorBone = pSkeleton->bones;
+void CalMixer::updateSkeleton(
+    CalSkeleton* skeleton,
+    const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
+    const std::vector<BoneScaleAdjustment>& boneScaleAdjustments
+) {
+    skeleton->clearState();
 
-    for (size_t i = 0; i < boneAdjustments.size(); i++) {
-        const BoneAdjustment& ba = boneAdjustments[i];
-        CalBone* bo = &vectorBone[ ba.boneId_ ];
-        const CalCoreBone& cbo = bo->getCoreBone();
-        if (ba.boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagMeshScale) {
-            bo->setMeshScaleAbsolute(ba.boneAdjustment_.meshScaleAbsolute_);
-        }
-        if (ba.boneAdjustment_.flags_ & CalMixerBoneAdjustmentFlagPosRot) {
-            const CalVector& localPos = cbo.relativeTransform.translation;
-            CalVector adjustedLocalPos = localPos;
-            CalQuaternion adjustedLocalOri = ba.boneAdjustment_.localOri_;
-            float const scale = 1.0f;
-            float rampValue = ba.boneAdjustment_.rampValue_;
-            bool const replace = true;
-            float const unrampedWeight = 1.0f;
-            bo->blendState(
-                unrampedWeight,
-                adjustedLocalPos,
-                adjustedLocalOri,
-                scale,
-                replace,
-                rampValue);
-        }
-    }
-}
-
-void CalMixer::updateSkeleton(CalSkeleton* pSkeleton, const std::vector<BoneAdjustment>& boneAdjustments) {
-    pSkeleton->clearState();
-
-    std::vector<CalBone>& vectorBone = pSkeleton->bones;
+    std::vector<CalBone>& vectorBone = skeleton->bones;
 
     // The bone adjustments are "replace" so they have to go first, giving them
     // highest priority and full influence.  Subsequent animations affecting the same bones,
     // including subsequent replace animations, will have their incluence attenuated appropriately.
-    applyBoneAdjustments(pSkeleton, boneAdjustments);
+    applyBoneAdjustments(skeleton, boneTransformAdjustments, boneScaleAdjustments);
 
     // loop through all animation actions
     std::list<boost::shared_ptr<CalAnimation> >::iterator itaa;
@@ -168,8 +143,36 @@ void CalMixer::updateSkeleton(CalSkeleton* pSkeleton, const std::vector<BoneAdju
     // the two sums together according to their relative weight sums.  I believe this is mathematically
     // equivalent of blending all the animation actions and cycles together into a single sum,
     // according to their relative weights.
-    pSkeleton->lockState();
+    skeleton->lockState();
 
     // let the skeleton calculate its final state
-    pSkeleton->calculateState();
+    skeleton->calculateState();
+}
+
+void CalMixer::applyBoneAdjustments(
+    CalSkeleton* skeleton,
+    const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
+    const std::vector<BoneScaleAdjustment>& boneScaleAdjustments
+) {
+    std::vector<CalBone>& vectorBone = skeleton->bones;
+
+    for (size_t i = 0; i < boneTransformAdjustments.size(); ++i) {
+        const BoneTransformAdjustment& ba = boneTransformAdjustments[i];
+        CalBone& bo = vectorBone[ba.boneId];
+        CalVector adjustedLocalPos = bo.getCoreBone().relativeTransform.translation;
+        CalQuaternion adjustedLocalOri = ba.boneAdjustment_.localOri_;
+        bo.blendState(
+            1.0f, /* unrampedWeight */
+            adjustedLocalPos,
+            adjustedLocalOri,
+            1.0f, /* scale */
+            true, /* replace */
+            ba.boneAdjustment_.rampValue_ /* rampValue */);
+    }
+
+    for (size_t i = 0; i < boneScaleAdjustments.size(); i++) {
+        const BoneScaleAdjustment& ba = boneScaleAdjustments[i];
+        CalBone& bo = vectorBone[ba.boneId];
+        bo.setMeshScaleAbsolute(ba.meshScaleAbsolute);
+    }
 }

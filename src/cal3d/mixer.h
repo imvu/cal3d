@@ -33,35 +33,28 @@ struct CalMixerManualAnimationAttributes {
     CalAnimation::CompositionFunction compositionFunction_;
 };
 
-enum CalMixerBoneAdjustmentFlag {
-    CalMixerBoneAdjustmentFlagPosRot = 1,
-    CalMixerBoneAdjustmentFlagMeshScale = 2
-};
-
-
 struct CalMixerBoneAdjustment {
-
-    // What parts of the adjustment are to be applied?
-    unsigned int flags_;
-
     // Relative to the parent frame of reference.
     CalVector localPos_;
     CalQuaternion localOri_;
-
-    // Scales X, Y, and Z of mesh by these parameters.  The scale parameters are with
-    // respect to the absolute coordinate space, e.g., Z is up in 3dMax, as opposed
-    // to the local coordinate space of the bone.
-    CalVector meshScaleAbsolute_;
 
     // The adjustment is a highest priority "replace" animation for the bone.  Lower priority
     // animations for the bone, including other replace animations, will be attenuated by 1 - rampValue.
     float rampValue_;
 };
 
-
-struct BoneAdjustment {
+struct BoneTransformAdjustment {
+    unsigned boneId;
     CalMixerBoneAdjustment boneAdjustment_;
-    int boneId_;
+};
+
+struct BoneScaleAdjustment {
+    unsigned boneId;
+
+    // Scales X, Y, and Z of mesh by these parameters.  The scale parameters are with
+    // respect to the absolute coordinate space, e.g., Z is up in 3dMax, as opposed
+    // to the local coordinate space of the bone.
+    CalVector meshScaleAbsolute;
 };
 
 class CAL3D_API CalMixer {
@@ -70,10 +63,16 @@ public:
     void removeManualAnimation(const boost::shared_ptr<CalAnimation>& coreAnimation);
     void setManualAnimationAttributes(const boost::shared_ptr<CalAnimation>& coreAnimation, CalMixerManualAnimationAttributes const& p);
 
-    void updateSkeleton(CalSkeleton* skeleton, const std::vector<BoneAdjustment>& boneAdjustments);
+    void updateSkeleton(
+        CalSkeleton* skeleton,
+        const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
+        const std::vector<BoneScaleAdjustment>& boneScaleAdjustments);
 
 private:
-    void applyBoneAdjustments(CalSkeleton* skeleton, const std::vector<BoneAdjustment>& boneAdjustments);
+    void applyBoneAdjustments(
+        CalSkeleton* skeleton,
+        const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
+        const std::vector<BoneScaleAdjustment>& boneScaleAdjustments);
 
     std::list< boost::shared_ptr<CalAnimation> > m_listAnimationAction;
 };
