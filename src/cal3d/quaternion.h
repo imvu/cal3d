@@ -92,6 +92,12 @@ public:
         w *= inv_norm;
     }
 
+    inline CalQuaternion operator-() const {
+        CalQuaternion rv = *this;
+        rv.invert();
+        return rv;
+    }
+
     inline void set(float qx, float qy, float qz, float qw) {
         x = qx;
         y = qy;

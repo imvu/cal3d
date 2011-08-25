@@ -55,6 +55,12 @@ public:
         z *= d;
     }
 
+    void operator*=(const CalVector& v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+    }
+
     void operator*=(const CalQuaternion& q);
 
     void operator/=(float d) {

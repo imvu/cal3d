@@ -173,10 +173,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;
     } else {
-        // get the parent bone
-        CalBone& pParent = skeleton->bones[parentId];
-
-        absoluteTransform = relativeTransform * pParent.absoluteTransform;
+        absoluteTransform = relativeTransform * skeleton->bones[parentId].absoluteTransform;
     }
 
     // calculate the bone space transformation
@@ -249,17 +246,13 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        CalQuaternion coreBoneRotBoneSpaceInverse = m_coreBone.boneSpaceTransform.rotation;
-        coreBoneRotBoneSpaceInverse.invert();
-        translationBoneSpace *= coreBoneRotBoneSpaceInverse;
-        translationBoneSpace.x *= m_meshScaleAbsolute.x;
-        translationBoneSpace.y *= m_meshScaleAbsolute.y;
-        translationBoneSpace.z *= m_meshScaleAbsolute.z;
+        translationBoneSpace *= -m_coreBone.boneSpaceTransform.rotation;
+        translationBoneSpace *= m_meshScaleAbsolute;
         translationBoneSpace *= m_coreBone.boneSpaceTransform.rotation;
 
     }
-    translationBoneSpace *= absoluteTransform.rotation;
-    translationBoneSpace += absoluteTransform.translation;
+
+    translationBoneSpace = translationBoneSpace * absoluteTransform.rotation + absoluteTransform.translation;
 
     CalMatrix transformMatrix = m_coreBone.boneSpaceTransform.rotation;
     if (meshScalingOn) {

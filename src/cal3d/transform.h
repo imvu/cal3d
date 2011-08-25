@@ -16,5 +16,9 @@ namespace cal3d {
         out.translation = inner.translation * outer.rotation + outer.translation;
         return out;
     }
-}
 
+    // cal3d right-multiplies, so preserve that here :/
+    inline CalVector operator*(const CalVector& v, const Transform& t) {
+        return v * t.rotation + t.translation;
+    }
+}
