@@ -19,12 +19,13 @@
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
-void CalVector::operator*=(const CalQuaternion& q) {
+CalVector operator*(const CalQuaternion& q, const CalVector& v) {
     CalQuaternion temp(-q.x, -q.y, -q.z, q.w);
-    temp *= *this;
+    temp *= v;
     temp *= q;
 
-    x = temp.x;
-    y = temp.y;
-    z = temp.z;
+    return CalVector(
+        temp.x,
+        temp.y,
+        temp.z);
 }

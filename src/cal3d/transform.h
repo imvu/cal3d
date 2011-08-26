@@ -12,11 +12,11 @@ namespace cal3d {
     inline Transform operator*(const Transform& outer, const Transform& inner) {
         Transform out;
         out.rotation = inner.rotation * outer.rotation;
-        out.translation = inner.translation * outer.rotation + outer.translation;
+        out.translation = outer.rotation * inner.translation + outer.translation;
         return out;
     }
 
     inline CalVector operator*(const Transform& t, const CalVector& v) {
-        return v * t.rotation + t.translation;
+        return t.rotation * v + t.translation;
     }
 }

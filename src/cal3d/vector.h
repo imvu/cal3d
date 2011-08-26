@@ -61,8 +61,6 @@ public:
         z *= v.z;
     }
 
-    void operator*=(const CalQuaternion& q);
-
     void operator/=(float d) {
         assert(d != 0);
         float m = 1.0f / d;
@@ -116,11 +114,6 @@ inline CalVector operator*(const CalVector& v, float d) {
 
 inline CalVector operator*(float d, const CalVector& v) {
     return CalVector(v.x * d, v.y * d, v.z * d);
-}
-
-inline CalVector operator*(CalVector v, const CalQuaternion& q) {
-    v *= q;
-    return v;
 }
 
 inline CalVector operator/(const CalVector& v, float d) {

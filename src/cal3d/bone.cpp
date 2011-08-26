@@ -246,13 +246,13 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        translationBoneSpace *= -m_coreBone.boneSpaceTransform.rotation;
+        translationBoneSpace = (-m_coreBone.boneSpaceTransform.rotation) * translationBoneSpace;
         translationBoneSpace *= m_meshScaleAbsolute;
-        translationBoneSpace *= m_coreBone.boneSpaceTransform.rotation;
+        translationBoneSpace = (m_coreBone.boneSpaceTransform.rotation) * translationBoneSpace;
 
     }
 
-    translationBoneSpace = translationBoneSpace * absoluteTransform.rotation + absoluteTransform.translation;
+    translationBoneSpace = absoluteTransform * translationBoneSpace;
 
     CalMatrix transformMatrix = m_coreBone.boneSpaceTransform.rotation;
     if (meshScalingOn) {

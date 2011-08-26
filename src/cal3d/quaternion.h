@@ -98,6 +98,9 @@ public:
     }
 };
 
+// left-multiply
+CalVector CAL3D_API operator*(const CalQuaternion& q, const CalVector& v);
+
 inline CalQuaternion operator*(CalQuaternion q, const CalQuaternion& u) {
     q *= u;
     return q;
