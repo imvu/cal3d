@@ -12,16 +12,11 @@
 #include "config.h"
 #endif
 
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/vector.h"
 #include "cal3d/quaternion.h"
 
 CalVector operator*(const CalQuaternion& q, const CalVector& v) {
-    CalQuaternion temp(-q.x, -q.y, -q.z, q.w);
-    temp *= v;
+    CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
     temp *= q;
 
     return CalVector(

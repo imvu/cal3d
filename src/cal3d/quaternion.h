@@ -32,29 +32,15 @@ public:
     }
 
     inline void operator*=(const CalQuaternion& q) {
-        float qx, qy, qz, qw;
-        qx = x;
-        qy = y;
-        qz = z;
-        qw = w;
+        float qx = x;
+        float qy = y;
+        float qz = z;
+        float qw = w;
 
         x = qw * q.x + qx * q.w + qy * q.z - qz * q.y;
         y = qw * q.y - qx * q.z + qy * q.w + qz * q.x;
         z = qw * q.z + qx * q.y - qy * q.x + qz * q.w;
         w = qw * q.w - qx * q.x - qy * q.y - qz * q.z;
-    }
-
-    inline void operator*=(const CalVector& v) {
-        float qx, qy, qz, qw;
-        qx = x;
-        qy = y;
-        qz = z;
-        qw = w;
-
-        x = qw * v.x            + qy * v.z - qz * v.y;
-        y = qw * v.y - qx * v.z            + qz * v.x;
-        z = qw * v.z + qx * v.y - qy * v.x;
-        w =          - qx * v.x - qy * v.y - qz * v.z;
     }
 
     inline void clear() {
@@ -98,8 +84,24 @@ public:
     }
 };
 
-// left-multiply
+// left-multiply, rotate v by quaternion and produce rotated vector
 CalVector CAL3D_API operator*(const CalQuaternion& q, const CalVector& v);
+
+// Implicitly convert vector to quaternion (w=0), multiply times q
+inline CalQuaternion operator*(const CalVector& v, const CalQuaternion& q) {
+    float qx = q.x;
+    float qy = q.y;
+    float qz = q.z;
+    float qw = q.w;
+
+    return CalQuaternion(
+        qw * v.x            + qy * v.z - qz * v.y,
+        qw * v.y - qx * v.z            + qz * v.x,
+        qw * v.z + qx * v.y - qy * v.x,
+                 - qx * v.x - qy * v.y - qz * v.z);
+}
+
+
 
 inline CalQuaternion operator*(CalQuaternion q, const CalQuaternion& u) {
     q *= u;
