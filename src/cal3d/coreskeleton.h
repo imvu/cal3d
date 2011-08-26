@@ -13,19 +13,26 @@
 #include <list>
 #include <map>
 #include <string>
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
 typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 
-class CAL3D_API CalCoreSkeleton {
+class CAL3D_API CalCoreSkeleton : private boost::noncopyable {
 public:
-    size_t addCoreBone(const CalCoreBonePtr& pCoreBone);
+    CalCoreSkeleton();
+
+    size_t addCoreBone(const CalCoreBonePtr& coreBone);
     CalCoreBone* getCoreBone(const std::string& strName);
     void scale(float factor);
 
-    std::vector<CalCoreBonePtr> coreBones;
+    const std::vector<CalCoreBonePtr>& coreBones; // points to the internal m_coreBones
+    const std::vector<CalCoreBonePtr>& getCoreBones() const {
+        return coreBones;
+    }
+
     std::vector<size_t> rootBoneIds;
     CalVector sceneAmbientColor;
 
@@ -33,6 +40,8 @@ private:
     size_t getCoreBoneId(const std::string& strName);
     bool mapCoreBoneName(size_t coreBoneId, const std::string& strName);
     std::map<std::string, size_t> m_mapCoreBoneNames;
+
+    std::vector<CalCoreBonePtr> m_coreBones;
 };
 
 typedef boost::shared_ptr<CalCoreSkeleton> CalCoreSkeletonPtr;

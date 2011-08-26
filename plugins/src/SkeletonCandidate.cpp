@@ -196,7 +196,7 @@ bool CSkeletonCandidate::AddNode(CalCoreSkeleton *pCoreSkeleton, CalCoreBone *pC
 	}
 
 	// get core bone vector
-	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = pCoreSkeleton->coreBones;
+	const std::vector<CalCoreBonePtr>& vectorCoreBone = pCoreSkeleton->coreBones;
 
 	// handle all children of the core bone
 	std::vector<int>::const_iterator iteratorChildId;
@@ -301,7 +301,7 @@ bool CSkeletonCandidate::CreateFromSkeletonFile(const std::string& strFilename)
 	}
 
 	// get core bone vector
-	std::vector<boost::shared_ptr<CalCoreBone> >& vectorCoreBone = m_skeleton->coreBones;
+	const std::vector<CalCoreBonePtr>& vectorCoreBone = m_skeleton->coreBones;
 
 	// loop through all root core bones
 	std::vector<size_t>::const_iterator iteratorRootCoreBoneId;

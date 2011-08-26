@@ -16,15 +16,19 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-size_t CalCoreSkeleton::addCoreBone(const boost::shared_ptr<CalCoreBone>& pCoreBone) {
-    size_t boneId = coreBones.size();
-    coreBones.push_back(pCoreBone);
+CalCoreSkeleton::CalCoreSkeleton()
+    : coreBones(m_coreBones)
+{}
 
-    if (pCoreBone->parentId == -1) {
+size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
+    size_t boneId = coreBones.size();
+    m_coreBones.push_back(coreBone);
+
+    if (coreBone->parentId == -1) {
         rootBoneIds.push_back(boneId);
     }
 
-    mapCoreBoneName(boneId, pCoreBone->name);
+    mapCoreBoneName(boneId, coreBone->name);
     return boneId;
 }
 
