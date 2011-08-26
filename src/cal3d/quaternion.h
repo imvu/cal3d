@@ -24,14 +24,6 @@ public:
     inline CalQuaternion(const CalQuaternion& q): x(q.x), y(q.y), z(q.z), w(q.w) {};
     inline CalQuaternion(float qx, float qy, float qz, float qw): x(qx), y(qy), z(qz), w(qw) {};
 
-    inline float& operator[](unsigned int index) {
-        return (&x)[index];
-    }
-
-    inline const float& operator[](unsigned int index) const {
-        return (&x)[index];
-    }
-
     inline void operator=(const CalQuaternion& q) {
         x = q.x;
         y = q.y;
