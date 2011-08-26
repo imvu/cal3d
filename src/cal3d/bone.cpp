@@ -173,7 +173,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;
     } else {
-        absoluteTransform = relativeTransform * skeleton->bones[parentId].absoluteTransform;
+        absoluteTransform = skeleton->bones[parentId].absoluteTransform * relativeTransform;
     }
 
     // calculate the bone space transformation
