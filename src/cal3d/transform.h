@@ -11,7 +11,7 @@ namespace cal3d {
 
     inline Transform operator*(const Transform& outer, const Transform& inner) {
         Transform out;
-        out.rotation = inner.rotation * outer.rotation;
+        out.rotation = rightMult(inner.rotation, outer.rotation);
         out.translation = outer.rotation * inner.translation + outer.translation;
         return out;
     }
