@@ -31,18 +31,6 @@ public:
         w = q.w;
     }
 
-    inline void operator*=(const CalQuaternion& q) {
-        float qx = x;
-        float qy = y;
-        float qz = z;
-        float qw = w;
-
-        x = qw * q.x + qx * q.w + qy * q.z - qz * q.y;
-        y = qw * q.y - qx * q.z + qy * q.w + qz * q.x;
-        z = qw * q.z + qx * q.y - qy * q.x + qz * q.w;
-        w = qw * q.w - qx * q.x - qy * q.y - qz * q.z;
-    }
-
     inline void clear() {
         x = 0.0f;
         y = 0.0f;
@@ -104,9 +92,16 @@ inline CalQuaternion operator*(const CalVector& v, const CalQuaternion& q) {
 
 
 inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
-    CalQuaternion q(inner);
-    q *= outer;
-    return q;
+    float qx = inner.x;
+    float qy = inner.y;
+    float qz = inner.z;
+    float qw = inner.w;
+
+    return CalQuaternion(
+        qw * outer.x + qx * outer.w + qy * outer.z - qz * outer.y,
+        qw * outer.y - qx * outer.z + qy * outer.w + qz * outer.x,
+        qw * outer.z + qx * outer.y - qy * outer.x + qz * outer.w,
+        qw * outer.w - qx * outer.x - qy * outer.y - qz * outer.z);
 }
 
 inline bool operator==(const CalQuaternion& lhs, const CalQuaternion& rhs) {

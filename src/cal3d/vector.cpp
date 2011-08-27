@@ -17,7 +17,7 @@
 
 CalVector operator*(const CalQuaternion& q, const CalVector& v) {
     CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
-    temp *= q;
+    temp = q * temp;
 
     return CalVector(
         temp.x,

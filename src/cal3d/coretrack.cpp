@@ -74,7 +74,7 @@ float DistanceDegrees(CalQuaternion const& p1, CalQuaternion const& p2) {
     // difference between the oris.
     CalQuaternion odist = p1;
     odist.invert();
-    odist *= p2;
+    odist = p2 * odist;
     float w = odist.w;
     if (w > 1) {
         w = 1;
