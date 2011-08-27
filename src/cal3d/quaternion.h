@@ -103,8 +103,9 @@ inline CalQuaternion operator*(const CalVector& v, const CalQuaternion& q) {
 
 
 
-inline CalQuaternion rightMult(CalQuaternion q, const CalQuaternion& u) {
-    q *= u;
+inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
+    CalQuaternion q(inner);
+    q *= outer;
     return q;
 }
 
