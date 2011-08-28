@@ -109,31 +109,6 @@ public:
     }
 };
 
-CAL3D_FORCEINLINE void transform(CalVector& v, const CalMatrix& m) {
-    float ox = v.x;
-    float oy = v.y;
-    float oz = v.z;
-    v.x = m.dxdx * ox + m.dxdy * oy + m.dxdz * oz;
-    v.y = m.dydx * ox + m.dydy * oy + m.dydz * oz;
-    v.z = m.dzdx * ox + m.dzdy * oy + m.dzdz * oz;
-}
-
-#if 0
-CAL3D_FORCEINLINE void transform(
-    CalVector& v,
-    const CalVector4& colx,
-    const CalVector4& coly,
-    const CalVector4& colz
-) {
-    float ox = v.x;
-    float oy = v.y;
-    float oz = v.z;
-    v.x = colx.x * ox + colx.y * oy + colx.z * oz;
-    v.y = coly.x * ox + coly.y * oy + coly.z * oz;
-    v.z = colz.x * ox + colz.y * oy + colz.z * oz;
-}
-#endif
-
 inline void extractRows(
     const CalMatrix& m,
     const CalVector& translation,
