@@ -17,6 +17,7 @@
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/corebone.h"
+#include "cal3d/matrix.h"
 #include "cal3d/skeleton.h"
 #include "cal3d/coreskeleton.h"
 

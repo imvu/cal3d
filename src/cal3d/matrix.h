@@ -118,6 +118,7 @@ CAL3D_FORCEINLINE void transform(CalVector& v, const CalMatrix& m) {
     v.z = m.dzdx * ox + m.dzdy * oy + m.dzdz * oz;
 }
 
+#if 0
 CAL3D_FORCEINLINE void transform(
     CalVector& v,
     const CalVector4& colx,
@@ -131,17 +132,7 @@ CAL3D_FORCEINLINE void transform(
     v.y = coly.x * ox + coly.y * oy + coly.z * oz;
     v.z = colz.x * ox + colz.y * oy + colz.z * oz;
 }
-
-inline void extractColumns(
-    const CalMatrix& m,
-    CalVector4& colx,
-    CalVector4& coly,
-    CalVector4& colz
-) {
-    colx.setAsVector(CalVector(m.dxdx, m.dxdy, m.dxdz));
-    coly.setAsVector(CalVector(m.dydx, m.dydy, m.dydz));
-    colz.setAsVector(CalVector(m.dzdx, m.dzdy, m.dzdz));
-}
+#endif
 
 inline void extractRows(
     const CalMatrix& m,
