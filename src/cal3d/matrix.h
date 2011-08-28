@@ -30,31 +30,8 @@ public:
 
     explicit CalMatrix(const CalQuaternion& q);
 
-    inline CalMatrix(float weight, const CalMatrix& m) {
-        dxdx = m.dxdx * weight;
-        dxdy = m.dxdy * weight;
-        dxdz = m.dxdz * weight;
-        dydx = m.dydx * weight;
-        dydy = m.dydy * weight;
-        dydz = m.dydz * weight;
-        dzdx = m.dzdx * weight;
-        dzdy = m.dzdy * weight;
-        dzdz = m.dzdz * weight;
-    }
-
     void operator=(const CalQuaternion& q);
 
-    inline void operator=(const CalMatrix& m) {
-        dxdx = m.dxdx;
-        dxdy = m.dxdy;
-        dxdz = m.dxdz;
-        dydx = m.dydx;
-        dydy = m.dydy;
-        dydz = m.dydz;
-        dzdx = m.dzdx;
-        dzdy = m.dzdy;
-        dzdz = m.dzdz;
-    }
     inline void operator *= (const CalMatrix& m) {
         float ndxdx = m.dxdx * dxdx + m.dxdy * dydx + m.dxdz * dzdx;
         float ndydx = m.dydx * dxdx + m.dydy * dydx + m.dydz * dzdx;
