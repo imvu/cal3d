@@ -28,7 +28,7 @@ public:
         , dxdz(0.0), dydz(0.0), dzdz(0.0) {
     }
 
-    CalMatrix(const CalQuaternion& q);
+    explicit CalMatrix(const CalQuaternion& q);
 
     inline CalMatrix(float weight, const CalMatrix& m) {
         dxdx = m.dxdx * weight;
@@ -77,18 +77,6 @@ public:
         dxdz = ndxdz;
         dydz = ndydz;
         dzdz = ndzdz;
-    }
-
-    inline void operator *= (float factor) {
-        dxdx *= factor;
-        dydx *= factor;
-        dzdx *= factor;
-        dxdy *= factor;
-        dydy *= factor;
-        dzdy *= factor;
-        dxdz *= factor;
-        dydz *= factor;
-        dzdz *= factor;
     }
 
     inline float det() {

@@ -255,7 +255,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
 
     translationBoneSpace = absoluteTransform * translationBoneSpace;
 
-    CalMatrix transformMatrix = m_coreBone.boneSpaceTransform.rotation;
+    CalMatrix transformMatrix(m_coreBone.boneSpaceTransform.rotation);
     if (meshScalingOn) {
 
         // By applying each scale component to the row, instead of the column, we
@@ -272,7 +272,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         transformMatrix.dydz *= m_meshScaleAbsolute.z;
         transformMatrix.dzdz *= m_meshScaleAbsolute.z;
     }
-    transformMatrix *= absoluteTransform.rotation;
+    transformMatrix *= CalMatrix(absoluteTransform.rotation);
 
     BoneTransform& bt = skeleton->boneTransforms[myIndex];
     extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
