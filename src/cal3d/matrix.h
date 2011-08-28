@@ -90,17 +90,6 @@ public:
         dydz *= factor;
         dzdz *= factor;
     }
-    inline void blend(float factor, const CalMatrix& m) {
-        dxdx += m.dxdx * factor;
-        dydx += m.dydx * factor;
-        dzdx += m.dzdx * factor;
-        dxdy += m.dxdy * factor;
-        dydy += m.dydy * factor;
-        dzdy += m.dzdy * factor;
-        dxdz += m.dxdz * factor;
-        dydz += m.dydz * factor;
-        dzdz += m.dzdz * factor;
-    }
 
     inline float det() {
         return dxdx * (dydy * dzdz - dydz * dzdy)
