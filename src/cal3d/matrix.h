@@ -55,12 +55,6 @@ public:
         dydz = ndydz;
         dzdz = ndzdz;
     }
-
-    inline float det() {
-        return dxdx * (dydy * dzdz - dydz * dzdy)
-               - dxdy * (dydx * dzdz - dzdx * dydz)
-               + dxdz * (dydx * dzdy - dzdx * dydy);
-    }
 };
 
 inline void extractRows(
