@@ -23,7 +23,10 @@
 
 
 CalBone::CalBone(const CalCoreBone& coreBone)
-: m_coreBone(coreBone)
+    : parentId(coreBone.parentId)
+    , coreRelativeTransform(coreBone.relativeTransform)
+    , coreBoneSpaceTransform(coreBone.boneSpaceTransform)
+    , childIds(coreBone.childIds)
 { }
 
 /*****************************************************************************/
@@ -166,10 +169,9 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     // check if the bone was not touched by any active animation
     if (m_accumulatedWeight == 0.0f) {
         // set the bone to the initial skeleton state
-        relativeTransform = m_coreBone.relativeTransform;
+        relativeTransform = coreRelativeTransform;
     }
 
-    int parentId = m_coreBone.parentId;
     if (parentId == -1) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;
@@ -178,7 +180,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     }
 
     // calculate the bone space transformation
-    CalVector translationBoneSpace(m_coreBone.boneSpaceTransform.translation);
+    CalVector translationBoneSpace(coreBoneSpaceTransform.translation);
 
     // Must go before the *= m_rotationAbsolute.
     bool meshScalingOn = m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1;
@@ -247,15 +249,15 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        translationBoneSpace = (-m_coreBone.boneSpaceTransform.rotation) * translationBoneSpace;
+        translationBoneSpace = (-coreBoneSpaceTransform.rotation) * translationBoneSpace;
         translationBoneSpace *= m_meshScaleAbsolute;
-        translationBoneSpace = (m_coreBone.boneSpaceTransform.rotation) * translationBoneSpace;
+        translationBoneSpace = (coreBoneSpaceTransform.rotation) * translationBoneSpace;
 
     }
 
     translationBoneSpace = absoluteTransform * translationBoneSpace;
 
-    CalMatrix transformMatrix(m_coreBone.boneSpaceTransform.rotation);
+    CalMatrix transformMatrix(coreBoneSpaceTransform.rotation);
     if (meshScalingOn) {
 
         // By applying each scale component to the row, instead of the column, we
@@ -278,8 +280,8 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
 
     // calculate all child bones
-    for (size_t i = 0; i < m_coreBone.childIds.size(); ++i) {
-        skeleton->bones[m_coreBone.childIds[i]].calculateState(skeleton, m_coreBone.childIds[i]);
+    for (size_t i = 0; i < childIds.size(); ++i) {
+        skeleton->bones[childIds[i]].calculateState(skeleton, childIds[i]);
     }
 }
 

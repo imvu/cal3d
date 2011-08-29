@@ -11,10 +11,9 @@
 #pragma once
 
 #include "cal3d/global.h"
-#include "cal3d/vector.h"
-#include "cal3d/quaternion.h"
-#include "cal3d/corebone.h"
+#include "cal3d/transform.h"
 
+class CalCoreBone;
 class CalSkeleton;
 class CalModel;
 
@@ -35,7 +34,7 @@ public:
     void calculateState(CalSkeleton* skeleton, unsigned myIndex);
     void clearState();
     const CalVector& getOriginalTranslation() const {
-        return m_coreBone.relativeTransform.translation;
+        return coreRelativeTransform.translation;
     }
 
     void setMeshScaleAbsolute(const CalVector& sv) {
@@ -44,9 +43,13 @@ public:
     void lockState();
 
 private:
-    // Store a copy of the CoreBone locally for better cache locality.
-    CalCoreBone m_coreBone; // really const, but we want operator= to work
+    // from core bone. stored locally for better cache locality
+    int parentId;
+    cal3d::Transform coreRelativeTransform;
+    cal3d::Transform coreBoneSpaceTransform;
+    std::vector<int> childIds;
 
+    // animated bone state
     float m_accumulatedWeight;
     float m_accumulatedWeightAbsolute;
     float m_accumulatedReplacementAttenuation;
