@@ -17,7 +17,7 @@
 
 typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
-class CAL3D_API CalSubmesh : public Cal::UserDataHolder {
+class CAL3D_API CalSubmesh : public cal3d::UserDataHolder {
 public:
     const CalCoreSubmeshPtr coreSubmesh;
     CalCoreMaterialPtr material;

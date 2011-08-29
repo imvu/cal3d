@@ -68,7 +68,7 @@ std::string CalSaver::saveCoreSkeletonToBuffer(CalCoreSkeletonPtr pCoreSkeleton)
 bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation) {
     if (
         strFilename.size() >= 3 &&
-        cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::ANIMATION_XMLFILE_EXTENSION) == 0
+        cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), cal3d::ANIMATION_XMLFILE_EXTENSION) == 0
     ) {
         return saveXmlCoreAnimation(strFilename, pCoreAnimation);
     }
@@ -88,19 +88,19 @@ bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnim
     const char* strFilename = ""; // do we care?
 
     // write magic tag
-    if (!CalPlatform::writeBytes(file, &Cal::ANIMATION_FILE_MAGIC, sizeof(Cal::ANIMATION_FILE_MAGIC))) {
+    if (!CalPlatform::writeBytes(file, &cal3d::ANIMATION_FILE_MAGIC, sizeof(cal3d::ANIMATION_FILE_MAGIC))) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
         return false;
     }
 
     // write version info
-    int version = Cal::CURRENT_FILE_VERSION;
+    int version = cal3d::CURRENT_FILE_VERSION;
     if (!CalPlatform::writeInteger(file, version)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
         return false;
     }
 
-    if (Cal::versionHasCompressionFlag(Cal::CURRENT_FILE_VERSION)) {
+    if (cal3d::versionHasCompressionFlag(cal3d::CURRENT_FILE_VERSION)) {
         int useCompressionFlag = 0; // no compression
         if (!CalPlatform::writeInteger(file, useCompressionFlag)) {
             CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
@@ -138,7 +138,7 @@ bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnim
 
 bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph) {
     if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(),
-            Cal::ANIMATEDMORPH_XMLFILE_EXTENSION) == 0) {
+            cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION) == 0) {
         return saveXmlCoreAnimatedMorph(strFilename, pCoreAnimatedMorph);
     }
 
@@ -158,13 +158,13 @@ bool CalSaver::saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* p
     const char* strFilename = "";
 
     // write magic tag
-    if (!CalPlatform::writeBytes(file, &Cal::ANIMATEDMORPH_FILE_MAGIC, sizeof(Cal::ANIMATEDMORPH_FILE_MAGIC))) {
+    if (!CalPlatform::writeBytes(file, &cal3d::ANIMATEDMORPH_FILE_MAGIC, sizeof(cal3d::ANIMATEDMORPH_FILE_MAGIC))) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
         return false;
     }
 
     // write version info
-    if (!CalPlatform::writeInteger(file, Cal::CURRENT_FILE_VERSION)) {
+    if (!CalPlatform::writeInteger(file, cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
         return false;
     }
@@ -347,7 +347,7 @@ bool CalSaver::saveCoreMorphKeyframe(std::ostream& file, const std::string& strF
   *****************************************************************************/
 
 bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial) {
-    if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::MATERIAL_XMLFILE_EXTENSION) == 0) {
+    if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), cal3d::MATERIAL_XMLFILE_EXTENSION) == 0) {
         return saveXmlCoreMaterial(strFilename, pCoreMaterial);
     }
 
@@ -366,13 +366,13 @@ bool CalSaver::saveCoreMaterial(const std::string& strFilename, CalCoreMaterial*
 
 bool CalSaver::saveCoreMaterial(std::ostream& file, CalCoreMaterial* pCoreMaterial) {
     // write magic tag
-    if (!CalPlatform::writeBytes(file, &Cal::MATERIAL_FILE_MAGIC, sizeof(Cal::MATERIAL_FILE_MAGIC))) {
+    if (!CalPlatform::writeBytes(file, &cal3d::MATERIAL_FILE_MAGIC, sizeof(cal3d::MATERIAL_FILE_MAGIC))) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
 
     // write version info
-    if (!CalPlatform::writeInteger(file, Cal::CURRENT_FILE_VERSION)) {
+    if (!CalPlatform::writeInteger(file, cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
@@ -436,7 +436,7 @@ bool CalSaver::saveCoreMaterial(std::ostream& file, CalCoreMaterial* pCoreMateri
   *****************************************************************************/
 
 bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh) {
-    if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::MESH_XMLFILE_EXTENSION) == 0) {
+    if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), cal3d::MESH_XMLFILE_EXTENSION) == 0) {
         return saveXmlCoreMesh(strFilename, pCoreMesh);
     }
 
@@ -454,13 +454,13 @@ bool CalSaver::saveCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMe
 bool CalSaver::saveCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
 
     // write magic tag
-    if (!CalPlatform::writeBytes(os, &Cal::MESH_FILE_MAGIC, sizeof(Cal::MESH_FILE_MAGIC))) {
+    if (!CalPlatform::writeBytes(os, &cal3d::MESH_FILE_MAGIC, sizeof(cal3d::MESH_FILE_MAGIC))) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
 
     // write version info
-    if (!CalPlatform::writeInteger(os, Cal::CURRENT_FILE_VERSION)) {
+    if (!CalPlatform::writeInteger(os, cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
@@ -500,7 +500,7 @@ bool CalSaver::saveCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
   *****************************************************************************/
 
 bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton) {
-    if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), Cal::SKELETON_XMLFILE_EXTENSION) == 0) {
+    if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), cal3d::SKELETON_XMLFILE_EXTENSION) == 0) {
         return saveXmlCoreSkeleton(strFilename, pCoreSkeleton);
     }
 
@@ -517,13 +517,13 @@ bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton*
 
 bool CalSaver::saveCoreSkeleton(std::ostream& file, CalCoreSkeleton* pCoreSkeleton) {
     // write magic tag
-    if (!CalPlatform::writeBytes(file, &Cal::SKELETON_FILE_MAGIC, sizeof(Cal::SKELETON_FILE_MAGIC))) {
+    if (!CalPlatform::writeBytes(file, &cal3d::SKELETON_FILE_MAGIC, sizeof(cal3d::SKELETON_FILE_MAGIC))) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
 
     // write version info
-    if (!CalPlatform::writeInteger(file, Cal::CURRENT_FILE_VERSION)) {
+    if (!CalPlatform::writeInteger(file, cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
@@ -605,7 +605,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     }
 
     // write all vertices
-    const CalCoreSubmesh::Influence* currentInfluence = Cal::pointerFromVector(pCoreSubmesh->getInfluences());
+    const CalCoreSubmesh::Influence* currentInfluence = cal3d::pointerFromVector(pCoreSubmesh->getInfluences());
     for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
         const CalCoreSubmesh::Vertex& vertex = vectorVertex[vertexId];
 
@@ -813,8 +813,8 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
     TiXmlDocument doc(strFilename);
 
     TiXmlElement header("HEADER");
-    header.SetAttribute("MAGIC", Cal::SKELETON_XMLFILE_EXTENSION);
-    header.SetAttribute("VERSION", Cal::LIBRARY_VERSION);
+    header.SetAttribute("MAGIC", cal3d::SKELETON_XMLFILE_EXTENSION);
+    header.SetAttribute("VERSION", cal3d::LIBRARY_VERSION);
 
     doc.InsertEndChild(header);
 
@@ -951,8 +951,8 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
     TiXmlElement animation("ANIMATION");
 
     TiXmlElement header("HEADER");
-    header.SetAttribute("MAGIC", Cal::ANIMATION_XMLFILE_EXTENSION);
-    header.SetAttribute("VERSION", Cal::LIBRARY_VERSION);
+    header.SetAttribute("MAGIC", cal3d::ANIMATION_XMLFILE_EXTENSION);
+    header.SetAttribute("VERSION", cal3d::LIBRARY_VERSION);
 
     doc.InsertEndChild(header);
 
@@ -1060,8 +1060,8 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
     TiXmlElement animation("ANIMATION");
 
     TiXmlElement header("HEADER");
-    header.SetAttribute("MAGIC", Cal::ANIMATEDMORPH_XMLFILE_EXTENSION);
-    header.SetAttribute("VERSION", Cal::LIBRARY_VERSION);
+    header.SetAttribute("MAGIC", cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION);
+    header.SetAttribute("VERSION", cal3d::LIBRARY_VERSION);
 
     doc.InsertEndChild(header);
 
@@ -1142,8 +1142,8 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
 
     TiXmlElement header("HEADER");
-    header.SetAttribute("MAGIC", Cal::MESH_XMLFILE_EXTENSION);
-    header.SetAttribute("VERSION", Cal::LIBRARY_VERSION);
+    header.SetAttribute("MAGIC", cal3d::MESH_XMLFILE_EXTENSION);
+    header.SetAttribute("VERSION", cal3d::LIBRARY_VERSION);
 
     doc.InsertEndChild(header);
 
@@ -1177,7 +1177,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         // get the texture coordinate vector vector
         const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
-        const CalCoreSubmesh::Influence* currentInfluence = Cal::pointerFromVector(pCoreSubmesh->getInfluences());
+        const CalCoreSubmesh::Influence* currentInfluence = cal3d::pointerFromVector(pCoreSubmesh->getInfluences());
         for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[vertexId];
             CalColor32 vertexColor = vertexColors[vertexId];
@@ -1398,8 +1398,8 @@ bool CalSaver::saveXmlCoreMaterial(const std::string& strFilename, CalCoreMateri
 
 
     TiXmlElement header("HEADER");
-    header.SetAttribute("MAGIC", Cal::MATERIAL_XMLFILE_EXTENSION);
-    header.SetAttribute("VERSION", Cal::LIBRARY_VERSION);
+    header.SetAttribute("MAGIC", cal3d::MATERIAL_XMLFILE_EXTENSION);
+    header.SetAttribute("VERSION", cal3d::LIBRARY_VERSION);
 
     doc.InsertEndChild(header);
 

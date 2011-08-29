@@ -96,7 +96,7 @@ struct AlignedMemory {
     }
 };
 
-namespace Cal {
+namespace cal3d {
 
     struct UserData {
         virtual ~UserData() {}

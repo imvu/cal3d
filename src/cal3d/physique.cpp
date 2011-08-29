@@ -422,7 +422,7 @@ static size_t getEnabledMorphs(const CalSubmesh* submesh) {
         float weight = submesh->morphTargetWeights[i];
         if (weight != 0.0) {
             enabledMorphCache[enabledMorphTargetCount].weight = weight;
-            enabledMorphCache[enabledMorphTargetCount].blendVertices = Cal::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
+            enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
             ++enabledMorphTargetCount;
         }
     }
@@ -436,11 +436,11 @@ void CalPhysique::calculateVerticesAndNormals(
 ) {
     CalCoreSubmesh* coreSubmesh = submesh->coreSubmesh.get();
     const size_t vertexCount = coreSubmesh->getVertexCount();
-    const CalCoreSubmesh::Vertex* sourceVertices = Cal::pointerFromVector(coreSubmesh->getVectorVertex());
+    const CalCoreSubmesh::Vertex* sourceVertices = cal3d::pointerFromVector(coreSubmesh->getVectorVertex());
 
     const size_t enabledMorphCount = getEnabledMorphs(submesh);
     if (enabledMorphCount) {
-        EnabledMorph* enabledMorphs = Cal::pointerFromVector(enabledMorphCache);
+        EnabledMorph* enabledMorphs = cal3d::pointerFromVector(enabledMorphCache);
 
         if (vertexCount > MorphSubmeshCache.size()) {
             MorphSubmeshCache.resize(vertexCount);
@@ -478,6 +478,6 @@ void CalPhysique::calculateVerticesAndNormals(
         boneTransforms,
         vertexCount,
         sourceVertices,
-        Cal::pointerFromVector(coreSubmesh->getInfluences()),
+        cal3d::pointerFromVector(coreSubmesh->getInfluences()),
         reinterpret_cast<CalVector4*>(pVertexBuffer));
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Cal {
+namespace cal3d {
     // zero-terminated.
     const char* const SKELETON_XMLFILE_EXTENSION      = "XSF";
     const char* const ANIMATION_XMLFILE_EXTENSION     = "XAF";

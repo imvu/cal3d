@@ -157,20 +157,20 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc)
 
     // check if this is a valid file
     char magic[4];
-    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATION_FILE_MAGIC, 4) != 0)) {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], cal3d::ANIMATION_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
+    if (!dataSrc.readInteger(version) || (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
 
     bool useAnimationCompression = CalLoader::usesAnimationCompression(version);
-    if (Cal::versionHasCompressionFlag(version)) {
+    if (cal3d::versionHasCompressionFlag(version)) {
         int compressionFlag = 0;
         if (!dataSrc.readInteger(compressionFlag)) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
@@ -225,14 +225,14 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalBufferSource& 
     const CalCoreAnimatedMorphPtr null;
 
     char magic[4];
-    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::ANIMATEDMORPH_FILE_MAGIC, 4) != 0)) {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], cal3d::ANIMATEDMORPH_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
+    if (!dataSrc.readInteger(version) || (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
@@ -293,19 +293,19 @@ CalCoreMaterialPtr CalLoader::loadBinaryCoreMaterial(CalBufferSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
-    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::MATERIAL_FILE_MAGIC, 4) != 0)) {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], cal3d::MATERIAL_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
+    if (!dataSrc.readInteger(version) || (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
 
-    bool hasMaterialTypes = (version >= Cal::FIRST_FILE_VERSION_WITH_MATERIAL_TYPES);
+    bool hasMaterialTypes = (version >= cal3d::FIRST_FILE_VERSION_WITH_MATERIAL_TYPES);
 
     // allocate a new core material instance
     CalCoreMaterialPtr pCoreMaterial(new CalCoreMaterial);
@@ -383,14 +383,14 @@ CalCoreMeshPtr CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
 
     // check if this is a valid file
     char magic[4];
-    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::MESH_FILE_MAGIC, 4) != 0)) {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], cal3d::MESH_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
+    if (!dataSrc.readInteger(version) || (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
@@ -435,19 +435,19 @@ CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
     const CalCoreSkeletonPtr null;
 
     char magic[4];
-    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], Cal::SKELETON_FILE_MAGIC, 4) != 0)) {
+    if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], cal3d::SKELETON_FILE_MAGIC, 4) != 0)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
     }
 
     // check if the version is compatible with the library
     int version;
-    if (!dataSrc.readInteger(version) || (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > Cal::CURRENT_FILE_VERSION)) {
+    if (!dataSrc.readInteger(version) || (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) || (version > cal3d::CURRENT_FILE_VERSION)) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__);
         return null;
     }
 
-    bool hasNodeLights = (version >= Cal::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
+    bool hasNodeLights = (version >= cal3d::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
 
     // read the number of bones
     int boneCount;
@@ -494,7 +494,7 @@ CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
 CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
     const CalCoreBonePtr null;
 
-    bool hasNodeLights = (version >= Cal::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
+    bool hasNodeLights = (version >= cal3d::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
 
     // read the name of the bone
     std::string strName;
@@ -582,7 +582,7 @@ CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
 
 bool
 CalLoader::usesAnimationCompression(int version) {
-    return (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION);
+    return (version >= cal3d::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION);
 }
 
 
@@ -620,9 +620,9 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         ry = quat.y;
         rz = quat.z;
         rw = quat.w;
-        if (version < Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION6) {
-            if (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION4) {
-                if (version >= Cal::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION5) {
+        if (version < cal3d::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION6) {
+            if (version >= cal3d::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION4) {
+                if (version >= cal3d::FIRST_FILE_VERSION_WITH_ANIMATION_COMPRESSION5) {
                     if (TranslationWritten(prevCoreKeyframe, translationRequired, translationIsDynamic)) {
                         dataSrc.readFloat(t.x);
                         dataSrc.readFloat(t.y);
@@ -829,8 +829,8 @@ CalCoreMorphKeyframePtr CalLoader::loadCoreMorphKeyframe(CalBufferSource& dataSr
 
 
 CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int version) {
-    bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
-    bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
+    bool hasVertexColors = (version >= cal3d::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
+    bool hasMorphTargetsInMorphFiles = (version >= cal3d::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
 
     // get the material thread id of the submesh
     int coreMaterialThreadId;

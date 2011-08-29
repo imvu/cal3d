@@ -271,12 +271,12 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), Cal::SKELETON_XMLFILE_EXTENSION) != 0) {
+    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::SKELETON_XMLFILE_EXTENSION) != 0) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-    if (atoi(header->Attribute("VERSION")) < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
     }
@@ -506,12 +506,12 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), Cal::ANIMATION_XMLFILE_EXTENSION) != 0) {
+    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::ANIMATION_XMLFILE_EXTENSION) != 0) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-    if (atoi(header->Attribute("VERSION")) < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
     }
@@ -686,12 +686,12 @@ CalCoreAnimatedMorphPtr CalLoader::loadXmlCoreAnimatedMorphDoc(TiXmlDocument& do
         return null;
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), Cal::ANIMATEDMORPH_XMLFILE_EXTENSION) != 0) {
+    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION) != 0) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-    if (atoi(header->Attribute("VERSION")) < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
     }
@@ -752,18 +752,18 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), Cal::MESH_XMLFILE_EXTENSION) != 0) {
+    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::MESH_XMLFILE_EXTENSION) != 0) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
     int version = atoi(header->Attribute("VERSION"));
-    if (version < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-    bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
+    bool hasVertexColors = (version >= cal3d::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
 
     TiXmlElement* mesh = header->NextSiblingElement();
     if (!mesh || cal3d_stricmp(mesh->Value(), "MESH") != 0) {
@@ -1147,12 +1147,12 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), Cal::MATERIAL_XMLFILE_EXTENSION) != 0) {
+    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::MATERIAL_XMLFILE_EXTENSION) != 0) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-    if (atoi(header->Attribute("VERSION")) < Cal::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
     }

@@ -13,7 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-class CAL3D_API CalCoreMaterial : public Cal::UserDataHolder {
+class CAL3D_API CalCoreMaterial : public cal3d::UserDataHolder {
 public:
     struct Map {
         std::string filename;

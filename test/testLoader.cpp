@@ -82,8 +82,8 @@ TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
     pCurPosInBuf += sizeof(int); //version
     tempInt = getIntFromBuf(pCurPosInBuf);
     pCurPosInBuf += sizeof(int); //submesh count
-    bool hasVertexColors = (version >= Cal::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
-    bool hasMorphTargetsInMorphFiles = (version >= Cal::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
+    bool hasVertexColors = (version >= cal3d::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
+    bool hasMorphTargetsInMorphFiles = (version >= cal3d::FIRST_FILE_VERSION_WITH_MORPH_TARGETS_IN_MORPH_FILES);
     tempInt =  getIntFromBuf(pCurPosInBuf);
     pCurPosInBuf += sizeof(int); //coreMaterialThreadId
     int vertexCount = getIntFromBuf(pCurPosInBuf);
