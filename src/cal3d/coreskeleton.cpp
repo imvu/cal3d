@@ -28,34 +28,7 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
         rootBoneIds.push_back(boneId);
     }
 
-    mapCoreBoneName(boneId, coreBone->name);
     return boneId;
-}
-
-CalCoreBone* CalCoreSkeleton::getCoreBone(const std::string& strName) {
-    return coreBones[getCoreBoneId(strName)].get();
-}
-
-size_t CalCoreSkeleton::getCoreBoneId(const std::string& strName) {
-    //Check to make sure the mapping exists
-    if (m_mapCoreBoneNames.count(strName) <= 0) {
-        CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-        return -1;
-    }
-
-    return m_mapCoreBoneNames[strName];
-}
-
-bool CalCoreSkeleton::mapCoreBoneName(size_t coreBoneId, const std::string& strName) {
-    //Make sure the ID given is a valid corebone ID number
-    if (coreBoneId >= coreBones.size()) {
-        return false;
-    }
-
-    //Add the mapping or overwrite an existing mapping
-    m_mapCoreBoneNames[strName] = coreBoneId;
-
-    return true;
 }
 
 void CalCoreSkeleton::scale(float factor) {

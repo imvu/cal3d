@@ -25,7 +25,6 @@ public:
     CalCoreSkeleton();
 
     size_t addCoreBone(const CalCoreBonePtr& coreBone);
-    CalCoreBone* getCoreBone(const std::string& strName);
     void scale(float factor);
 
     const std::vector<CalCoreBonePtr>& coreBones; // points to the internal m_coreBones
@@ -37,10 +36,6 @@ public:
     CalVector sceneAmbientColor;
 
 private:
-    size_t getCoreBoneId(const std::string& strName);
-    bool mapCoreBoneName(size_t coreBoneId, const std::string& strName);
-    std::map<std::string, size_t> m_mapCoreBoneNames;
-
     std::vector<CalCoreBonePtr> m_coreBones;
 };
 
