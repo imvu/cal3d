@@ -21,6 +21,8 @@ CalCoreSkeleton::CalCoreSkeleton()
 {}
 
 size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
+    cal3d::verify(coreBone->parentId == -1 || coreBone->parentId < coreBones.size(), "bones must be added in topological order");
+
     size_t boneId = coreBones.size();
     m_coreBones.push_back(coreBone);
 

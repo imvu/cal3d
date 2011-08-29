@@ -173,6 +173,11 @@ namespace cal3d {
         return v.data;
     }
 
+// Boo OS X
+#ifdef verify
+#undef verify
+#endif
+
     inline void verify(bool condition, const char* message) {
         if (!condition) {
             throw std::runtime_error(message);
