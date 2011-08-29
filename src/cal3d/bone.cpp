@@ -272,7 +272,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         transformMatrix.dydz *= m_meshScaleAbsolute.z;
         transformMatrix.dzdz *= m_meshScaleAbsolute.z;
     }
-    transformMatrix *= CalMatrix(absoluteTransform.rotation);
+    transformMatrix = CalMatrix(absoluteTransform.rotation) * transformMatrix;
 
     BoneTransform& bt = skeleton->boneTransforms[myIndex];
     extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
