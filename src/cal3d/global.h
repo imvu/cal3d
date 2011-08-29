@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <stdexcept>
 #include <math.h>
 #include <boost/noncopyable.hpp>
 #include <string>
@@ -172,11 +173,11 @@ namespace cal3d {
         return v.data;
     }
 
-};
-
-struct CalHeader {
-    int version;
-    char const* magic;
+    inline void verify(bool condition, const char* message) {
+        if (!condition) {
+            throw std::runtime_error(message);
+        }
+    }
 };
 
 #define CAL3D_DEFINE_SIZE(T)                    \
