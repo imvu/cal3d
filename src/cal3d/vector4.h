@@ -189,17 +189,3 @@ struct CalPoint4 : CalBase4 {
         *this = CalPoint4(r.x, r.y, r.z, 1.0f);
     }
 };
-
-// 3x3 transform matrix plus a translation 3-vector (stored in the w components
-// of the rows.  This struct needs to be 16-byte aligned for SSE.
-struct BoneTransform {
-    CalVector4 rowx;
-    CalVector4 rowy;
-    CalVector4 rowz;
-};
-
-inline bool operator==(const BoneTransform& lhs, const BoneTransform& rhs) {
-    return lhs.rowx == rhs.rowx
-           && lhs.rowy == rhs.rowy
-           && lhs.rowz == rhs.rowz;
-}

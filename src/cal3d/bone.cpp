@@ -276,8 +276,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     }
     transformMatrix = CalMatrix(absoluteTransform.rotation) * transformMatrix;
 
-    BoneTransform& bt = skeleton->boneTransforms[myIndex];
-    extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
+    skeleton->boneTransforms[myIndex] = BoneTransform(transformMatrix, translationBoneSpace);
 }
 
 /*****************************************************************************/

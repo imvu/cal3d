@@ -68,13 +68,10 @@ FIXTURE(skin_SSE) {
 #endif
 
 ABSTRACT_TEST(single_identity_bone) {
-    BoneTransform bt[] = {
-        {
-            CalVector4(1, 0, 0, 0),
-            CalVector4(0, 1, 0, 0),
-            CalVector4(0, 0, 1, 0),
-        },
-    };
+    BoneTransform bt;
+    bt.rowx = CalVector4(1, 0, 0, 0);
+    bt.rowy = CalVector4(0, 1, 0, 0);
+    bt.rowz = CalVector4(0, 0, 1, 0);
 
     CalCoreSubmesh::Vertex v[] = {
         { CalPoint4(1, 2, 3), CalVector4(0, 1, 0) },
@@ -85,7 +82,7 @@ ABSTRACT_TEST(single_identity_bone) {
     };
 
     CalVector4 output[2];
-    this->skin(bt, 1, v, i, output);
+    this->skin(&bt, 1, v, i, output);
     CHECK_EQUAL(output[0].x, 1);
     CHECK_EQUAL(output[0].y, 2);
     CHECK_EQUAL(output[0].z, 3);
@@ -96,18 +93,13 @@ ABSTRACT_TEST(single_identity_bone) {
 APPLY_SKIN_FIXTURES(single_identity_bone);
 
 ABSTRACT_TEST(two_translated_bones) {
-    BoneTransform bt[] = {
-        {
-            CalVector4(1, 0, 0, 1),
-            CalVector4(0, 1, 0, 0),
-            CalVector4(0, 0, 1, 0),
-        },
-        {
-            CalVector4(1, 0, 0, 0),
-            CalVector4(0, 1, 0, 1),
-            CalVector4(0, 0, 1, 0),
-        },
-    };
+    BoneTransform bt[2];
+    bt[0].rowx = CalVector4(1, 0, 0, 1);
+    bt[0].rowy = CalVector4(0, 1, 0, 0);
+    bt[0].rowz = CalVector4(0, 0, 1, 0);
+    bt[1].rowx = CalVector4(1, 0, 0, 0);
+    bt[1].rowy = CalVector4(0, 1, 0, 1);
+    bt[1].rowz = CalVector4(0, 0, 1, 0);
 
     CalCoreSubmesh::Vertex v[] = {
         { CalPoint4(1, 2, 3), CalVector4(1, 1, 0) },
@@ -131,21 +123,21 @@ APPLY_SKIN_FIXTURES(two_translated_bones);
 
 ABSTRACT_TEST(three_translated_bones) {
     BoneTransform bt[] = {
-        {
+        BoneTransform(
             CalVector4(1, 0, 0, 1),
             CalVector4(0, 1, 0, 0),
-            CalVector4(0, 0, 1, 0),
-        },
-        {
+            CalVector4(0, 0, 1, 0)
+        ),
+        BoneTransform(
             CalVector4(1, 0, 0, 0),
             CalVector4(0, 1, 0, 1),
-            CalVector4(0, 0, 1, 0),
-        },
-        {
+            CalVector4(0, 0, 1, 0)
+        ),
+        BoneTransform(
             CalVector4(1, 0, 0, 0),
             CalVector4(0, 1, 0, 0),
-            CalVector4(0, 0, 1, 1),
-        },
+            CalVector4(0, 0, 1, 1)
+        ),
     };
 
     CalCoreSubmesh::Vertex v[] = {
@@ -173,17 +165,17 @@ APPLY_SKIN_FIXTURES(three_translated_bones);
 ABSTRACT_TEST(two_rotated_bones) {
     BoneTransform bt[] = {
         // 90 degree rotation about z
-        {
+        BoneTransform(
             CalVector4(0, -1, 0, 0),
             CalVector4(1,  0, 0, 0),
-            CalVector4(0,  0, 1, 0),
-        },
+            CalVector4(0,  0, 1, 0)
+        ),
         // -90 degree rotation about x
-        {
+        BoneTransform(
             CalVector4(1,  0, 0, 0),
             CalVector4(0,  0, 1, 0),
-            CalVector4(0, -1, 0, 0),
-        },
+            CalVector4(0, -1, 0, 0)
+        ),
     };
 
     CalCoreSubmesh::Vertex v[] = {

@@ -12,6 +12,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include "cal3d/bone.h"
+#include "cal3d/bonetransform.h"
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/vector4.h"

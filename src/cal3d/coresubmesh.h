@@ -18,6 +18,7 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 #include "cal3d/vector4.h"
+#include "cal3d/bonetransform.h"
 
 class CalCoreSubMorphTarget;
 typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;

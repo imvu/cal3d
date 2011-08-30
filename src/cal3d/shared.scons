@@ -6,6 +6,7 @@ env.Library('cal3d', Split("""
     animation_action.cpp
     animation_cycle.cpp
     bone.cpp
+    bonetransform.cpp
     buffersource.cpp
     cal3d_wrapper.cpp
     coreanimation.cpp

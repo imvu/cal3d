@@ -12,8 +12,10 @@
 #include "config.h"
 #endif
 
-#include "cal3d/vector.h"
+#include "cal3d/matrix.h"
+#include "cal3d/vector4.h"
 #include "cal3d/quaternion.h"
+#include "cal3d/transform.h"
 
 CalVector operator*(const CalQuaternion& q, const CalVector& v) {
     CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);

@@ -39,18 +39,6 @@ public:
     void operator=(const CalQuaternion& q);
 };
 
-inline void extractRows(
-    const CalMatrix& m,
-    const CalVector& translation,
-    CalVector4& rowx,
-    CalVector4& rowy,
-    CalVector4& rowz
-) {
-    rowx.set(m.dxdx, m.dxdy, m.dxdz, translation.x);
-    rowy.set(m.dydx, m.dydy, m.dydz, translation.y);
-    rowz.set(m.dzdx, m.dzdy, m.dzdz, translation.z);
-}
-
 inline CalMatrix operator*(const CalMatrix& outer, const CalMatrix& inner) {
     float ndxdx = outer.dxdx * inner.dxdx + outer.dxdy * inner.dydx + outer.dxdz * inner.dzdx;
     float ndydx = outer.dydx * inner.dxdx + outer.dydy * inner.dydx + outer.dydz * inner.dzdx;

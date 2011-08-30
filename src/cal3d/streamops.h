@@ -7,6 +7,7 @@
 #include <cal3d/corekeyframe.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/coretrack.h>
+#include <cal3d/bonetransform.h>
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector4& v) {
     return os << "CalVector4(" << v.x << "," << v.y << "," << v.z << "," << v.w << ")";
