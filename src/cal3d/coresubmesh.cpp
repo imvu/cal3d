@@ -12,6 +12,7 @@
 #include "config.h"
 #endif
 
+#include "cal3d/coreskeleton.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coresubmorphtarget.h"
 
@@ -130,6 +131,15 @@ void CalCoreSubmesh::scale(float factor) {
 
     for (CoreSubMorphTargetVector::iterator i = m_vectorCoreSubMorphTarget.begin(); i != m_vectorCoreSubMorphTarget.end(); ++i) {
         (*i)->scale(factor);
+    }
+}
+
+void CalCoreSubmesh::fixup(const CalCoreSkeletonPtr& skeleton) {
+    for (size_t i = 0; i < m_influences.size(); ++i) {
+        Influence& inf = m_influences[i];
+        inf.boneId = (inf.boneId < skeleton->boneIdTranslation.size())
+            ? skeleton->boneIdTranslation[inf.boneId]
+            : 0;
     }
 }
 

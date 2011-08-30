@@ -13,6 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
+typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 typedef boost::shared_ptr<class CalCoreSubmesh> CalCoreSubmeshPtr;
 
 class CAL3D_API CalCoreMesh {
@@ -23,6 +24,7 @@ public:
     size_t addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
     
     void scale(float factor);
+    void fixup(const CalCoreSkeletonPtr& skeleton);
 
     CalCoreSubmeshVector submeshes;
 };

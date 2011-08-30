@@ -93,3 +93,9 @@ void CalCoreMesh::scale(float factor) {
         (*i)->scale(factor);
     }
 }
+
+void CalCoreMesh::fixup(const CalCoreSkeletonPtr& skeleton) {
+    for (CalCoreSubmeshVector::iterator i = submeshes.begin(); i != submeshes.end(); ++i) {
+        (*i)->fixup(skeleton);
+    }
+}

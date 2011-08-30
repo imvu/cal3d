@@ -20,7 +20,7 @@
 #include "cal3d/vector4.h"
 
 class CalCoreSubMorphTarget;
-
+typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 
 enum CalMorphTargetType {
     CalMorphTargetTypeNull = 0,
@@ -158,7 +158,9 @@ public:
     }
     size_t getCoreSubMorphTargetCount();
     CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
+    
     void scale(float factor);
+    void fixup(const CalCoreSkeletonPtr& skeleton);
 
     bool isStatic() const;
     BoneTransform getStaticTransform(const BoneTransform* bones) const;

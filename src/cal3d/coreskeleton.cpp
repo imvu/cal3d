@@ -92,8 +92,14 @@ CalCoreSkeleton::CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones)
         }
     }
 
+    boneIdTranslation.resize(bones.size());
+    for (size_t i = 0; i < bones.size(); ++i) {
+        boneIdTranslation[i] = newIndices[originalIndices[i]];
+    }
+
     cal3d::verify(added.size() == bones.size(), "should have added all bones");
     cal3d::verify(newIndices.size() == originalIndices.size(), "new and original index lists should have identical lengths");
+    cal3d::verify(boneIdTranslation.size() == m_coreBones.size(), "ID->index translation table and bone list must have identical lengths");
 }
 
 size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {

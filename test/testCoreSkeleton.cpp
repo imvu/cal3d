@@ -1,5 +1,7 @@
 #include "TestPrologue.h"
 #include <cal3d/corebone.h>
+#include <cal3d/coremesh.h>
+#include <cal3d/coresubmesh.h>
 #include <cal3d/coreskeleton.h>
 
 TEST(loader_topologically_sorts) {
@@ -10,6 +12,9 @@ TEST(loader_topologically_sorts) {
 
     CHECK_EQUAL(cs.coreBones[0].get(), bones[1].get());
     CHECK_EQUAL(cs.coreBones[1].get(), bones[0].get());
+
+    CHECK_EQUAL(1, cs.boneIdTranslation[0]);
+    CHECK_EQUAL(0, cs.boneIdTranslation[1]);
 }
 
 TEST(loader_disregards_self_parents) {
@@ -52,11 +57,53 @@ TEST(loader_disregards_paths_to_out_of_range) {
     CHECK_EQUAL(-1, cs.coreBones[1]->parentId);
 }
 
+TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
+    std::vector<CalCoreBonePtr> bones;
+    bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
+    bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
+    CalCoreSkeletonPtr cs(new CalCoreSkeleton(bones));
 
-#if 0
-TEST(can_fixup_meshes) {
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> influences;
+    influences.push_back(CalCoreSubmesh::Influence(0, 0.5, false));
+    influences.push_back(CalCoreSubmesh::Influence(1, 0.5, true));
+
+    CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 1, 1));
+    csm->addVertex(v, 0, influences);
+
+    CalCoreMesh cm;
+    cm.submeshes.push_back(csm);
+    cm.fixup(cs);
+
+    influences = csm->getInfluences();
+    CHECK_EQUAL(2u, influences.size());
+    CHECK_EQUAL(1, influences[0].boneId);
+    CHECK_EQUAL(0, influences[1].boneId);
 }
 
+TEST(fixup_out_of_range_influences_resets_to_zero) {
+    std::vector<CalCoreBonePtr> bones;
+    bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
+    bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
+    CalCoreSkeletonPtr cs(new CalCoreSkeleton(bones));
+
+    CalCoreSubmesh::Vertex v;
+    std::vector<CalCoreSubmesh::Influence> influences;
+    influences.push_back(CalCoreSubmesh::Influence(2, 1, true));
+
+    CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 1, 1));
+    csm->addVertex(v, 0, influences);
+
+    CalCoreMesh cm;
+    cm.submeshes.push_back(csm);
+    cm.fixup(cs);
+
+    influences = csm->getInfluences();
+    CHECK_EQUAL(1u, influences.size());
+    CHECK_EQUAL(0, influences[0].boneId);
+}
+
+#if 0
 TEST(can_fixup_animations) {
 }
 #endif
