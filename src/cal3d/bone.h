@@ -47,7 +47,6 @@ private:
     int parentId;
     cal3d::Transform coreRelativeTransform;
     cal3d::Transform coreBoneSpaceTransform;
-    std::vector<int> childIds;
 
     // animated bone state
     float m_accumulatedWeight;

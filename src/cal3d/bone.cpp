@@ -26,7 +26,6 @@ CalBone::CalBone(const CalCoreBone& coreBone)
     : parentId(coreBone.parentId)
     , coreRelativeTransform(coreBone.relativeTransform)
     , coreBoneSpaceTransform(coreBone.boneSpaceTransform)
-    , childIds(coreBone.childIds)
 { }
 
 /*****************************************************************************/
@@ -176,6 +175,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;
     } else {
+        cal3d::verify(parentId < myIndex, "skeleton was created with bones in non-topological order");
         absoluteTransform = skeleton->bones[parentId].absoluteTransform * relativeTransform;
     }
 
@@ -278,11 +278,6 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
 
     BoneTransform& bt = skeleton->boneTransforms[myIndex];
     extractRows(transformMatrix, translationBoneSpace, bt.rowx, bt.rowy, bt.rowz);
-
-    // calculate all child bones
-    for (size_t i = 0; i < childIds.size(); ++i) {
-        skeleton->bones[childIds[i]].calculateState(skeleton, childIds[i]);
-    }
 }
 
 /*****************************************************************************/

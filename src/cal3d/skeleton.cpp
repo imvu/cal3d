@@ -39,12 +39,8 @@ CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton)
 }
 
 void CalSkeleton::calculateState() {
-    // calculate all bone states of the skeleton
-    const std::vector<size_t>& listRootCoreBoneId = m_coreSkeleton->rootBoneIds;
-
-    std::vector<size_t>::const_iterator iteratorRootBoneId;
-    for (iteratorRootBoneId = listRootCoreBoneId.begin(); iteratorRootBoneId != listRootCoreBoneId.end(); ++iteratorRootBoneId) {
-        bones[*iteratorRootBoneId].calculateState(this, *iteratorRootBoneId);
+    for (unsigned i = 0; i < bones.size(); ++i) {
+        bones[i].calculateState(this, i);
     }
 }
 
