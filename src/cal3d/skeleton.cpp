@@ -37,8 +37,9 @@ CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton) {
 }
 
 void CalSkeleton::calculateState() {
+    CalBone* bones_ptr = cal3d::pointerFromVector(bones);
     for (unsigned i = 0; i < bones.size(); ++i) {
-        bones[i].calculateState(this, i);
+        boneTransforms[i] = bones_ptr[i].calculateState(bones_ptr);
     }
 }
 

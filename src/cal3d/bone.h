@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "cal3d/bonetransform.h"
 #include "cal3d/global.h"
 #include "cal3d/transform.h"
 
@@ -31,7 +32,7 @@ public:
         float scale = 1.0f,
         bool replace = false,
         float rampValue = 1.0f);
-    void calculateState(CalSkeleton* skeleton, unsigned myIndex);
+    BoneTransform calculateState(const CalBone* bones);
     void clearState();
     const CalVector& getOriginalTranslation() const {
         return coreRelativeTransform.translation;

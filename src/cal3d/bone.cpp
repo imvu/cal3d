@@ -164,7 +164,7 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
   * and all its children.
   *****************************************************************************/
 
-void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
+BoneTransform CalBone::calculateState(const CalBone* bones) {
     // check if the bone was not touched by any active animation
     if (m_accumulatedWeight == 0.0f) {
         // set the bone to the initial skeleton state
@@ -175,8 +175,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;
     } else {
-        cal3d::verify(parentId < myIndex, "skeleton was created with bones in non-topological order");
-        absoluteTransform = skeleton->bones[parentId].absoluteTransform * relativeTransform;
+        absoluteTransform = bones[parentId].absoluteTransform * relativeTransform;
     }
 
     // calculate the bone space transformation
@@ -276,7 +275,7 @@ void CalBone::calculateState(CalSkeleton* skeleton, unsigned myIndex) {
     }
     transformMatrix = CalMatrix(absoluteTransform.rotation) * transformMatrix;
 
-    skeleton->boneTransforms[myIndex] = BoneTransform(transformMatrix, translationBoneSpace);
+    return BoneTransform(transformMatrix, translationBoneSpace);
 }
 
 /*****************************************************************************/
