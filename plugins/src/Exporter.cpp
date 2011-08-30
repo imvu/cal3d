@@ -733,14 +733,7 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
       pCoreBone->lightColor = ( color );
                         
 			// add the core bone to the core skeleton instance
-			int boneId;
-			boneId = coreSkeleton.addCoreBone(pCoreBone);
-
-			// adjust child list of parent bone
-			if(parentId != -1)
-			{
-				coreSkeleton.coreBones[parentId]->childIds.push_back(boneId);
-			}
+			coreSkeleton.addCoreBone(pCoreBone);
 		}
 	}
 

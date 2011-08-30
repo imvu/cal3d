@@ -20,9 +20,7 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h" // DEBUG
 
-CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton)
-: m_coreSkeleton(pCoreSkeleton)
-{
+CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton) {
     assert(pCoreSkeleton);
 
     // clone the skeleton structure of the core skeleton

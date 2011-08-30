@@ -470,10 +470,6 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
-
-            int childId = atoi(childid->Value());
-
-            pCoreBone->childIds.push_back(childId);
         }
 
         // add the core bone to the core skeleton instance

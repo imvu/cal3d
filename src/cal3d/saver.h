@@ -58,7 +58,7 @@ public:
     static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
 
 private:
-    static bool saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone);
+    static bool saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkeleton, const CalCoreBone* pCoreBone);
     static bool saveCoreKeyframe(std::ostream& file, const std::string& strFilename, const CalCoreKeyframe* pCoreKeyframe);
     static bool saveCoreSubmesh(std::ostream& file, CalCoreSubmesh* pCoreSubmesh);
     static bool saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack* pCoreTrack);

@@ -570,8 +570,6 @@ CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return null;
         }
-
-        pCoreBone->childIds.push_back(childId);
     }
 
     return pCoreBone;

@@ -152,15 +152,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			pCoreBone->boneSpaceTransform.translation = translationBoneSpace;
 			pCoreBone->boneSpaceTransform.rotation = rotationBoneSpace;
 
-			// add the core bone to the core skeleton instance
-			int boneId;
-			boneId = coreSkeleton.addCoreBone(pCoreBone);
-
-			// adjust child list of parent bone
-			if(parentId != -1)
-			{
-				coreSkeleton.coreBones[parentId]->childIds.push_back(boneId);
-			}
+			coreSkeleton.addCoreBone(pCoreBone);
 		}
 	}
 

@@ -25,11 +25,6 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
 
     size_t boneId = coreBones.size();
     m_coreBones.push_back(coreBone);
-
-    if (coreBone->parentId == -1) {
-        rootBoneIds.push_back(boneId);
-    }
-
     return boneId;
 }
 
@@ -41,4 +36,27 @@ void CalCoreSkeleton::scale(float factor) {
     ) {
         (*i)->scale(factor);
     }
+}
+
+std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const {
+    int index = -1;
+    if (coreBone) {
+        for (size_t i = 0; i < coreBones.size(); ++i) {
+            if (coreBones[i].get() == coreBone) {
+                index = i;
+                break;
+            }
+        }
+        cal3d::verify(index != -1, "Cannot calculate children of bone not owned by this skeleton");
+    } else {
+        // find roots
+    }
+
+    std::vector<int> rv;
+    for (size_t i = 0; i < coreBones.size(); ++i) {
+        if (coreBones[i]->parentId == index) {
+            rv.push_back(i);
+        }
+    }
+    return rv;
 }

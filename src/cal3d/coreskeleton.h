@@ -32,7 +32,8 @@ public:
         return coreBones;
     }
 
-    std::vector<size_t> rootBoneIds;
+    std::vector<int> getChildIds(const CalCoreBone* coreBone) const;
+
     CalVector sceneAmbientColor;
 
 private:

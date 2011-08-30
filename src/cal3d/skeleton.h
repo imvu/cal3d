@@ -26,9 +26,7 @@ public:
     void clearState();
     void lockState();
 
+    // same length
     std::vector<CalBone> bones;
     SSEArray<BoneTransform> boneTransforms;
-
-private:
-    CalCoreSkeletonPtr m_coreSkeleton;
 };

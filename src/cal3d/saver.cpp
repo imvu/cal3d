@@ -195,21 +195,7 @@ bool CalSaver::saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* p
     return true;
 }
 
-/*****************************************************************************/
-/** Saves a core bone instance.
-  *
-  * This function saves a core bone instance to a file stream.
-  *
-  * @param file The file stream to save the core bone instance to.
-  * @param strFilename The name of the file stream.
-  * @param pCoreBone A pointer to the core bone instance that should be saved.
-  *
-  * @return One of the following values:
-  *         \li \b true if successful
-  *         \li \b false if an error happend
-  *****************************************************************************/
-
-bool CalSaver::saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone) {
+bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkeleton, const CalCoreBone* pCoreBone) {
     if (!file) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, "");
         return false;
@@ -236,19 +222,15 @@ bool CalSaver::saveCoreBones(std::ostream& file, CalCoreBone* pCoreBone) {
     CalPlatform::writeInteger(file, pCoreBone->lightType);
     CalPlatform::writeVector(file, pCoreBone->lightColor);
 
-    // get children list
-    const std::vector<int>& listChildId = pCoreBone->childIds;
+    std::vector<int> children(coreSkeleton->getChildIds(pCoreBone));
 
-    // write the number of children
-    if (!CalPlatform::writeInteger(file, listChildId.size())) {
+    if (!CalPlatform::writeInteger(file, children.size())) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
         return false;
     }
 
-    // write all children ids
     std::vector<int>::const_iterator iteratorChildId;
-    for (iteratorChildId = listChildId.begin(); iteratorChildId != listChildId.end(); ++iteratorChildId) {
-        // write the child id
+    for (iteratorChildId = children.begin(); iteratorChildId != children.end(); ++iteratorChildId) {
         if (!CalPlatform::writeInteger(file, *iteratorChildId)) {
             CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
             return false;
@@ -542,7 +524,7 @@ bool CalSaver::saveCoreSkeleton(std::ostream& file, CalCoreSkeleton* pCoreSkelet
 
 
     for (size_t boneId = 0; boneId < pCoreSkeleton->coreBones.size(); ++boneId) {
-        if (!saveCoreBones(file, pCoreSkeleton->coreBones[boneId].get())) {
+        if (!saveCoreBone(file, pCoreSkeleton, pCoreSkeleton->coreBones[boneId].get())) {
             return false;
         }
     }
@@ -825,15 +807,12 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
     str << sceneColor.x << " " << sceneColor.y << " " << sceneColor.z;
     skeleton.SetAttribute("SCENEAMBIENTCOLOR", str.str());
 
-
-    int boneId;
-    for (boneId = 0; boneId < (int)pCoreSkeleton->coreBones.size(); ++boneId) {
+    for (int boneId = 0; boneId < (int)pCoreSkeleton->coreBones.size(); ++boneId) {
         CalCoreBone* pCoreBone = pCoreSkeleton->coreBones[boneId].get();
 
         TiXmlElement bone("BONE");
         bone.SetAttribute("ID", boneId);
         bone.SetAttribute("NAME", pCoreBone->name);
-        bone.SetAttribute("NUMCHILDS", pCoreBone->childIds.size());
         if (pCoreBone->hasLightingData()) {
             bone.SetAttribute("LIGHTTYPE", pCoreBone->lightType);
             str.str("");
@@ -907,12 +886,8 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         parent.InsertEndChild(parentid);
         bone.InsertEndChild(parent);
 
+        std::vector<int> listChildId(pCoreSkeleton->getChildIds(pCoreBone));
 
-        // get children list
-        const std::vector<int>& listChildId = pCoreBone->childIds;
-
-
-        // write all children ids
         std::vector<int>::const_iterator iteratorChildId;
         for (iteratorChildId = listChildId.begin(); iteratorChildId != listChildId.end(); ++iteratorChildId) {
             TiXmlElement child("CHILDID");

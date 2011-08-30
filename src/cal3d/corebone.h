@@ -35,8 +35,6 @@ public:
     cal3d::Transform relativeTransform;
     cal3d::Transform boneSpaceTransform;
 
-    std::vector<int> childIds;
-
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);
 
