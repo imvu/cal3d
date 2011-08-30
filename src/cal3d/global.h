@@ -232,3 +232,36 @@ size_t sizeInBytes(const std::map<K, V>& m) {
     }
     return r;
 }
+
+namespace cal3d {
+    template<typename V, typename K>
+    V map_get(const std::map<K, V>& m, const K& key) {
+        typename std::map<K, V>::const_iterator i = m.find(key);
+        if (i == m.end()) {
+            return V();
+        } else {
+            return i->second;
+        }
+    }
+
+    template<typename V, typename K>
+    V* map_get_ptr(std::map<K, V>& m, const K& key) {
+        typename std::map<K, V>::iterator i = m.find(key);
+        if (i == m.end()) {
+            return 0;
+        } else {
+            return &i->second;
+        }
+    }
+
+    template<typename V, typename K>
+    const V* map_get_ptr(const std::map<K, V>& m, const K& key) {
+        typename std::map<K, V>::const_iterator i = m.find(key);
+        if (i == m.end()) {
+            return 0;
+        } else {
+            return &i->second;
+        }
+    }
+}
+

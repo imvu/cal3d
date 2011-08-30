@@ -36,7 +36,7 @@ std::vector<CalCoreBonePtr> findInvalidParents(
                 break;
             }
 
-            CalCoreBonePtr next = originalIndices.at(p->parentId);
+            CalCoreBonePtr next = cal3d::map_get(originalIndices, static_cast<unsigned>(p->parentId));
             if (path.count(next)) {
                 knownInvalid.insert(knownInvalid.end(), path.begin(), path.end());
                 break;
