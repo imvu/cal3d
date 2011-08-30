@@ -24,7 +24,7 @@ class CAL3D_API CalCoreSkeleton : private boost::noncopyable {
 public:
     CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones = std::vector<CalCoreBonePtr>());
 
-    void addCoreBone(const CalCoreBonePtr& coreBone);
+    size_t addCoreBone(const CalCoreBonePtr& coreBone);
 
     void scale(float factor);
 

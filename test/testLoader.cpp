@@ -372,6 +372,66 @@ TEST(simple_two_bone_skeleton) {
     CHECK_EQUAL(parentIdOfChildBone, 0);
 }
 
+const char nontopological_two_bone_skeleton[] =
+    "<HEADER MAGIC=\"XSF\" VERSION=\"919\" />"
+    "<SKELETON NUMBONES=\"2\" SCENEAMBIENTCOLOR=\"0.5 0.5 0.5\">"
+    "    <BONE NAME=\"AttachmentNode\" NUMCHILDS=\"0\" ID=\"1\">"
+    "        <TRANSLATION>0.0930318 1.64391e-006 -4.76993e-008</TRANSLATION>"
+    "        <ROTATION>-4.40272e-008 -1.67311e-007 4.27578e-008 1</ROTATION>"
+    "        <LOCALTRANSLATION>-772.368 34.8961 -0.334036</LOCALTRANSLATION>"
+    "        <LOCALROTATION>0.706778 -0.0217731 0.706766 -0.0217552</LOCALROTATION>"
+    "        <PARENTID>1</PARENTID>"
+    "    </BONE>"
+    "    <BONE NAME=\"AttachmentRoot\" NUMCHILDS=\"1\" ID=\"0\">"
+    "        <TRANSLATION>0.346893 -12.6875 772.958</TRANSLATION>"
+    "        <ROTATION>0.706778 -0.0217732 0.706766 0.0217552</ROTATION>"
+    "        <LOCALTRANSLATION>-772.275 34.8962 -0.333774</LOCALTRANSLATION>"
+    "        <LOCALROTATION>0.706778 -0.0217732 0.706766 -0.0217552</LOCALROTATION>"
+    "        <PARENTID>-1</PARENTID>"
+    "        <CHILDID>0</CHILDID>"
+    "    </BONE>"
+    "</SKELETON>"
+    ;
+
+TEST(two_bone_skeleton_with_bones_in_nontopological_order) {
+    float tol = 0.001f;
+    CalBufferSource cbs(fromString(nontopological_two_bone_skeleton));
+    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
+    CHECK(skel);
+    CHECK_EQUAL(skel->coreBones.size(), 2u);
+    CalVector sceneAmbientClr = skel->sceneAmbientColor;
+    CHECK_EQUAL(CalVector(0.5f, 0.5f, 0.5f), sceneAmbientClr);
+    CalCoreBone* rootBone = skel->coreBones[0].get();
+    CHECK(rootBone);
+    const std::string rootBoneName = rootBone->name;
+    CHECK_EQUAL(rootBoneName.c_str(), "AttachmentRoot");
+    std::vector<int> childrenOfRootBone = skel->getChildIds(rootBone);
+    CHECK_EQUAL(childrenOfRootBone.size(), 1u);
+    int parentIdOfRootBone = rootBone->parentId;
+    CHECK_EQUAL(parentIdOfRootBone, -1);
+    const CalQuaternion& rot = rootBone->relativeTransform.rotation;
+    CHECK_CLOSE(rot.x, 0.706778, tol);
+    CHECK_CLOSE(rot.y, -0.0217732, tol);
+    CHECK_CLOSE(rot.z, 0.706766, tol);
+    CHECK_CLOSE(rot.w, 0.0217552, tol);
+    const CalQuaternion& boneSpaceRot = rootBone->boneSpaceTransform.rotation;
+    CHECK_CLOSE(boneSpaceRot.x, 0.706778, tol);
+    CHECK_CLOSE(boneSpaceRot.y, -0.0217732, tol);
+    CHECK_CLOSE(boneSpaceRot.z, 0.706766, tol);
+    CHECK_CLOSE(boneSpaceRot.w, -0.0217552, tol);
+    const CalVector& trans = rootBone->relativeTransform.translation;
+    CHECK_CLOSE(trans.x, 0.346893, tol);
+    CHECK_CLOSE(trans.y, -12.6875, tol);
+    CHECK_CLOSE(trans.z, 772.958, tol);
+    const CalVector& boneSpaceTrans = rootBone->boneSpaceTransform.translation;
+    CHECK_CLOSE(boneSpaceTrans.x, -772.275, tol);
+    CHECK_CLOSE(boneSpaceTrans.y, 34.8962, tol);
+    CHECK_CLOSE(boneSpaceTrans.z, -0.333774, tol);
+    CalCoreBone* child = skel->coreBones[childrenOfRootBone[0]].get();
+    int parentIdOfChildBone = child->parentId;
+    CHECK_EQUAL(parentIdOfChildBone, 0);
+}
+
 const char one_bone_skeleton[] =
     "<HEADER MAGIC=\"XSF\" VERSION=\"919\" />"
     "<SKELETON NUMBONES=\"2\" SCENEAMBIENTCOLOR=\"1 1 1\">"
