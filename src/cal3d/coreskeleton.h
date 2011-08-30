@@ -22,9 +22,10 @@ typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 
 class CAL3D_API CalCoreSkeleton : private boost::noncopyable {
 public:
-    CalCoreSkeleton();
+    CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones = std::vector<CalCoreBonePtr>());
 
     void addCoreBone(const CalCoreBonePtr& coreBone);
+
     void scale(float factor);
 
     const std::vector<CalCoreBonePtr>& coreBones; // points to the internal m_coreBones

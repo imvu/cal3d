@@ -12,7 +12,7 @@
 #include "config.h"
 #endif
 
-#include <fstream>
+#include <boost/optional.hpp>
 #include <stdexcept>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
@@ -456,24 +456,28 @@ CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
         return null;
     }
 
-    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton);
-
-    // load the scene ambient
+    boost::optional<CalVector> sceneAmbientColor;
     if (hasNodeLights) {
         CalVector sceneColor;
         CalVectorFromDataSrc(dataSrc, &sceneColor);
-        pCoreSkeleton->sceneAmbientColor = sceneColor;
+        sceneAmbientColor = sceneColor;
     }
 
+    std::vector<CalCoreBonePtr> bones;
+
     for (int boneId = 0; boneId < boneCount; ++boneId) {
-        boost::shared_ptr<CalCoreBone> pCoreBone(loadCoreBones(dataSrc, version));
+        CalCoreBonePtr pCoreBone(loadCoreBones(dataSrc, version));
         if (!pCoreBone) {
             return null;
         }
 
-        pCoreSkeleton->addCoreBone(pCoreBone);
+        bones.push_back(pCoreBone);
     }
 
+    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton(bones));
+    if (sceneAmbientColor) {
+        pCoreSkeleton->sceneAmbientColor = *sceneAmbientColor;
+    }
     return pCoreSkeleton;
 }
 

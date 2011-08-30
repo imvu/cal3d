@@ -1,3 +1,4 @@
+#include <boost/optional.hpp>
 #include <sstream>
 #include <stdexcept>
 #include "cal3d/loader.h"
@@ -287,18 +288,18 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    // allocate a new core skeleton instance
-    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton);
+    boost::optional<CalVector> sceneAmbientColor;
 
     char const* attrStr = skeleton->Attribute("SCENEAMBIENTCOLOR");
     if (attrStr) {
         CalVector sceneColor;
         ReadTripleFloat(attrStr, &sceneColor.x, &sceneColor.y, &sceneColor.z);
-        pCoreSkeleton->sceneAmbientColor = sceneColor;
+        sceneAmbientColor = sceneColor;
     }
 
-    TiXmlElement* bone;
-    for (bone = skeleton->FirstChildElement(); bone; bone = bone->NextSiblingElement()) {
+    std::vector<CalCoreBonePtr> bones;
+
+    for (TiXmlElement* bone = skeleton->FirstChildElement(); bone; bone = bone->NextSiblingElement()) {
         if (cal3d_stricmp(bone->Value(), "BONE") != 0) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return null;
@@ -426,8 +427,6 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
         }
 
 
-        int parentId;
-
         node = parent->FirstChild();
         if (!node) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
@@ -438,7 +437,7 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return null;
         }
-        parentId = atoi(parentid->Value());
+        int parentId = atoi(parentid->Value());
 
         boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(strName, parentId));
 
@@ -472,13 +471,13 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
             }
         }
 
-        // add the core bone to the core skeleton instance
-        pCoreSkeleton->addCoreBone(pCoreBone);
-
+        bones.push_back(pCoreBone);
     }
 
-    doc.Clear();
-
+    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton(bones));
+    if (sceneAmbientColor) {
+        pCoreSkeleton->sceneAmbientColor = *sceneAmbientColor;
+    }
     return pCoreSkeleton;
 }
 

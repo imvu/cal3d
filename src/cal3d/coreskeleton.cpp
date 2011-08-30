@@ -16,9 +16,13 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
 
-CalCoreSkeleton::CalCoreSkeleton()
+CalCoreSkeleton::CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones)
     : coreBones(m_coreBones)
-{}
+{
+    for (size_t i = 0; i < bones.size(); ++i) {
+        addCoreBone(bones[i]);
+    }
+}
 
 void CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     cal3d::verify(coreBone->parentId == -1 || coreBone->parentId < coreBones.size(), "bones must be added in topological order");
