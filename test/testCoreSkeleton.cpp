@@ -1,4 +1,5 @@
 #include "TestPrologue.h"
+#include <cal3d/coreanimation.h>
 #include <cal3d/corebone.h>
 #include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
@@ -103,7 +104,17 @@ TEST(fixup_out_of_range_influences_resets_to_zero) {
     CHECK_EQUAL(0, influences[0].boneId);
 }
 
-#if 0
-TEST(can_fixup_animations) {
+TEST(topologically_sorted_skeletons_can_fixup_animations) {
+    std::vector<CalCoreBonePtr> bones;
+    bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
+    bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
+    CalCoreSkeletonPtr cs(new CalCoreSkeleton(bones));
+
+    CalCoreTrack ct(0, std::vector<CalCoreKeyframe>());
+
+    CalCoreAnimation ca;
+    ca.tracks.push_back(ct);
+
+    ca.fixup(cs);
+    CHECK_EQUAL(1, ca.tracks[0].coreBoneId);
 }
-#endif

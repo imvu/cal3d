@@ -56,6 +56,8 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton) {
             continue;
         }
 
+        i->coreBoneId = skeleton->boneIdTranslation[i->coreBoneId];
+
         i->fixup(skeleton->coreBones[i->coreBoneId]);
         output.push_back(*i);
     }
