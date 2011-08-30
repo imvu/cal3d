@@ -4,6 +4,7 @@
 #include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
 #include <cal3d/coreskeleton.h>
+#include <cal3d/matrix.h>
 
 TEST(loader_topologically_sorts) {
     std::vector<CalCoreBonePtr> bones;
@@ -66,8 +67,8 @@ TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
 
     CalCoreSubmesh::Vertex v;
     std::vector<CalCoreSubmesh::Influence> influences;
-    influences.push_back(CalCoreSubmesh::Influence(0, 0.5, false));
-    influences.push_back(CalCoreSubmesh::Influence(1, 0.5, true));
+    influences.push_back(CalCoreSubmesh::Influence(0, 0, false));
+    influences.push_back(CalCoreSubmesh::Influence(1, 1, true));
 
     CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 1, 1));
     csm->addVertex(v, 0, influences);
@@ -80,6 +81,16 @@ TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
     CHECK_EQUAL(2u, influences.size());
     CHECK_EQUAL(1, influences[0].boneId);
     CHECK_EQUAL(0, influences[1].boneId);
+
+    CalMatrix identity(1, 0, 0, 0, 1, 0, 0, 0, 1);
+    BoneTransform bt[2] = {
+        BoneTransform(identity, CalVector(0, 0, 0)),
+        BoneTransform(identity, CalVector(1, 1, 1)),
+    };
+
+    CHECK(csm->isStatic());
+    BoneTransform staticTransform = csm->getStaticTransform(bt);
+    CHECK_EQUAL(0.0f, staticTransform.rowx.w);
 }
 
 TEST(fixup_out_of_range_influences_resets_to_zero) {

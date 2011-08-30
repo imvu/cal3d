@@ -142,6 +142,18 @@ void CalCoreSubmesh::fixup(const CalCoreSkeletonPtr& skeleton) {
             ? skeleton->boneIdTranslation[inf.boneId]
             : 0;
     }
+
+    std::set<Influence> staticInfluenceSet;
+
+    for (std::set<Influence>::iterator i = m_staticInfluenceSet.influences.begin(); i != m_staticInfluenceSet.influences.end(); ++i) {
+        Influence inf = *i;
+        inf.boneId = (inf.boneId < skeleton->boneIdTranslation.size())
+            ? skeleton->boneIdTranslation[inf.boneId]
+            : 0;
+        staticInfluenceSet.insert(inf);
+    }
+
+    std::swap(m_staticInfluenceSet.influences, staticInfluenceSet);
 }
 
 bool CalCoreSubmesh::isStatic() const {
@@ -154,20 +166,9 @@ BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) con
     std::set<Influence>::const_iterator current = m_staticInfluenceSet.influences.begin();
     while (current != m_staticInfluenceSet.influences.end()) {
         const BoneTransform& influence = bones[current->boneId];
-        rm.rowx.x += current->weight * influence.rowx.x;
-        rm.rowx.y += current->weight * influence.rowx.y;
-        rm.rowx.z += current->weight * influence.rowx.z;
-        rm.rowx.w += current->weight * influence.rowx.w;
-
-        rm.rowy.x += current->weight * influence.rowy.x;
-        rm.rowy.y += current->weight * influence.rowy.y;
-        rm.rowy.z += current->weight * influence.rowy.z;
-        rm.rowy.w += current->weight * influence.rowy.w;
-
-        rm.rowz.x += current->weight * influence.rowz.x;
-        rm.rowz.y += current->weight * influence.rowz.y;
-        rm.rowz.z += current->weight * influence.rowz.z;
-        rm.rowz.w += current->weight * influence.rowz.w;
+        rm.rowx += current->weight * influence.rowx;
+        rm.rowy += current->weight * influence.rowy;
+        rm.rowz += current->weight * influence.rowz;
 
         ++current;
     }
