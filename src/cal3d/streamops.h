@@ -8,6 +8,7 @@
 #include <cal3d/coreanimation.h>
 #include <cal3d/coretrack.h>
 #include <cal3d/bonetransform.h>
+#include <cal3d/transform.h>
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector4& v) {
     return os << "CalVector4(" << v.x << "," << v.y << "," << v.z << "," << v.w << ")";
@@ -29,8 +30,14 @@ inline std::ostream& operator<<(std::ostream& os, const CalQuaternion& quat) {
     return os << "CalQuaternion(" << quat.x << "," << quat.y << "," << quat.z << "," << quat.w << ")";
 }
 
+namespace cal3d {
+    inline std::ostream& operator<<(std::ostream& os, const Transform& t) {
+        return os << "cal3d::Transform(" << t.rotation << ", " << t.translation << ")";
+    }
+}
+
 inline std::ostream& operator<<(std::ostream& os, const CalCoreKeyframe& keyframe) {
-    return os << "CalCoreKeyframe(" << keyframe.time << ", " << keyframe.translation << ", " << keyframe.rotation << ")";
+    return os << "CalCoreKeyframe(" << keyframe.time << ", " << keyframe.transform << ")";
 }
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreAnimation& animation) {

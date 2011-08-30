@@ -11,8 +11,7 @@
 #pragma once
 
 #include "cal3d/global.h"
-#include "cal3d/vector.h"
-#include "cal3d/quaternion.h"
+#include "cal3d/transform.h"
 
 extern CalVector InvalidTranslation;
 
@@ -24,20 +23,18 @@ public:
 
     CalCoreKeyframe(float t, const CalVector& tr, const CalQuaternion& ro)
         : time(t)
-        , translation(tr)
-        , rotation(ro)
+        , transform(ro, tr)
     {}
 
     void scale(float factor) {
         // don't scale the 'invalid translation' sentinel
-        if (!exactlyEqual(translation, InvalidTranslation)) {
-            translation *= factor;
+        if (!exactlyEqual(transform.translation, InvalidTranslation)) {
+            transform.translation *= factor;
         }
     }
 
     float time;
-    CalVector translation;
-    CalQuaternion rotation;
+    cal3d::Transform transform;
 };
 
 inline bool operator<(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
@@ -45,7 +42,5 @@ inline bool operator<(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
 }
 
 inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
-    return close(lhs.time, rhs.time) &&
-           lhs.translation == rhs.translation &&
-           lhs.rotation == rhs.rotation;
+    return close(lhs.time, rhs.time) && lhs.transform == rhs.transform;
 }

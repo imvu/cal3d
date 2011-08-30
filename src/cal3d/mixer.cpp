@@ -124,16 +124,15 @@ void CalMixer::updateSkeleton(
             if (itct->coreBoneId >= int(vectorBone.size())) {
                 continue;
             }
-            CalBone* pBone = &vectorBone[itct->coreBoneId];
-
-            // get the current translation and rotation
-            CalVector translation;
-            CalQuaternion rotation;
-            itct->getState(aa->time, translation, rotation);
 
             // Replace and CrossFade both blend with the replace function.
             bool replace = aa->compositionFunction != CalAnimation::CompositionFunctionAverage;
-            pBone->blendState(aa->weight, translation, rotation, aa->scale, replace, aa->rampValue);
+            vectorBone[itct->coreBoneId].blendState(
+                aa->weight,
+                itct->getState(aa->time),
+                aa->scale,
+                replace,
+                aa->rampValue);
         }
     }
 
@@ -161,8 +160,9 @@ void CalMixer::applyBoneAdjustments(
         CalBone& bo = bones[ba.boneId];
         bo.blendState(
             1.0f, /* unrampedWeight */
-            bo.getOriginalTranslation(), /* adjustedLocalPos */
-            ba.localOri,
+            cal3d::Transform(
+                ba.localOri,
+                bo.getOriginalTranslation() /* adjustedLocalPos */),
             1.0f, /* scale */
             true, /* replace */
             ba.rampValue /* rampValue */);

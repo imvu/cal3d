@@ -25,22 +25,21 @@ public:
 
     CalBone(const CalCoreBone& coreBone);
 
-    void blendState(
-        float unrampedWeight,
-        const CalVector& translation,
-        const CalQuaternion& rotation,
-        float scale = 1.0f,
-        bool replace = false,
-        float rampValue = 1.0f);
-    BoneTransform calculateState(const CalBone* bones);
-    void clearState();
     const CalVector& getOriginalTranslation() const {
         return coreRelativeTransform.translation;
     }
-
+    void clearState();
+    void blendState(
+        float unrampedWeight,
+        const cal3d::Transform& transform,
+        float scale = 1.0f,
+        bool replace = false,
+        float rampValue = 1.0f);
     void setMeshScaleAbsolute(const CalVector& sv) {
         m_meshScaleAbsolute = sv;
     }
+    BoneTransform calculateState(const CalBone* bones);
+
     void lockState();
 
 private:

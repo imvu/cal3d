@@ -654,15 +654,7 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(rw);
     }
 
-
-    // allocate a new core keyframe instance
-    CalCoreKeyframePtr pCoreKeyframe(new CalCoreKeyframe);
-
-    // set all attributes of the keyframe
-    pCoreKeyframe->time = time;
-    pCoreKeyframe->translation = t;
-    pCoreKeyframe->rotation = CalQuaternion(rx, ry, rz, rw);
-
+    CalCoreKeyframePtr pCoreKeyframe(new CalCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw)));
     return pCoreKeyframe;
 }
 
@@ -711,7 +703,7 @@ CalLoader::readCompressedKeyframe(
         // they are the same for all the keyframes in the track, though different from the skeleton), then
         // just use the translation from the last keyframe.
         if (lastCoreKeyframe && !translationIsDynamic) {
-            * vecResult = lastCoreKeyframe->translation;
+            * vecResult = lastCoreKeyframe->transform.translation;
         } else {
             unsigned int data;
             float tx, ty, tz;

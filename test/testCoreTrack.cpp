@@ -3,18 +3,16 @@
 #include <cal3d/streamops.h>
 
 FIXTURE(TrackFixture) {
-    CalVector t;
-    CalQuaternion q;
+    cal3d::Transform t;
 };
 
 TEST_F(TrackFixture, getState_returns_empty_if_no_keyframes) {
     CalCoreTrack track(0, CalCoreTrack::KeyframeList());
-    track.getState(-1, t, q);
-    CHECK_EQUAL(t, CalVector());
+    t = track.getState(-1);
+    CHECK_EQUAL(CalVector(), t.translation);
 
-    t = CalVector(1, 2, 3);
-    track.getState(1, t, q);
-    CHECK_EQUAL(t, CalVector());
+    t = track.getState(1);
+    CHECK_EQUAL(cal3d::Transform(), t);
 }
 
 TEST_F(TrackFixture, getState_blends_keyframes) {
@@ -23,20 +21,20 @@ TEST_F(TrackFixture, getState_blends_keyframes) {
     keyframes.push_back(CalCoreKeyframe(1, CalVector(4, 4, 4), CalQuaternion()));
     CalCoreTrack track(0, keyframes);
 
-    track.getState(-1, t, q);
-    CHECK_EQUAL(CalVector(2, 2, 2), t);
+    t = track.getState(-1);
+    CHECK_EQUAL(CalVector(2, 2, 2), t.translation);
 
-    track.getState(0, t, q);
-    CHECK_EQUAL(CalVector(2, 2, 2), t);
+    t = track.getState(0);
+    CHECK_EQUAL(CalVector(2, 2, 2), t.translation);
 
-    track.getState(0.5, t, q);
-    CHECK_EQUAL(CalVector(3, 3, 3), t);
+    t = track.getState(0.5);
+    CHECK_EQUAL(CalVector(3, 3, 3), t.translation);
 
-    track.getState(1, t, q);
-    CHECK_EQUAL(CalVector(4, 4, 4), t);
+    t = track.getState(1);
+    CHECK_EQUAL(CalVector(4, 4, 4), t.translation);
 
-    track.getState(2, t, q);
-    CHECK_EQUAL(CalVector(4, 4, 4), t);
+    t = track.getState(2);
+    CHECK_EQUAL(CalVector(4, 4, 4), t.translation);
 }
 
 TEST_F(TrackFixture, getState_with_two_keyframes_at_same_time) {
@@ -46,7 +44,7 @@ TEST_F(TrackFixture, getState_with_two_keyframes_at_same_time) {
     keyframes.push_back(CalCoreKeyframe(1, CalVector(6, 6, 6), CalQuaternion()));
     CalCoreTrack track(0, keyframes);
 
-    track.getState(1.5, t, q);
-    CHECK_EQUAL(CalQuaternion(), q);
-    CHECK_EQUAL(CalVector(6, 6, 6), t);
+    t = track.getState(1.5);
+    CHECK_EQUAL(CalQuaternion(), t.rotation);
+    CHECK_EQUAL(CalVector(6, 6, 6), t.translation);
 }

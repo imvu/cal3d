@@ -28,6 +28,14 @@ CalBone::CalBone(const CalCoreBone& coreBone)
     , coreBoneSpaceTransform(coreBone.boneSpaceTransform)
 { }
 
+void CalBone::clearState() {
+    m_accumulatedWeight = 0.0f;
+    m_accumulatedWeightAbsolute = 0.0f;
+    m_accumulatedReplacementAttenuation = 1.0f;
+    m_firstBlendScale = 1.0f;
+    m_meshScaleAbsolute.set(1, 1, 1);
+}
+
 /*****************************************************************************/
 /** Interpolates the current state to another state.
   *
@@ -42,9 +50,13 @@ CalBone::CalBone(const CalCoreBone& coreBone)
   * @param rampValue Amount to attenuate weight when ramping in/out the animation.
   *****************************************************************************/
 
-void CalBone::blendState(float unrampedWeight, const CalVector& translation,
-                         const CalQuaternion& rotation, float scale,
-                         bool replace, float rampValue) {
+void CalBone::blendState(
+    float unrampedWeight,
+    const cal3d::Transform& transform,
+    float scale,
+    bool replace,
+    float rampValue
+) {
 
     // Attenuate the weight by the accumulated replacement attenuation.  Each applied
     // "replacement" animation attenuates the weights of the subsequent animations by
@@ -74,8 +86,7 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
         // to be blended onto a pose.  If we scale the first state, the skeleton will look like
         // a crumpled spider.
         m_accumulatedWeightAbsolute = attenuatedWeight;
-        absoluteTransform.translation = translation;
-        absoluteTransform.rotation = rotation;
+        absoluteTransform = transform;
 
         // I would like to scale this blend, but I cannot since it is the initial pose.  Thus I
         // will store away this scale and compensate appropriately on the second blend.  See below.
@@ -146,8 +157,7 @@ void CalBone::blendState(float unrampedWeight, const CalVector& translation,
         //
         assert(factor <= 1.0f);
         factor = 1.0f - m_firstBlendScale * (1.0f - factor);
-        absoluteTransform.translation = lerp(factor, absoluteTransform.translation, translation);
-        absoluteTransform.rotation = slerp(factor, absoluteTransform.rotation, rotation);
+        absoluteTransform = blend(factor, absoluteTransform, transform);
         m_accumulatedWeightAbsolute += attenuatedWeight;
         m_firstBlendScale = 1.0;
     }
@@ -254,8 +264,6 @@ BoneTransform CalBone::calculateState(const CalBone* bones) {
 
     }
 
-    translationBoneSpace = absoluteTransform * translationBoneSpace;
-
     CalMatrix transformMatrix(coreBoneSpaceTransform.rotation);
     if (meshScalingOn) {
 
@@ -273,24 +281,10 @@ BoneTransform CalBone::calculateState(const CalBone* bones) {
         transformMatrix.dydz *= m_meshScaleAbsolute.z;
         transformMatrix.dzdz *= m_meshScaleAbsolute.z;
     }
-    transformMatrix = CalMatrix(absoluteTransform.rotation) * transformMatrix;
 
-    return BoneTransform(transformMatrix, translationBoneSpace);
-}
-
-/*****************************************************************************/
-/** Clears the current state.
-  *
-  * This function clears the current state (absolute translation and rotation)
-  * of the bone instance and all its children.
-  *****************************************************************************/
-
-void CalBone::clearState() {
-    m_accumulatedWeight = 0.0f;
-    m_accumulatedWeightAbsolute = 0.0f;
-    m_accumulatedReplacementAttenuation = 1.0f;
-    m_firstBlendScale = 1.0f;
-    m_meshScaleAbsolute.set(1, 1, 1);
+    return BoneTransform(
+        CalMatrix(absoluteTransform.rotation) * transformMatrix,
+        absoluteTransform * translationBoneSpace);
 }
 
 void CalBone::lockState() {
@@ -308,8 +302,7 @@ void CalBone::lockState() {
             // it is not the first state, so blend all attributes
             float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
 
-            relativeTransform.translation = lerp(factor, relativeTransform.translation, absoluteTransform.translation);
-            relativeTransform.rotation = slerp(factor, relativeTransform.rotation, absoluteTransform.rotation);
+            relativeTransform = blend(factor, relativeTransform, absoluteTransform);
 
             m_accumulatedWeight += m_accumulatedWeightAbsolute;
         }

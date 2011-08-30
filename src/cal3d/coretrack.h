@@ -13,8 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/corekeyframe.h"
 #include "cal3d/global.h"
-#include "cal3d/vector.h"
-#include "cal3d/quaternion.h"
+#include "cal3d/transform.h"
 
 typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 class CalCoreSkeleton;
@@ -37,7 +36,7 @@ public:
     void scale(float factor);
     void fixup(const CalCoreBonePtr& bone);
 
-    void getState(float time, CalVector& translation, CalQuaternion& rotation) const;
+    cal3d::Transform getState(float time) const;
 
     CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
     void translationCompressibility(

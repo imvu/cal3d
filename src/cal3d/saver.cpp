@@ -255,8 +255,7 @@ bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkele
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool
-CalSaver::saveCoreKeyframe(
+bool CalSaver::saveCoreKeyframe(
     std::ostream& file,
     const std::string& strFilename,
     const CalCoreKeyframe* pCoreKeyframe
@@ -267,8 +266,8 @@ CalSaver::saveCoreKeyframe(
     }
 
     CalPlatform::writeFloat(file, pCoreKeyframe->time);
-    CalPlatform::writeVector(file, pCoreKeyframe->translation);
-    CalPlatform::writeQuat(file, pCoreKeyframe->rotation);
+    CalPlatform::writeVector(file, pCoreKeyframe->transform.translation);
+    CalPlatform::writeQuat(file, pCoreKeyframe->transform.rotation);
 
     // check if an error happend
     if (!file) {
@@ -972,7 +971,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
                 // If translation required but not dynamic and i != 0, then I won't write the translation.
                 if (translationIsDynamic || i == 0) {
                     TiXmlElement translation("TRANSLATION");
-                    const CalVector& translationVector = pCoreKeyframe.translation;
+                    const CalVector& translationVector = pCoreKeyframe.transform.translation;
 
                     str.str("");
                     str << translationVector.x << " "
@@ -987,7 +986,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
             }
 
             TiXmlElement rotation("ROTATION");
-            const CalQuaternion& rotationQuad = pCoreKeyframe.rotation;
+            const CalQuaternion& rotationQuad = pCoreKeyframe.transform.rotation;
 
             str.str("");
             str << rotationQuad.x << " "

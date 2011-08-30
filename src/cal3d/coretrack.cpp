@@ -49,8 +49,8 @@ void CalCoreTrack::scale(float factor) {
 
 void CalCoreTrack::fixup(const CalCoreBonePtr& bone) {
     for (KeyframeList::iterator i = keyframes.begin(); i != keyframes.end(); ++i) {
-        if (exactlyEqual(i->translation, InvalidTranslation)) {
-            i->translation = bone->relativeTransform.translation;
+        if (exactlyEqual(i->transform.translation, InvalidTranslation)) {
+            i->transform.translation = bone->relativeTransform.translation;
         }
     }
 }
@@ -118,9 +118,8 @@ static bool keyframeEliminatable(
     float blendFactor = (p->time - prev->time) / (next->time - prev->time);
 
     // blend between the two keyframes
-    CalVector translation = lerp(blendFactor, prev->translation, next->translation);
-    CalQuaternion rotation = slerp(blendFactor, prev->rotation, next->rotation);
-    return Near(translation, rotation, p->translation, p->rotation, transTolerance, rotTolerance);
+    cal3d::Transform transform = blend(blendFactor, prev->transform, next->transform);
+    return Near(transform.translation, transform.rotation, p->transform.translation, p->transform.rotation, transTolerance, rotTolerance);
 }
 
 
@@ -134,13 +133,13 @@ struct KeyLink {
 
 unsigned int
 KeyFrameSequenceLength(KeyLink* p, double transTolerance, double rotTolerance) {
-    CalVector translation = p->keyframe_->translation;
-    CalQuaternion rotation = p->keyframe_->rotation;
+    CalVector translation = p->keyframe_->transform.translation;
+    CalQuaternion rotation = p->keyframe_->transform.rotation;
     p = p->next_;
     unsigned int len = 1;
     while (p) {
-        CalVector const ppos = p->keyframe_->translation;
-        CalQuaternion const pori = p->keyframe_->rotation;
+        CalVector const ppos = p->keyframe_->transform.translation;
+        CalQuaternion const pori = p->keyframe_->transform.rotation;
         if (Near(translation, rotation, ppos, pori, transTolerance, rotTolerance)) {
             len++;
             p = p->next_;
@@ -248,9 +247,9 @@ void CalCoreTrack::translationCompressibility(
     float t2 = threshold * threshold;
     for (size_t i = 0; i < numFrames; i++) {
         const CalCoreKeyframe* keyframe = &keyframes[i];
-        const CalVector& kftrans = keyframe->translation;
+        const CalVector& kftrans = keyframe->transform.translation;
         if (i == 0) {
-            trans0 = keyframe->translation;
+            trans0 = keyframe->transform.translation;
         } else {
             float d2 = DistanceSquared(trans0, kftrans);
             if (d2 > t2) {
@@ -264,26 +263,20 @@ void CalCoreTrack::translationCompressibility(
     }
 }
 
-void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& rotation) const {
+cal3d::Transform CalCoreTrack::getState(float time) const {
     if (keyframes.empty()) {
-        translation.clear();
-        rotation.clear();
-        return;
+        return cal3d::Transform();
     }
 
     KeyframeList::const_iterator iteratorCoreKeyframeAfter = getUpperBound(time);
 
     if (iteratorCoreKeyframeAfter == keyframes.end()) {
         --iteratorCoreKeyframeAfter;
-        rotation = iteratorCoreKeyframeAfter->rotation;
-        translation = iteratorCoreKeyframeAfter->translation;
-        return;
+        return iteratorCoreKeyframeAfter->transform;
     }
 
     if (iteratorCoreKeyframeAfter == keyframes.begin()) {
-        rotation = iteratorCoreKeyframeAfter->rotation;
-        translation = iteratorCoreKeyframeAfter->translation;
-        return;
+        return iteratorCoreKeyframeAfter->transform;
     }
 
     KeyframeList::const_iterator iteratorCoreKeyframeBefore = iteratorCoreKeyframeAfter;
@@ -297,8 +290,7 @@ void CalCoreTrack::getState(float time, CalVector& translation, CalQuaternion& r
         blendFactor = (time - pCoreKeyframeBefore.time) / (pCoreKeyframeAfter.time - pCoreKeyframeBefore.time);
     }
 
-    translation = lerp(blendFactor, pCoreKeyframeBefore.translation, pCoreKeyframeAfter.translation);
-    rotation = slerp(blendFactor, pCoreKeyframeBefore.rotation, pCoreKeyframeAfter.rotation);
+    return blend(blendFactor, pCoreKeyframeBefore.transform, pCoreKeyframeAfter.transform);
 }
 
 CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float time) const {

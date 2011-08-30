@@ -190,8 +190,8 @@ OutputDebugString(str);
 				CalQuaternion rotation;
 				skeletonCandidate.GetTranslationAndRotation(boneCandidateId, time, translation, rotation);
 
-				pCoreKeyframe.translation = translation;
-				pCoreKeyframe.rotation = rotation;
+				pCoreKeyframe.transform.translation = translation;
+				pCoreKeyframe.transform.rotation = rotation;
 
                                 // oh god
                                 CalCoreTrack::KeyframeList& ls = const_cast<CalCoreTrack::KeyframeList&>(coreAnimation.getCoreTrack(pBoneCandidate->GetId())->keyframes);

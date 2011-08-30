@@ -605,7 +605,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
             // values for all but the first frame, and for each frame's translation I will
             // copy the translation from the previous frame.
             if (hasLastKeyframe && !translationIsDynamic && translationRequired) {
-                t = prevCoreKeyframe.translation;
+                t = prevCoreKeyframe.transform.translation;
             }
 
             if (!translation) {

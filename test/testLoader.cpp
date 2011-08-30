@@ -228,13 +228,13 @@ TEST(load_animation_with_translation) {
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.rotation);
-    CHECK_EQUAL(CalVector(1, 2, 3), k1.translation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.transform.rotation);
+    CHECK_EQUAL(CalVector(1, 2, 3), k1.transform.translation);
 
     const CalCoreKeyframe& k2 = track->keyframes[1];
     CHECK_EQUAL(40.0f, k2.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.rotation);
-    CHECK_EQUAL(CalVector(4, 5, 6), k2.translation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.transform.rotation);
+    CHECK_EQUAL(CalVector(4, 5, 6), k2.transform.translation);
 }
 
 const char animation_with_static_translations[] =
@@ -265,13 +265,13 @@ TEST(load_animation_with_static_translations) {
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.rotation);
-    CHECK_EQUAL(CalVector(1, 2, 3), k1.translation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.transform.rotation);
+    CHECK_EQUAL(CalVector(1, 2, 3), k1.transform.translation);
 
     const CalCoreKeyframe& k2 = track->keyframes[1];
     CHECK_EQUAL(40.0f, k2.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.rotation);
-    CHECK_EQUAL(CalVector(1, 2, 3), k2.translation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.transform.rotation);
+    CHECK_EQUAL(CalVector(1, 2, 3), k2.transform.translation);
 }
 
 const char animation_with_mismatched_track_and_keyframe_count[] =
@@ -302,13 +302,13 @@ TEST(load_animation_with_mismatched_counts) {
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.rotation);
-    CHECK_EQUAL(CalVector(1, 2, 3), k1.translation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.transform.rotation);
+    CHECK_EQUAL(CalVector(1, 2, 3), k1.transform.translation);
 
     const CalCoreKeyframe& k2 = track->keyframes[1];
     CHECK_EQUAL(40.0f, k2.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.rotation);
-    CHECK_EQUAL(CalVector(1, 2, 3), k2.translation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.transform.rotation);
+    CHECK_EQUAL(CalVector(1, 2, 3), k2.transform.translation);
 }
 
 
