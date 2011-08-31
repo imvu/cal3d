@@ -258,9 +258,7 @@ BoneTransform CalBone::calculateState(const CalBone* bones) {
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        translationBoneSpace = (-coreBoneSpaceTransform.rotation) * translationBoneSpace;
-        translationBoneSpace *= m_meshScaleAbsolute;
-        translationBoneSpace = (coreBoneSpaceTransform.rotation) * translationBoneSpace;
+        translationBoneSpace = (coreBoneSpaceTransform.rotation) * (((-coreBoneSpaceTransform.rotation) * translationBoneSpace) * m_meshScaleAbsolute);
 
     }
 

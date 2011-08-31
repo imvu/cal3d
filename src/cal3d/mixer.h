@@ -64,5 +64,5 @@ private:
         const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
         const std::vector<BoneScaleAdjustment>& boneScaleAdjustments);
 
-    std::list<CalAnimationPtr> m_listAnimationAction;
+    std::list<CalAnimationPtr> activeAnimations;
 };

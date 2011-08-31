@@ -108,6 +108,10 @@ inline CalVector operator-(const CalVector& v, const CalVector& u) {
     return CalVector(v.x - u.x, v.y - u.y, v.z - u.z);
 }
 
+inline CalVector operator*(const CalVector& v, const CalVector& u) {
+    return CalVector(v.x * u.x, v.y * u.y, v.z * u.z);
+}
+
 inline CalVector operator*(const CalVector& v, float d) {
     return CalVector(v.x * d, v.y * d, v.z * d);
 }
