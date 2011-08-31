@@ -18,7 +18,6 @@ public:
     const CalCoreAnimationPtr coreAnimation;
 
     float time;
-    float weight;
     float rampValue;
 
     CompositionFunction compositionFunction;

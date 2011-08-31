@@ -21,7 +21,6 @@ class CalSkeleton;
 struct AnimationAttributes {
     bool on_;
     float time_;
-    float weight_;
     float rampValue_;
     CalAnimation::CompositionFunction compositionFunction_;
 };

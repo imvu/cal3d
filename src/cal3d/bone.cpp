@@ -43,42 +43,38 @@ void CalBone::clearState() {
   * This function interpolates the current state (relative translation and
   * rotation) of the bone instance to another state of a given weight.
   *
-  * @param unrampedWeight The blending weight, not incorporating ramp value
-  * @param translation The relative translation to be interpolated to.
-  * @param rotation The relative rotation to be interpolated to.
-  * @param scale Optional scale from 0-1 applies to transformation directly without affecting weights.
   * @param replace If true, subsequent animations will have their weight attenuated by 1 - rampValue.
   * @param rampValue Amount to attenuate weight when ramping in/out the animation.
   *****************************************************************************/
 
 void CalBone::blendState(
-    float unrampedWeight,
     const cal3d::Transform& transform,
     bool replace,
-    float rampValue
+    const float rampValue
 ) {
     // Attenuate the weight by the accumulated replacement attenuation.  Each applied
     // "replacement" animation attenuates the weights of the subsequent animations by
     // the inverse of its rampValue, so that when a replacement animation ramps up to
     // full, all lesser priority animations automatically ramp down to zero.
-    const float rampedWeight = unrampedWeight * rampValue;
-    const float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
+    const float attenuatedWeight = rampValue * m_accumulatedReplacementAttenuation;
     if (replace) {
         m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
     }
 
+    bool first = m_accumulatedWeightAbsolute == 0.0f;
+    m_accumulatedWeightAbsolute += attenuatedWeight;
+        
     // Now apply weighted, scaled transformation.  For weights, Cal starts with the
     // first and then blends the later ones in proportion to their weights.  Though this
     // would seem to depend on the order, you can reason by induction that it does not.
     // Each application of an animation gives it the correct proportion to the others in
     // aggregate and leaves in tact the proportions among the others.
-    if (m_accumulatedWeightAbsolute == 0.0f) {
+    if (first) {
 
         // It is the first state, so we can just copy it into the bone state.  The first animation
         // must be applied with scale = 1.0 since it is the initial pose rather than something
         // to be blended onto a pose.  If we scale the first state, the skeleton will look like
         // a crumpled spider.
-        m_accumulatedWeightAbsolute = attenuatedWeight;
         absoluteTransform = transform;
     } else {
 
@@ -129,7 +125,7 @@ void CalBone::blendState(
         // Point        1.0           1.0                 0.0               1.0 (not replace)   n/a (100%)
         // Wave         1.0           1.0                 1.0               1.0 (not replace)   1.0/(1.0+1.0) = 0.5
         // Walk         1.0           1.0                 2.0               1.0 (not replace)   1.0/(1.0+2.0) = 0.33
-        float factor = attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
+        float factor = attenuatedWeight / m_accumulatedWeightAbsolute;
 
         // If the scale of the first blend was not 1.0, then I will adjust the factor of the second blend
         // to compensate,
@@ -138,7 +134,6 @@ void CalBone::blendState(
         //
         assert(factor <= 1.0f);
         absoluteTransform = blend(factor, absoluteTransform, transform);
-        m_accumulatedWeightAbsolute += attenuatedWeight;
     }
 }
 

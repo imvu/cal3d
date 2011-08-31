@@ -35,7 +35,6 @@ public:
 
     void clearState();
     void blendState(
-        float unrampedWeight,
         const cal3d::Transform& transform,
         bool replace = false,
         float rampValue = 1.0f);
