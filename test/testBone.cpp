@@ -53,3 +53,9 @@ TEST_F(BoneFixture, bone_with_two_replacements_uses_first_replacement_partially_
     BoneTransform bt = bone.calculateState(&bone);
     CHECK_EQUAL(3.6f, bt.rowx.w);
 }
+
+TEST_F(BoneFixture, can_ramp_in_at_zero) {
+    bone.blendState(makeTranslation(2, 2, 2), true, 0.0f);
+    BoneTransform bt = bone.calculateState(&bone);
+    CHECK_EQUAL(1.0f, bt.rowx.w);    
+}
