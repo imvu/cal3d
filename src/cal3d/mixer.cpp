@@ -23,29 +23,27 @@
 #include "cal3d/animation.h"
 
 
-boost::shared_ptr<CalAnimation> CalMixer::addManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation) {
-    boost::shared_ptr<CalAnimation> pAnimationAction(new CalAnimation(coreAnimation));
-    m_listAnimationAction.push_front(pAnimationAction);
-    return pAnimationAction;
+void CalMixer::addManualAnimation(const CalAnimationPtr& animation) {
+    m_listAnimationAction.push_front(animation);
 }
 
-void CalMixer::removeManualAnimation(const boost::shared_ptr<CalAnimation>& animation) {
+void CalMixer::removeManualAnimation(const CalAnimationPtr& animation) {
     m_listAnimationAction.remove(animation);
 }
 
 
 void CalMixer::setManualAnimationAttributes(
-    const boost::shared_ptr<CalAnimation>& aa,
+    const CalAnimationPtr& animation,
     const AnimationAttributes& p
 ) {
-    aa->time = p.time_;
-    aa->weight = p.weight_;
-    aa->scale = p.scale_;
-    aa->rampValue = p.rampValue_;
+    animation->time = p.time_;
+    animation->weight = p.weight_;
+    animation->scale = p.scale_;
+    animation->rampValue = p.rampValue_;
 
     // now update composition function
 
-    CalAnimation::CompositionFunction oldValue = aa->compositionFunction;
+    CalAnimation::CompositionFunction oldValue = animation->compositionFunction;
 
     // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
     // it at the front, which wouldn't preserve the property that the most recently inserted
@@ -53,41 +51,41 @@ void CalMixer::setManualAnimationAttributes(
     if (oldValue == p.compositionFunction_) {
         return;
     }
-    aa->compositionFunction = p.compositionFunction_;
+    animation->compositionFunction = p.compositionFunction_;
 
     // Iterate through the list and remove this element.
-    m_listAnimationAction.remove(aa);
+    m_listAnimationAction.remove(animation);
 
     // Now insert it back in in the appropriate position.  Replace animations go in at the front.
     // Average animations go in after the replace animations.
     switch (p.compositionFunction_) {
         case CalAnimation::CompositionFunctionReplace: {
             // Replace animations go on the front of the list.
-            m_listAnimationAction.push_front(aa);
+            m_listAnimationAction.push_front(animation);
             break;
         }
         case CalAnimation::CompositionFunctionCrossFade: {
             // Average animations go after replace, but before Average.
-            std::list<boost::shared_ptr<CalAnimation> >::iterator aait2;
+            std::list<CalAnimationPtr>::iterator aait2;
             for (aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++) {
                 CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
                 if (cf != CalAnimation::CompositionFunctionReplace) {
                     break;
                 }
             }
-            m_listAnimationAction.insert(aait2, aa);
+            m_listAnimationAction.insert(aait2, animation);
             break;
         }
         case CalAnimation::CompositionFunctionAverage: {
             // Average animations go before the first Average animation.
-            std::list<boost::shared_ptr<CalAnimation> >::iterator aait2;
+            std::list<CalAnimationPtr>::iterator aait2;
             for (aait2 = m_listAnimationAction.begin(); aait2 != m_listAnimationAction.end(); aait2++) {
                 CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
                 if (cf == CalAnimation::CompositionFunctionAverage) {  // Skip over replace and crossFade animations
                     break;
                 }
             }
-            m_listAnimationAction.insert(aait2, aa);
+            m_listAnimationAction.insert(aait2, animation);
             break;
         }
         default: {
@@ -113,11 +111,11 @@ void CalMixer::updateSkeleton(
     applyBoneAdjustments(skeleton, boneTransformAdjustments, boneScaleAdjustments);
 
     // loop through all animation actions
-    std::list<boost::shared_ptr<CalAnimation> >::iterator itaa;
+    std::list<CalAnimationPtr>::iterator itaa;
     for (itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++) {
-        CalAnimation* aa = itaa->get();
+        CalAnimation* animation = itaa->get();
 
-        const CalCoreAnimation::TrackList& tracks = aa->coreAnimation->tracks;
+        const CalCoreAnimation::TrackList& tracks = animation->coreAnimation->tracks;
 
         for (
             CalCoreAnimation::TrackList::const_iterator itct = tracks.begin();
@@ -129,13 +127,13 @@ void CalMixer::updateSkeleton(
             }
 
             // Replace and CrossFade both blend with the replace function.
-            bool replace = aa->compositionFunction != CalAnimation::CompositionFunctionAverage;
+            bool replace = animation->compositionFunction != CalAnimation::CompositionFunctionAverage;
             vectorBone[itct->coreBoneId].blendState(
-                aa->weight,
-                itct->getState(aa->time),
-                aa->scale,
+                animation->weight,
+                itct->getState(animation->time),
+                animation->scale,
                 replace,
-                aa->rampValue);
+                animation->rampValue);
         }
     }
 
