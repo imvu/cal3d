@@ -37,7 +37,6 @@ public:
     void blendState(
         float unrampedWeight,
         const cal3d::Transform& transform,
-        float scale = 1.0f,
         bool replace = false,
         float rampValue = 1.0f);
 
@@ -54,6 +53,5 @@ private:
     float m_accumulatedWeight;
     float m_accumulatedWeightAbsolute;
     float m_accumulatedReplacementAttenuation;
-    float m_firstBlendScale;
     CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
 };

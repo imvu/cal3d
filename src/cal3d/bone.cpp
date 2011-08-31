@@ -34,7 +34,6 @@ void CalBone::clearState() {
     m_accumulatedWeight = 0.0f;
     m_accumulatedWeightAbsolute = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
-    m_firstBlendScale = 1.0f;
     m_meshScaleAbsolute.set(1, 1, 1);
 }
 
@@ -55,7 +54,6 @@ void CalBone::clearState() {
 void CalBone::blendState(
     float unrampedWeight,
     const cal3d::Transform& transform,
-    float scale,
     bool replace,
     float rampValue
 ) {
@@ -68,9 +66,6 @@ void CalBone::blendState(
     if (replace) {
         m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
     }
-
-    // It appears that quaternion::blend() only works with blend factors of 0-1.
-    scale = cal3d::clamp(scale, 0.0f, 1.0f);
 
     // Now apply weighted, scaled transformation.  For weights, Cal starts with the
     // first and then blends the later ones in proportion to their weights.  Though this
@@ -85,18 +80,6 @@ void CalBone::blendState(
         // a crumpled spider.
         m_accumulatedWeightAbsolute = attenuatedWeight;
         absoluteTransform = transform;
-
-        // I would like to scale this blend, but I cannot since it is the initial pose.  Thus I
-        // will store away this scale and compensate appropriately on the second blend.  See below.
-        // After applying blend2, the blend1 = 1 - blend2.  If I would like to scale blend1 to 30%
-        // of its original scale, for example, then I would like,
-        //
-        //      ( 1 - blend2' ) = 0.3 * ( 1 - blend2 )
-        // so,
-        //      blend2' = 1 - 0.3 * ( 1 - blend2 )
-        //
-        // or similarly for any value of m_firstBlendScale instead of 30%.
-        m_firstBlendScale = scale;
     } else {
 
         // Consider an example with two animations, one or both of them "replace" animations.
@@ -146,7 +129,7 @@ void CalBone::blendState(
         // Point        1.0           1.0                 0.0               1.0 (not replace)   n/a (100%)
         // Wave         1.0           1.0                 1.0               1.0 (not replace)   1.0/(1.0+1.0) = 0.5
         // Walk         1.0           1.0                 2.0               1.0 (not replace)   1.0/(1.0+2.0) = 0.33
-        float factor = scale * attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
+        float factor = attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
 
         // If the scale of the first blend was not 1.0, then I will adjust the factor of the second blend
         // to compensate,
@@ -154,10 +137,8 @@ void CalBone::blendState(
         //      factor' = 1 - m_firstBlendScale * ( 1 - factor )
         //
         assert(factor <= 1.0f);
-        factor = 1.0f - m_firstBlendScale * (1.0f - factor);
         absoluteTransform = blend(factor, absoluteTransform, transform);
         m_accumulatedWeightAbsolute += attenuatedWeight;
-        m_firstBlendScale = 1.0;
     }
 }
 

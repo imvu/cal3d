@@ -37,7 +37,6 @@ void CalMixer::setManualAnimationAttributes(
 ) {
     animation->time = p.time_;
     animation->weight = p.weight_;
-    animation->scale = p.scale_;
     animation->rampValue = p.rampValue_;
 
     // now update composition function
@@ -132,7 +131,6 @@ void CalMixer::updateSkeleton(
             bones[itct->coreBoneId].blendState(
                 animation->weight,
                 itct->getState(animation->time),
-                animation->scale,
                 replace,
                 animation->rampValue);
         }
@@ -157,7 +155,6 @@ void CalMixer::applyBoneAdjustments(
             cal3d::Transform(
                 ba.localOri,
                 bo.getOriginalTranslation() /* adjustedLocalPos */),
-            1.0f, /* scale */
             true, /* replace */
             ba.rampValue /* rampValue */);
     }

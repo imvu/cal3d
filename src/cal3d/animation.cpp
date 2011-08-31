@@ -17,6 +17,5 @@ CalAnimation::CalAnimation(const CalCoreAnimationPtr& pCoreAnimation)
     , time(0.0f)
     , weight(0.0f)
     , rampValue(1.0f)
-    , scale(1.0f)
     , compositionFunction(CompositionFunctionCrossFade) // Initially NULL (CrossFade) so we can recognize when it changes.
 {}
