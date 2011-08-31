@@ -65,6 +65,9 @@ void CalBone::blendState(
     // full, all lesser priority animations automatically ramp down to zero.
     const float rampedWeight = unrampedWeight * rampValue;
     const float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
+    if (replace) {
+        m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
+    }
 
     // It appears that quaternion::blend() only works with blend factors of 0-1.
     scale = cal3d::clamp(scale, 0.0f, 1.0f);
@@ -155,9 +158,6 @@ void CalBone::blendState(
         absoluteTransform = blend(factor, absoluteTransform, transform);
         m_accumulatedWeightAbsolute += attenuatedWeight;
         m_firstBlendScale = 1.0;
-    }
-    if (replace) {
-        m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
     }
 }
 

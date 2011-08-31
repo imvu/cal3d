@@ -15,7 +15,6 @@
 CalAnimation::CalAnimation(const CalCoreAnimationPtr& pCoreAnimation)
     : coreAnimation(pCoreAnimation)
     , time(0.0f)
-    , timeFactor(1.0f)
     , weight(0.0f)
     , rampValue(1.0f)
     , scale(1.0f)
