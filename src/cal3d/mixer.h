@@ -12,19 +12,13 @@
 #pragma once
 
 #include <list>
-#include "cal3d/global.h"
 #include "cal3d/animation.h"
 #include "cal3d/quaternion.h"
 
-//****************************************************************************//
-// Forward declarations                                                       //
-//****************************************************************************//
-
-class CalAnimation;
-class CalModel;
+typedef boost::shared_ptr<class CalAnimation> CalAnimationPtr;
 class CalSkeleton;
 
-struct CalMixerManualAnimationAttributes {
+struct AnimationAttributes {
     bool on_;
     float time_;
     float weight_;
@@ -55,9 +49,9 @@ struct BoneScaleAdjustment {
 
 class CAL3D_API CalMixer {
 public:
-    boost::shared_ptr<CalAnimation> addManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
-    void removeManualAnimation(const boost::shared_ptr<CalAnimation>& coreAnimation);
-    void setManualAnimationAttributes(const boost::shared_ptr<CalAnimation>& coreAnimation, CalMixerManualAnimationAttributes const& p);
+    CalAnimationPtr addManualAnimation(const boost::shared_ptr<CalCoreAnimation>& coreAnimation);
+    void removeManualAnimation(const CalAnimationPtr& coreAnimation);
+    void setManualAnimationAttributes(const CalAnimationPtr& coreAnimation, const AnimationAttributes& p);
 
     void updateSkeleton(
         CalSkeleton* skeleton,

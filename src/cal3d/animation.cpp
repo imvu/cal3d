@@ -12,13 +12,12 @@
 #include "cal3d/error.h"
 #include "cal3d/coreanimation.h"
 
-CalAnimation::CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation)
-    : time(0.0f)
+CalAnimation::CalAnimation(const CalCoreAnimationPtr& pCoreAnimation)
+    : coreAnimation(pCoreAnimation)
+    , time(0.0f)
     , timeFactor(1.0f)
-    , weight(0.0f) {
-    scale = 1.0;
-    rampValue = 1.0;
-
-    m_pCoreAnimation = pCoreAnimation;
-    compositionFunction = CompositionFunctionCrossFade; // Initially NULL (CrossFade) so we can recognize when it changes.
-}
+    , weight(0.0f)
+    , rampValue(1.0f)
+    , scale(1.0f)
+    , compositionFunction(CompositionFunctionCrossFade) // Initially NULL (CrossFade) so we can recognize when it changes.
+{}

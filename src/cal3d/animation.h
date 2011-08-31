@@ -3,7 +3,7 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-class CalCoreAnimation;
+typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
 
 class CAL3D_API CalAnimation {
 public:
@@ -13,11 +13,9 @@ public:
         CompositionFunctionCrossFade
     };
 
-    CalAnimation(const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation);
+    CalAnimation(const CalCoreAnimationPtr& pCoreAnimation);
 
-    const boost::shared_ptr<CalCoreAnimation>& getCoreAnimation() const {
-        return m_pCoreAnimation;
-    }
+    const CalCoreAnimationPtr coreAnimation;
 
     float time;
     float timeFactor;
@@ -38,7 +36,5 @@ public:
     float scale;
 
     CompositionFunction compositionFunction;
-
-private:
-    boost::shared_ptr<CalCoreAnimation> m_pCoreAnimation;
 };
+typedef boost::shared_ptr<CalAnimation> CalAnimationPtr;

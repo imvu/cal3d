@@ -36,7 +36,8 @@ void CalMixer::removeManualAnimation(const boost::shared_ptr<CalAnimation>& anim
 
 void CalMixer::setManualAnimationAttributes(
     const boost::shared_ptr<CalAnimation>& aa,
-    const CalMixerManualAnimationAttributes& p) {
+    const AnimationAttributes& p
+) {
     aa->time = p.time_;
     aa->weight = p.weight_;
     aa->scale = p.scale_;
@@ -116,11 +117,13 @@ void CalMixer::updateSkeleton(
     for (itaa = m_listAnimationAction.begin(); itaa != m_listAnimationAction.end(); itaa++) {
         CalAnimation* aa = itaa->get();
 
-        const boost::shared_ptr<CalCoreAnimation>& pCoreAnimation = aa->getCoreAnimation();
-        CalCoreAnimation::TrackList& listCoreTrack = pCoreAnimation->tracks;
+        const CalCoreAnimation::TrackList& tracks = aa->coreAnimation->tracks;
 
-        CalCoreAnimation::TrackList::iterator itct;
-        for (itct = listCoreTrack.begin(); itct != listCoreTrack.end(); itct++) {
+        for (
+            CalCoreAnimation::TrackList::const_iterator itct = tracks.begin();
+            itct != tracks.end();
+            ++itct
+        ) {
             if (itct->coreBoneId >= int(vectorBone.size())) {
                 continue;
             }
