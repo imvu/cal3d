@@ -26,7 +26,9 @@ CalBone::CalBone(const CalCoreBone& coreBone)
     : parentId(coreBone.parentId)
     , coreRelativeTransform(coreBone.relativeTransform)
     , coreBoneSpaceTransform(coreBone.boneSpaceTransform)
-{ }
+{
+    clearState();
+}
 
 void CalBone::clearState() {
     m_accumulatedWeight = 0.0f;
@@ -57,7 +59,6 @@ void CalBone::blendState(
     bool replace,
     float rampValue
 ) {
-
     // Attenuate the weight by the accumulated replacement attenuation.  Each applied
     // "replacement" animation attenuates the weights of the subsequent animations by
     // the inverse of its rampValue, so that when a replacement animation ramps up to
@@ -65,14 +66,8 @@ void CalBone::blendState(
     const float rampedWeight = unrampedWeight * rampValue;
     const float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
 
-    // It appears that quaternion::blend() only works with blend factors of 0-1, so
-    // I'll clamp the scale to that range.
-    if (scale < 0.0f) {
-        scale = 0.0f;
-    }
-    if (scale > 1.0f) {
-        scale = 1.0f;
-    }
+    // It appears that quaternion::blend() only works with blend factors of 0-1.
+    scale = cal3d::clamp(scale, 0.0f, 1.0f);
 
     // Now apply weighted, scaled transformation.  For weights, Cal starts with the
     // first and then blends the later ones in proportion to their weights.  Though this
@@ -175,6 +170,35 @@ void CalBone::blendState(
   *****************************************************************************/
 
 BoneTransform CalBone::calculateState(const CalBone* bones) {
+    // === What does lockState() mean?  Why do we need it at all?  It seems only to allow us
+    // to blend all the animation actions together into a temporary sum, and then
+    // blend all the animation cycles together into a different sum, and then blend
+    // the two sums together according to their relative weight sums.  I believe this is mathematically
+    // equivalent of blending all the animation actions and cycles together into a single sum,
+    // according to their relative weights.
+
+    // clamp accumulated weight
+    if (m_accumulatedWeightAbsolute > 1.0f - m_accumulatedWeight) {
+        m_accumulatedWeightAbsolute = 1.0f - m_accumulatedWeight;
+    }
+
+    if (m_accumulatedWeightAbsolute > 0.0f) {
+        if (m_accumulatedWeight == 0.0f) {
+            // it is the first state, so we can just copy it into the bone state
+            relativeTransform = absoluteTransform;
+            m_accumulatedWeight = m_accumulatedWeightAbsolute;
+        } else {
+            // it is not the first state, so blend all attributes
+            float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
+
+            relativeTransform = blend(factor, relativeTransform, absoluteTransform);
+
+            m_accumulatedWeight += m_accumulatedWeightAbsolute;
+        }
+
+        m_accumulatedWeightAbsolute = 0.0f;
+    }
+
     // check if the bone was not touched by any active animation
     if (m_accumulatedWeight == 0.0f) {
         // set the bone to the initial skeleton state
@@ -258,8 +282,7 @@ BoneTransform CalBone::calculateState(const CalBone* bones) {
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        translationBoneSpace = (coreBoneSpaceTransform.rotation) * (((-coreBoneSpaceTransform.rotation) * translationBoneSpace) * m_meshScaleAbsolute);
-
+        translationBoneSpace = coreBoneSpaceTransform.rotation * ((-coreBoneSpaceTransform.rotation * translationBoneSpace) * m_meshScaleAbsolute);
     }
 
     CalMatrix transformMatrix(coreBoneSpaceTransform.rotation);
@@ -283,28 +306,4 @@ BoneTransform CalBone::calculateState(const CalBone* bones) {
     return BoneTransform(
         CalMatrix(absoluteTransform.rotation) * transformMatrix,
         absoluteTransform * translationBoneSpace);
-}
-
-void CalBone::lockState() {
-    // clamp accumulated weight
-    if (m_accumulatedWeightAbsolute > 1.0f - m_accumulatedWeight) {
-        m_accumulatedWeightAbsolute = 1.0f - m_accumulatedWeight;
-    }
-
-    if (m_accumulatedWeightAbsolute > 0.0f) {
-        if (m_accumulatedWeight == 0.0f) {
-            // it is the first state, so we can just copy it into the bone state
-            relativeTransform = absoluteTransform;
-            m_accumulatedWeight = m_accumulatedWeightAbsolute;
-        } else {
-            // it is not the first state, so blend all attributes
-            float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
-
-            relativeTransform = blend(factor, relativeTransform, absoluteTransform);
-
-            m_accumulatedWeight += m_accumulatedWeightAbsolute;
-        }
-
-        m_accumulatedWeightAbsolute = 0.0f;
-    }
 }

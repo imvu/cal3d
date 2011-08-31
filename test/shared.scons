@@ -2,6 +2,7 @@ Import('*')
 
 sources = Split('''
     testAnimationCompression.cpp
+    testBone.cpp
     testLoader.cpp
     testCoreSkeleton.cpp
     testCoreTrack.cpp

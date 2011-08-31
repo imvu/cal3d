@@ -138,14 +138,6 @@ void CalMixer::updateSkeleton(
         }
     }
 
-    // === What does lockState() mean?  Why do we need it at all?  It seems only to allow us
-    // to blend all the animation actions together into a temporary sum, and then
-    // blend all the animation cycles together into a different sum, and then blend
-    // the two sums together according to their relative weight sums.  I believe this is mathematically
-    // equivalent of blending all the animation actions and cycles together into a single sum,
-    // according to their relative weights.
-    skeleton->lockState();
-
     // let the skeleton calculate its final state
     skeleton->calculateState();
 }

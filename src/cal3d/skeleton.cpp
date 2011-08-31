@@ -36,18 +36,13 @@ CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton) {
     boneTransforms.resize(boneCount);
 }
 
+void CalSkeleton::clearState() {
+    std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::clearState));
+}
+
 void CalSkeleton::calculateState() {
     CalBone* bones_ptr = cal3d::pointerFromVector(bones);
     for (unsigned i = 0; i < bones.size(); ++i) {
         boneTransforms[i] = bones_ptr[i].calculateState(bones_ptr);
     }
 }
-
-void CalSkeleton::clearState() {
-    std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::clearState));
-}
-
-void CalSkeleton::lockState() {
-    std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::lockState));
-}
-

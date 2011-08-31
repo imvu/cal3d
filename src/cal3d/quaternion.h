@@ -105,10 +105,10 @@ inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& 
 }
 
 inline bool operator==(const CalQuaternion& lhs, const CalQuaternion& rhs) {
-    return close(lhs.x, rhs.x)
-           && close(lhs.y, rhs.y)
-           && close(lhs.z, rhs.z)
-           && close(lhs.w, rhs.w);
+    return cal3d::close(lhs.x, rhs.x)
+           && cal3d::close(lhs.y, rhs.y)
+           && cal3d::close(lhs.z, rhs.z)
+           && cal3d::close(lhs.w, rhs.w);
 }
 
 inline float dot(const CalQuaternion& left, const CalQuaternion& right) {

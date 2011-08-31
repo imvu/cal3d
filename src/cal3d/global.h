@@ -24,8 +24,20 @@ typedef unsigned short CalIndex;
 
 const float EPSILON = 1e-5f;
 
-inline bool close(float a, float b) {
-    return fabs(a - b) < EPSILON;
+namespace cal3d {
+    inline bool close(float a, float b) {
+        return fabs(a - b) < EPSILON;
+    }
+
+    inline float clamp(float v, float min, float max) {
+        if (v > max) {
+            return max;
+        } else if (v < min) {
+            return min;
+        } else {
+            return v;
+        }
+    }
 }
 
 void* allocate_aligned_data(size_t size);

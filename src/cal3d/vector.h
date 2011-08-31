@@ -70,7 +70,7 @@ public:
     }
 
     bool operator==(const CalVector& v) const {
-        return (close(x, v.x) && close(y, v.y) && close(z, v.z));
+        return (cal3d::close(x, v.x) && cal3d::close(y, v.y) && cal3d::close(z, v.z));
     }
 
     void clear() {

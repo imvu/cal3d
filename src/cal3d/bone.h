@@ -28,6 +28,11 @@ public:
     const CalVector& getOriginalTranslation() const {
         return coreRelativeTransform.translation;
     }
+
+    void setMeshScaleAbsolute(const CalVector& sv) {
+        m_meshScaleAbsolute = sv;
+    }
+
     void clearState();
     void blendState(
         float unrampedWeight,
@@ -35,12 +40,9 @@ public:
         float scale = 1.0f,
         bool replace = false,
         float rampValue = 1.0f);
-    void setMeshScaleAbsolute(const CalVector& sv) {
-        m_meshScaleAbsolute = sv;
-    }
+
     BoneTransform calculateState(const CalBone* bones);
 
-    void lockState();
 
 private:
     // from core bone. stored locally for better cache locality

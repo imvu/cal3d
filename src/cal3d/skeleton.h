@@ -23,9 +23,8 @@ class CAL3D_API CalSkeleton {
 public:
     CalSkeleton(const CalCoreSkeletonPtr& coreSkeleton);
 
-    void calculateState();
     void clearState();
-    void lockState();
+    void calculateState();
 
     // same length
     std::vector<CalBone> bones;

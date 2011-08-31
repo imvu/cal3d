@@ -42,5 +42,5 @@ inline bool operator<(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
 }
 
 inline bool operator==(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
-    return close(lhs.time, rhs.time) && lhs.transform == rhs.transform;
+    return cal3d::close(lhs.time, rhs.time) && lhs.transform == rhs.transform;
 }
