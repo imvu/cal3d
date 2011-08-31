@@ -31,9 +31,8 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 }
 
 void CalBone::clearState() {
-    relativeTransform = cal3d::Transform();
+    relativeTransform = coreRelativeTransform; // if no animations are applied, use this
     m_accumulatedWeight = 0.0f;
-    m_accumulatedWeightAbsolute = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
     m_meshScaleAbsolute.set(1, 1, 1);
 }
@@ -58,45 +57,17 @@ void CalBone::blendState(
         m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
     }
 
-    m_accumulatedWeightAbsolute += attenuatedWeight;
+    m_accumulatedWeight += attenuatedWeight;
 
-    float factor = m_accumulatedWeightAbsolute
-        ? attenuatedWeight / m_accumulatedWeightAbsolute
-        : 1.0f;
+    float factor = m_accumulatedWeight
+        ? attenuatedWeight / m_accumulatedWeight
+        : 0.0f;
 
     assert(factor <= 1.0f);
     relativeTransform = blend(factor, relativeTransform, transform);
 }
 
-/*****************************************************************************/
-/** Calculates the current state.
-  *
-  * This function calculates the current state (absolute translation and
-  * rotation, as well as the bone space transformation) of the bone instance
-  * and all its children.
-  *****************************************************************************/
-
 BoneTransform CalBone::calculateState(const CalBone* bones) {
-    // === What does lockState() mean?  Why do we need it at all?  It seems only to allow us
-    // to blend all the animation actions together into a temporary sum, and then
-    // blend all the animation cycles together into a different sum, and then blend
-    // the two sums together according to their relative weight sums.  I believe this is mathematically
-    // equivalent of blending all the animation actions and cycles together into a single sum,
-    // according to their relative weights.
-
-    // clamp accumulated weight
-    if (m_accumulatedWeightAbsolute > 1.0f - m_accumulatedWeight) {
-        m_accumulatedWeightAbsolute = 1.0f - m_accumulatedWeight;
-    }
-
-    if (m_accumulatedWeightAbsolute > 0.0f) {
-        m_accumulatedWeight = m_accumulatedWeightAbsolute;
-        m_accumulatedWeightAbsolute = 0.0f;
-    } else {
-        // set the bone to the initial skeleton state
-        relativeTransform = coreRelativeTransform;
-    }
-
     if (parentId == -1) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;

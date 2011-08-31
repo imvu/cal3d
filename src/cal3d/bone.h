@@ -50,7 +50,6 @@ private:
 
     // animated bone state
     float m_accumulatedWeight;
-    float m_accumulatedWeightAbsolute;
     float m_accumulatedReplacementAttenuation;
     CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
 };
