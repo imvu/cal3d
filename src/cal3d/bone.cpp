@@ -31,7 +31,7 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 }
 
 void CalBone::clearState() {
-    absoluteTransform = cal3d::Transform();
+    relativeTransform = cal3d::Transform();
     m_accumulatedWeight = 0.0f;
     m_accumulatedWeightAbsolute = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
@@ -65,7 +65,7 @@ void CalBone::blendState(
         : 1.0f;
 
     assert(factor <= 1.0f);
-    absoluteTransform = blend(factor, absoluteTransform, transform);
+    relativeTransform = blend(factor, relativeTransform, transform);
 }
 
 /*****************************************************************************/
@@ -90,24 +90,9 @@ BoneTransform CalBone::calculateState(const CalBone* bones) {
     }
 
     if (m_accumulatedWeightAbsolute > 0.0f) {
-        if (m_accumulatedWeight == 0.0f) {
-            // it is the first state, so we can just copy it into the bone state
-            relativeTransform = absoluteTransform;
-            m_accumulatedWeight = m_accumulatedWeightAbsolute;
-        } else {
-            // it is not the first state, so blend all attributes
-            float factor = m_accumulatedWeightAbsolute / (m_accumulatedWeight + m_accumulatedWeightAbsolute);
-
-            relativeTransform = blend(factor, relativeTransform, absoluteTransform);
-
-            m_accumulatedWeight += m_accumulatedWeightAbsolute;
-        }
-
+        m_accumulatedWeight = m_accumulatedWeightAbsolute;
         m_accumulatedWeightAbsolute = 0.0f;
-    }
-
-    // check if the bone was not touched by any active animation
-    if (m_accumulatedWeight == 0.0f) {
+    } else {
         // set the bone to the initial skeleton state
         relativeTransform = coreRelativeTransform;
     }
