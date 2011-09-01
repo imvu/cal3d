@@ -34,7 +34,7 @@ public:
 
     size_t sizeInBytes() const;
     void scale(float factor);
-    void fixup(const CalCoreBonePtr& bone);
+    void fixup(const CalCoreBone& bone);
 
     cal3d::Transform getState(float time) const;
 

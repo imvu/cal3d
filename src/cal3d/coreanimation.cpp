@@ -57,8 +57,9 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton) {
         }
 
         i->coreBoneId = skeleton->boneIdTranslation[i->coreBoneId];
+        cal3d::verify(i->coreBoneId < skeleton->coreBones.size(), "translated track ID out of the range of bones...");
 
-        i->fixup(skeleton->coreBones[i->coreBoneId]);
+        i->fixup(*skeleton->coreBones[i->coreBoneId]);
         output.push_back(*i);
     }
 

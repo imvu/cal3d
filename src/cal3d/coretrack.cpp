@@ -47,10 +47,10 @@ void CalCoreTrack::scale(float factor) {
     std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
 }
 
-void CalCoreTrack::fixup(const CalCoreBonePtr& bone) {
+void CalCoreTrack::fixup(const CalCoreBone& bone) {
     for (KeyframeList::iterator i = keyframes.begin(); i != keyframes.end(); ++i) {
         if (exactlyEqual(i->transform.translation, InvalidTranslation)) {
-            i->transform.translation = bone->relativeTransform.translation;
+            i->transform.translation = bone.relativeTransform.translation;
         }
     }
 }
