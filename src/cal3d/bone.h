@@ -20,6 +20,7 @@ class CalModel;
 
 class CAL3D_API CalBone {
 public:
+    int parentId; // would be const, but we store CalBone in an array
     cal3d::Transform relativeTransform;
     cal3d::Transform absoluteTransform;
 
@@ -41,10 +42,8 @@ public:
 
     BoneTransform calculateState(const CalBone* bones);
 
-
 private:
     // from core bone. stored locally for better cache locality
-    int parentId;
     cal3d::Transform coreRelativeTransform;
     cal3d::Transform coreBoneSpaceTransform;
 
