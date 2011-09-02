@@ -19,6 +19,14 @@ TEST(loader_topologically_sorts) {
     CHECK_EQUAL(0, cs.boneIdTranslation[1]);
 }
 
+TEST(addCoreBone_adds_id_translation_to_table) {
+    CalCoreSkeleton skeleton;
+    CalCoreBonePtr bone(new CalCoreBone("a"));
+    skeleton.addCoreBone(bone);
+    CHECK_EQUAL(skeleton.coreBones.size(), skeleton.boneIdTranslation.size());
+    CHECK_EQUAL(0, skeleton.boneIdTranslation[0]);
+}
+
 TEST(loader_disregards_self_parents) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 0)));

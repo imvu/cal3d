@@ -107,6 +107,8 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
 
     size_t newIndex = m_coreBones.size();
     m_coreBones.push_back(coreBone);
+
+    boneIdTranslation.push_back(newIndex);
     return newIndex;
 }
 
