@@ -27,10 +27,10 @@ CalBone::CalBone(const CalCoreBone& coreBone)
     , coreRelativeTransform(coreBone.relativeTransform)
     , coreBoneSpaceTransform(coreBone.boneSpaceTransform)
 {
-    clearState();
+    resetPose();
 }
 
-void CalBone::clearState() {
+void CalBone::resetPose() {
     relativeTransform = coreRelativeTransform; // if no animations are applied, use this
     m_accumulatedWeight = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
@@ -47,7 +47,7 @@ void CalBone::clearState() {
   * @param rampValue Amount to attenuate weight when ramping in/out the animation.
   *****************************************************************************/
 
-void CalBone::blendState(
+void CalBone::blendPose(
     const cal3d::Transform& transform,
     bool replace,
     const float rampValue
@@ -67,7 +67,7 @@ void CalBone::blendState(
     relativeTransform = blend(factor, relativeTransform, transform);
 }
 
-BoneTransform CalBone::calculateState(const CalBone* bones) {
+BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones) {
     if (parentId == -1) {
         // no parent, this means absolute state == relative state
         absoluteTransform = relativeTransform;

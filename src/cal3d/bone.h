@@ -34,13 +34,13 @@ public:
         m_meshScaleAbsolute = sv;
     }
 
-    void clearState();
-    void blendState(
+    void resetPose();
+    void blendPose(
         const cal3d::Transform& transform,
         bool replace = false,
         float rampValue = 1.0f);
 
-    BoneTransform calculateState(const CalBone* bones);
+    BoneTransform calculateAbsolutePose(const CalBone* bones);
 
 private:
     // from core bone. stored locally for better cache locality

@@ -127,7 +127,7 @@ void CalMixer::updateSkeleton(
 
             // Replace and CrossFade both blend with the replace function.
             bool replace = animation->compositionFunction != CalAnimation::CompositionFunctionAverage;
-            bones[itct->coreBoneId].blendState(
+            bones[itct->coreBoneId].blendPose(
                 itct->getState(animation->time),
                 replace,
                 animation->rampValue);
@@ -148,7 +148,7 @@ void CalMixer::applyBoneAdjustments(
     for (size_t i = 0; i < boneTransformAdjustments.size(); ++i) {
         const BoneTransformAdjustment& ba = boneTransformAdjustments[i];
         CalBone& bo = bones[ba.boneId];
-        bo.blendState(
+        bo.blendPose(
             cal3d::Transform(
                 ba.localOri,
                 bo.getOriginalTranslation() /* adjustedLocalPos */),
