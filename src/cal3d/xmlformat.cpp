@@ -24,24 +24,15 @@
 
 
 static inline void ReadPair(char const* buffer, float* f1, float* f2) {
-#if CAL3D_USE_STL_INSTEAD_OF_SSCANF
     std::stringstream str;
     str << buffer;
     str >> *f1 >> *f2;
-#else
-    sscanf(buffer, "%f %f", f1, f2);
-#endif
 }
 
 static inline void ReadPair(char const* buffer, int* f1, int* f2) {
-
-#if CAL3D_USE_STL_INSTEAD_OF_SSCANF
     std::stringstream str;
     str << buffer;
     str >> *f1 >> *f2;
-#else
-    sscanf(buffer, "%d %d", f1, f2);
-#endif
 }
 
 
@@ -106,13 +97,9 @@ static inline bool TexCoordFromXml(
 
 
 static inline void ReadTripleFloat(char const* buffer, float* f1, float* f2, float* f3) {
-#if CAL3D_USE_STL_INSTEAD_OF_SSCANF
     std::stringstream str;
     str << buffer;
     str >> *f1 >> *f2 >> *f3;
-#else
-    sscanf(buffer, "%f %f %f", f1, f2, f3);
-#endif
 }
 
 
@@ -175,13 +162,9 @@ static inline bool CalVectorFromXml(
 
 
 static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float* f3, float* f4) {
-#if CAL3D_USE_STL_INSTEAD_OF_SSCANF
     std::stringstream str;
     str << buffer;
     str >> *f1 >> *f2 >> *f3 >> *f4;
-#else
-    sscanf(buffer, "%f %f %f %f", f1, f2, f3, f4);
-#endif
 }
 
 CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(const char* dataSrc) {
@@ -1071,13 +1054,9 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             int tmp[3];
 
             // load data of the face
-#if CAL3D_USE_STL_INSTEAD_OF_SSCANF
-            str.clear();
+            std::stringstream str;
             str << face->Attribute("VERTEXID");
             str >> tmp[0] >> tmp [1] >> tmp[2];
-#else
-            sscanf(face->Attribute("VERTEXID"), "%d %d %d", &tmp[0], &tmp[1], &tmp[2]);
-#endif
 
             if (sizeof(CalIndex) == 2) {
                 if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
