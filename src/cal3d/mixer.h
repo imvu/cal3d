@@ -37,6 +37,11 @@ struct BoneTransformAdjustment {
 };
 
 struct BoneScaleAdjustment {
+    BoneScaleAdjustment(unsigned i, const CalVector& scale)
+        : boneId(i)
+        , meshScaleAbsolute(scale)
+    {}
+
     unsigned boneId;
 
     // Scales X, Y, and Z of mesh by these parameters.  The scale parameters are with
