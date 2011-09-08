@@ -88,7 +88,7 @@ FIXTURE(MixerFixture) {
 };
 
 TEST_F(MixerFixture, boneTransform_accumulates_transforms) {
-    mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), std::vector<BoneScaleAdjustment>());
+    mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), std::vector<BoneScaleAdjustment>(), IncludeRootTransform);
 
     CHECK_EQUAL(11, skeleton.boneTransforms[0].rowx.w);
     CHECK_EQUAL(23, skeleton.boneTransforms[1].rowx.w);

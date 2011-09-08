@@ -27,6 +27,7 @@ public:
     size_t addCoreBone(const CalCoreBonePtr& coreBone);
 
     void scale(float factor);
+    void zeroRootTransforms();
 
     const std::vector<CalCoreBonePtr>& coreBones; // points to the internal m_coreBones
     const std::vector<CalCoreBonePtr>& getCoreBones() const {

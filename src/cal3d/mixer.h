@@ -65,7 +65,7 @@ public:
         CalSkeleton* skeleton,
         const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
         const std::vector<BoneScaleAdjustment>& boneScaleAdjustments,
-        RootTransformFlag includeRoot = IncludeRootTransform);
+        RootTransformFlag includeRoot);
 
 private:
     void applyBoneAdjustments(

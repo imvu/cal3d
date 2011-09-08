@@ -122,6 +122,19 @@ void CalCoreSkeleton::scale(float factor) {
     }
 }
 
+void CalCoreSkeleton::zeroRootTransforms() {
+    for (
+        std::vector<CalCoreBonePtr>::iterator i = m_coreBones.begin();
+        i != m_coreBones.end();
+        ++i
+    ) {
+        CalCoreBone& coreBone = *(*i);
+        if (coreBone.parentId == -1) {
+            coreBone.relativeTransform = cal3d::Transform();
+        }
+    }
+}
+
 std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const {
     int index = -1;
     if (coreBone) {
