@@ -40,7 +40,7 @@ public:
         bool replace = false,
         float rampValue = 1.0f);
 
-    BoneTransform calculateAbsolutePose(const CalBone* bones);
+    BoneTransform calculateAbsolutePose(const CalBone* bones, bool includeRootTransform);
 
 private:
     // from core bone. stored locally for better cache locality

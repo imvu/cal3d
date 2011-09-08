@@ -24,7 +24,7 @@ public:
     CalSkeleton(const CalCoreSkeletonPtr& coreSkeleton);
 
     void clearState();
-    void calculateState();
+    void calculateState(bool includeRootTransform);
 
     // same length
     std::vector<CalBone> bones;

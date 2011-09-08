@@ -95,7 +95,8 @@ void CalMixer::setManualAnimationAttributes(
 void CalMixer::updateSkeleton(
     CalSkeleton* skeleton,
     const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
-    const std::vector<BoneScaleAdjustment>& boneScaleAdjustments
+    const std::vector<BoneScaleAdjustment>& boneScaleAdjustments,
+    RootTransformFlag includeRoot
 ) {
     skeleton->clearState();
 
@@ -135,7 +136,7 @@ void CalMixer::updateSkeleton(
     }
 
     // let the skeleton calculate its final state
-    skeleton->calculateState();
+    skeleton->calculateState(includeRoot == IncludeRootTransform);
 }
 
 void CalMixer::applyBoneAdjustments(
