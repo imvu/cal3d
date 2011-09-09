@@ -79,10 +79,8 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         absoluteTransform = bones[parentId].absoluteTransform * relativeTransform;
     }
 
-    // calculate the bone space transformation
-    CalVector translationBoneSpace(coreBoneSpaceTransform.translation);
+    CalVector boneSpaceTranslation(coreBoneSpaceTransform.translation);
 
-    // Must go before the *= m_rotationAbsolute.
     bool meshScalingOn = m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1;
     if (meshScalingOn) {
         // The mesh transformation is intended to apply to the vector from the
@@ -91,28 +89,19 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         // global coordinate system has X to stage right, Z up, and Y stage back.
         //
         // The standard vert transformation is:
-        // v1 = vmesh - boneAbsPosInJpose
-        // v2 = v1 * boneAbsRotInAnimPose
-        // v3 = v2 + boneAbsPosInAnimPose
+        // v = (vmesh - boneAbsPosInJpose) * boneAbsRotInAnimPose + boneAbsPosInAnimPose
         //
         // Cal3d does the calculation by:
-        // u1 = umesh * transformMatrix
-        // u2 = u1 + translationBoneSpace
+        // u = (umesh * transformMatrix) + translationBoneSpace
         //
-        // where translationBoneSpace =
-        //   "coreBoneTranslationBoneSpace"
-        //   * boneAbsRotInAnimPose
-        //   + boneAbsPosInAnimPose
-        //
-        // and where transformMatrix =
-        //   "coreBoneRotBoneSpace"
-        //   * boneAbsRotInAnimPose
+        // where translationBoneSpace = "coreBoneTranslationBoneSpace" * boneAbsRotInAnimPose + boneAbsPosInAnimPose
+        //   and transformMatrix = "coreBoneRotBoneSpace" * boneAbsRotInAnimPose
         //
         // I don't know what "coreBoneRotBoneSpace" and "coreBoneTranslationBoneSpace" actually are,
         // but to add scale to the scandard vert transformation, I simply do:
         //
-        // v3' = vmesh           * scalevec    * boneAbsRotInAnimPose
-        //   - boneAbsPosInJpose * scalevec    * boneAbsRotInAnimPose
+        // v' = vmesh            * scalevec * boneAbsRotInAnimPose
+        //   - boneAbsPosInJpose * scalevec * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
         //
         // Essentially, the boneAbsPosInJpose is just an extra vector added to
@@ -122,19 +111,19 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         //
         // Expanding out the u2 equation, we have:
         //
-        // u2 = umesh * "coreBoneRotBoneSpace"   * boneAbsRotInAnimPose
-        //   + "coreBoneTranslationBoneSpace"    * boneAbsRotInAnimPose
+        // u = umesh * "coreBoneRotBoneSpace" * boneAbsRotInAnimPose
+        //   + "coreBoneTranslationBoneSpace" * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
         //
         // We assume that "coreBoneTranslationBoneSpace" = vectorThatMustBeSubtractedFromUmesh * "coreBoneRotBoneSpace":
         //
-        // u2 = umesh * "coreBoneRotBoneSpace"                                 * boneAbsRotInAnimPose
-        //   + vectorThatMustBeSubtractedFromUmesh * "coreBoneRotBoneSpace"    * boneAbsRotInAnimPose
+        // u = umesh * "coreBoneRotBoneSpace"                               * boneAbsRotInAnimPose
+        //   + vectorThatMustBeSubtractedFromUmesh * "coreBoneRotBoneSpace" * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
         //
         // We assume that scale should be applied to umesh, not umesh * "coreBoneRotBoneSpace":
         //
-        // u2 = umesh * scaleVec * "coreBoneRotBoneSpace" * boneAbsRotInAnimPose
+        // u = umesh * scaleVec * "coreBoneRotBoneSpace" * boneAbsRotInAnimPose
         //   + "coreBoneTranslationBoneSpace" * "coreBoneRotBoneSpaceInverse" * scaleVec * "coreBoneRotBoneSpace" * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
         //
@@ -149,28 +138,29 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        translationBoneSpace = coreBoneSpaceTransform.rotation * ((-coreBoneSpaceTransform.rotation * translationBoneSpace) * m_meshScaleAbsolute);
+        //boneSpaceTranslation *= m_meshScaleAbsolute;
+        boneSpaceTranslation = coreBoneSpaceTransform.rotation * ((-coreBoneSpaceTransform.rotation * boneSpaceTranslation) * m_meshScaleAbsolute);
     }
 
-    CalMatrix transformMatrix(coreBoneSpaceTransform.rotation);
+    CalMatrix boneSpaceRotationAndScale(coreBoneSpaceTransform.rotation);
     if (meshScalingOn) {
 
         // By applying each scale component to the row, instead of the column, we
         // are effectively making the scale apply prior to the rotationBoneSpace.
-        transformMatrix.dxdx *= m_meshScaleAbsolute.x;
-        transformMatrix.dydx *= m_meshScaleAbsolute.x;
-        transformMatrix.dzdx *= m_meshScaleAbsolute.x;
+        boneSpaceRotationAndScale.dxdx *= m_meshScaleAbsolute.x;
+        boneSpaceRotationAndScale.dydx *= m_meshScaleAbsolute.x;
+        boneSpaceRotationAndScale.dzdx *= m_meshScaleAbsolute.x;
 
-        transformMatrix.dxdy *= m_meshScaleAbsolute.y;
-        transformMatrix.dydy *= m_meshScaleAbsolute.y;
-        transformMatrix.dzdy *= m_meshScaleAbsolute.y;
+        boneSpaceRotationAndScale.dxdy *= m_meshScaleAbsolute.y;
+        boneSpaceRotationAndScale.dydy *= m_meshScaleAbsolute.y;
+        boneSpaceRotationAndScale.dzdy *= m_meshScaleAbsolute.y;
 
-        transformMatrix.dxdz *= m_meshScaleAbsolute.z;
-        transformMatrix.dydz *= m_meshScaleAbsolute.z;
-        transformMatrix.dzdz *= m_meshScaleAbsolute.z;
+        boneSpaceRotationAndScale.dxdz *= m_meshScaleAbsolute.z;
+        boneSpaceRotationAndScale.dydz *= m_meshScaleAbsolute.z;
+        boneSpaceRotationAndScale.dzdz *= m_meshScaleAbsolute.z;
     }
 
     return BoneTransform(
-        CalMatrix(absoluteTransform.rotation) * transformMatrix,
-        absoluteTransform * translationBoneSpace);
+        CalMatrix(absoluteTransform.rotation) * boneSpaceRotationAndScale,
+        absoluteTransform * boneSpaceTranslation);
 }

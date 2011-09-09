@@ -35,8 +35,6 @@ public:
     {}
 
     explicit CalMatrix(const CalQuaternion& q);
-
-    void operator=(const CalQuaternion& q);
 };
 
 inline CalMatrix operator*(const CalMatrix& outer, const CalMatrix& inner) {
