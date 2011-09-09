@@ -64,7 +64,6 @@ TEST_F(BoneFixture, can_ramp_in_at_zero) {
     CHECK_EQUAL(1.0f, bt.rowx.w);    
 }
 
-#if 0
 FIXTURE(MixerFixture) {
     static CalCoreSkeletonPtr fakeSkeleton() {
         CalCoreBonePtr coreRoot(new CalCoreBone("root"));
@@ -142,4 +141,3 @@ TEST_F(MixerFixture, can_optionally_disregard_root_transform) {
     CHECK_EQUAL(10, skeleton.boneTransforms[0].rowx.w);
     CHECK_EQUAL(22, skeleton.boneTransforms[1].rowx.w);
 }
-#endif

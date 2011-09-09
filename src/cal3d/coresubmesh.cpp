@@ -126,9 +126,15 @@ CalCoreSubmesh::CoreSubMorphTargetVector& CalCoreSubmesh::getVectorCoreSubMorphT
 }
 
 void CalCoreSubmesh::scale(float factor) {
+    // needed because we shouldn't modify the w term
+    CalVector4 scaleFactor(factor, factor, factor, 1.0f);
+
     for (int vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
-        m_vertices[vertexId].position *= factor;
+        m_vertices[vertexId].position *= scaleFactor;
     }
+
+    m_boundingVolume.min *= factor;
+    m_boundingVolume.max *= factor;
 
     for (CoreSubMorphTargetVector::iterator i = m_vectorCoreSubMorphTarget.begin(); i != m_vectorCoreSubMorphTarget.end(); ++i) {
         (*i)->scale(factor);

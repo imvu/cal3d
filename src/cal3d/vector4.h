@@ -49,6 +49,10 @@ struct CalBase4 {
         return CalVector(x, y, z);
     }
 
+    void operator*=(const CalBase4& rhs) {
+        v = _mm_mul_ps(v, rhs.v);
+    }
+
     void operator*=(float f) {
         __m128 fv = _mm_load1_ps(&f);
         v = _mm_mul_ps(v, fv);
