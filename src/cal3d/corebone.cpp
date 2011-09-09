@@ -28,7 +28,6 @@ CalCoreBone::CalCoreBone(const std::string& n, int p)
 
 void CalCoreBone::scale(float factor) {
     relativeTransform.translation *= factor;
-    boneSpaceTransform.translation *= factor;
 }
 
 
