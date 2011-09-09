@@ -168,7 +168,6 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
     boneSpaceRotationAndScale.dzdx *= 0.002f;
     boneSpaceRotationAndScale.dzdy *= 0.002f;
     boneSpaceRotationAndScale.dzdz *= 0.002f;
-    boneSpaceTranslation *= 0.002f;
 
     return BoneTransform(
         CalMatrix(absoluteTransform.rotation) * boneSpaceRotationAndScale,
