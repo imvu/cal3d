@@ -65,5 +65,32 @@ class CalInspectorTest(imvu.test.TestCase):
             result = cal3d.CalInspector.getMeshInfo(map)
         self.assertMeshInfo(result)
 
+class LocaleTest(imvu.test.TestCase):
+    def test_convert_to_binary_matches_gold_standard(self):
+        meshData = imvu.fs.getSourceFileSystem().file('TestData/DN_flor_dress.xmf', 'rb').read()
+        coreMesh = cal3d.loadCoreMeshFromBuffer(meshData)
+        binaryMeshData = cal3d.saveCoreMeshToBuffer(coreMesh)
+
+        binaryFileData = imvu.fs.getSourceFileSystem().file('TestData/DN_flor_dress.cmf', 'rb').read()
+        self.assertEqual(len(binaryMeshData), len(binaryFileData))
+
+    def test_can_load_mesh_on_serbian_locale(self):
+        meshData = imvu.fs.getSourceFileSystem().file('TestData/DN_flor_dress.xmf', 'rb').read()
+        coreMesh = cal3d.loadCoreMeshFromBuffer(meshData)
+        [sm1, sm2, sm3] = coreMesh.submeshes
+        self.assertEqual([8221, 10438, 10700], [len(sm.vertices) for sm in coreMesh.submeshes])
+
+        def assertSubmeshStats(submesh, (sumx, sumy, sumz), (sumBoneId, sumWeight)):
+            self.assertEqual(sumx, sum(vertex.position.x for vertex in submesh.vertices))
+            self.assertEqual(sumy, sum(vertex.position.y for vertex in submesh.vertices))
+            self.assertEqual(sumz, sum(vertex.position.z for vertex in submesh.vertices))
+
+            self.assertEqual(sumBoneId, sum(inf.boneId for inf in submesh.influences))
+            self.assertEqual(sumWeight, sum(inf.weight for inf in submesh.influences))
+
+        assertSubmeshStats(sm1, (-982824.2527006492, -180497.75814134791, 6765443.3099365234), (669991, 8221.0529946999159))
+        assertSubmeshStats(sm2, (251854.15499719395,  152439.8440515846,  3896401.3394775391), (103119, 10438.036999161588))
+        assertSubmeshStats(sm3, (-19384.503997981548, 6021.3888615714386, 6454644.2445678711), (148316, 10700.017000436899))
+        
 if __name__ == "__main__":
     imvu.test.main()
