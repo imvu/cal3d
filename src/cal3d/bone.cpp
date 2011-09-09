@@ -30,16 +30,22 @@ CalBone::CalBone(const CalCoreBone& coreBone)
     resetPose();
 }
 
-void CalBone::setMeshScaleAbsolute(const CalVector& sv) {
-    m_meshScaleAbsolute = sv * 0.002f;
-}
-
 void CalBone::resetPose() {
     relativeTransform = coreRelativeTransform; // if no animations are applied, use this
     m_accumulatedWeight = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
-    m_meshScaleAbsolute = CalVector(1, 1, 1) * 0.002f;
+    m_meshScaleAbsolute.set(1, 1, 1);
 }
+
+/*****************************************************************************/
+/** Interpolates the current state to another state.
+  *
+  * This function interpolates the current state (relative translation and
+  * rotation) of the bone instance to another state of a given weight.
+  *
+  * @param replace If true, subsequent animations will have their weight attenuated by 1 - rampValue.
+  * @param rampValue Amount to attenuate weight when ramping in/out the animation.
+  *****************************************************************************/
 
 void CalBone::blendPose(
     const cal3d::Transform& transform,
@@ -152,6 +158,17 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         boneSpaceRotationAndScale.dydz *= m_meshScaleAbsolute.z;
         boneSpaceRotationAndScale.dzdz *= m_meshScaleAbsolute.z;
     }
+
+    boneSpaceRotationAndScale.dxdx *= 0.002f;
+    boneSpaceRotationAndScale.dxdy *= 0.002f;
+    boneSpaceRotationAndScale.dxdz *= 0.002f;
+    boneSpaceRotationAndScale.dydx *= 0.002f;
+    boneSpaceRotationAndScale.dydy *= 0.002f;
+    boneSpaceRotationAndScale.dydz *= 0.002f;
+    boneSpaceRotationAndScale.dzdx *= 0.002f;
+    boneSpaceRotationAndScale.dzdy *= 0.002f;
+    boneSpaceRotationAndScale.dzdz *= 0.002f;
+    boneSpaceTranslation *= 0.002f;
 
     return BoneTransform(
         CalMatrix(absoluteTransform.rotation) * boneSpaceRotationAndScale,

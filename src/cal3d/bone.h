@@ -30,7 +30,9 @@ public:
         return coreRelativeTransform.translation;
     }
 
-    void setMeshScaleAbsolute(const CalVector& sv);
+    void setMeshScaleAbsolute(const CalVector& sv) {
+        m_meshScaleAbsolute = sv;
+    }
 
     void resetPose();
     void blendPose(
