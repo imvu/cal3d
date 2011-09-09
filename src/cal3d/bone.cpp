@@ -138,7 +138,6 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         //   * boneAbsRotInAnimPose
         //   + boneAbsPosInAnimPose
 
-        //boneSpaceTranslation *= m_meshScaleAbsolute;
         boneSpaceTranslation = coreBoneSpaceTransform.rotation * ((-coreBoneSpaceTransform.rotation * boneSpaceTranslation) * m_meshScaleAbsolute);
     }
 
