@@ -24,17 +24,22 @@
 
 
 static inline void ReadPair(char const* buffer, float* f1, float* f2) {
-    std::stringstream str;
-    str << buffer;
+    std::stringstream str(buffer);
     str >> *f1 >> *f2;
 }
 
 static inline void ReadPair(char const* buffer, int* f1, int* f2) {
-    std::stringstream str;
-    str << buffer;
+    std::stringstream str(buffer);
     str >> *f1 >> *f2;
 }
 
+// atof does wacky things in VC++ 2010 CRT in Serbia...
+static inline float imvu_atof(const char* p) {
+    std::stringstream str(p);
+    float f;
+    str >> f;
+    return f;
+}
 
 
 #define CAL3D_VALIDATE_XML_TAGS ( 1 )
@@ -500,7 +505,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    float duration = (float) atof(animation->Attribute("DURATION"));
+    float duration = imvu_atof(animation->Attribute("DURATION"));
 
     // allocate a new core animation instance
     CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
@@ -574,7 +579,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
                 return null;
             }
 
-            float time = (float)atof(keyframe->Attribute("TIME"));
+            float time = imvu_atof(keyframe->Attribute("TIME"));
 
             // Translation component in the XML is now optional.
             // I first fill the translation with zero.
@@ -952,7 +957,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 }
 
                 influences[influenceId].boneId = atoi(influence->Attribute("ID"));
-                influences[influenceId].weight = (float) atof(influencedata->Value());
+                influences[influenceId].weight = imvu_atof(influencedata->Value());
 
                 influence = influence->NextSiblingElement();
             }
@@ -1221,7 +1226,7 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
-    fshininess = (float)atof(shininessdata->Value());
+    fshininess = imvu_atof(shininessdata->Value());
 
     std::vector<std::string> MatFileName;
     std::vector<std::string> MatTypes;
