@@ -122,6 +122,13 @@ struct CalBase4 {
         //w += v.w;
     }
 
+    void operator*=(const CalBase4& rhs) {
+        x *= rhs.x;
+        y *= rhs.y;
+        z *= rhs.z;
+        w *= rhs.w;
+    }
+
     void operator*=(float f) {
         x *= f;
         y *= f;
