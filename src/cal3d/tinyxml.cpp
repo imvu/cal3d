@@ -584,19 +584,6 @@ const char* TiXmlElement::Attribute(const char* name, int* i) const {
 }
 
 
-const char* TiXmlElement::Attribute(const char* name, double* d) const {
-    const char* s = Attribute(name);
-    if (d) {
-        if (s) {
-            *d = atof(s);
-        } else {
-            *d = 0;
-        }
-    }
-    return s;
-}
-
-
 int TiXmlElement::QueryIntAttribute(const char* name, int* ival) const {
     TiXmlAttributeSet* attributeSet = attributeSetForName(name);
     TiXmlAttribute* node = attributeSet->Find(name);
@@ -605,18 +592,6 @@ int TiXmlElement::QueryIntAttribute(const char* name, int* ival) const {
     }
 
     return node->QueryIntValue(ival);
-}
-
-
-int TiXmlElement::QueryDoubleAttribute(const char* name, double* dval) const {
-    TiXmlAttributeSet* attributeSet = attributeSetForName(name);
-
-    TiXmlAttribute* node = attributeSet->Find(name);
-    if (!node) {
-        return TIXML_NO_ATTRIBUTE;
-    }
-
-    return node->QueryDoubleValue(dval);
 }
 
 
@@ -1013,13 +988,6 @@ void TiXmlAttribute::StreamOut(TIXML_OSTREAM* stream) const {
 
 int TiXmlAttribute::QueryIntValue(int* ival) const {
     if (sscanf(value.c_str(), "%d", ival) == 1) {
-        return TIXML_SUCCESS;
-    }
-    return TIXML_WRONG_TYPE;
-}
-
-int TiXmlAttribute::QueryDoubleValue(double* dval) const {
-    if (sscanf(value.c_str(), "%lf", dval) == 1) {
         return TIXML_SUCCESS;
     }
     return TIXML_WRONG_TYPE;

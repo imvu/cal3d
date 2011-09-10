@@ -32,7 +32,6 @@ sources = Split('''
     skeleton.cpp
     submesh.cpp
     tinybind.cpp
-    tinystr.cpp
     tinyxml.cpp
     tinyxmlerror.cpp
     tinyxmlparser.cpp

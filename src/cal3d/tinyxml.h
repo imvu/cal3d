@@ -626,8 +626,6 @@ public:
     	which is the opposite of almost all other TinyXml calls.
     */
     int QueryIntValue(int* value) const;
-    /// QueryDoubleValue examines the value string. See QueryIntValue().
-    int QueryDoubleValue(double* value) const;
 
     void SetName(const char* _name)	{
         name = _name;    ///< Set the name of this attribute.
@@ -756,14 +754,6 @@ public:
     */
     const char* Attribute(const char* name, int* i) const;
 
-    /** Given an attribute name, Attribute() returns the value
-    	for the attribute of that name, or null if none exists.
-    	If the attribute exists and can be converted to an double,
-    	the double value will be put in the return 'd', if 'd'
-    	is non-null.
-    */
-    const char* Attribute(const char* name, double* d) const;
-
     /** QueryIntAttribute examines the attribute - it is an alternative to the
     	Attribute() method with richer error checking.
     	If the attribute is an integer, it is stored in 'value' and
@@ -772,8 +762,6 @@ public:
     	does not exist, then TIXML_NO_ATTRIBUTE is returned.
     */
     int QueryIntAttribute(const char* name, int* value) const;
-    /// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
-    int QueryDoubleAttribute(const char* name, double* value) const;
 
     /** Sets an attribute of name to a given value. The attribute
     	will be created if it does not exist, or changed if it does.
