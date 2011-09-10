@@ -1,23 +1,6 @@
 #include "tinybind.h"
 #include <sstream>
 
-// do this to support your STL container types, like list and vector
-#if 0
-typedef std::vector<int> StlIntVector;
-TiXmlBinding<StlIntVector> const*
-GetTiXmlBinding(StlIntVector const&,  StlIntVector const&) {
-    static StlContainerTiXmlBinding<int, StlIntVector> binding(false);
-    return &binding;
-}
-#endif
-
-#ifdef WIN32
-#undef TIXML_USE_STL
-#else
-#define TIXML_USE_STL
-#endif
-
-#ifdef TIXML_USE_STL
 template<class T>
 char const*
 ConvertToString(T const& t) {
@@ -43,78 +26,6 @@ ConvertFromString<char const*>(char const* strIn, const char * * dataOut) {
     strHolder = strIn;
     *dataOut = strHolder.c_str();
 }
-
-#else
-
-
-char const*
-ConvertToString(double const& d) {
-    static char buffer[2048];
-    sprintf(buffer, "%g", d);
-    return buffer;
-}
-
-char const*
-ConvertToString(float const& f) {
-    return ConvertToString((double)f);
-}
-
-char const*
-ConvertToString(int const& d) {
-    static char buffer[2048];
-    sprintf(buffer, "%d", d);
-    return buffer;
-}
-
-char const*
-ConvertToString(unsigned int const& d) {
-    static char buffer[2048];
-    sprintf(buffer, "%u", d);
-    return buffer;
-}
-
-char const*
-ConvertToString(char const* const& s) {
-    return s;
-}
-
-char const*
-ConvertToString(std::string const& s) {
-    return s.c_str();
-}
-
-
-void
-ConvertFromString(char const* strIn, const char * * dataOut) {
-    *dataOut = strIn;
-}
-
-void
-ConvertFromString(char const* strIn, std::string* dataOut) {
-    *dataOut = strIn;
-}
-
-void
-ConvertFromString(char const* strIn,  int* dataOut) {
-    *dataOut = atoi(strIn);
-}
-
-void
-ConvertFromString(char const* strIn,  unsigned int* dataOut) {
-    *dataOut = (unsigned int) atoi(strIn);
-}
-
-void
-ConvertFromString(char const* strIn,  double* dataOut) {
-    *dataOut = atof(strIn);
-}
-
-void
-ConvertFromString(char const* strIn,  float* dataOut) {
-    *dataOut = (float)atof(strIn);
-}
-#endif
-
 
 template<class T>
 TiXmlBinding<T> const*

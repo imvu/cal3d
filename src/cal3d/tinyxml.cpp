@@ -24,10 +24,7 @@ distribution.
 
 #include <ctype.h>
 #include "tinyxml.h"
-
-#ifdef TIXML_USE_STL
 #include <sstream>
-#endif
 
 void SetFactory(TiXmlAttribute*, PiClassFactory*) {
 }
@@ -1266,8 +1263,6 @@ TiXmlAttribute* TiXmlAttributeSet::Find(const char* name) const {
     return 0;
 }
 
-
-#ifdef TIXML_USE_STL
 TIXML_ISTREAM& operator >> (TIXML_ISTREAM& in, TiXmlNode& base) {
     TIXML_STRING tag;
     tag.reserve(8 * 1000);
@@ -1276,8 +1271,6 @@ TIXML_ISTREAM& operator >> (TIXML_ISTREAM& in, TiXmlNode& base) {
     base.Parse(tag.c_str(), 0);
     return in;
 }
-#endif
-
 
 TIXML_OSTREAM& operator<< (TIXML_OSTREAM& out, const TiXmlNode& base) {
     base.StreamOut(& out);
@@ -1285,7 +1278,6 @@ TIXML_OSTREAM& operator<< (TIXML_OSTREAM& out, const TiXmlNode& base) {
 }
 
 
-#ifdef TIXML_USE_STL
 std::string& operator<< (std::string& out, const TiXmlNode& base) {
     std::ostringstream os_stream(std::ostringstream::out);
     base.StreamOut(&os_stream);
@@ -1293,8 +1285,6 @@ std::string& operator<< (std::string& out, const TiXmlNode& base) {
     out.append(os_stream.str());
     return out;
 }
-#endif
-
 
 TiXmlHandle TiXmlHandle::FirstChild() const {
     if (node) {
