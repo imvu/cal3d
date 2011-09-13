@@ -315,15 +315,35 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def(vector_indexing_suite<CalCoreMesh::CalCoreSubmeshVector, true>())
         ;
 
-    class_<CalCoreMesh, boost::shared_ptr<CalCoreMesh> >("CoreMesh")
+    class_<CalCoreMesh, CalCoreMeshPtr>("CoreMesh")
         .def_readwrite("submeshes", &CalCoreMesh::submeshes)
         .def("scale", &CalCoreMesh::scale)
         .def("fixup", &CalCoreMesh::fixup)
         ;
 
-    class_<CalCoreAnimation, boost::shared_ptr<CalCoreAnimation> >("CoreAnimation")
+    class_<CalCoreKeyframe>("CoreKeyframe")
+        .def_readwrite("time", &CalCoreKeyframe::time)
+        .def_readwrite("transform", &CalCoreKeyframe::transform)
+        ;
+
+    class_<CalCoreTrack::KeyframeList>("CoreKeyframeVector")
+        .def(vector_indexing_suite<CalCoreTrack::KeyframeList, true>())
+        ;
+
+    class_<CalCoreTrack>("CoreTrack", init<int, const CalCoreTrack::KeyframeList&>())
+        .def_readwrite("coreBoneId", &CalCoreTrack::coreBoneId)
+        .def_readwrite("keyframes", &CalCoreTrack::keyframes)
+        ;
+
+    class_< std::vector<CalCoreTrack> >("CoreTrackVector")
+        .def(vector_indexing_suite< std::vector<CalCoreTrack>, true >())
+        ;
+
+    class_<CalCoreAnimation, CalCoreAnimationPtr>("CoreAnimation")
         .def("scale", &CalCoreAnimation::scale)
         .def("fixup", &CalCoreAnimation::fixup)
+        .def_readwrite("duration", &CalCoreAnimation::duration)
+        .def_readwrite("tracks", &CalCoreAnimation::tracks)
         ;
 
     class_<CalCoreMorphKeyframe>("CoreMorphKeyframe")
@@ -331,12 +351,12 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("weight", &CalCoreMorphKeyframe::weight)
         ;
 
-    class_<CalCoreMorphTrack, boost::shared_ptr<CalCoreMorphTrack> >("CoreMorphTrack")
+    class_<CalCoreMorphTrack, CalCoreMorphTrackPtr>("CoreMorphTrack")
         .def_readonly("name", &CalCoreMorphTrack::morphName)
         .add_property("keyframes", &getKeyframes)
         ;
 
-    class_<CalCoreAnimatedMorph, boost::shared_ptr<CalCoreAnimatedMorph> >("CoreAnimatedMorph")
+    class_<CalCoreAnimatedMorph, CalCoreAnimatedMorphPtr>("CoreAnimatedMorph")
         .def("removeZeroScaleTracks", &CalCoreAnimatedMorph::removeZeroScaleTracks)
         .def("scale", &CalCoreAnimatedMorph::scale)
         .def_readonly("duration", &CalCoreAnimatedMorph::duration)
