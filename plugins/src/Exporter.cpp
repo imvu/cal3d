@@ -698,16 +698,9 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 			m_pInterface->SetProgressInfo(int(100.0f * (selectedId + 1) / selectedCount));
 			selectedId++;
 
-                        // get the parent id of the bone candidate
-                        int parentId;
-                        parentId = skeletonCandidate.GetParentSelectedId(boneCandidateId);
+                        int parentId = skeletonCandidate.GetParentSelectedId(boneCandidateId);
+                        CalCoreBonePtr pCoreBone(new CalCoreBone(pBoneCandidate->GetNode()->GetName(), parentId));
                         
-                        // allocate new core bone instance
-                        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(pBoneCandidate->GetNode()->GetName()));
-                        
-			// set the parentId
-			pCoreBone->parentId = (parentId);
-
 			// get the translation and the rotation of the bone candidate
 			CalVector translation;
 			CalQuaternion rotation;

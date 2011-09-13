@@ -120,19 +120,13 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 		// only export selected bone candidates
 		if(pBoneCandidate->IsSelected())
 		{
-			// update the progress info
 			m_pInterface->SetProgressInfo(int(100.0f * (selectedId + 1) / selectedCount));
 			selectedId++;
 
-			// allocate new core bone instance
-                        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(pBoneCandidate->GetNode()->GetName()));
-
 			// get the parent id of the bone candidate
-			int parentId;
-			parentId = skeletonCandidate.GetParentSelectedId(boneCandidateId);
+			int parentId = skeletonCandidate.GetParentSelectedId(boneCandidateId);
 
-			// set the parentId
-			pCoreBone->parentId = (parentId);
+                        CalCoreBonePtr pCoreBone(new CalCoreBone(pBoneCandidate->GetNode()->GetName(), parentId));
 
 			// get the translation and the rotation of the bone candidate
 			CalVector translation;
