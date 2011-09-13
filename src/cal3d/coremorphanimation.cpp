@@ -22,13 +22,13 @@ size_t sizeInBytes(const CalCoreMorphTrack& t) {
     return t.size();
 }
 
-size_t CalCoreAnimatedMorph::sizeInBytes() const {
+size_t CalCoreMorphAnimation::sizeInBytes() const {
     size_t r = sizeof(*this);
     r += ::sizeInBytes(tracks);
     return r;
 }
 
-void CalCoreAnimatedMorph::removeZeroScaleTracks() {
+void CalCoreMorphAnimation::removeZeroScaleTracks() {
     std::vector<CalCoreMorphTrack> & p = tracks;
     bool changed = true;
     while (changed) {
@@ -57,11 +57,11 @@ void CalCoreAnimatedMorph::removeZeroScaleTracks() {
     }
 }
 
-void CalCoreAnimatedMorph::scale(float factor) {
+void CalCoreMorphAnimation::scale(float factor) {
     std::for_each(tracks.begin(), tracks.end(), std::bind2nd(std::mem_fun_ref(&CalCoreMorphTrack::scale), factor));
 }
 
-CalCoreMorphTrack* CalCoreAnimatedMorph::getCoreTrack(std::string const& name) {
+CalCoreMorphTrack* CalCoreMorphAnimation::getCoreTrack(std::string const& name) {
     // loop through all core track
     std::vector<CalCoreMorphTrack>::iterator iteratorCoreTrack;
     for (iteratorCoreTrack = tracks.begin(); iteratorCoreTrack != tracks.end(); ++iteratorCoreTrack) {

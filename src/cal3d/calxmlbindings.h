@@ -6,6 +6,6 @@ struct CalHeader {
 };
 
 const TiXmlBinding<CalHeader>* GetTiXmlBinding(CalHeader const&,  IdentityBase);
-const TiXmlBinding<CalCoreAnimatedMorph>* GetTiXmlBinding(CalCoreAnimatedMorph const&,  IdentityBase);
+const TiXmlBinding<CalCoreMorphAnimation>* GetTiXmlBinding(CalCoreMorphAnimation const&,  IdentityBase);
 const TiXmlBinding<CalCoreMorphTrack>* GetTiXmlBinding(CalCoreMorphTrack const&,  IdentityBase);
 const TiXmlBinding<CalCoreMorphKeyframe>* GetTiXmlBinding(CalCoreMorphKeyframe const&,  IdentityBase);

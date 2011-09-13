@@ -53,13 +53,13 @@ bool saveCoreMesh(const boost::shared_ptr<CalCoreMesh>& mesh, const std::string&
     return CalSaver::saveCoreMesh(path, mesh.get());
 }
 
-CalCoreAnimatedMorphPtr loadCoreAnimatedMorphFromBuffer(const cal3d::Buffer& buffer) {
+CalCoreMorphAnimationPtr loadCoreMorphAnimationFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalLoader::loadCoreAnimatedMorph(cbs);
+    return CalLoader::loadCoreMorphAnimation(cbs);
 }
 
-bool saveCoreAnimatedMorph(const boost::shared_ptr<CalCoreAnimatedMorph>& animatedMorph, const std::string& path) {
-    return CalSaver::saveCoreAnimatedMorph(path, animatedMorph.get());
+bool saveCoreMorphAnimation(const boost::shared_ptr<CalCoreMorphAnimation>& animatedMorph, const std::string& path) {
+    return CalSaver::saveCoreMorphAnimation(path, animatedMorph.get());
 }
 
 tuple getCoreSkeletonSceneAmbientColor(const CalCoreSkeletonPtr& skel) {
@@ -94,7 +94,7 @@ list getKeyframes(const CalCoreMorphTrack* t) {
     return rv;
 }
 
-list getTracks(const CalCoreAnimatedMorph* m) {
+list getTracks(const CalCoreMorphAnimation* m) {
     list rv;
     const std::vector<CalCoreMorphTrack>& tracks = m->tracks;
     for (
@@ -356,10 +356,10 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("keyframes", &getKeyframes)
         ;
 
-    class_<CalCoreAnimatedMorph, CalCoreAnimatedMorphPtr>("CoreAnimatedMorph")
-        .def("removeZeroScaleTracks", &CalCoreAnimatedMorph::removeZeroScaleTracks)
-        .def("scale", &CalCoreAnimatedMorph::scale)
-        .def_readonly("duration", &CalCoreAnimatedMorph::duration)
+    class_<CalCoreMorphAnimation, CalCoreMorphAnimationPtr>("CoreMorphAnimation")
+        .def("removeZeroScaleTracks", &CalCoreMorphAnimation::removeZeroScaleTracks)
+        .def("scale", &CalCoreMorphAnimation::scale)
+        .def_readonly("duration", &CalCoreMorphAnimation::duration)
         .add_property("tracks", &getTracks)
         ;
 
@@ -379,9 +379,9 @@ BOOST_PYTHON_MODULE(_cal3d)
     def("saveCoreMesh", &saveCoreMesh);
     def("saveCoreMeshToBuffer", &CalSaver::saveCoreMeshToBuffer);
 
-    def("loadCoreAnimatedMorphFromBuffer", &loadCoreAnimatedMorphFromBuffer);
-    def("saveCoreAnimatedMorph", &saveCoreAnimatedMorph);
-    def("saveCoreAnimatedMorphToBuffer", &CalSaver::saveCoreAnimatedMorphToBuffer);
+    def("loadCoreMorphAnimationFromBuffer", &loadCoreMorphAnimationFromBuffer);
+    def("saveCoreMorphAnimation", &saveCoreMorphAnimation);
+    def("saveCoreMorphAnimationToBuffer", &CalSaver::saveCoreMorphAnimationToBuffer);
 
     def("getLastErrorText", &CalError::getLastErrorText);
 }

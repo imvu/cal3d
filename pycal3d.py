@@ -8,12 +8,12 @@ class Cal3d:
     def __init__(self):
         self.typeToBinaryExtensionMap_ = { "CoreAnimation" : "caf",
                                            "CoreMaterial"  : "crf",
-                                           "CoreAnimatedMorph"  : "cpf",
+                                           "CoreMorphAnimation"  : "cpf",
                                            "CoreMesh"      : "cmf",
                                            "CoreSkeleton"  : "csf" }
         self.typeToXmlExtensionMap_ = { "CoreAnimation" : "xaf",
                                         "CoreMaterial"  : "xrf",
-                                        "CoreAnimatedMorph"  : "xpf",
+                                        "CoreMorphAnimation"  : "xpf",
                                         "CoreMesh"      : "xmf",
                                         "CoreSkeleton"  : "xsf" }
         self.xmlExtensionToTypeMap_ = {}

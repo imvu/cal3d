@@ -636,11 +636,11 @@ const char header_only_without_magic[] =
 
 TEST(morph_loader_doesnt_crash_on_invalid_data) {
     CalBufferSource cbs1(fromString(invalid_morph));
-    CHECK(!CalLoader::loadCoreAnimatedMorph(cbs1));
+    CHECK(!CalLoader::loadCoreMorphAnimation(cbs1));
 
     CalBufferSource cbs2(fromString(header_only));
-    CHECK(!CalLoader::loadCoreAnimatedMorph(cbs2));
+    CHECK(!CalLoader::loadCoreMorphAnimation(cbs2));
 
     // passes on mac, fails on windows...  weird.
-    //CHECK(CalLoader::loadCoreAnimatedMorph(header_only_without_magic));
+    //CHECK(CalLoader::loadCoreMorphAnimation(header_only_without_magic));
 }

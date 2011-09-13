@@ -19,7 +19,7 @@ class Test(imvu.test.TestCase):
         self.hereAndBackAgain(origData=material1, calCoreType="CoreMaterial")
 
     def testAnimatedMorph(self):
-        self.hereAndBackAgain(origData=animmorph1, calCoreType="CoreAnimatedMorph")
+        self.hereAndBackAgain(origData=animmorph1, calCoreType="CoreMorphAnimation")
         
 
     def assertEqual(self, a, b):
@@ -64,19 +64,19 @@ class Test(imvu.test.TestCase):
     def test_morph_loader_does_not_crash(self):
         anim1 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'AnimationCEO3K.xaf')
         anim2 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'SkeletalAnimation.xaf')
-        self.assertIs(None, cal3d.loadCoreAnimatedMorphFromBuffer(file(anim1, 'rb').read()))
-        self.assertIs(None, cal3d.loadCoreAnimatedMorphFromBuffer(file(anim2, 'rb').read()))
+        self.assertIs(None, cal3d.loadCoreMorphAnimationFromBuffer(file(anim1, 'rb').read()))
+        self.assertIs(None, cal3d.loadCoreMorphAnimationFromBuffer(file(anim2, 'rb').read()))
 
     def test_xml_morph_loader_reads_weights(self):
         anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
-        morph = cal3d.loadCoreAnimatedMorphFromBuffer(file(anim, 'rb').read())
+        morph = cal3d.loadCoreMorphAnimationFromBuffer(file(anim, 'rb').read())
         self.assertGbHello2(morph)
 
     def test_binary_morph_loader_reads_weights(self):
         anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
-        morph = cal3d.loadCoreAnimatedMorphFromBuffer(file(anim, 'rb').read())
-        binaryData = cal3d.saveCoreAnimatedMorphToBuffer(morph)
-        morph = cal3d.loadCoreAnimatedMorphFromBuffer(binaryData)
+        morph = cal3d.loadCoreMorphAnimationFromBuffer(file(anim, 'rb').read())
+        binaryData = cal3d.saveCoreMorphAnimationToBuffer(morph)
+        morph = cal3d.loadCoreMorphAnimationFromBuffer(binaryData)
         self.assertGbHello2(morph)
 
     def test_xml_to_binary_and_back_removes_keyframes_with_corrupt_data(self):
@@ -130,7 +130,7 @@ class Test(imvu.test.TestCase):
         self.assertEqual('CoreAnimation,XML', self.cal3d_.getFormat(animation1))
         self.assertEqual('CoreAnimation,XML', self.cal3d_.getFormat(animation2))
         self.assertEqual('CoreMaterial,XML', self.cal3d_.getFormat(material1))
-        self.assertEqual('CoreAnimatedMorph,XML', self.cal3d_.getFormat(animmorph1))
+        self.assertEqual('CoreMorphAnimation,XML', self.cal3d_.getFormat(animmorph1))
 
     def test_get_format_doesnt_crash_on_malformed_xml(self):
         self.assertEqual(None, self.cal3d_.getFormat("<janky>" + mesh1 + "</janky>"))

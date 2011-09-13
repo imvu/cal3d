@@ -17,12 +17,12 @@
 
 class CalCoreMorphTrack;
 
-class CAL3D_API CalCoreAnimatedMorph {
+class CAL3D_API CalCoreMorphAnimation {
 public:
     float duration;
     std::vector<CalCoreMorphTrack> tracks;
 
-    CalCoreAnimatedMorph()
+    CalCoreMorphAnimation()
         : duration(0.0f)
     {}
 
@@ -33,4 +33,4 @@ public:
 
     size_t sizeInBytes() const;
 };
-typedef boost::shared_ptr<CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;
+typedef boost::shared_ptr<CalCoreMorphAnimation> CalCoreMorphAnimationPtr;

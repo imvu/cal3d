@@ -266,7 +266,7 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 	if(sheet.DoModal() != ID_WIZFINISH) return true;
 
 	// create the core animation instance
-	CalCoreAnimatedMorph coreAnimation;
+	CalCoreMorphAnimation coreAnimation;
 
 	coreAnimation.duration = (float)(sheet.GetEndFrame() - sheet.GetStartFrame()) / (float)m_pInterface->GetFps();
 
@@ -367,7 +367,7 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
         
 	// save core animation to the file
         ::OutputDebugString("Writing to output file...\n");
-	if(!CalSaver::saveCoreAnimatedMorph(strFilename, &coreAnimation))
+	if(!CalSaver::saveCoreMorphAnimation(strFilename, &coreAnimation))
 	{
           SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
           return false;

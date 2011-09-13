@@ -131,7 +131,7 @@ bool CExporter::ExportMorphAnimationFromMaxscriptCall(const std::string& strFile
 	}
 
 	// create the core morphAnimation instance
-	CalCoreAnimatedMorph coreMorphAnimation;
+	CalCoreMorphAnimation coreMorphAnimation;
 	if(!coreMorphAnimation.create())
 	{
 		SetLastError("Creation of core morphAnimation instance failed.", __FILE__, __LINE__);
@@ -302,7 +302,7 @@ OutputDebugString(str);
 	}
 
 	// save core morphAnimation to the file
-	if(!CalSaver::saveCoreAnimatedMorph(strFilename, &coreMorphAnimation))
+	if(!CalSaver::saveCoreMorphAnimation(strFilename, &coreMorphAnimation))
 	{
 		SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
 		coreMorphAnimation.destroy();

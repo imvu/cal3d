@@ -29,12 +29,12 @@ GetTiXmlBinding(CalHeader const&,  IdentityBase) {
 }
 
 
-TiXmlBinding<CalCoreAnimatedMorph> const*
-GetTiXmlBinding(CalCoreAnimatedMorph const&,  IdentityBase) {
-    static MemberTiXmlBinding<CalCoreAnimatedMorph> binding;
+TiXmlBinding<CalCoreMorphAnimation> const*
+GetTiXmlBinding(CalCoreMorphAnimation const&,  IdentityBase) {
+    static MemberTiXmlBinding<CalCoreMorphAnimation> binding;
     if (binding.empty()) {
-        binding.AddMember("DURATION", MemberAttribute(&CalCoreAnimatedMorph::duration));
-        binding.AddMember("TRACK", MemberPeer(&CalCoreAnimatedMorph::tracks));
+        binding.AddMember("DURATION", MemberAttribute(&CalCoreMorphAnimation::duration));
+        binding.AddMember("TRACK", MemberPeer(&CalCoreMorphAnimation::tracks));
     }
     return &binding;
 }

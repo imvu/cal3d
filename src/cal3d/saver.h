@@ -16,7 +16,7 @@
 typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 class CalCoreBone;
 typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
-typedef boost::shared_ptr<class CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;
+typedef boost::shared_ptr<class CalCoreMorphAnimation> CalCoreMorphAnimationPtr;
 class CalCoreTrack;
 class CalCoreKeyframe;
 class CalCoreMorphTrack;
@@ -30,7 +30,7 @@ class CalQuaternion;
 class CAL3D_API CalSaver {
 public:
     static std::string saveCoreAnimationToBuffer(CalCoreAnimationPtr pCoreAnimation);
-    static std::string saveCoreAnimatedMorphToBuffer(CalCoreAnimatedMorphPtr pCoreAnimatedMorph);
+    static std::string saveCoreMorphAnimationToBuffer(CalCoreMorphAnimationPtr pCoreMorphAnimation);
     static std::string saveCoreMaterialToBuffer(CalCoreMaterialPtr pCoreMaterial);
     static std::string saveCoreMeshToBuffer(CalCoreMeshPtr pCoreMesh);
     static std::string saveCoreSkeletonToBuffer(CalCoreSkeletonPtr pCoreSkeleton);
@@ -38,8 +38,8 @@ public:
     static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation);
     static bool saveCoreAnimation(std::ostream& stream, CalCoreAnimation* coreAnimation);
 
-    static bool saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph);
-    static bool saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* pCoreAnimatedMorph);
+    static bool saveCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation);
+    static bool saveCoreMorphAnimation(std::ostream& file, CalCoreMorphAnimation* pCoreMorphAnimation);
 
     static bool saveCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
     static bool saveCoreMaterial(std::ostream& file, CalCoreMaterial* pCoreMaterial);
@@ -53,7 +53,7 @@ public:
     static bool saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton);
     static bool saveXmlCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation);
     static bool saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAnimation);
-    static bool saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph);
+    static bool saveXmlCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation);
     static bool saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh);
     static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
 

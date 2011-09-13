@@ -49,8 +49,8 @@ std::string CalSaver::saveCoreAnimationToBuffer(CalCoreAnimationPtr pCoreAnimati
     return save(pCoreAnimation, &saveCoreAnimation);
 }
 
-std::string CalSaver::saveCoreAnimatedMorphToBuffer(CalCoreAnimatedMorphPtr pCoreAnimatedMorph) {
-    return save(pCoreAnimatedMorph, &saveCoreAnimatedMorph);
+std::string CalSaver::saveCoreMorphAnimationToBuffer(CalCoreMorphAnimationPtr pCoreMorphAnimation) {
+    return save(pCoreMorphAnimation, &saveCoreMorphAnimation);
 }
 
 std::string CalSaver::saveCoreMaterialToBuffer(CalCoreMaterialPtr pCoreMaterial) {
@@ -136,10 +136,10 @@ bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnim
 }
 
 
-bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph) {
+bool CalSaver::saveCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation) {
     if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(),
             cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION) == 0) {
-        return saveXmlCoreAnimatedMorph(strFilename, pCoreAnimatedMorph);
+        return saveXmlCoreMorphAnimation(strFilename, pCoreMorphAnimation);
     }
 
 
@@ -151,10 +151,10 @@ bool CalSaver::saveCoreAnimatedMorph(const std::string& strFilename, CalCoreAnim
         return false;
     }
 
-    return saveCoreAnimatedMorph(file, pCoreAnimatedMorph);
+    return saveCoreMorphAnimation(file, pCoreMorphAnimation);
 }
 
-bool CalSaver::saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* pCoreAnimatedMorph) {
+bool CalSaver::saveCoreMorphAnimation(std::ostream& file, CalCoreMorphAnimation* pCoreMorphAnimation) {
     const char* strFilename = "";
 
     // write magic tag
@@ -170,13 +170,13 @@ bool CalSaver::saveCoreAnimatedMorph(std::ostream& file, CalCoreAnimatedMorph* p
     }
 
     // write the duration of the core animatedMorph
-    if (!CalPlatform::writeFloat(file, pCoreAnimatedMorph->duration)) {
+    if (!CalPlatform::writeFloat(file, pCoreMorphAnimation->duration)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
         return false;
     }
 
     // get core track list
-    std::vector<CalCoreMorphTrack>& listCoreMorphTrack = pCoreAnimatedMorph->tracks;
+    std::vector<CalCoreMorphTrack>& listCoreMorphTrack = pCoreMorphAnimation->tracks;
 
     // write the number of tracks
     if (!CalPlatform::writeInteger(file, listCoreMorphTrack.size())) {
@@ -1027,7 +1027,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreAnimatedMorph* pCoreAnimatedMorph) {
+bool CalSaver::saveXmlCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation) {
     TiXmlDocument doc(strFilename);
     std::stringstream str;
 
@@ -1040,11 +1040,11 @@ bool CalSaver::saveXmlCoreAnimatedMorph(const std::string& strFilename, CalCoreA
     doc.InsertEndChild(header);
 
     str.str("");
-    str << pCoreAnimatedMorph->duration;
+    str << pCoreMorphAnimation->duration;
     animation.SetAttribute("DURATION", str.str());
 
     // get core track list
-    std::vector<CalCoreMorphTrack>& listCoreMorphTrack = pCoreAnimatedMorph->tracks;
+    std::vector<CalCoreMorphTrack>& listCoreMorphTrack = pCoreMorphAnimation->tracks;
 
     animation.SetAttribute("NUMTRACKS", listCoreMorphTrack.size());
 

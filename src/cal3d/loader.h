@@ -21,7 +21,7 @@
 typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
-typedef boost::shared_ptr<class CalCoreAnimatedMorph> CalCoreAnimatedMorphPtr;
+typedef boost::shared_ptr<class CalCoreMorphAnimation> CalCoreMorphAnimationPtr;
 typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
 typedef boost::shared_ptr<class CalCoreKeyframe> CalCoreKeyframePtr;
 typedef boost::shared_ptr<class CalCoreMorphTrack> CalCoreMorphTrackPtr;
@@ -51,14 +51,14 @@ public:
     static unsigned int const keyframePosBytesSmall;
 
     static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc);
-    static CalCoreAnimatedMorphPtr loadCoreAnimatedMorph(CalBufferSource& inputSrc);
+    static CalCoreMorphAnimationPtr loadCoreMorphAnimation(CalBufferSource& inputSrc);
     static CalCoreMaterialPtr loadCoreMaterial(CalBufferSource& inputSrc);
     static CalCoreMeshPtr loadCoreMesh(CalBufferSource& inputSrc);
     static CalCoreSkeletonPtr loadCoreSkeleton(CalBufferSource& inputSrc);
 
 private:
     static CalCoreAnimationPtr loadBinaryCoreAnimation(CalBufferSource& inputSrc);
-    static CalCoreAnimatedMorphPtr loadBinaryCoreAnimatedMorph(CalBufferSource& inputSrc);
+    static CalCoreMorphAnimationPtr loadBinaryCoreMorphAnimation(CalBufferSource& inputSrc);
     static CalCoreMaterialPtr loadBinaryCoreMaterial(CalBufferSource& inputSrc);
     static CalCoreMeshPtr loadBinaryCoreMesh(CalBufferSource& inputSrc);
     static CalCoreSkeletonPtr loadBinaryCoreSkeleton(CalBufferSource& inputSrc);
@@ -66,8 +66,8 @@ private:
     static CalCoreAnimationPtr loadXmlCoreAnimation(const char*);
     static CalCoreAnimationPtr loadXmlCoreAnimationDoc(TiXmlDocument& doc);
 
-    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorph(const char*);
-    static CalCoreAnimatedMorphPtr loadXmlCoreAnimatedMorphDoc(TiXmlDocument& doc);
+    static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimation(const char*);
+    static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimationDoc(TiXmlDocument& doc);
 
     static CalCoreSkeletonPtr loadXmlCoreSkeleton(const char*);
     static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(TiXmlDocument& doc);

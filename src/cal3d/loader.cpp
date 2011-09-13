@@ -136,8 +136,8 @@ CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc) {
     return tryBothLoaders(inputSrc, &loadBinaryCoreAnimation, &loadXmlCoreAnimation);
 }
 
-CalCoreAnimatedMorphPtr CalLoader::loadCoreAnimatedMorph(CalBufferSource& inputSrc) {
-    return tryBothLoaders(inputSrc, &loadBinaryCoreAnimatedMorph, &loadXmlCoreAnimatedMorph);
+CalCoreMorphAnimationPtr CalLoader::loadCoreMorphAnimation(CalBufferSource& inputSrc) {
+    return tryBothLoaders(inputSrc, &loadBinaryCoreMorphAnimation, &loadXmlCoreMorphAnimation);
 }
 
 CalCoreMaterialPtr CalLoader::loadCoreMaterial(CalBufferSource& inputSrc) {
@@ -221,8 +221,8 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc)
 
 
 
-CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalBufferSource& dataSrc) {
-    const CalCoreAnimatedMorphPtr null;
+CalCoreMorphAnimationPtr CalLoader::loadBinaryCoreMorphAnimation(CalBufferSource& dataSrc) {
+    const CalCoreMorphAnimationPtr null;
 
     char magic[4];
     if (!dataSrc.readBytes(&magic[0], 4) || (memcmp(&magic[0], cal3d::ANIMATEDMORPH_FILE_MAGIC, 4) != 0)) {
@@ -238,7 +238,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalBufferSource& 
     }
 
     // allocate a new core animatedMorph instance
-    CalCoreAnimatedMorphPtr pCoreAnimatedMorph(new CalCoreAnimatedMorph);
+    CalCoreMorphAnimationPtr pCoreMorphAnimation(new CalCoreMorphAnimation);
 
     // get the duration of the core animatedMorph
     float duration;
@@ -254,7 +254,7 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalBufferSource& 
     }
 
     // set the duration in the core animatedMorph instance
-    pCoreAnimatedMorph->duration = duration;
+    pCoreMorphAnimation->duration = duration;
 
     // read the number of tracks
     int trackCount;
@@ -269,10 +269,10 @@ CalCoreAnimatedMorphPtr CalLoader::loadBinaryCoreAnimatedMorph(CalBufferSource& 
             return null;
         }
 
-        pCoreAnimatedMorph->tracks.push_back(*pCoreTrack);
+        pCoreMorphAnimation->tracks.push_back(*pCoreTrack);
     }
 
-    return pCoreAnimatedMorph;
+    return pCoreMorphAnimation;
 }
 
 
