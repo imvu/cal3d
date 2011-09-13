@@ -13,7 +13,7 @@
 #endif
 
 #include <string>
-#include "cal3d/coreanimatedmorph.h"
+#include "cal3d/coremorphanimation.h"
 #include "cal3d/coremorphtrack.h"
 
 CAL3D_DEFINE_SIZE(CalCoreMorphTrack*);

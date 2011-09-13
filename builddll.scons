@@ -10,8 +10,8 @@ sources = Split('''
     bonetransform.cpp
     buffersource.cpp
     calxmlbindings.cpp
-    coreanimatedmorph.cpp
     coreanimation.cpp
+    coremorphanimation.cpp
     corebone.cpp
     coremesh.cpp
     coremorphtrack.cpp

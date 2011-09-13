@@ -5,7 +5,7 @@
 
 #include <cal3d/buffersource.h>
 #include <cal3d/coreanimation.h>
-#include <cal3d/coreanimatedmorph.h>
+#include <cal3d/coremorphanimation.h>
 #include <cal3d/corebone.h>
 #include <cal3d/corematerial.h>
 #include <cal3d/coremesh.h>

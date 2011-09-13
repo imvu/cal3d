@@ -14,7 +14,7 @@
 
 #include "StdAfx.h"
 #include <cal3d/coreanimation.h>
-#include <cal3d/coreanimatedmorph.h>
+#include <cal3d/coremorphanimation.h>
 #include <cal3d/corekeyframe.h>
 #include <cal3d/coretrack.h>
 #include <cal3d/corematerial.h>
