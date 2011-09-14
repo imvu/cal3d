@@ -24,7 +24,6 @@ typedef boost::shared_ptr<class CalCoreSubMorphTarget> CalCoreSubMorphTargetPtr;
 typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 
 enum CalMorphTargetType {
-    CalMorphTargetTypeNull = 0,
     CalMorphTargetTypeAdditive,
     CalMorphTargetTypeClamped,
     CalMorphTargetTypeAverage,
