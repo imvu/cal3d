@@ -21,12 +21,14 @@ typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 
 class CAL3D_API CalSkeleton {
 public:
+    typedef SSEArray<CalBone> BoneArray;
+
     CalSkeleton(const CalCoreSkeletonPtr& coreSkeleton);
 
     void clearState();
     void calculateState(bool includeRootTransform);
 
     // same length
-    std::vector<CalBone> bones;
+    BoneArray bones;
     SSEArray<BoneTransform> boneTransforms;
 };

@@ -181,6 +181,11 @@ namespace cal3d {
     }
 
     template<typename T>
+    T* pointerFromVector(SSEArray<T>& v) {
+        return v.data;
+    }
+
+    template<typename T>
     const T* pointerFromVector(const SSEArray<T>& v) {
         return v.data;
     }

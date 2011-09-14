@@ -100,7 +100,7 @@ void CalMixer::updateSkeleton(
 ) {
     skeleton->clearState();
 
-    std::vector<CalBone>& bones = skeleton->bones;
+    CalSkeleton::BoneArray& bones = skeleton->bones;
 
     // The bone adjustments are "replace" so they have to go first, giving them
     // highest priority and full influence.  Subsequent animations affecting the same bones,
@@ -144,7 +144,7 @@ void CalMixer::applyBoneAdjustments(
     const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
     const std::vector<BoneScaleAdjustment>& boneScaleAdjustments
 ) {
-    std::vector<CalBone>& bones = skeleton->bones;
+    CalSkeleton::BoneArray& bones = skeleton->bones;
 
     for (size_t i = 0; i < boneTransformAdjustments.size(); ++i) {
         const BoneTransformAdjustment& ba = boneTransformAdjustments[i];

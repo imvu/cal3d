@@ -27,10 +27,10 @@ CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton) {
     const std::vector<CalCoreBonePtr>& coreBones = pCoreSkeleton->coreBones;
 
     size_t boneCount = coreBones.size();
-    bones.reserve(boneCount);
+    bones.resize(boneCount);
 
     for (size_t boneId = 0; boneId < boneCount; ++boneId) {
-        bones.push_back(CalBone(*coreBones[boneId]));
+        new(&bones[boneId]) CalBone(*coreBones[boneId]);
     }
 
     boneTransforms.resize(boneCount);
