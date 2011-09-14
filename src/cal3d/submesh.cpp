@@ -26,48 +26,42 @@ BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 // not yet have a value by setting this field to this specific invalid value.
 static float const ReplacementAttenuationNull = 100.0; // Any number not between zero and one.
 
+cal3d::MorphTarget::MorphTarget()
+    : weight(0.0f)
+    , accumulatedWeight(0.0f)
+    , replacementAttenuation(ReplacementAttenuationNull)
+{}
+
 CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
     : coreSubmesh(pCoreSubmesh) {
     assert(pCoreSubmesh);
 
-    morphTargetWeights.resize(coreSubmesh->getCoreSubMorphTargetCount());
-    m_vectorAccumulatedWeight.resize(coreSubmesh->getCoreSubMorphTargetCount());
-    m_vectorReplacementAttenuation.resize(coreSubmesh->getCoreSubMorphTargetCount());
-
-    for (int morphTargetId = 0; morphTargetId < coreSubmesh->getCoreSubMorphTargetCount(); ++morphTargetId) {
-        morphTargetWeights[morphTargetId] = 0.0f;
-        m_vectorAccumulatedWeight[morphTargetId] = 0.0f;
-        m_vectorReplacementAttenuation[morphTargetId] = ReplacementAttenuationNull;
-    }
+    morphTargets.resize(coreSubmesh->getCoreSubMorphTargetCount());
 }
 
 void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight) {
-    for (size_t i = 0; i < morphTargetWeights.size(); i++) {
+    for (size_t i = 0; i < morphTargets.size(); i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
-            morphTargetWeights[i] = weight;
+            morphTargets[i].weight = weight;
             return;
         }
     }
 }
 
 void CalSubmesh::clearMorphTargetScales() {
-    size_t size = morphTargetWeights.size();
+    size_t size = morphTargets.size();
     for (size_t i = 0; i < size; i++) {
-        morphTargetWeights[i] = 0.0f;
-        m_vectorAccumulatedWeight[ i ] = 0.0f;
-        m_vectorReplacementAttenuation[ i ] = ReplacementAttenuationNull;
+        morphTargets[i] = cal3d::MorphTarget();
     }
 }
 
 
 void CalSubmesh::clearMorphTargetState(std::string const& morphName) {
-    for (size_t i = 0; i < morphTargetWeights.size(); i++) {
+    for (size_t i = 0; i < morphTargets.size(); i++) {
         const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
-            morphTargetWeights[i] = 0.0f;
-            m_vectorAccumulatedWeight[ i ] = 0.0f;
-            m_vectorReplacementAttenuation[ i ] = ReplacementAttenuationNull;
+            morphTargets[i] = cal3d::MorphTarget();
         }
     }
 }
@@ -80,9 +74,10 @@ void CalSubmesh::blendMorphTargetScale(
     float rampValue,
     bool replace
 ) {
-    size_t size = morphTargetWeights.size();
+    size_t size = morphTargets.size();
     for (size_t i = 0; i < size; i++) {
-        const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
+        cal3d::MorphTarget& morphTargetState = morphTargets[i];
+        const CalCoreSubMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
             CalMorphTargetType mtype = target->morphTargetType;
             switch (mtype) {
@@ -92,15 +87,15 @@ void CalSubmesh::blendMorphTargetScale(
                     // if the channel is Additive.  The unrampedWeight parameter is ignored
                     // because the actions are not affecting each other so there is no need
                     // to assign them a relative weight.
-                    morphTargetWeights[ i ] += scale * rampValue;
+                    morphTargetState.weight += scale * rampValue;
                     break;
                 }
                 case CalMorphTargetTypeClamped: {
 
                     // Like Additive, but clamped to 1.0.
-                    morphTargetWeights[ i ] += scale * rampValue;
-                    if (morphTargetWeights[ i ] > 1.0) {
-                        morphTargetWeights[ i ] = 1.0;
+                    morphTargetState.weight += scale * rampValue;
+                    if (morphTargetState.weight > 1.0) {
+                        morphTargetState.weight = 1.0;
                     }
                     break;
                 }
@@ -126,14 +121,14 @@ void CalSubmesh::blendMorphTargetScale(
                     // If I already have a Replace chosen, then I attenuate this action.
                     // Otherwise, if this action is a Replace, then I record it and attenuate current scale.
                     if (mtype == CalMorphTargetTypeExclusive) {
-                        if (m_vectorReplacementAttenuation[ i ] != ReplacementAttenuationNull) {
-                            attenuatedWeight *= m_vectorReplacementAttenuation[ i ];
+                        if (morphTargetState.replacementAttenuation != ReplacementAttenuationNull) {
+                            attenuatedWeight *= morphTargetState.replacementAttenuation;
                         } else {
                             if (replace) {
                                 float attenuation = 1.0f - rampValue;
-                                m_vectorReplacementAttenuation[ i ] = attenuation;
-                                morphTargetWeights[ i ] *= attenuation;
-                                m_vectorAccumulatedWeight[ i ] *= attenuation;
+                                morphTargetState.replacementAttenuation = attenuation;
+                                morphTargetState.weight *= attenuation;
+                                morphTargetState.accumulatedWeight *= attenuation;
                             }
                         }
                     }
@@ -152,13 +147,13 @@ void CalSubmesh::blendMorphTargetScale(
                     // for the other composition modes.  The term ( attenuatedWeight / sumOfAttentuatedWeights ),
                     // is a ratio that doesn't have any units.
                     float rampedScale = scale * rampValue;
-                    if (m_vectorAccumulatedWeight[ i ] == 0.0f) {
-                        morphTargetWeights[ i ] = rampedScale;
+                    if (morphTargetState.accumulatedWeight == 0.0f) {
+                        morphTargetState.weight = rampedScale;
                     } else {
-                        float factor = attenuatedWeight / (m_vectorAccumulatedWeight[ i ] + attenuatedWeight);
-                        morphTargetWeights[ i ] = morphTargetWeights[ i ] * (1.0f - factor) + rampedScale * factor;
+                        float factor = attenuatedWeight / (morphTargetState.accumulatedWeight + attenuatedWeight);
+                        morphTargetState.weight = morphTargetState.weight * (1.0f - factor) + rampedScale * factor;
                     }
-                    m_vectorAccumulatedWeight[ i ] += attenuatedWeight;
+                    morphTargetState.accumulatedWeight += attenuatedWeight;
                     break;
                 }
                 default: {

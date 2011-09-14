@@ -413,14 +413,14 @@ struct EnabledMorph {
 static std::vector<EnabledMorph> enabledMorphCache;
 
 static size_t getEnabledMorphs(const CalSubmesh* submesh) {
-    const size_t morphTargetCount = submesh->morphTargetWeights.size();
+    const size_t morphTargetCount = submesh->morphTargets.size();
     if (enabledMorphCache.size() < morphTargetCount) {
         enabledMorphCache.resize(morphTargetCount);
     }
 
     size_t enabledMorphTargetCount = 0;
     for (size_t i = 0; i < morphTargetCount; ++i) {
-        float weight = submesh->morphTargetWeights[i];
+        float weight = submesh->morphTargets[i].weight;
         if (weight != 0.0) {
             enabledMorphCache[enabledMorphTargetCount].weight = weight;
             enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());

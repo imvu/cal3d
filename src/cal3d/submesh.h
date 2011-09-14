@@ -17,25 +17,32 @@
 
 typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
+namespace cal3d {
+    struct CAL3D_API MorphTarget {
+        MorphTarget();
+
+        float weight;
+        float accumulatedWeight;
+        float replacementAttenuation;
+    };
+}
+
+
 class CAL3D_API CalSubmesh : public cal3d::UserDataHolder {
 public:
     const CalCoreSubmeshPtr coreSubmesh;
     CalCoreMaterialPtr material;
-    std::vector<float> morphTargetWeights;
+    std::vector<cal3d::MorphTarget> morphTargets; // index maps to CoreSubMorphTarget in CoreSubmesh
 
     CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
 
-    std::vector<float>& getVectorWeight();
     void setMorphTargetWeight(std::string const& morphName, float weight);
     void clearMorphTargetScales();
     void clearMorphTargetState(std::string const& morphName);
-    void blendMorphTargetScale(std::string const& morphName,
-                               float scale,
-                               float unrampedWeight,
-                               float rampValue,
-                               bool replace);
-
-private:
-    std::vector<float> m_vectorAccumulatedWeight;
-    std::vector<float> m_vectorReplacementAttenuation;
+    void blendMorphTargetScale(
+        std::string const& morphName,
+        float scale,
+        float unrampedWeight,
+        float rampValue,
+        bool replace);
 };
