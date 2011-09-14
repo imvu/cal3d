@@ -16,7 +16,7 @@
 #include "cal3d/coremesh.h"
 #include "cal3d/error.h"
 #include "cal3d/coresubmesh.h"
-#include "cal3d/coresubmorphtarget.h"
+#include "cal3d/coremorphtarget.h"
 
 size_t sizeInBytes(const CalCoreSubmeshPtr& submesh) {
     return sizeof(CalCoreSubmeshPtr) + submesh->sizeInBytes();

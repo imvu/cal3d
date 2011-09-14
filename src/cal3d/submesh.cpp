@@ -17,7 +17,7 @@
 #include "cal3d/submesh.h"
 #include "cal3d/error.h"
 #include "cal3d/coresubmesh.h"
-#include "cal3d/coresubmorphtarget.h"
+#include "cal3d/coremorphtarget.h"
 
 BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 

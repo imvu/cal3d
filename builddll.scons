@@ -11,13 +11,13 @@ sources = Split('''
     buffersource.cpp
     calxmlbindings.cpp
     coreanimation.cpp
-    coremorphanimation.cpp
     corebone.cpp
     coremesh.cpp
+    coremorphanimation.cpp
+    coremorphtarget.cpp
     coremorphtrack.cpp
     coreskeleton.cpp
     coresubmesh.cpp
-    coresubmorphtarget.cpp
     coretrack.cpp
     error.cpp
     global.cpp

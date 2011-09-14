@@ -29,7 +29,7 @@
 #include "cal3d/coremorphkeyframe.h"
 #include "cal3d/coremesh.h"
 #include "cal3d/coresubmesh.h"
-#include "cal3d/coresubmorphtarget.h"
+#include "cal3d/coremorphtarget.h"
 #include "cal3d/corematerial.h"
 
 #include "cal3d/calxmlbindings.h"

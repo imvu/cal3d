@@ -13,7 +13,7 @@
 #endif
 
 #include <string.h>
-#include "cal3d/coresubmorphtarget.h"
+#include "cal3d/coremorphtarget.h"
 
 static CalMorphTargetType calculateType(const char* s2) {
     const char* dot = strrchr(s2, '.');

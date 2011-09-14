@@ -14,7 +14,7 @@
 
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coresubmesh.h"
-#include "cal3d/coresubmorphtarget.h"
+#include "cal3d/coremorphtarget.h"
 #include "cal3d/transform.h"
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)

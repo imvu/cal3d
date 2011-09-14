@@ -24,7 +24,7 @@
 #include "cal3d/skeleton.h"
 #include "cal3d/bone.h"
 #include "cal3d/coresubmesh.h"
-#include "cal3d/coresubmorphtarget.h"
+#include "cal3d/coremorphtarget.h"
 #include "cal3d/transform.h"
 
 SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
