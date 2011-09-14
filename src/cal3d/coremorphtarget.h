@@ -21,6 +21,7 @@ public:
         CalVector4 normal;
         std::vector<CalCoreSubmesh::TextureCoordinate> textureCoords;
     };
+    typedef std::vector<BlendVertex*> VectorBlendVertex;
 
     const std::string name;
     const CalMorphTargetType morphTargetType;
@@ -28,19 +29,9 @@ public:
     CalCoreSubMorphTarget(const std::string& name);
     ~CalCoreSubMorphTarget();
 
-    typedef std::vector<BlendVertex*> VectorBlendVertex;
     size_t size() const;
-    size_t getBlendVertexCount() const {
-        return m_vectorBlendVertex.size();
-    }
-    const std::vector<BlendVertex*>& getVectorBlendVertex() const {
+    const std::vector<BlendVertex*>& getVertices() const {
         return m_vectorBlendVertex;
-    }
-    inline bool hasBlendVertex(int blendVertexId) const {
-        return m_vectorBlendVertex[blendVertexId] != NULL;
-    }
-    inline BlendVertex const* getBlendVertex(int blendVertexId) {
-        return m_vectorBlendVertex[blendVertexId];
     }
     void reserve(size_t blendVertexCount);
     bool setBlendVertex(int vertexId, const BlendVertex& vertex);

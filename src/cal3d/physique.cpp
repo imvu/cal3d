@@ -423,7 +423,7 @@ static size_t getEnabledMorphs(const CalSubmesh* submesh) {
         float weight = submesh->morphTargets[i].weight;
         if (weight != 0.0) {
             enabledMorphCache[enabledMorphTargetCount].weight = weight;
-            enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVectorBlendVertex());
+            enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVertices());
             ++enabledMorphTargetCount;
         }
     }
