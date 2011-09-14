@@ -32,20 +32,20 @@ static CalMorphTargetType calculateType(const char* s2) {
     return CalMorphTargetTypeAdditive;
 }
 
-CalCoreSubMorphTarget::CalCoreSubMorphTarget(const std::string& n)
+CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n)
     : name(n)
     , morphTargetType(calculateType(n.c_str()))
 {
 }
 
-CalCoreSubMorphTarget::~CalCoreSubMorphTarget() {
+CalCoreMorphTarget::~CalCoreMorphTarget() {
     for (size_t i = 0; i < m_vectorBlendVertex.size(); i++) {
         delete m_vectorBlendVertex[i];
     }
 }
 
-size_t CalCoreSubMorphTarget::size() const {
-    size_t r = sizeof(CalCoreSubMorphTarget);
+size_t CalCoreMorphTarget::size() const {
+    size_t r = sizeof(CalCoreMorphTarget);
     r += sizeof(CalMorphTargetType);
 
     // Assume single texture coordinate pair.
@@ -54,7 +54,7 @@ size_t CalCoreSubMorphTarget::size() const {
     return r;
 }
 
-void CalCoreSubMorphTarget::reserve(size_t blendVertexCount) {
+void CalCoreMorphTarget::reserve(size_t blendVertexCount) {
     // reserve the space needed in all the vectors
     m_vectorBlendVertex.resize(blendVertexCount);
     for (size_t i = 0; i < m_vectorBlendVertex.size(); i++) {
@@ -62,7 +62,7 @@ void CalCoreSubMorphTarget::reserve(size_t blendVertexCount) {
     }
 }
 
-bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& blendVertex) {
+bool CalCoreMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& blendVertex) {
     if ((blendVertexId < 0) || (blendVertexId >= (int)m_vectorBlendVertex.size())) {
         return false;
     }
@@ -81,7 +81,7 @@ bool CalCoreSubMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex&
     return true;
 }
 
-void CalCoreSubMorphTarget::scale(float factor) {
+void CalCoreMorphTarget::scale(float factor) {
     for (std::vector<BlendVertex*>::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
         BlendVertex* v = *i;
         if (v) {

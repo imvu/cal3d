@@ -653,12 +653,12 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
 
     for (int morphId = 0; morphId < morphCount; morphId++) {
-        CalCoreSubMorphTargetPtr morphTarget = vectorMorphs[morphId];
+        CalCoreMorphTargetPtr morphTarget = vectorMorphs[morphId];
         CalPlatform::writeString(os, morphTarget->name);
 
-        const CalCoreSubMorphTarget::VectorBlendVertex& vertices = morphTarget->getVertices();
+        const CalCoreMorphTarget::VectorBlendVertex& vertices = morphTarget->getVertices();
         for (int blendId = 0; blendId < vertices.size(); ++blendId) {
-            CalCoreSubMorphTarget::BlendVertex const* bv = vertices[blendId];
+            CalCoreMorphTarget::BlendVertex const* bv = vertices[blendId];
             if (!bv) {
                 continue;
             }
@@ -1242,7 +1242,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         // write all morphs
         int morphId;
         for (morphId = 0; morphId < (int)pCoreSubmesh->getCoreSubMorphTargetCount(); ++morphId) {
-            CalCoreSubMorphTargetPtr morphTarget = vectorMorphs[morphId];
+            CalCoreMorphTargetPtr morphTarget = vectorMorphs[morphId];
 
             TiXmlElement morph("MORPH");
             str.str("");
@@ -1252,9 +1252,9 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
             morph.SetAttribute("NAME", morphTarget->name);
 
             int morphVertCount = 0;
-            const CalCoreSubMorphTarget::VectorBlendVertex& vertices = morphTarget->getVertices();
+            const CalCoreMorphTarget::VectorBlendVertex& vertices = morphTarget->getVertices();
             for (int blendId = 0; blendId < vertices.size(); ++blendId) {
-                CalCoreSubMorphTarget::BlendVertex const* bv = vertices[blendId];
+                CalCoreMorphTarget::BlendVertex const* bv = vertices[blendId];
                 if (!bv) {
                     continue;
                 }

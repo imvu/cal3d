@@ -407,7 +407,7 @@ void automaticallyDetectSkinRoutine(
 
 struct EnabledMorph {
     float weight;
-    const CalCoreSubMorphTarget::BlendVertex* const* blendVertices;
+    const CalCoreMorphTarget::BlendVertex* const* blendVertices;
 };
 
 static std::vector<EnabledMorph> enabledMorphCache;
@@ -456,7 +456,7 @@ void CalPhysique::calculateVerticesAndNormals(
             CalVector4 position;
             CalVector4 normal;
             for (unsigned i = 0; i < enabledMorphCount; i++) {
-                const CalCoreSubMorphTarget::BlendVertex* blendVertex = enabledMorphs[i].blendVertices[vertexId];
+                const CalCoreMorphTarget::BlendVertex* blendVertex = enabledMorphs[i].blendVertices[vertexId];
                 if (blendVertex) {
                     float currentWeight = enabledMorphs[i].weight;
                     position += currentWeight * blendVertex->position;

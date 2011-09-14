@@ -111,7 +111,7 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
 }
 
-size_t CalCoreSubmesh::addCoreSubMorphTarget(CalCoreSubMorphTargetPtr pCoreSubMorphTarget) {
+size_t CalCoreSubmesh::addCoreSubMorphTarget(CalCoreMorphTargetPtr pCoreSubMorphTarget) {
     size_t subMorphTargetId = m_vectorCoreSubMorphTarget.size();
     m_vectorCoreSubMorphTarget.push_back(pCoreSubMorphTarget);
     return subMorphTargetId;

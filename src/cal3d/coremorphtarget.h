@@ -14,7 +14,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/coresubmesh.h"
 
-class CAL3D_API CalCoreSubMorphTarget {
+class CAL3D_API CalCoreMorphTarget {
 public:
     struct BlendVertex : public AlignedMemory<16> {
         CalPoint4 position;
@@ -26,8 +26,8 @@ public:
     const std::string name;
     const CalMorphTargetType morphTargetType;
 
-    CalCoreSubMorphTarget(const std::string& name);
-    ~CalCoreSubMorphTarget();
+    CalCoreMorphTarget(const std::string& name);
+    ~CalCoreMorphTarget();
 
     size_t size() const;
     const std::vector<BlendVertex*>& getVertices() const {
@@ -42,4 +42,4 @@ private:
     std::vector<BlendVertex*> m_vectorBlendVertex;
     CalMorphTargetType m_morphTargetType;
 };
-typedef boost::shared_ptr<CalCoreSubMorphTarget> CalCoreSubMorphTargetPtr;
+typedef boost::shared_ptr<CalCoreMorphTarget> CalCoreMorphTargetPtr;
