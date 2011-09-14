@@ -26,17 +26,27 @@ BOOST_STATIC_ASSERT(sizeof(CalIndex) == 2);
 // not yet have a value by setting this field to this specific invalid value.
 static float const ReplacementAttenuationNull = 100.0; // Any number not between zero and one.
 
-cal3d::MorphTarget::MorphTarget()
-    : weight(0.0f)
-    , accumulatedWeight(0.0f)
-    , replacementAttenuation(ReplacementAttenuationNull)
-{}
+cal3d::MorphTarget::MorphTarget(const CalCoreMorphTargetPtr& cmt)
+    : coreMorphTarget(cmt)
+{
+    resetState();
+}
+
+void cal3d::MorphTarget::resetState() {
+    weight = 0.0f;
+    accumulatedWeight = 0.0f;
+    replacementAttenuation = ReplacementAttenuationNull;
+}
 
 CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
     : coreSubmesh(pCoreSubmesh) {
     assert(pCoreSubmesh);
 
-    morphTargets.resize(coreSubmesh->getCoreSubMorphTargetCount());
+    const size_t morphTargetCount = coreSubmesh->getCoreSubMorphTargetCount();
+    morphTargets.reserve(morphTargetCount);
+    for (size_t i = 0; i < morphTargetCount; ++i) {
+        morphTargets.push_back(cal3d::MorphTarget(coreSubmesh->getCoreSubMorphTarget(i)));
+    }
 }
 
 void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight) {
@@ -52,7 +62,7 @@ void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight
 void CalSubmesh::clearMorphTargetScales() {
     size_t size = morphTargets.size();
     for (size_t i = 0; i < size; i++) {
-        morphTargets[i] = cal3d::MorphTarget();
+        morphTargets[i].resetState();
     }
 }
 
@@ -61,7 +71,7 @@ void CalSubmesh::clearMorphTargetState(std::string const& morphName) {
     for (size_t i = 0; i < morphTargets.size(); i++) {
         const CalCoreMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
-            morphTargets[i] = cal3d::MorphTarget();
+            morphTargets[i].resetState();
         }
     }
 }
