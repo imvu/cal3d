@@ -20,7 +20,7 @@
 #include "cal3d/vector4.h"
 #include "cal3d/bonetransform.h"
 
-class CalCoreSubMorphTarget;
+typedef boost::shared_ptr<class CalCoreSubMorphTarget> CalCoreSubMorphTargetPtr;
 typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 
 enum CalMorphTargetType {
@@ -116,7 +116,7 @@ public:
         }
     };
 
-    typedef std::vector<boost::shared_ptr<CalCoreSubMorphTarget> > CoreSubMorphTargetVector;
+    typedef std::vector<CalCoreSubMorphTargetPtr> CoreSubMorphTargetVector;
     typedef std::vector<Face> VectorFace;
     typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
     typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
@@ -152,8 +152,8 @@ public:
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
     bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
-    size_t addCoreSubMorphTarget(boost::shared_ptr<CalCoreSubMorphTarget> pCoreSubMorphTarget);
-    const boost::shared_ptr<CalCoreSubMorphTarget>& getCoreSubMorphTarget(size_t id) {
+    size_t addCoreSubMorphTarget(CalCoreSubMorphTargetPtr pCoreSubMorphTarget);
+    const CalCoreSubMorphTargetPtr& getCoreSubMorphTarget(size_t id) {
         assert(id < m_vectorCoreSubMorphTarget.size());
         return m_vectorCoreSubMorphTarget[id];
     }

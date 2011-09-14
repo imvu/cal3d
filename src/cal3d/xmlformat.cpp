@@ -985,7 +985,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
-            boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(morph->Attribute("NAME")));
+            CalCoreSubMorphTargetPtr morphTarget(new CalCoreSubMorphTarget(morph->Attribute("NAME")));
             morphTarget->reserve(vertexCount);
 
             TiXmlElement* blendVert = morph->FirstChildElement();

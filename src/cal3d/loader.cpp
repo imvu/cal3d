@@ -931,7 +931,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         std::string morphName;
         dataSrc.readString(morphName);
 
-        boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(morphName));
+        CalCoreSubMorphTargetPtr morphTarget(new CalCoreSubMorphTarget(morphName));
         morphTarget->reserve(vertexCount);
 
         int blendVertId;

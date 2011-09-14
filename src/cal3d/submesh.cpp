@@ -41,7 +41,7 @@ CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
 
 void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight) {
     for (size_t i = 0; i < morphTargets.size(); i++) {
-        const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
+        const CalCoreSubMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
             morphTargets[i].weight = weight;
             return;
@@ -59,7 +59,7 @@ void CalSubmesh::clearMorphTargetScales() {
 
 void CalSubmesh::clearMorphTargetState(std::string const& morphName) {
     for (size_t i = 0; i < morphTargets.size(); i++) {
-        const boost::shared_ptr<CalCoreSubMorphTarget>& target = coreSubmesh->getCoreSubMorphTarget(i);
+        const CalCoreSubMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
         if (target->name == morphName) {
             morphTargets[i] = cal3d::MorphTarget();
         }

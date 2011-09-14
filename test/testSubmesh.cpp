@@ -148,7 +148,7 @@ TEST(is_not_static_if_has_morph_targets) {
     inf[1].weight = 1.0f;
     csm.addVertex(v, black, inf);
 
-    boost::shared_ptr<CalCoreSubMorphTarget> morphTarget(new CalCoreSubMorphTarget(""));
+    CalCoreSubMorphTargetPtr morphTarget(new CalCoreSubMorphTarget(""));
     csm.addCoreSubMorphTarget(morphTarget);
 
     CHECK(!csm.isStatic());
