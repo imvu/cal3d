@@ -366,7 +366,6 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
         }
         
 	// save core animation to the file
-        ::OutputDebugString("Writing to output file...\n");
 	if(!CalSaver::saveCoreMorphAnimation(strFilename, &coreAnimation))
 	{
           SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
@@ -374,7 +373,6 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 	}
         
 	// destroy the core animation
-  ::OutputDebugString("Writing complete.\n");
 
 	return true;
 }
