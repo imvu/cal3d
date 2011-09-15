@@ -6,6 +6,20 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/matrix.h>
 
+TEST(coreskeleton_can_only_have_one_root) {
+    CalCoreBonePtr root1(new CalCoreBone("root1"));
+    CalCoreBonePtr root2(new CalCoreBone("root2"));
+    
+    CalCoreSkeleton cs;
+    cs.addCoreBone(root1);
+    cs.addCoreBone(root2);
+
+    CHECK_EQUAL(-1, cs.coreBones[0]->parentId);
+    CHECK_EQUAL(0, cs.coreBones[1]->parentId);
+
+    CHECK_EQUAL(0, root2->parentId);
+}
+
 TEST(loader_topologically_sorts) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
@@ -53,7 +67,7 @@ TEST(loader_disregards_cyclic_parents) {
 
     CHECK_EQUAL(2u, cs.coreBones.size());
     CHECK_EQUAL(-1, cs.coreBones[0]->parentId);
-    CHECK_EQUAL(-1, cs.coreBones[1]->parentId);
+    CHECK_EQUAL(0, cs.coreBones[1]->parentId);
 }
 
 TEST(loader_disregards_paths_to_out_of_range) {
@@ -64,7 +78,7 @@ TEST(loader_disregards_paths_to_out_of_range) {
 
     CHECK_EQUAL(2u, cs.coreBones.size());
     CHECK_EQUAL(-1, cs.coreBones[0]->parentId);
-    CHECK_EQUAL(-1, cs.coreBones[1]->parentId);
+    CHECK_EQUAL(0, cs.coreBones[1]->parentId);
 }
 
 TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {

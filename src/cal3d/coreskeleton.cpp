@@ -105,6 +105,11 @@ CalCoreSkeleton::CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones)
 size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     cal3d::verify(coreBone->parentId == -1 || coreBone->parentId < coreBones.size(), "bones must be added in topological order");
 
+    // skeletons can only have one root
+    if (!m_coreBones.empty() && coreBone->parentId == -1) {
+        coreBone->parentId = 0;
+    }
+
     size_t newIndex = m_coreBones.size();
     m_coreBones.push_back(coreBone);
 
