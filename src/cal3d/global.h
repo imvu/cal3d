@@ -24,6 +24,8 @@ typedef unsigned short CalIndex;
 
 const float EPSILON = 1e-5f;
 
+#define CAL3D_PTR(c) typedef boost::shared_ptr<class c> c##Ptr
+
 namespace cal3d {
     inline bool close(float a, float b) {
         return fabs(a - b) < EPSILON;

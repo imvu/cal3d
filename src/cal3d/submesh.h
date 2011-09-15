@@ -18,7 +18,8 @@
 typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
 
 namespace cal3d {
-    struct CAL3D_API MorphTarget {
+    class CAL3D_API MorphTarget {
+    public:
         MorphTarget(const CalCoreMorphTargetPtr& coreMorphTarget);
         void resetState();
 
@@ -28,6 +29,7 @@ namespace cal3d {
         float accumulatedWeight;
         float replacementAttenuation;
     };
+    CAL3D_PTR(MorphTarget);
 }
 
 
