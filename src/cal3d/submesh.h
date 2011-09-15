@@ -22,7 +22,7 @@ namespace cal3d {
         MorphTarget(const CalCoreMorphTargetPtr& coreMorphTarget);
         void resetState();
 
-        const CalCoreMorphTargetPtr coreMorphTarget;
+        CalCoreMorphTargetPtr coreMorphTarget;
 
         float weight;
         float accumulatedWeight;
