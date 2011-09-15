@@ -251,7 +251,6 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton>, boost::noncopyable>("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
         .def("scale", &CalCoreSkeleton::scale)
-        .def("zeroRootTransforms", &CalCoreSkeleton::zeroRootTransforms)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
         .add_property("bones", make_function(&CalCoreSkeleton::getCoreBones, return_value_policy<return_by_value>()))
         ;
