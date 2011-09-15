@@ -21,6 +21,20 @@ namespace cal3d {
         return lhs.rotation == rhs.rotation && lhs.translation == rhs.translation;
     }
 
+    // Given that Transform is equivalent to rotate-then-translate,
+    //   i.e. v' = M * v = Mt * Mr * v
+    // we are looking for a matrix M' such that:
+    //   v = M' * M * v
+    //   v = M' * (Mt * Mr) * v
+    //   v = (Mr' * Mt') * (Mt * Mr) * v
+    // thus,
+    //   M' = (Mr' * Mt')
+    inline Transform invert(const Transform& t) {
+        return Transform(
+            -t.rotation,
+            (-t.rotation) * (-t.translation));
+    }
+
     inline Transform operator*(const Transform& outer, const Transform& inner) {
         return Transform(
             outer.rotation * inner.rotation,

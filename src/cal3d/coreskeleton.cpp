@@ -108,6 +108,7 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     // skeletons can only have one root
     if (!m_coreBones.empty() && coreBone->parentId == -1) {
         coreBone->parentId = 0;
+        coreBone->relativeTransform = invert(m_coreBones[0]->relativeTransform) * coreBone->relativeTransform;
     }
 
     size_t newIndex = m_coreBones.size();

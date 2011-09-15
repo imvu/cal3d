@@ -5,6 +5,7 @@
 #include <cal3d/coresubmesh.h>
 #include <cal3d/coreskeleton.h>
 #include <cal3d/matrix.h>
+#include <cal3d/streamops.h>
 
 TEST(coreskeleton_can_only_have_one_root) {
     CalCoreBonePtr root1(new CalCoreBone("root1"));
@@ -18,6 +19,21 @@ TEST(coreskeleton_can_only_have_one_root) {
     CHECK_EQUAL(0, cs.coreBones[1]->parentId);
 
     CHECK_EQUAL(0, root2->parentId);
+}
+
+TEST(coreskeleton_second_roots_are_transformed_relative_to_first_root) {
+    CalCoreBonePtr root1(new CalCoreBone("root1"));
+    root1->relativeTransform.translation = CalVector(1, 1, 1);
+    CalCoreBonePtr root2(new CalCoreBone("root2"));
+    root2->relativeTransform.translation = CalVector(-1, -1, -1);
+    
+    CalCoreSkeleton cs;
+    cs.addCoreBone(root1);
+    cs.addCoreBone(root2);
+
+    CHECK_EQUAL(root2, cs.coreBones[1]);
+    CHECK_EQUAL(0, root2->parentId);
+    CHECK_EQUAL(CalVector(-2, -2, -2), root2->relativeTransform.translation);
 }
 
 TEST(loader_topologically_sorts) {

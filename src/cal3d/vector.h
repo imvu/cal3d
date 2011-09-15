@@ -35,6 +35,10 @@ public:
     CalVector(): x(0.0f), y(0.0f), z(0.0f) {};
     CalVector(const CalVector& v) : x(v.x), y(v.y), z(v.z) {};
     CalVector(float vx, float vy, float vz): x(vx), y(vy), z(vz) {};
+
+    CalVector operator-() const {
+        return CalVector(-x, -y, -z);
+    }
     
     CAL3D_FORCEINLINE void operator+=(const CalVector& v) {
         x += v.x;
