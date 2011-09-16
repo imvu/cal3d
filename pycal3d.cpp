@@ -310,9 +310,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
         ;
 
-    class_< CalCoreMesh::CalCoreSubmeshVector >("CalCoreSubmeshVector")
-        .def(vector_indexing_suite<CalCoreMesh::CalCoreSubmeshVector, true>())
-        ;
+    exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");
 
     class_<CalCoreMesh, CalCoreMeshPtr>("CoreMesh")
         .def_readwrite("submeshes", &CalCoreMesh::submeshes)
@@ -325,18 +323,14 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("transform", &CalCoreKeyframe::transform)
         ;
 
-    class_<CalCoreTrack::KeyframeList>("CoreKeyframeVector")
-        .def(vector_indexing_suite<CalCoreTrack::KeyframeList, true>())
-        ;
+    exportVector<CalCoreKeyframe>("CoreKeyframeVector");
 
     class_<CalCoreTrack>("CoreTrack", init<int, const CalCoreTrack::KeyframeList&>())
         .def_readwrite("coreBoneId", &CalCoreTrack::coreBoneId)
         .def_readwrite("keyframes", &CalCoreTrack::keyframes)
         ;
 
-    class_< std::vector<CalCoreTrack> >("CoreTrackVector")
-        .def(vector_indexing_suite< std::vector<CalCoreTrack>, true >())
-        ;
+    exportVector<CalCoreTrack>("CoreTrackVector");
 
     class_<CalCoreAnimation, CalCoreAnimationPtr>("CoreAnimation")
         .def("scale", &CalCoreAnimation::scale)
