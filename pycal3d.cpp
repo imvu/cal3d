@@ -1,5 +1,6 @@
 #include <vector>
 
+#include <boost/math/constants/constants.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
@@ -212,6 +213,26 @@ void exportVector(const char* name) {
         ;
 }
 
+std::string VectorRepr(const CalVector& v) {
+    std::ostringstream os;
+    os << "cal3d.Vector(" << v.x << ", " << v.y << ", " << v.z << ")";
+    return os.str();
+}
+
+std::string QuaternionRepr(const CalQuaternion& q) {
+    float h2 = acos(-q.w);
+    float angle = h2 * 360 / boost::math::constants::pi<float>();
+    float s = sin(h2);
+
+    std::ostringstream os;
+    os << "cal3d.Quaternion(angle=" << angle << ", axis=(" << (q.x / s) << ", " << (q.y / s) << ", " << (q.z / s) << "))";
+    return os.str();
+}
+
+std::string TransformRepr(const cal3d::Transform& t) {
+    return "cal3d.Transform(" + QuaternionRepr(t.rotation) + ", " + VectorRepr(t.translation) + ")";
+}
+
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
 #else
@@ -221,12 +242,14 @@ BOOST_PYTHON_MODULE(_cal3d)
     cal3d::BufferFromPythonObject();
 
     class_<CalVector>("Vector")
+        .def("__repr__", &VectorRepr)
         .def_readwrite("x", &CalVector::x)
         .def_readwrite("y", &CalVector::y)
         .def_readwrite("z", &CalVector::z)
         ;
 
     class_<CalQuaternion>("Quaternion")
+        .def("__repr__", &QuaternionRepr)
         .def_readwrite("x", &CalQuaternion::x)
         .def_readwrite("y", &CalQuaternion::y)
         .def_readwrite("z", &CalQuaternion::z)
@@ -234,6 +257,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     class_<cal3d::Transform>("Transform")
+        .def("__repr__", &TransformRepr)
         .def_readwrite("translation", &cal3d::Transform::translation)
         .def_readwrite("rotation", &cal3d::Transform::rotation)
         ;
