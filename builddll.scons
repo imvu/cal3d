@@ -35,6 +35,7 @@ sources = Split('''
     tinyxml.cpp
     tinyxmlerror.cpp
     tinyxmlparser.cpp
+    transform.cpp
     vector.cpp
     xmlformat.cpp
 ''')

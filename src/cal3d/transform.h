@@ -9,19 +9,6 @@ namespace cal3d {
         CalVector scale;
     };
 
-    struct Transform {
-        Transform()
-        {}
-
-        Transform(const CalQuaternion& r, const CalVector& t)
-            : basis(r)
-            , translation(t)
-        {}
-
-        CalMatrix basis;
-        CalVector translation;
-    };
-
     struct RotateTranslate {
         RotateTranslate()
         {}
@@ -67,5 +54,34 @@ namespace cal3d {
         return RotateTranslate(
             slerp(factor, left.rotation, right.rotation),
             lerp(factor, left.translation, right.translation));
+    }
+
+    struct Transform {
+        Transform()
+        {}
+
+        Transform(const RotateTranslate& t)
+            : basis(t.rotation)
+            , translation(t.translation)
+        {}
+
+        Transform(const CalMatrix& m, const CalVector& t)
+            : basis(m)
+            , translation(t)
+        {}
+
+        Transform(const CalQuaternion& r, const CalVector& t)
+            : basis(r)
+            , translation(t)
+        {}
+
+        CalMatrix basis;
+        CalVector translation;
+    };
+
+    CAL3D_API Transform operator*(const Transform& outer, const Transform& inner);
+
+    inline CalVector operator*(const Transform& t, const CalVector& v) {
+        return t.translation + t.basis * v;
     }
 }

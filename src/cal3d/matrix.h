@@ -38,6 +38,13 @@ public:
     explicit CalMatrix(const CalQuaternion& q);
 };
 
+inline CalVector operator*(const CalMatrix& m, const CalVector& v) {
+    return CalVector(
+        m.dxdx * v.x + m.dxdy * v.y + m.dxdz * v.z,
+        m.dydx * v.x + m.dydy * v.y + m.dydz * v.z,
+        m.dzdx * v.x + m.dzdy * v.y + m.dzdz * v.z);
+}
+
 inline CalMatrix operator*(const CalMatrix& outer, const CalMatrix& inner) {
     float ndxdx = outer.dxdx * inner.dxdx + outer.dxdy * inner.dydx + outer.dxdz * inner.dzdx;
     float ndydx = outer.dydx * inner.dxdx + outer.dydy * inner.dydx + outer.dydz * inner.dzdx;
