@@ -79,11 +79,13 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         absoluteTransform = bones[parentId].absoluteTransform * relativeTransform;
     }
 
-    //absoluteTransform = absoluteTransform * cal3d::Scale(m_meshScaleAbsolute);
+    if (m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1) {
+        absoluteTransform = absoluteTransform * cal3d::Scale(m_meshScaleAbsolute);
+    }
 
     CalVector boneSpaceTranslation(coreBoneSpaceTransform.translation);
 
-    bool meshScalingOn = m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1;
+    bool meshScalingOn = false;//m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1;
     if (meshScalingOn) {
         // The mesh transformation is intended to apply to the vector from the
         // bone node to the vert, relative to the model's global coordinate system.

@@ -109,7 +109,7 @@ TEST_F(MixerFixture, boneTransform_accumulates_transforms_and_scales) {
     mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), boneScaleAdjustments, IncludeRootTransform);
 
     CHECK_EQUAL(CalVector(25, 28, 36), transformPoint(skeleton.boneTransforms[0], CalVector(2, 4, 8)));
-    CHECK_EQUAL(CalVector(14, 12, 14), transformPoint(skeleton.boneTransforms[1], CalVector(2, 4, 8)));
+    CHECK_EQUAL(CalVector(27, 24, 28), transformPoint(skeleton.boneTransforms[1], CalVector(2, 4, 8)));
 }
 
 TEST(scale_is_in_bone_space) {
@@ -132,7 +132,7 @@ TEST(scale_is_in_bone_space) {
     CalMixer mixer;
     mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), boneScaleAdjustments, IncludeRootTransform);
 
-    CHECK_EQUAL(CalVector(-2, 3, 32), transformPoint(skeleton.boneTransforms[0], CalVector(2, 4, 8)));
+    CHECK_EQUAL(CalVector(-1, 6, 32), transformPoint(skeleton.boneTransforms[0], CalVector(2, 4, 8)));
 }
 
 TEST_F(MixerFixture, can_optionally_disregard_root_transform) {
