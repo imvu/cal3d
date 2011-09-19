@@ -6,6 +6,9 @@
 
 namespace cal3d {
     struct Scale {
+        Scale(const CalVector& s)
+        : scale(s)
+        {}
         CalVector scale;
     };
 
@@ -80,6 +83,7 @@ namespace cal3d {
     };
 
     CAL3D_API Transform operator*(const Transform& outer, const Transform& inner);
+    CAL3D_API Transform operator*(const Transform& outer, const Scale& inner);
 
     inline CalVector operator*(const Transform& t, const CalVector& v) {
         return t.translation + t.basis * v;
