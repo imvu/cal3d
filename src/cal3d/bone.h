@@ -21,8 +21,8 @@ class CalModel;
 class CAL3D_API CalBone {
 public:
     const int parentId;
-    cal3d::Transform relativeTransform;
-    cal3d::Transform absoluteTransform;
+    cal3d::RotateTranslate relativeTransform;
+    cal3d::RotateTranslate absoluteTransform;
 
     CalBone(const CalCoreBone& coreBone);
 
@@ -36,7 +36,7 @@ public:
 
     void resetPose();
     void blendPose(
-        const cal3d::Transform& transform,
+        const cal3d::RotateTranslate& transform,
         bool replace = false,
         float rampValue = 1.0f);
 
@@ -44,8 +44,8 @@ public:
 
 private:
     // from core bone. stored locally for better cache locality
-    const cal3d::Transform coreRelativeTransform;
-    const cal3d::Transform coreBoneSpaceTransform;
+    const cal3d::RotateTranslate coreRelativeTransform;
+    const cal3d::RotateTranslate coreBoneSpaceTransform;
 
     // animated bone state
     float m_accumulatedWeight;

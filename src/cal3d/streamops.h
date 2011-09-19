@@ -31,7 +31,7 @@ inline std::ostream& operator<<(std::ostream& os, const CalQuaternion& quat) {
 }
 
 namespace cal3d {
-    inline std::ostream& operator<<(std::ostream& os, const Transform& t) {
+    inline std::ostream& operator<<(std::ostream& os, const RotateTranslate& t) {
         return os << "cal3d::Transform(" << t.rotation << ", " << t.translation << ")";
     }
 }

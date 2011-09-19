@@ -229,8 +229,8 @@ std::string QuaternionRepr(const CalQuaternion& q) {
     return os.str();
 }
 
-std::string TransformRepr(const cal3d::Transform& t) {
-    return "cal3d.Transform(" + QuaternionRepr(t.rotation) + ", " + VectorRepr(t.translation) + ")";
+std::string RotateTranslateRepr(const cal3d::RotateTranslate& t) {
+    return "cal3d.RotateTranslate(" + QuaternionRepr(t.rotation) + ", " + VectorRepr(t.translation) + ")";
 }
 
 #ifndef NDEBUG
@@ -256,10 +256,10 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("w", &CalQuaternion::w)
         ;
 
-    class_<cal3d::Transform>("Transform")
-        .def("__repr__", &TransformRepr)
-        .def_readwrite("translation", &cal3d::Transform::translation)
-        .def_readwrite("rotation", &cal3d::Transform::rotation)
+    class_<cal3d::RotateTranslate>("Transform")
+        .def("__repr__", &RotateTranslateRepr)
+        .def_readwrite("translation", &cal3d::RotateTranslate::translation)
+        .def_readwrite("rotation", &cal3d::RotateTranslate::rotation)
         ;
 
     class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone", no_init)

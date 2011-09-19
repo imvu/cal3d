@@ -150,7 +150,7 @@ void CalMixer::applyBoneAdjustments(
         const BoneTransformAdjustment& ba = boneTransformAdjustments[i];
         CalBone& bo = bones[ba.boneId];
         bo.blendPose(
-            cal3d::Transform(
+            cal3d::RotateTranslate(
                 ba.localOri,
                 bo.getOriginalTranslation() /* adjustedLocalPos */),
             true, /* replace */

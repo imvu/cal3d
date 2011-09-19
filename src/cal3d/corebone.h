@@ -32,8 +32,8 @@ public:
     CalVector lightColor;
     CalLightType lightType;
 
-    cal3d::Transform relativeTransform;
-    cal3d::Transform boneSpaceTransform;
+    cal3d::RotateTranslate relativeTransform;
+    cal3d::RotateTranslate boneSpaceTransform;
 
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);

@@ -36,7 +36,7 @@ public:
     void scale(float factor);
     void fixup(const CalCoreBone& bone);
 
-    cal3d::Transform getState(float time) const;
+    cal3d::RotateTranslate getState(float time) const;
 
     CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
     void translationCompressibility(

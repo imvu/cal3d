@@ -6,8 +6,8 @@
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
 
-static cal3d::Transform makeTranslation(float x, float y, float z) {
-    return cal3d::Transform(CalQuaternion(), CalVector(x, y, z));
+static cal3d::RotateTranslate makeTranslation(float x, float y, float z) {
+    return cal3d::RotateTranslate(CalQuaternion(), CalVector(x, y, z));
 }
 
 FIXTURE(BoneFixture) {
@@ -119,7 +119,7 @@ TEST(scale_is_in_bone_space) {
     CHECK_EQUAL(CalVector(-4, 2, 8), aboutZ * CalVector(2, 4, 8));
 
     CalCoreBonePtr root(new CalCoreBone("root"));
-    root->boneSpaceTransform = cal3d::Transform(aboutZ, CalVector(2, 4, 8));
+    root->boneSpaceTransform = cal3d::RotateTranslate(aboutZ, CalVector(2, 4, 8));
 
     CalCoreSkeletonPtr coreSkeleton(new CalCoreSkeleton);
     coreSkeleton->addCoreBone(root);

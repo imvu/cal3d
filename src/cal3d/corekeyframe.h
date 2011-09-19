@@ -34,7 +34,7 @@ public:
     }
 
     float time;
-    cal3d::Transform transform;
+    cal3d::RotateTranslate transform;
 };
 
 inline bool operator<(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {

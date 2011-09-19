@@ -48,7 +48,7 @@ void CalBone::resetPose() {
   *****************************************************************************/
 
 void CalBone::blendPose(
-    const cal3d::Transform& transform,
+    const cal3d::RotateTranslate& transform,
     bool replace,
     const float rampValue
 ) {
@@ -73,7 +73,7 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
             // no parent, this means absolute state == relative state
             absoluteTransform = relativeTransform;
         } else {
-            absoluteTransform = cal3d::Transform();
+            absoluteTransform = cal3d::RotateTranslate();
         }
     } else {
         absoluteTransform = bones[parentId].absoluteTransform * relativeTransform;

@@ -4,11 +4,11 @@
 #include "cal3d/quaternion.h"
 
 namespace cal3d {
-    struct Transform {
-        Transform()
+    struct RotateTranslate {
+        RotateTranslate()
         {}
 
-        Transform(const CalQuaternion& r, const CalVector& t)
+        RotateTranslate(const CalQuaternion& r, const CalVector& t)
             : rotation(r)
             , translation(t)
         {}
@@ -17,7 +17,7 @@ namespace cal3d {
         CalVector translation;
     };
 
-    inline bool operator==(const Transform& lhs, const Transform& rhs) {
+    inline bool operator==(const RotateTranslate& lhs, const RotateTranslate& rhs) {
         return lhs.rotation == rhs.rotation && lhs.translation == rhs.translation;
     }
 
@@ -29,24 +29,24 @@ namespace cal3d {
     //   v = (Mr' * Mt') * (Mt * Mr) * v
     // thus,
     //   M' = (Mr' * Mt')
-    inline Transform invert(const Transform& t) {
-        return Transform(
+    inline RotateTranslate invert(const RotateTranslate& t) {
+        return RotateTranslate(
             -t.rotation,
             (-t.rotation) * (-t.translation));
     }
 
-    inline Transform operator*(const Transform& outer, const Transform& inner) {
-        return Transform(
+    inline RotateTranslate operator*(const RotateTranslate& outer, const RotateTranslate& inner) {
+        return RotateTranslate(
             outer.rotation * inner.rotation,
             outer.rotation * inner.translation + outer.translation);
     }
 
-    inline CalVector operator*(const Transform& t, const CalVector& v) {
+    inline CalVector operator*(const RotateTranslate& t, const CalVector& v) {
         return t.rotation * v + t.translation;
     }
 
-    inline Transform blend(float factor, const Transform& left, const Transform& right) {
-        return Transform(
+    inline RotateTranslate blend(float factor, const RotateTranslate& left, const RotateTranslate& right) {
+        return RotateTranslate(
             slerp(factor, left.rotation, right.rotation),
             lerp(factor, left.translation, right.translation));
     }

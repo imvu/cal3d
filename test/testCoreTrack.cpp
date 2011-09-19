@@ -3,7 +3,7 @@
 #include <cal3d/streamops.h>
 
 FIXTURE(TrackFixture) {
-    cal3d::Transform t;
+    cal3d::RotateTranslate t;
 };
 
 TEST_F(TrackFixture, getState_returns_empty_if_no_keyframes) {
@@ -12,7 +12,7 @@ TEST_F(TrackFixture, getState_returns_empty_if_no_keyframes) {
     CHECK_EQUAL(CalVector(), t.translation);
 
     t = track.getState(1);
-    CHECK_EQUAL(cal3d::Transform(), t);
+    CHECK_EQUAL(cal3d::RotateTranslate(), t);
 }
 
 TEST_F(TrackFixture, getState_blends_keyframes) {

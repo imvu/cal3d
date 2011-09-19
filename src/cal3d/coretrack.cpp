@@ -118,7 +118,7 @@ static bool keyframeEliminatable(
     float blendFactor = (p->time - prev->time) / (next->time - prev->time);
 
     // blend between the two keyframes
-    cal3d::Transform transform = blend(blendFactor, prev->transform, next->transform);
+    cal3d::RotateTranslate transform = blend(blendFactor, prev->transform, next->transform);
     return Near(transform.translation, transform.rotation, p->transform.translation, p->transform.rotation, transTolerance, rotTolerance);
 }
 
@@ -263,9 +263,9 @@ void CalCoreTrack::translationCompressibility(
     }
 }
 
-cal3d::Transform CalCoreTrack::getState(float time) const {
+cal3d::RotateTranslate CalCoreTrack::getState(float time) const {
     if (keyframes.empty()) {
-        return cal3d::Transform();
+        return cal3d::RotateTranslate();
     }
 
     KeyframeList::const_iterator iteratorCoreKeyframeAfter = getUpperBound(time);
