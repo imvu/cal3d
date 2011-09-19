@@ -18,14 +18,15 @@ class CalQuaternion;
 
 class CAL3D_API CalMatrix {
 public:
+    // column-major
     float dxdx, dydx, dzdx;
     float dxdy, dydy, dzdy;
     float dxdz, dydz, dzdz;
 
     inline CalMatrix()
-        : dxdx(0.0), dydx(0.0), dzdx(0.0)
-        , dxdy(0.0), dydy(0.0), dzdy(0.0)
-        , dxdz(0.0), dydz(0.0), dzdz(0.0)
+        : dxdx(1), dydx(0), dzdx(0)
+        , dxdy(0), dydy(1), dzdy(0)
+        , dxdz(0), dydz(0), dzdz(1)
     {}
 
     inline CalMatrix(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz)

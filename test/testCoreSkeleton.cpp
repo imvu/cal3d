@@ -120,7 +120,7 @@ TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
     CHECK_EQUAL(1, influences[0].boneId);
     CHECK_EQUAL(0, influences[1].boneId);
 
-    CalMatrix identity(1, 0, 0, 0, 1, 0, 0, 0, 1);
+    CalMatrix identity;
     BoneTransform bt[2] = {
         BoneTransform(identity, CalVector(0, 0, 0)),
         BoneTransform(identity, CalVector(1, 1, 1)),

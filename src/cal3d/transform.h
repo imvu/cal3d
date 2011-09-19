@@ -1,9 +1,27 @@
 #pragma once
 
+#include "cal3d/matrix.h"
 #include "cal3d/vector4.h"
 #include "cal3d/quaternion.h"
 
 namespace cal3d {
+    struct Scale {
+        CalVector scale;
+    };
+
+    struct Transform {
+        Transform()
+        {}
+
+        Transform(const CalQuaternion& r, const CalVector& t)
+            : basis(r)
+            , translation(t)
+        {}
+
+        CalMatrix basis;
+        CalVector translation;
+    };
+
     struct RotateTranslate {
         RotateTranslate()
         {}
