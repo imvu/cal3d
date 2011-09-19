@@ -22,7 +22,7 @@ class CAL3D_API CalBone {
 public:
     const int parentId;
     cal3d::RotateTranslate relativeTransform;
-    cal3d::RotateTranslate absoluteTransform;
+    cal3d::Transform absoluteTransform;
 
     CalBone(const CalCoreBone& coreBone);
 

@@ -160,6 +160,6 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
     }
 
     return BoneTransform(
-        CalMatrix(absoluteTransform.rotation) * boneSpaceRotationAndScale,
+        absoluteTransform.basis * boneSpaceRotationAndScale,
         absoluteTransform * boneSpaceTranslation);
 }
