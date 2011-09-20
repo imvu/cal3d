@@ -45,7 +45,7 @@ public:
 private:
     // from core bone. stored locally for better cache locality
     const cal3d::RotateTranslate coreRelativeTransform;
-    const cal3d::RotateTranslate coreBoneSpaceTransform;
+    const cal3d::Transform coreBoneSpaceTransform;
 
     // animated bone state
     float m_accumulatedWeight;

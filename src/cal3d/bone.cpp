@@ -83,5 +83,5 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         absoluteTransform = absoluteTransform * cal3d::Scale(m_meshScaleAbsolute);
     }
 
-    return absoluteTransform * cal3d::Transform(coreBoneSpaceTransform);
+    return absoluteTransform * coreBoneSpaceTransform;
 }
