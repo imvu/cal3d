@@ -209,8 +209,8 @@ bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkele
 
     CalPlatform::writeVector(file, pCoreBone->relativeTransform.translation);
     CalPlatform::writeQuat(file, pCoreBone->relativeTransform.rotation);
-    CalPlatform::writeVector(file, pCoreBone->boneSpaceTransform.translation);
-    CalPlatform::writeQuat(file, pCoreBone->boneSpaceTransform.rotation);
+    CalPlatform::writeVector(file, pCoreBone->inverseBindPoseTransform.translation);
+    CalPlatform::writeQuat(file, pCoreBone->inverseBindPoseTransform.rotation);
 
     // write the parent bone id
     if (!CalPlatform::writeInteger(file, pCoreBone->parentId)) {
@@ -852,7 +852,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
         TiXmlElement localtranslation("LOCALTRANSLATION");
-        const CalVector& localtranslationVector = pCoreBone->boneSpaceTransform.translation;
+        const CalVector& localtranslationVector = pCoreBone->inverseBindPoseTransform.translation;
 
         str.str("");
         str << localtranslationVector.x << " "
@@ -866,7 +866,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 
 
         TiXmlElement localrotation("LOCALROTATION");
-        const CalQuaternion& localrotationQuad = pCoreBone->boneSpaceTransform.rotation;
+        const CalQuaternion& localrotationQuad = pCoreBone->inverseBindPoseTransform.rotation;
 
         str.str("");
         str << localrotationQuad.x << " "

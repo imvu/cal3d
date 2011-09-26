@@ -25,7 +25,7 @@
 CalBone::CalBone(const CalCoreBone& coreBone)
     : parentId(coreBone.parentId)
     , coreRelativeTransform(coreBone.relativeTransform)
-    , coreBoneSpaceTransform(coreBone.boneSpaceTransform)
+    , coreBoneSpaceTransform(coreBone.inverseBindPoseTransform)
 {
     resetPose();
 }

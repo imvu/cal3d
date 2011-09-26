@@ -553,8 +553,8 @@ CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
     // set all attributes of the bone
     pCoreBone->relativeTransform.translation = trans;
     pCoreBone->relativeTransform.rotation = rot;
-    pCoreBone->boneSpaceTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
-    pCoreBone->boneSpaceTransform.rotation = rotbs;
+    pCoreBone->inverseBindPoseTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
+    pCoreBone->inverseBindPoseTransform.rotation = rotbs;
     if (hasNodeLights) {
         pCoreBone->lightType = (CalLightType)lightType;
         pCoreBone->lightColor = lightColor;

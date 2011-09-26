@@ -354,7 +354,7 @@ TEST(simple_two_bone_skeleton) {
     CHECK_CLOSE(rot.y, -0.0217732, tol);
     CHECK_CLOSE(rot.z, 0.706766, tol);
     CHECK_CLOSE(rot.w, 0.0217552, tol);
-    const CalQuaternion& boneSpaceRot = rootBone->boneSpaceTransform.rotation;
+    const CalQuaternion& boneSpaceRot = rootBone->inverseBindPoseTransform.rotation;
     CHECK_CLOSE(boneSpaceRot.x, 0.706778, tol);
     CHECK_CLOSE(boneSpaceRot.y, -0.0217732, tol);
     CHECK_CLOSE(boneSpaceRot.z, 0.706766, tol);
@@ -363,7 +363,7 @@ TEST(simple_two_bone_skeleton) {
     CHECK_CLOSE(trans.x, 0.346893, tol);
     CHECK_CLOSE(trans.y, -12.6875, tol);
     CHECK_CLOSE(trans.z, 772.958, tol);
-    const CalVector& boneSpaceTrans = rootBone->boneSpaceTransform.translation;
+    const CalVector& boneSpaceTrans = rootBone->inverseBindPoseTransform.translation;
     CHECK_CLOSE(boneSpaceTrans.x, -772.275, tol);
     CHECK_CLOSE(boneSpaceTrans.y, 34.8962, tol);
     CHECK_CLOSE(boneSpaceTrans.z, -0.333774, tol);
@@ -414,7 +414,7 @@ TEST(two_bone_skeleton_with_bones_in_nontopological_order) {
     CHECK_CLOSE(rot.y, -0.0217732, tol);
     CHECK_CLOSE(rot.z, 0.706766, tol);
     CHECK_CLOSE(rot.w, 0.0217552, tol);
-    const CalQuaternion& boneSpaceRot = rootBone->boneSpaceTransform.rotation;
+    const CalQuaternion& boneSpaceRot = rootBone->inverseBindPoseTransform.rotation;
     CHECK_CLOSE(boneSpaceRot.x, 0.706778, tol);
     CHECK_CLOSE(boneSpaceRot.y, -0.0217732, tol);
     CHECK_CLOSE(boneSpaceRot.z, 0.706766, tol);
@@ -423,7 +423,7 @@ TEST(two_bone_skeleton_with_bones_in_nontopological_order) {
     CHECK_CLOSE(trans.x, 0.346893, tol);
     CHECK_CLOSE(trans.y, -12.6875, tol);
     CHECK_CLOSE(trans.z, 772.958, tol);
-    const CalVector& boneSpaceTrans = rootBone->boneSpaceTransform.translation;
+    const CalVector& boneSpaceTrans = rootBone->inverseBindPoseTransform.translation;
     CHECK_CLOSE(boneSpaceTrans.x, -772.275, tol);
     CHECK_CLOSE(boneSpaceTrans.y, 34.8962, tol);
     CHECK_CLOSE(boneSpaceTrans.z, -0.333774, tol);

@@ -143,8 +143,8 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 			skeletonCandidate.GetTranslationAndRotationBoneSpace(boneCandidateId, -1.0f, translationBoneSpace, rotationBoneSpace);
 
 			// set the bone space translation and rotation
-			pCoreBone->boneSpaceTransform.translation = translationBoneSpace;
-			pCoreBone->boneSpaceTransform.rotation = rotationBoneSpace;
+			pCoreBone->inverseBindPoseTransform.translation = translationBoneSpace;
+			pCoreBone->inverseBindPoseTransform.rotation = rotationBoneSpace;
 
 			coreSkeleton.addCoreBone(pCoreBone);
 		}

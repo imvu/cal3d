@@ -33,7 +33,7 @@ public:
     CalLightType lightType;
 
     cal3d::RotateTranslate relativeTransform;
-    cal3d::RotateTranslate boneSpaceTransform;
+    cal3d::RotateTranslate inverseBindPoseTransform;
 
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);

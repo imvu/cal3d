@@ -267,7 +267,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("parentIndex", &CalCoreBone::parentId)
         .def_readonly("name", &CalCoreBone::name)
         .def_readwrite("relativeTransform", &CalCoreBone::relativeTransform)
-        .def_readwrite("boneSpaceTransform", &CalCoreBone::boneSpaceTransform)
+        .def_readwrite("inverseBindPoseTransform", &CalCoreBone::inverseBindPoseTransform)
         ;
 
     exportVector<CalCoreBonePtr>("BoneVector");

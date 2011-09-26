@@ -434,8 +434,8 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
 
         pCoreBone->relativeTransform.translation = trans;
         pCoreBone->relativeTransform.rotation = rot;
-        pCoreBone->boneSpaceTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
-        pCoreBone->boneSpaceTransform.rotation = CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
+        pCoreBone->inverseBindPoseTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
+        pCoreBone->inverseBindPoseTransform.rotation = CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
 
         pCoreBone->lightType = lightType;
         pCoreBone->lightColor = lightColor;
