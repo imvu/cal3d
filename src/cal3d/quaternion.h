@@ -64,13 +64,6 @@ public:
         return rv;
     }
 
-    inline void set(float qx, float qy, float qz, float qw) {
-        x = qx;
-        y = qy;
-        z = qz;
-        w = qw;
-    }
-
     // right-handed API
     void setAxisAngle(const CalVector& axis, float angle) {
         float h2 = angle * 0.5f;

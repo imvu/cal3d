@@ -785,8 +785,8 @@ CalLoader::readCompressedKeyframe(
     (void)bytesRead;
     assert(bytesRead == 6);
 
-    quatResult->set(quat[ 0 ], quat[ 1 ], quat[ 2 ], quat[ 3 ]);
-    * timeResult = steps / 30.0f;
+    *quatResult = CalQuaternion(quat[ 0 ], quat[ 1 ], quat[ 2 ], quat[ 3 ]);
+    *timeResult = steps / 30.0f;
     return buf - bufStart;
 }
 
