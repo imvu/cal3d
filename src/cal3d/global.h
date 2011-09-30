@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <math.h>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
 #include <list>
@@ -113,31 +114,24 @@ struct AlignedMemory {
 
 namespace cal3d {
 
-    struct UserData {
+    class UserData {
+    public:
         virtual ~UserData() {}
     };
+    CAL3D_PTR(UserData);
 
     struct CAL3D_API UserDataHolder {
     public:
-        UserDataHolder()
-            : m_userData(0)
-        { }
-
-        ~UserDataHolder() {
-            delete m_userData;
-        }
-
-        void setUserData(UserData* userData) {
-            delete m_userData;
+        void setUserData(const UserDataPtr& userData) {
             m_userData = userData;
         }
 
-        UserData* getUserData() const {
+        const UserDataPtr& getUserData() const {
             return m_userData;
         }
 
     private:
-        UserData* m_userData;
+        UserDataPtr m_userData;
     };
 
     const char SKELETON_FILE_MAGIC[4]  = { 'C', 'S', 'F', '\0' };
