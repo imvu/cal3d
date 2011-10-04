@@ -118,6 +118,15 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     return newIndex;
 }
 
+int CalCoreSkeleton::getBoneId(const CalCoreBone* coreBone) const {
+    for (size_t i = 0; i < coreBones.size(); ++i) {
+        if (coreBones[i].get() == coreBone) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void CalCoreSkeleton::scale(float factor) {
     for (
         std::vector<CalCoreBonePtr>::const_iterator i = coreBones.begin();

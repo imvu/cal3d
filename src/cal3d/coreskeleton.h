@@ -25,6 +25,7 @@ public:
     CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones = std::vector<CalCoreBonePtr>());
 
     size_t addCoreBone(const CalCoreBonePtr& coreBone);
+    int getBoneId(const CalCoreBone* coreBone) const;
 
     void scale(float factor);
 
