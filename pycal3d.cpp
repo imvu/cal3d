@@ -7,6 +7,7 @@
 #include <cal3d/buffersource.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/coremorphanimation.h>
+#include <cal3d/coremorphtarget.h>
 #include <cal3d/corebone.h>
 #include <cal3d/corematerial.h>
 #include <cal3d/coremesh.h>
@@ -192,6 +193,7 @@ struct PythonVertex {
         normal.y = v.normal.y;
         normal.z = v.normal.z;
     }
+    
     CalVector position;
     CalVector normal;
 
@@ -200,10 +202,50 @@ struct PythonVertex {
     }
 };
 
+struct PythonBlendVertex {
+    PythonBlendVertex() {}
+    PythonBlendVertex(const CalCoreMorphTarget::BlendVertex& bv, int id) {
+        position.x = bv.position.x;
+        position.y = bv.position.y;
+        position.z = bv.position.z;
+        
+        normal.x = bv.normal.x;
+        normal.y = bv.normal.y;
+        normal.z = bv.normal.z;
+        
+        vertexId = id;
+    }
+    
+    CalVector position;
+    CalVector normal;
+    int vertexId;
+    
+    bool operator==(const PythonBlendVertex& rhs) const {
+        return position == rhs.position && normal == rhs.normal;
+    }
+};
+
 std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
     return std::vector<PythonVertex>(
         submesh.getVectorVertex().begin(),
         submesh.getVectorVertex().end());
+}
+
+boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
+    boost::python::list pVerts;
+    const CalCoreMorphTarget::VectorBlendVertex& vertices = target.getVertices();
+    
+    for (int blendId = 0; blendId < vertices.size(); ++blendId) {
+        CalCoreMorphTarget::BlendVertex const* bv = vertices[blendId];
+        if(bv)
+        {
+            PythonBlendVertex vertex(*bv, blendId);
+            pVerts.append(vertex);
+        } else {
+            pVerts.append(boost::python::object());
+        }
+    }    
+    return pVerts;
 }
 
 template<typename T>
@@ -324,7 +366,20 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     exportVector<CalCoreSubmesh::Influence>("InfluenceVector");
-
+    
+    class_<PythonBlendVertex>("BlendVertex")
+        .def_readwrite("position", &PythonBlendVertex::position)
+        .def_readwrite("normal", &PythonBlendVertex::normal)
+        .def_readwrite("id", &PythonBlendVertex::vertexId)
+        ;
+    
+    class_<CalCoreMorphTarget, boost::shared_ptr<CalCoreMorphTarget>, boost::noncopyable>("CoreMorphTarget", no_init)
+        .def_readonly("name", &CalCoreMorphTarget::name)
+        .add_property("blendVertices", &getBlendVertices)
+        ;
+    
+    exportVector<boost::shared_ptr<CalCoreMorphTarget> >("MorphTargetVector");
+    
     class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .def_readwrite("triangles", &CalCoreSubmesh::faces)
@@ -333,6 +388,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("colors", make_function(&CalCoreSubmesh::getVertexColors, return_value_policy<return_by_value>()))
         .add_property("texcoords", make_function(&CalCoreSubmesh::getVectorVectorTextureCoordinate, return_value_policy<return_by_value>()))
         .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
+        .add_property("subMorphTargets", make_function(&CalCoreSubmesh::getVectorCoreSubMorphTarget, return_value_policy<return_by_value>()))
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");
