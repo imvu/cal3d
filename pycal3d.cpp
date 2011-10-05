@@ -262,7 +262,8 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("rotation", &cal3d::RotateTranslate::rotation)
         ;
 
-    class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone", no_init)
+    class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone",
+        init<std::string, int>())
         .def(init<std::string>())
         .def_readwrite("parentIndex", &CalCoreBone::parentId)
         .def_readonly("name", &CalCoreBone::name)
