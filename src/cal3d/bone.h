@@ -36,6 +36,7 @@ public:
 
     void resetPose();
     void blendPose(
+        float unrampedWeight,
         const cal3d::RotateTranslate& transform,
         bool replace = false,
         float rampValue = 1.0f);
@@ -49,6 +50,7 @@ private:
 
     // animated bone state
     float m_accumulatedWeight;
+    float m_accumulatedWeightAbsolute;
     float m_accumulatedReplacementAttenuation;
     CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
 };

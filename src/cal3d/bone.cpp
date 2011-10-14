@@ -33,6 +33,7 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 void CalBone::resetPose() {
     relativeTransform = coreRelativeTransform; // if no animations are applied, use this
     m_accumulatedWeight = 0.0f;
+    m_accumulatedWeightAbsolute = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
     m_meshScaleAbsolute.set(1, 1, 1);
 }
@@ -43,28 +44,35 @@ void CalBone::resetPose() {
   * This function interpolates the current state (relative translation and
   * rotation) of the bone instance to another state of a given weight.
   *
+  * @param unrampedWeight The blending weight, not incorporating ramp value
+  * @param translation The relative translation to be interpolated to.
+  * @param rotation The relative rotation to be interpolated to.
+  * @param scale Optional scale from 0-1 applies to transformation directly without affecting weights.
   * @param replace If true, subsequent animations will have their weight attenuated by 1 - rampValue.
   * @param rampValue Amount to attenuate weight when ramping in/out the animation.
   *****************************************************************************/
 
 void CalBone::blendPose(
+    float unrampedWeight,
     const cal3d::RotateTranslate& transform,
     bool replace,
-    const float rampValue
+    float rampValue
 ) {
-    const float attenuatedWeight = rampValue * m_accumulatedReplacementAttenuation;
+    const float rampedWeight = unrampedWeight * rampValue;
+    const float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
     if (replace) {
         m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
     }
 
-    m_accumulatedWeight += attenuatedWeight;
-
-    float factor = m_accumulatedWeight
-        ? attenuatedWeight / m_accumulatedWeight
-        : 0.0f;
-
-    assert(factor <= 1.0f);
-    relativeTransform = blend(factor, relativeTransform, transform);
+    if (m_accumulatedWeightAbsolute == 0.0f) {
+        m_accumulatedWeightAbsolute = attenuatedWeight;
+        relativeTransform = transform;
+    } else {
+        float factor = attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
+        assert(factor <= 1.0f);
+        relativeTransform = blend(factor, relativeTransform, transform);
+        m_accumulatedWeightAbsolute += attenuatedWeight;
+    }
 }
 
 BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
