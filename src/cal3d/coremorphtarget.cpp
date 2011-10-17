@@ -32,10 +32,13 @@ static CalMorphTargetType calculateType(const char* s2) {
     return CalMorphTargetTypeAdditive;
 }
 
-CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n)
+CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount)
     : name(n)
     , morphTargetType(calculateType(n.c_str()))
+    , m_vectorBlendVertex(vertexCount)
 {
+    BlendVertex* null = 0;
+    std::fill(m_vectorBlendVertex.begin(), m_vectorBlendVertex.end(), null);
 }
 
 CalCoreMorphTarget::~CalCoreMorphTarget() {
@@ -52,14 +55,6 @@ size_t CalCoreMorphTarget::size() const {
     r += (sizeof(BlendVertex) + sizeof(CalCoreSubmesh::TextureCoordinate)) * m_vectorBlendVertex.size();
     r += name.size();
     return r;
-}
-
-void CalCoreMorphTarget::reserve(size_t blendVertexCount) {
-    // reserve the space needed in all the vectors
-    m_vectorBlendVertex.resize(blendVertexCount);
-    for (size_t i = 0; i < m_vectorBlendVertex.size(); i++) {
-        m_vectorBlendVertex[i] = NULL;
-    }
 }
 
 bool CalCoreMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& blendVertex) {

@@ -26,14 +26,13 @@ public:
     const std::string name;
     const CalMorphTargetType morphTargetType;
 
-    CalCoreMorphTarget(const std::string& name);
+    CalCoreMorphTarget(const std::string& name, size_t vertexCount);
     ~CalCoreMorphTarget();
 
     size_t size() const;
     const std::vector<BlendVertex*>& getVertices() const {
         return m_vectorBlendVertex;
     }
-    void reserve(size_t blendVertexCount);
     bool setBlendVertex(int vertexId, const BlendVertex& vertex);
 
     void scale(float factor);

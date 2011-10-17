@@ -985,8 +985,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
-            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME")));
-            morphTarget->reserve(vertexCount);
+            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount));
 
             TiXmlElement* blendVert = morph->FirstChildElement();
             for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
