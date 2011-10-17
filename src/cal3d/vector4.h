@@ -67,6 +67,14 @@ inline CalBase4 operator*(float f, const CalBase4& v) {
     return CalBase4(_mm_mul_ps(_mm_load1_ps(&f), v.v));
 }
 
+inline CalBase4 operator+(const CalBase4& lhs, const CalBase4& rhs) {
+    return CalBase4(_mm_add_ps(lhs.v, rhs.v));
+}
+
+inline CalBase4 operator-(const CalBase4& lhs, const CalBase4& rhs) {
+    return CalBase4(_mm_sub_ps(lhs.v, rhs.v));
+}
+
 inline CalBase4 operator*(const CalBase4& lhs, const CalBase4& rhs) {
     return CalBase4(_mm_mul_ps(lhs.v, rhs.v));
 }
