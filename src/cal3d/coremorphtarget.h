@@ -40,6 +40,5 @@ public:
 
 private:
     std::vector<BlendVertex*> m_vectorBlendVertex;
-    CalMorphTargetType m_morphTargetType;
 };
 typedef boost::shared_ptr<CalCoreMorphTarget> CalCoreMorphTargetPtr;
