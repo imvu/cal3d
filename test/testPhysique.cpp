@@ -428,3 +428,56 @@ TEST(two_morph_targets) {
     CHECK_EQUAL(0.5, output[1].z);
     //CHECK_EQUAL(0.0, output[1].w);
 }
+
+TEST(two_disjoint_morph_targets) {
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+    inf[0].lastInfluenceForThisVertex = true;
+
+    CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(2, 0, 1));
+    CalCoreSubmesh::Vertex v;
+
+    v.position.setAsPoint(CalVector(0, 0, 0));
+    v.normal.setAsVector(CalVector(0, 0, 0));
+    coreSubmesh->addVertex(v, 0, inf);
+    coreSubmesh->addVertex(v, 0, inf);
+
+    CalCoreMorphTarget::BlendVertex bv;
+    bv.position.setAsPoint(CalVector(1, 1, 1));
+    bv.normal.setAsVector(CalVector(1, 1, 1));
+
+    CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo"));
+    morphTarget1->reserve(2);
+    morphTarget1->setBlendVertex(0, bv);
+
+    coreSubmesh->addCoreSubMorphTarget(morphTarget1);
+
+    CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar"));
+    morphTarget2->reserve(2);
+    morphTarget2->setBlendVertex(1, bv);
+    coreSubmesh->addCoreSubMorphTarget(morphTarget2);
+
+    CalSubmesh submesh(coreSubmesh);
+    submesh.setMorphTargetWeight("foo", 1.0f);
+    submesh.setMorphTargetWeight("bar", 1.0f);
+    
+    BoneTransform bt;
+    bt.rowx.set(1, 0, 0, 0);
+    bt.rowy.set(0, 1, 0, 0);
+    bt.rowz.set(0, 0, 1, 0);
+
+    CAL3D_ALIGN_HEAD(16) CalVector4 output[2 * 2] CAL3D_ALIGN_TAIL(16);
+
+    CalPhysique::calculateVerticesAndNormals(&bt, &submesh, &output[0].x);
+
+    // position of vertex 0
+    CHECK_EQUAL(1, output[0].x);
+    CHECK_EQUAL(1, output[0].y);
+    CHECK_EQUAL(1, output[0].z);
+
+    // position of vertex 1
+    CHECK_EQUAL(1, output[2].x);
+    CHECK_EQUAL(1, output[2].y);
+    CHECK_EQUAL(1, output[2].z);
+}
