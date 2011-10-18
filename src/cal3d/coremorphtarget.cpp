@@ -67,11 +67,6 @@ bool CalCoreMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& bl
     }
     m_vectorBlendVertex[blendVertexId]->position = blendVertex.position;
     m_vectorBlendVertex[blendVertexId]->normal = blendVertex.normal;
-    m_vectorBlendVertex[blendVertexId]->textureCoords.clear();
-    m_vectorBlendVertex[blendVertexId]->textureCoords.reserve(blendVertex.textureCoords.size());
-    for (int tcI = 0; tcI < blendVertex.textureCoords.size(); tcI++) {
-        m_vectorBlendVertex[blendVertexId]->textureCoords.push_back(blendVertex.textureCoords[tcI]);
-    }
 
     return true;
 }

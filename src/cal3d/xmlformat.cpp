@@ -990,8 +990,6 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             TiXmlElement* blendVert = morph->FirstChildElement();
             for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
                 CalCoreMorphTarget::BlendVertex Vertex;
-                Vertex.textureCoords.clear();
-                Vertex.textureCoords.reserve(textureCoordinateCount);
 
                 bool copyOrig = true;
                 if (blendVert && !cal3d_stricmp(blendVert->Value(), "BLENDVERTEX")) {
@@ -1031,7 +1029,6 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                         ) {
                             return null;
                         }
-                        Vertex.textureCoords.push_back(textureCoordinate);
                         texcoord = texcoord->NextSiblingElement();
                     }
                     blendVert = blendVert->NextSiblingElement();

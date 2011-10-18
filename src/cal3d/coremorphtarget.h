@@ -19,7 +19,6 @@ public:
     struct BlendVertex : public AlignedMemory<16> {
         CalPoint4 position;
         CalVector4 normal;
-        std::vector<CalCoreSubmesh::TextureCoordinate> textureCoords;
     };
     typedef std::vector<BlendVertex*> VectorBlendVertex;
 

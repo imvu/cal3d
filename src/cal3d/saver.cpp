@@ -677,11 +677,9 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
             CalPlatform::writeFloat(os, bv->normal.y);
             CalPlatform::writeFloat(os, bv->normal.z);
 
-            std::vector<CalCoreSubmesh::TextureCoordinate> const& textureCoords = bv->textureCoords;
-            for (size_t tcI = 0; tcI < textureCoords.size(); tcI++) {
-                CalCoreSubmesh::TextureCoordinate const& tc1 = textureCoords[tcI];
-                CalPlatform::writeFloat(os, tc1.u);
-                CalPlatform::writeFloat(os, tc1.v);
+            for (size_t tcI = 0; tcI < vectorvectorTextureCoordinate.size(); tcI++) {
+                CalPlatform::writeFloat(os, 0.f);
+                CalPlatform::writeFloat(os, 0.f);
             }
         }
         CalPlatform::writeInteger(os, vectorVertex.size() + 1);
@@ -1264,19 +1262,6 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
                 float positionDiffLength = positionDiff.length();
 
                 bool skip = positionDiffLength < differenceTolerance;
-
-                std::vector<CalCoreSubmesh::TextureCoordinate> const& textureCoords = bv->textureCoords;
-                size_t tcI;
-                for (tcI = 0; tcI < textureCoords.size(); tcI++) {
-                    CalCoreSubmesh::TextureCoordinate const& tc1 = textureCoords[tcI];
-                    CalCoreSubmesh::TextureCoordinate const& tc2 = vectorvectorTextureCoordinate[tcI][blendId];
-                    if (fabs(tc1.u - tc2.u) > differenceTolerance ||
-                            fabs(tc1.v - tc2.v) > differenceTolerance) {
-                        skip = false;
-                    }
-                }
-
-
                 if (skip) {
                     continue;
                 }
@@ -1304,11 +1289,10 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
                 blendVert.InsertEndChild(pos);
                 blendVert.InsertEndChild(norm);
-                for (tcI = 0; tcI < bv->textureCoords.size(); tcI++) {
+                for (size_t tcI = 0; tcI < vectorvectorTextureCoordinate.size(); tcI++) {
                     TiXmlElement tcXml("TEXCOORD");
                     str.str("");
-                    CalCoreSubmesh::TextureCoordinate const& tc = bv->textureCoords[tcI];
-                    str << tc.u << " " << tc.v;
+                    str << 0.0f << " " << 0.0f;
                     TiXmlText tcdata(str.str());
                     tcXml.InsertEndChild(tcdata);
                     blendVert.InsertEndChild(tcXml);
