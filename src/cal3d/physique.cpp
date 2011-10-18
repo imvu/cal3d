@@ -452,27 +452,18 @@ void CalPhysique::calculateVerticesAndNormals(
             MorphSubmeshCache.resize(vertexCount);
         }
 
-        // Fill MorphSubmeshCache w/ outputs of morph target calculation
-        for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
-            const CalCoreSubmesh::Vertex& sourceVertex = sourceVertices[vertexId];
+        std::copy(sourceVertices, sourceVertices + vertexCount, MorphSubmeshCache.begin());
 
-            CalVector4 position(sourceVertex.position);
-            CalVector4 normal(sourceVertex.normal);
-            for (unsigned i = 0; i < enabledMorphCount; i++) {
-                const CalCoreMorphTarget::BlendVertex* blendVertex = enabledMorphs[i].blendVertices[vertexId];
+        for (unsigned morphIndex = 0; morphIndex < enabledMorphCount; ++morphIndex) {
+            float currentWeight = enabledMorphs[morphIndex].weight;
+            CalCoreMorphTarget::BlendVertex const* const* blendVertices = enabledMorphs[morphIndex].blendVertices;
+            for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
+                const CalCoreMorphTarget::BlendVertex* blendVertex = blendVertices[vertexId];
                 if (blendVertex) {
-                    float currentWeight = enabledMorphs[i].weight;
-                    // If morph targets stored the differences instead of absolute positions,
-                    // we could eliminate the subtraction here.  However, in my tests on my Core 2 Duo,
-                    // the subtraction has zero cost, perhaps thanks to out-of-order execution.
-                    position += currentWeight * (blendVertex->position - sourceVertex.position);
-                    normal   += currentWeight * (blendVertex->normal - sourceVertex.normal);
+                    MorphSubmeshCache[vertexId].position += currentWeight * (blendVertex->position - sourceVertices[vertexId].position);
+                    MorphSubmeshCache[vertexId].normal   += currentWeight * (blendVertex->normal   - sourceVertices[vertexId].normal);
                 }
             }
-
-            CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
-            destVertex.position = position;
-            destVertex.normal = normal;
         }
 
         sourceVertices = MorphSubmeshCache.data;
