@@ -27,7 +27,9 @@
 #include "cal3d/coremorphtarget.h"
 #include "cal3d/transform.h"
 
-SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
+#ifdef _MSC_VER
+#pragma optimize("t", on)
+#endif
 
 // calculateVerticesAndNormals_{x87,SSE_intrinsics,SSE} are:
 /*
@@ -405,29 +407,32 @@ void automaticallyDetectSkinRoutine(
     return optimizedSkinRoutine(boneTransforms, vertexCount, vertices, influences, output_vertices);
 }
 
-struct EnabledMorph {
-    float weight;
-    const CalCoreMorphTarget::BlendVertex* const* blendVertices;
-};
+namespace {
+    struct EnabledMorph {
+        float weight;
+        const CalCoreMorphTarget::BlendVertex* const* blendVertices;
+    };
 
-static std::vector<EnabledMorph> enabledMorphCache;
+    SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
+    std::vector<EnabledMorph> enabledMorphCache;
 
-static size_t getEnabledMorphs(const CalSubmesh* submesh) {
-    const size_t morphTargetCount = submesh->morphTargets.size();
-    if (enabledMorphCache.size() < morphTargetCount) {
-        enabledMorphCache.resize(morphTargetCount);
-    }
-
-    size_t enabledMorphTargetCount = 0;
-    for (size_t i = 0; i < morphTargetCount; ++i) {
-        float weight = submesh->morphTargets[i].weight;
-        if (weight != 0.0) {
-            enabledMorphCache[enabledMorphTargetCount].weight = weight;
-            enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVertices());
-            ++enabledMorphTargetCount;
+    size_t getEnabledMorphs(const CalSubmesh* submesh) {
+        const size_t morphTargetCount = submesh->morphTargets.size();
+        if (enabledMorphCache.size() < morphTargetCount) {
+            enabledMorphCache.resize(morphTargetCount);
         }
+
+        size_t enabledMorphTargetCount = 0;
+        for (size_t i = 0; i < morphTargetCount; ++i) {
+            float weight = submesh->morphTargets[i].weight;
+            if (weight != 0.0) {
+                enabledMorphCache[enabledMorphTargetCount].weight = weight;
+                enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVertices());
+                ++enabledMorphTargetCount;
+            }
+        }
+        return enabledMorphTargetCount;
     }
-    return enabledMorphTargetCount;
 }
 
 void CalPhysique::calculateVerticesAndNormals(
@@ -451,21 +456,19 @@ void CalPhysique::calculateVerticesAndNormals(
         for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
             const CalCoreSubmesh::Vertex& sourceVertex = sourceVertices[vertexId];
 
-            float baseWeight = 1.0f;
-
-            CalVector4 position;
-            CalVector4 normal;
+            CalVector4 position(sourceVertex.position);
+            CalVector4 normal(sourceVertex.normal);
             for (unsigned i = 0; i < enabledMorphCount; i++) {
                 const CalCoreMorphTarget::BlendVertex* blendVertex = enabledMorphs[i].blendVertices[vertexId];
                 if (blendVertex) {
                     float currentWeight = enabledMorphs[i].weight;
-                    position += currentWeight * blendVertex->position;
-                    normal   += currentWeight * blendVertex->normal;
-                    baseWeight -= currentWeight;
+                    // If morph targets stored the differences instead of absolute positions,
+                    // we could eliminate the subtraction here.  However, in my tests on my Core 2 Duo,
+                    // the subtraction has zero cost, perhaps thanks to out-of-order execution.
+                    position += currentWeight * (blendVertex->position - sourceVertex.position);
+                    normal   += currentWeight * (blendVertex->normal - sourceVertex.normal);
                 }
             }
-            position += baseWeight * sourceVertex.position;
-            normal   += baseWeight * sourceVertex.normal;
 
             CalCoreSubmesh::Vertex& destVertex = MorphSubmeshCache[vertexId];
             destVertex.position = position;
@@ -482,3 +485,7 @@ void CalPhysique::calculateVerticesAndNormals(
         cal3d::pointerFromVector(coreSubmesh->getInfluences()),
         reinterpret_cast<CalVector4*>(pVertexBuffer));
 }
+
+#ifdef _MSC_VER
+#pragma optimize("", on)
+#endif

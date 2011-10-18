@@ -17,6 +17,10 @@ struct CalBase4 {
         };
     };
 
+    CalBase4(const CalBase4& v)
+        : v(v.v)
+    {}
+
     explicit CalBase4(__m128 m)
         : v(m)
     {}
@@ -47,6 +51,10 @@ struct CalBase4 {
 
     CalVector asCalVector() const {
         return CalVector(x, y, z);
+    }
+
+    void operator=(const CalBase4& rhs) {
+        v = rhs.v;
     }
 
     void operator*=(const CalBase4& rhs) {
