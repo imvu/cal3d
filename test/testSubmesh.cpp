@@ -15,17 +15,17 @@
 TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_absolute_in_file) {
     CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex vertex;
-    vertex.position = CalVector4(1, 1, 1, 1);
+    vertex.position = CalVector4(1, 1, 1, 0);
     vertex.normal = CalVector4(-1, -1 -1, 0);
     csm->addVertex(vertex, CalColor32(), CalCoreSubmesh::InfluenceVector());
 
-    CalCoreMorphTarget::MorphVertexArray morphVertices;
-    CalCoreMorphTarget::MorphVertex mv;
+    CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
+    VertexOffset mv;
     mv.vertexId = 0;
-    mv.position = CalVector4(2, 2, 2, 1);
+    mv.position = CalVector4(2, 2, 2, 0);
     mv.normal = CalVector4(-2, -2, -2, 0);
-    morphVertices.push_back(mv);
-    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, morphVertices));
+    vertexOffsets.push_back(mv);
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, vertexOffsets));
     csm->addMorphTarget(morphTarget);
 
     CalCoreMesh cm;
@@ -43,9 +43,9 @@ TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_abso
 
         CHECK_EQUAL(1u, loaded->submeshes.size());
         CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets().size());
-        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets()[0]->morphVertices.size());
-        CHECK_EQUAL(CalVector4(2, 2, 2, 1),    loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].position);
-        CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
+        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets()[0]->vertexOffsets.size());
+        CHECK_EQUAL(CalVector4(2, 2, 2, 0),    loaded->submeshes[0]->getMorphTargets()[0]->vertexOffsets[0].position);
+        CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->vertexOffsets[0].normal);
     }
 
     { // test XML format
@@ -60,9 +60,9 @@ TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_abso
 
         CHECK_EQUAL(1u, loaded->submeshes.size());
         CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets().size());
-        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets()[0]->morphVertices.size());
-        CHECK_EQUAL(CalVector4(2, 2, 2, 1),    loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].position);
-        CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
+        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets()[0]->vertexOffsets.size());
+        CHECK_EQUAL(CalVector4(2, 2, 2, 0),    loaded->submeshes[0]->getMorphTargets()[0]->vertexOffsets[0].position);
+        CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->vertexOffsets[0].normal);
     }
 }
 
@@ -205,7 +205,7 @@ TEST(is_not_static_if_has_morph_targets) {
     inf[1].weight = 1.0f;
     csm.addVertex(v, black, inf);
 
-    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("", 0, CalCoreMorphTarget::MorphVertexArray()));
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("", 0, CalCoreMorphTarget::VertexOffsetArray()));
     csm.addMorphTarget(morphTarget);
 
     CHECK(!csm.isStatic());

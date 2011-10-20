@@ -412,19 +412,18 @@ namespace {
 
     void accumulateMorphTarget(
         size_t vertexCount,
-        const CalCoreSubmesh::Vertex* sourceVertices,
         const cal3d::MorphTarget* morphTarget
     ) {
         // VC++ isn't hoisting this SSE register out of the loop, so do it manually.
         CalVector4 weight(morphTarget->weight);
 
-        const CalCoreMorphTarget::MorphVertexArray& morphVertices = morphTarget->coreMorphTarget->morphVertices;
-        const CalCoreMorphTarget::MorphVertex* morphVertex = cal3d::pointerFromVector(morphVertices);
-        const CalCoreMorphTarget::MorphVertex* lastMorphVertex = morphVertex + morphVertices.size();
+        const CalCoreMorphTarget::VertexOffsetArray& vertexOffsets = morphTarget->coreMorphTarget->vertexOffsets;
+        const VertexOffset* morphVertex = cal3d::pointerFromVector(vertexOffsets);
+        const VertexOffset* lastMorphVertex = morphVertex + vertexOffsets.size();
         for (; morphVertex != lastMorphVertex; ++morphVertex) {
             size_t i = morphVertex->vertexId;
-            MorphSubmeshCache[i].position += weight * (morphVertex->position - sourceVertices[i].position);
-            MorphSubmeshCache[i].normal   += weight * (morphVertex->normal   - sourceVertices[i].normal);
+            MorphSubmeshCache[i].position += weight * morphVertex->position;
+            MorphSubmeshCache[i].normal   += weight * morphVertex->normal;
         }
     }
 
@@ -449,7 +448,7 @@ namespace {
         // Now find active morph targets and accumulate them
         while (morphTarget != morphTargetEnd) {
             if (morphTarget->weight != 0.0f) {
-                accumulateMorphTarget(vertexCount, sourceVertices, morphTarget);
+                accumulateMorphTarget(vertexCount, morphTarget);
             }
             ++morphTarget;
         }

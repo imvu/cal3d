@@ -248,15 +248,15 @@ static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
 }
 
 static CalCoreMorphTargetPtr djinnMorphTarget(int N, const char* name) {
-    CalCoreMorphTarget::MorphVertexArray morphVertices;
+    CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
     for (int k = 0; k < N; ++k) {
-        CalCoreMorphTarget::MorphVertex bv;
+        VertexOffset bv;
         bv.vertexId = k;
         bv.position.set(1.0f, 2.0f, 3.0f, 1.0f);
         bv.normal.set(0.0f, 0.0f, 1.0f, 0.0f);
-        morphVertices.push_back(bv);
+        vertexOffsets.push_back(bv);
     }
-    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(name, N, morphVertices));
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(name, N, vertexOffsets));
     return morphTarget;
 }
 
@@ -342,19 +342,19 @@ TEST(single_morph_target) {
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
-    CalCoreMorphTarget::MorphVertexArray morphVertices;
+    CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
 
-    CalCoreMorphTarget::MorphVertex bv;
+    VertexOffset bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));
     bv.normal.setAsVector(CalVector(1, 1, 1));
     bv.vertexId = 0;
-    morphVertices.push_back(bv);
+    vertexOffsets.push_back(bv);
     bv.vertexId = 1;
-    morphVertices.push_back(bv);
+    vertexOffsets.push_back(bv);
     bv.vertexId = 2;
-    morphVertices.push_back(bv);
+    vertexOffsets.push_back(bv);
 
-    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("foo", 3, morphVertices));
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("foo", 3, vertexOffsets));
     coreSubmesh->addMorphTarget(morphTarget);
 
     CalSubmesh submesh(coreSubmesh);
@@ -394,11 +394,11 @@ TEST(two_morph_targets) {
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
-    CalCoreMorphTarget::MorphVertex bv;
+    VertexOffset bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));
     bv.normal.setAsVector(CalVector(1, 1, 1));
 
-    CalCoreMorphTarget::MorphVertexArray morphVertices1;
+    CalCoreMorphTarget::VertexOffsetArray morphVertices1;
     bv.vertexId = 0;
     morphVertices1.push_back(bv);
     bv.vertexId = 1;
@@ -409,7 +409,7 @@ TEST(two_morph_targets) {
     CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo", 3, morphVertices1));
     coreSubmesh->addMorphTarget(morphTarget1);
 
-    CalCoreMorphTarget::MorphVertexArray morphVertices2;
+    CalCoreMorphTarget::VertexOffsetArray morphVertices2;
     bv.vertexId = 0;
     morphVertices2.push_back(bv);
     bv.vertexId = 1;
@@ -457,18 +457,18 @@ TEST(two_disjoint_morph_targets) {
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
-    CalCoreMorphTarget::MorphVertex bv;
+    VertexOffset bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));
     bv.normal.setAsVector(CalVector(1, 1, 1));
 
-    CalCoreMorphTarget::MorphVertexArray morphVertices1;
+    CalCoreMorphTarget::VertexOffsetArray morphVertices1;
     bv.vertexId = 0;
     morphVertices1.push_back(bv);
 
     CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo", 2, morphVertices1));
     coreSubmesh->addMorphTarget(morphTarget1);
 
-    CalCoreMorphTarget::MorphVertexArray morphVertices2;
+    CalCoreMorphTarget::VertexOffsetArray morphVertices2;
     bv.vertexId = 1;
     morphVertices2.push_back(bv);
 

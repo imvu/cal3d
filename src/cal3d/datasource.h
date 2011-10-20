@@ -14,6 +14,7 @@
 #include <string>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
+#include "cal3d/vector4.h"
 #include "cal3d/quaternion.h"
 
 namespace CalPlatform {
@@ -37,5 +38,8 @@ namespace CalPlatform {
     }
 
     CAL3D_API bool writeVector(std::ostream& output, CalVector v);
+    inline bool writeVector(std::ostream& output, const CalBase4& b) {
+        return writeVector(output, b.asCalVector());
+    }
     CAL3D_API bool writeQuat(std::ostream& output, CalQuaternion q);
 };

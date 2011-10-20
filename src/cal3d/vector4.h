@@ -69,6 +69,10 @@ struct CalBase4 {
     void operator+=(const CalBase4& rhs) {
         v = _mm_add_ps(v, rhs.v);
     }
+
+    void operator-=(const CalBase4& rhs) {
+        v = _mm_sub_ps(v, rhs.v);
+    }
 };
 
 inline CalBase4 operator*(float f, const CalBase4& v) {

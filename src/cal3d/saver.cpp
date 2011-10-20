@@ -655,25 +655,20 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
         CalCoreMorphTargetPtr morphTarget = vectorMorphs[morphId];
         CalPlatform::writeString(os, morphTarget->name);
 
-        const CalCoreMorphTarget::MorphVertexArray& vertices = morphTarget->morphVertices;
+        const CalCoreMorphTarget::VertexOffsetArray& vertices = morphTarget->vertexOffsets;
         for (size_t i = 0; i < vertices.size(); ++i) {
-            CalCoreMorphTarget::MorphVertex const& bv = vertices[i];
+            VertexOffset const& bv = vertices[i];
 
             const size_t blendId = bv.vertexId;
             const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
             const float differenceTolerance = 0.01f;
-            CalVector positionDiff = bv.position.asCalVector() - Vertex.position.asCalVector();
-            if (positionDiff.length() < differenceTolerance) {
+            if (bv.position.asCalVector().length() < differenceTolerance) {
                 continue;
             }
 
             CalPlatform::writeInteger(os, blendId);
-            CalPlatform::writeFloat(os, bv.position.x);
-            CalPlatform::writeFloat(os, bv.position.y);
-            CalPlatform::writeFloat(os, bv.position.z);
-            CalPlatform::writeFloat(os, bv.normal.x);
-            CalPlatform::writeFloat(os, bv.normal.y);
-            CalPlatform::writeFloat(os, bv.normal.z);
+            CalPlatform::writeVector(os, Vertex.position + bv.position);
+            CalPlatform::writeVector(os, Vertex.normal + bv.normal);
 
             for (size_t tcI = 0; tcI < vectorvectorTextureCoordinate.size(); tcI++) {
                 CalPlatform::writeFloat(os, 0.f);
@@ -1251,14 +1246,14 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
             morph.SetAttribute("NAME", morphTarget->name);
 
             int morphVertCount = 0;
-            const CalCoreMorphTarget::MorphVertexArray& vertices = morphTarget->morphVertices;
+            const CalCoreMorphTarget::VertexOffsetArray& vertices = morphTarget->vertexOffsets;
             for (size_t i = 0; i < vertices.size(); ++i) {
-                CalCoreMorphTarget::MorphVertex const& bv = vertices[i];
+                VertexOffset const& bv = vertices[i];
 
                 size_t blendId = bv.vertexId;
                 const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
                 static float differenceTolerance = 1.0;
-                CalVector positionDiff = bv.position.asCalVector() - Vertex.position.asCalVector();
+                CalVector positionDiff = bv.position.asCalVector();
                 float positionDiffLength = positionDiff.length();
 
                 bool skip = positionDiffLength < differenceTolerance;
@@ -1275,15 +1270,18 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
                 str << positionDiffLength;
                 blendVert.SetAttribute("POSDIFF", str.str());
 
+                const CalVector4 p = Vertex.position + bv.position;
+                const CalVector4 n = Vertex.normal + bv.normal;
+
                 TiXmlElement pos("POSITION");
                 str.str("");
-                str << bv.position.x << " " << bv.position.y << " " << bv.position.z;
+                str << p.x << " " << p.y << " " << p.z;
                 TiXmlText posdata(str.str());
                 pos.InsertEndChild(posdata);
 
                 TiXmlElement norm("NORMAL");
                 str.str("");
-                str << bv.normal.x << " " << bv.normal.y << " " << bv.normal.z;
+                str << n.x << " " << n.y << " " << n.z;
                 TiXmlText normdata(str.str());
                 norm.InsertEndChild(normdata);
 

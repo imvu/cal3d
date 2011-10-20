@@ -32,14 +32,14 @@ static CalMorphTargetType calculateType(const char* s2) {
     return CalMorphTargetTypeAdditive;
 }
 
-CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount, const MorphVertexArray& morphVertices)
+CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount, const VertexOffsetArray& vertexOffsets)
     : name(n)
     , morphTargetType(calculateType(n.c_str()))
-    , morphVertices(morphVertices)
+    , vertexOffsets(vertexOffsets)
 {
-    cal3d::verify(morphVertices.size() <= vertexCount, "Cannot morph more vertices than in the base mesh");
-    for (size_t i = 0; i < morphVertices.size(); ++i) {
-        cal3d::verify(morphVertices[i].vertexId < vertexCount, "Cannot morph vertices outside of the base mesh");
+    cal3d::verify(vertexOffsets.size() <= vertexCount, "Cannot morph more vertices than in the base mesh");
+    for (size_t i = 0; i < vertexOffsets.size(); ++i) {
+        cal3d::verify(vertexOffsets[i].vertexId < vertexCount, "Cannot morph vertices outside of the base mesh");
     }
 }
 
@@ -48,14 +48,14 @@ size_t CalCoreMorphTarget::size() const {
     r += sizeof(CalMorphTargetType);
 
     // Assume single texture coordinate pair.
-    r += ::sizeInBytes(morphVertices);
+    r += ::sizeInBytes(vertexOffsets);
     r += name.size();
     return r;
 }
 
 void CalCoreMorphTarget::scale(float factor) {
-    MorphVertexArray& mv = const_cast<MorphVertexArray&>(morphVertices);
-    for (MorphVertexArray::iterator i = mv.begin(); i != mv.end(); ++i) {
+    VertexOffsetArray& mv = const_cast<VertexOffsetArray&>(vertexOffsets);
+    for (VertexOffsetArray::iterator i = mv.begin(); i != mv.end(); ++i) {
         i->position.x *= factor;
         i->position.y *= factor;
         i->position.z *= factor;

@@ -986,11 +986,11 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 return null;
             }
 
-            CalCoreMorphTarget::MorphVertexArray morphVertices;
+            CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
 
             TiXmlElement* blendVert = morph->FirstChildElement();
             for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
-                CalCoreMorphTarget::MorphVertex Vertex;
+                VertexOffset Vertex;
 
                 bool copyOrig = true;
                 if (blendVert && !cal3d_stricmp(blendVert->Value(), "BLENDVERTEX")) {
@@ -1034,10 +1034,12 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     }
                     blendVert = blendVert->NextSiblingElement();
                     Vertex.vertexId = blendVertI;
-                    morphVertices.push_back(Vertex);
+                    Vertex.position -= pCoreSubmesh->getVectorVertex()[blendVertI].position;
+                    Vertex.normal -= pCoreSubmesh->getVectorVertex()[blendVertI].normal;
+                    vertexOffsets.push_back(Vertex);
                 }
             }
-            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount, morphVertices));
+            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount, vertexOffsets));
             pCoreSubmesh->addMorphTarget(morphTarget);
 
             morph = morph->NextSiblingElement();

@@ -14,20 +14,21 @@
 #include "cal3d/vector.h"
 #include "cal3d/coresubmesh.h"
 
+struct VertexOffset {
+    size_t vertexId;
+    CalPoint4 position;
+    CalVector4 normal;
+};
+
 class CAL3D_API CalCoreMorphTarget {
 public:
-    struct MorphVertex {
-        size_t vertexId;
-        CalPoint4 position;
-        CalVector4 normal;
-    };
-    typedef cal3d::SSEArray<MorphVertex> MorphVertexArray;
+    typedef cal3d::SSEArray<VertexOffset> VertexOffsetArray;
 
     const std::string name;
     const CalMorphTargetType morphTargetType;
-    const MorphVertexArray morphVertices;
+    const VertexOffsetArray vertexOffsets;
 
-    CalCoreMorphTarget(const std::string& name, const size_t vertexCount, const MorphVertexArray& morphVertices);
+    CalCoreMorphTarget(const std::string& name, const size_t vertexCount, const VertexOffsetArray& vertexOffsets);
 
     size_t size() const;
 
