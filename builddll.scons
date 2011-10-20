@@ -20,9 +20,9 @@ sources = Split('''
     coresubmesh.cpp
     coretrack.cpp
     error.cpp
-    global.cpp
     loader.cpp
     matrix.cpp
+    memory.cpp
     mesh.cpp
     mixer.cpp
     physique.cpp

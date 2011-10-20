@@ -15,6 +15,7 @@
 #include <string>
 #include "cal3d/coremorphanimation.h"
 #include "cal3d/coremorphtrack.h"
+#include "cal3d/memory.h"
 
 CAL3D_DEFINE_SIZE(CalCoreMorphTrack*);
 

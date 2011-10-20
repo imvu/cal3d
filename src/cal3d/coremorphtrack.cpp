@@ -16,6 +16,7 @@
 #include "cal3d/coremorphtrack.h"
 #include "cal3d/error.h"
 #include "cal3d/coremorphkeyframe.h"
+#include "cal3d/memory.h"
 
 size_t sizeInBytes(CalCoreMorphKeyframe const&) {
     return sizeof(CalCoreMorphKeyframe);

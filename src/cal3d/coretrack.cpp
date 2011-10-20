@@ -18,6 +18,7 @@
 #include "cal3d/error.h"
 #include "cal3d/corekeyframe.h"
 #include "cal3d/loader.h"
+#include "cal3d/memory.h"
 
 bool sortByTime(const CalCoreKeyframe& lhs, const CalCoreKeyframe& rhs) {
     return lhs.time < rhs.time;

@@ -408,7 +408,7 @@ void automaticallyDetectSkinRoutine(
 }
 
 namespace {
-    SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
+    cal3d::SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
 
     void accumulateMorphTarget(
         size_t vertexCount,

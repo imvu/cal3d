@@ -16,7 +16,7 @@
 
 class CAL3D_API CalCoreMorphTarget {
 public:
-    struct BlendVertex : public AlignedMemory<16> {
+    struct BlendVertex : public cal3d::AlignedMemory<16> {
         CalPoint4 position;
         CalVector4 normal;
     };

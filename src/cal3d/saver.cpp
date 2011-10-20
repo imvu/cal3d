@@ -559,7 +559,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     }
 
     // get the vertex, face, physical property and spring vector
-    const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+    const cal3d::SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
     const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
 
@@ -1142,7 +1142,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
         submesh.SetAttribute("NUMTEXCOORDS", pCoreSubmesh->getVectorVectorTextureCoordinate().size());
 
-        const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
+        const cal3d::SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
         const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
         const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;

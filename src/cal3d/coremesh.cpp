@@ -64,7 +64,7 @@ size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& 
     while (iteratorCoreSubmesh != submeshes.end()) {
         size_t vertexCount = (*otherIteratorCoreSubmesh)->getVertexCount();
         CalCoreMorphTargetPtr pCalCoreMorphTarget(new CalCoreMorphTarget(morphTargetName, vertexCount));
-        const SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
+        const CalCoreSubmesh::VectorVertex& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
 
         for (int i = 0; i < vertexCount; ++i) {
             CalCoreMorphTarget::BlendVertex blendVertex;

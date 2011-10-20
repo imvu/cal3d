@@ -16,6 +16,7 @@
 #include "cal3d/coretrack.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
+#include "cal3d/memory.h"
 
 size_t sizeInBytes(const CalCoreTrack& t) {
     return t.sizeInBytes();

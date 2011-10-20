@@ -16,6 +16,7 @@
 #include "cal3d/aabox.h"
 #include "cal3d/color.h"
 #include "cal3d/global.h"
+#include "cal3d/memory.h"
 #include "cal3d/vector.h"
 #include "cal3d/vector4.h"
 #include "cal3d/bonetransform.h"
@@ -119,7 +120,7 @@ public:
     typedef std::vector<Face> VectorFace;
     typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
     typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
-    typedef SSEArray<Vertex> VectorVertex;
+    typedef cal3d::SSEArray<Vertex> VectorVertex;
     typedef std::vector<Influence> InfluenceVector;
 
     CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
@@ -136,7 +137,7 @@ public:
         return m_vectorvectorTextureCoordinate;
     }
 
-    const SSEArray<Vertex>& getVectorVertex() const {
+    const VectorVertex& getVectorVertex() const {
         return m_vertices;
     }
 
@@ -177,7 +178,7 @@ private:
     int m_currentVertexId;
 
     // The following arrays should always be the same size.
-    SSEArray<Vertex> m_vertices;
+    VectorVertex m_vertices;
 
     bool m_hasVertexColors;    
     std::vector<CalColor32> m_vertexColors;

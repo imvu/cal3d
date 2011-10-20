@@ -14,6 +14,7 @@
 #include "cal3d/bone.h"
 #include "cal3d/bonetransform.h"
 #include "cal3d/global.h"
+#include "cal3d/memory.h"
 #include "cal3d/vector.h"
 #include "cal3d/vector4.h"
 
@@ -21,7 +22,7 @@ typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 
 class CAL3D_API CalSkeleton {
 public:
-    typedef SSEArray<CalBone> BoneArray;
+    typedef cal3d::SSEArray<CalBone> BoneArray;
 
     CalSkeleton(const CalCoreSkeletonPtr& coreSkeleton);
 
@@ -30,5 +31,5 @@ public:
 
     // same length
     BoneArray bones;
-    SSEArray<BoneTransform> boneTransforms;
+    cal3d::SSEArray<BoneTransform> boneTransforms;
 };
