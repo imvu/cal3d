@@ -1032,7 +1032,8 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                         texcoord = texcoord->NextSiblingElement();
                     }
                     blendVert = blendVert->NextSiblingElement();
-                    morphTarget->setMorphVertex(blendVertI, Vertex);
+                    Vertex.vertexId = blendVertI;
+                    morphTarget->addMorphVertex(Vertex);
                 }
             }
             pCoreSubmesh->addCoreSubMorphTarget(morphTarget);

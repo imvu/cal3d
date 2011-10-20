@@ -15,6 +15,19 @@ TEST(can_grow_SSEArray) {
     CHECK_EQUAL(2u, v.size());
     CHECK_EQUAL(CalVector4(1, 2, 3, 4), v[0]);
     CHECK_EQUAL(CalVector4(5, 6, 7, 8), v[1]);
+
+    v.push_back(CalVector4(9, 0, 9, 0));
+    CHECK_EQUAL(3u, v.size());
+    CHECK_EQUAL(CalVector4(1, 2, 3, 4), v[0]);
+    CHECK_EQUAL(CalVector4(5, 6, 7, 8), v[1]);
+    CHECK_EQUAL(CalVector4(9, 0, 9, 0), v[2]);
+
+    v.push_back(CalVector4(8, 6, 4, 2));
+    CHECK_EQUAL(4u, v.size());
+    CHECK_EQUAL(CalVector4(1, 2, 3, 4), v[0]);
+    CHECK_EQUAL(CalVector4(5, 6, 7, 8), v[1]);
+    CHECK_EQUAL(CalVector4(9, 0, 9, 0), v[2]);
+    CHECK_EQUAL(CalVector4(8, 6, 4, 2), v[3]);
 }
 
 struct MagicValue {

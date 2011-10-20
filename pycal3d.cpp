@@ -204,7 +204,9 @@ struct PythonVertex {
 
 struct PythonBlendVertex {
     PythonBlendVertex() {}
-    PythonBlendVertex(const CalCoreMorphTarget::MorphVertex& bv, int id) {
+    PythonBlendVertex(const CalCoreMorphTarget::MorphVertex& bv) {
+        vertexId = bv.vertexId;
+
         position.x = bv.position.x;
         position.y = bv.position.y;
         position.z = bv.position.z;
@@ -212,8 +214,6 @@ struct PythonBlendVertex {
         normal.x = bv.normal.x;
         normal.y = bv.normal.y;
         normal.z = bv.normal.z;
-        
-        vertexId = id;
     }
     
     CalVector position;
@@ -236,14 +236,9 @@ boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
     const CalCoreMorphTarget::MorphVertexArray& vertices = target.getVertices();
     
     for (int blendId = 0; blendId < vertices.size(); ++blendId) {
-        CalCoreMorphTarget::MorphVertex const* bv = vertices[blendId];
-        if(bv)
-        {
-            PythonBlendVertex vertex(*bv, blendId);
-            pVerts.append(vertex);
-        } else {
-            pVerts.append(boost::python::object());
-        }
+        CalCoreMorphTarget::MorphVertex const& bv = vertices[blendId];
+        PythonBlendVertex vertex(bv);
+        pVerts.append(vertex);
     }    
     return pVerts;
 }

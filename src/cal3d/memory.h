@@ -31,7 +31,8 @@ namespace cal3d {
             , _capacity(initial_size)
         {
             for (T* d = _data; d != _data + _size; ++d) {
-                new(d) T;
+                void* p = d;
+                new(p) T;
             }
         }
 
@@ -70,14 +71,14 @@ namespace cal3d {
                 size_t new_capacity = _capacity ? (_capacity * 2) : 1;
                 T* new_data = reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * new_capacity));
                 std::copy(_data, _data + _size, new_data);
-                new(new_data + _size) T(v);
 
                 CAL3D_ALIGNED_FREE(_data);
-                
-                ++_size;
                 _capacity = new_capacity;
                 _data = new_data;
             }
+
+            new(_data + _size) T(v);
+            ++_size;
         }
 
         iterator begin() { return _data; }

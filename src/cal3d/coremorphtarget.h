@@ -16,23 +16,24 @@
 
 class CAL3D_API CalCoreMorphTarget {
 public:
-    struct MorphVertex : public cal3d::AlignedMemory<16> {
+    struct MorphVertex {
+        size_t vertexId;
         CalPoint4 position;
         CalVector4 normal;
     };
-    typedef std::vector<MorphVertex*> MorphVertexArray;
+    typedef cal3d::SSEArray<MorphVertex> MorphVertexArray;
 
     const std::string name;
     const CalMorphTargetType morphTargetType;
+    const size_t vertexCount;
 
     CalCoreMorphTarget(const std::string& name, size_t vertexCount);
-    ~CalCoreMorphTarget();
 
     size_t size() const;
     const MorphVertexArray& getVertices() const {
         return m_vectorBlendVertex;
     }
-    bool setMorphVertex(int vertexId, const MorphVertex& vertex);
+    void addMorphVertex(const MorphVertex& vertex);
 
     void scale(float factor);
 

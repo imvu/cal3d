@@ -35,16 +35,8 @@ static CalMorphTargetType calculateType(const char* s2) {
 CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount)
     : name(n)
     , morphTargetType(calculateType(n.c_str()))
-    , m_vectorBlendVertex(vertexCount)
+    , vertexCount(vertexCount)
 {
-    MorphVertex* null = 0;
-    std::fill(m_vectorBlendVertex.begin(), m_vectorBlendVertex.end(), null);
-}
-
-CalCoreMorphTarget::~CalCoreMorphTarget() {
-    for (size_t i = 0; i < m_vectorBlendVertex.size(); i++) {
-        delete m_vectorBlendVertex[i];
-    }
 }
 
 size_t CalCoreMorphTarget::size() const {
@@ -57,26 +49,17 @@ size_t CalCoreMorphTarget::size() const {
     return r;
 }
 
-bool CalCoreMorphTarget::setMorphVertex(int blendVertexId, const MorphVertex& blendVertex) {
-    if ((blendVertexId < 0) || (blendVertexId >= (int)m_vectorBlendVertex.size())) {
-        return false;
-    }
+void CalCoreMorphTarget::addMorphVertex(const MorphVertex& blendVertex) {
+    cal3d::verify(blendVertex.vertexId < vertexCount, "Cannot morph out-of-range vertex");
+    cal3d::verify(m_vectorBlendVertex.size() < vertexCount, "Cannot add more morph vertices than mesh vertices");
 
-    if (m_vectorBlendVertex[blendVertexId] == NULL) {
-        m_vectorBlendVertex[blendVertexId] = new MorphVertex();
-    }
-    *m_vectorBlendVertex[blendVertexId] = blendVertex;
-
-    return true;
+    m_vectorBlendVertex.push_back(blendVertex);
 }
 
 void CalCoreMorphTarget::scale(float factor) {
-    for (std::vector<MorphVertex*>::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
-        MorphVertex* v = *i;
-        if (v) {
-            v->position.x *= factor;
-            v->position.y *= factor;
-            v->position.z *= factor;
-        }
+    for (MorphVertexArray::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
+        i->position.x *= factor;
+        i->position.y *= factor;
+        i->position.z *= factor;
     }
 }
