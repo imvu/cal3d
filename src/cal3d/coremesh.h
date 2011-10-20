@@ -21,7 +21,7 @@ public:
     typedef std::vector<CalCoreSubmeshPtr> CalCoreSubmeshVector;
 
     size_t sizeInBytes() const;
-    size_t addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
+    bool addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
     
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);

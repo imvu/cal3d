@@ -1038,7 +1038,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 }
             }
             CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount, morphVertices));
-            pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
+            pCoreSubmesh->addMorphTarget(morphTarget);
 
             morph = morph->NextSiblingElement();
         }

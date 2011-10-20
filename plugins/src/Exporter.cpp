@@ -510,7 +510,7 @@ bool CExporter::ExportMesh(const std::string& strFilename)
             SetLastError("Creation of core mesh instance failed.", __FILE__, __LINE__);
 			return false;
           }
-          if( coreMesh.addAsMorphTarget(&morphCoreMesh, morphNode->GetName()) == -1 ) {
+          if (!coreMesh.addAsMorphTarget(&morphCoreMesh, morphNode->GetName())) {
             SetLastError(CalError::getLastErrorText(), __FILE__, __LINE__);
             return false;
           }

@@ -954,7 +954,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
             }
         }
         CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morphName, vertexCount, morphVertices));
-        pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
+        pCoreSubmesh->addMorphTarget(morphTarget);
     }
 
     for (int faceId = 0; faceId < faceCount; ++faceId) {

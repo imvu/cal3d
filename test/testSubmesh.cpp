@@ -9,6 +9,11 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/coremorphtarget.h>
 
+TEST(saving_and_loading_submesh_with_morph_stores_differences) {
+    CalCoreSubmesh csm(0, 0, 0);
+    
+}
+
 const CalColor32 black = 0;
 
 TEST(not_static_without_vertices) {
@@ -149,7 +154,7 @@ TEST(is_not_static_if_has_morph_targets) {
     csm.addVertex(v, black, inf);
 
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("", 0, CalCoreMorphTarget::MorphVertexArray()));
-    csm.addCoreSubMorphTarget(morphTarget);
+    csm.addMorphTarget(morphTarget);
 
     CHECK(!csm.isStatic());
 }

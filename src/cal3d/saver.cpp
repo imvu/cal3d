@@ -576,8 +576,9 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     CalPlatform::writeInteger(os, vectorvectorTextureCoordinate.size());
 
     // write the number of morph targets
-    size_t morphCount = pCoreSubmesh->getCoreSubMorphTargetCount();
-    CalPlatform::writeInteger(os, morphCount);
+    const CalCoreSubmesh::MorphTargetArray& vectorMorphs = pCoreSubmesh->getMorphTargets();
+
+    CalPlatform::writeInteger(os, vectorMorphs.size());
 
     // check if an error happend
     if (!os) {
@@ -650,9 +651,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
         }
     }
 
-    CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
-
-    for (int morphId = 0; morphId < morphCount; morphId++) {
+    for (size_t morphId = 0; morphId < vectorMorphs.size(); morphId++) {
         CalCoreMorphTargetPtr morphTarget = vectorMorphs[morphId];
         CalPlatform::writeString(os, morphTarget->name);
 
@@ -1132,12 +1131,14 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
 
         TiXmlElement submesh("SUBMESH");
 
+        const CalCoreSubmesh::MorphTargetArray& vectorMorphs = pCoreSubmesh->getMorphTargets();
+
         submesh.SetAttribute("NUMVERTICES", pCoreSubmesh->getVertexCount());
         submesh.SetAttribute("NUMFACES", pCoreSubmesh->faces.size());
         submesh.SetAttribute("MATERIAL", pCoreSubmesh->coreMaterialThreadId);
         submesh.SetAttribute("NUMLODSTEPS", 0);
         submesh.SetAttribute("NUMSPRINGS", 0);
-        submesh.SetAttribute("NUMMORPHS", pCoreSubmesh->getCoreSubMorphTargetCount());
+        submesh.SetAttribute("NUMMORPHS", vectorMorphs.size());
 
         submesh.SetAttribute("NUMTEXCOORDS", pCoreSubmesh->getVectorVectorTextureCoordinate().size());
 
@@ -1145,7 +1146,6 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
         const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
-        CalCoreSubmesh::CoreSubMorphTargetVector& vectorMorphs = pCoreSubmesh->getVectorCoreSubMorphTarget();
         // get the texture coordinate vector vector
         const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
@@ -1237,8 +1237,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
         }
 
         // write all morphs
-        int morphId;
-        for (morphId = 0; morphId < (int)pCoreSubmesh->getCoreSubMorphTargetCount(); ++morphId) {
+        for (size_t morphId = 0; morphId < vectorMorphs.size(); ++morphId) {
             CalCoreMorphTargetPtr morphTarget = vectorMorphs[morphId];
 
             TiXmlElement morph("MORPH");

@@ -111,18 +111,12 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
 }
 
-size_t CalCoreSubmesh::addCoreSubMorphTarget(CalCoreMorphTargetPtr pCoreSubMorphTarget) {
-    size_t subMorphTargetId = m_vectorCoreSubMorphTarget.size();
-    m_vectorCoreSubMorphTarget.push_back(pCoreSubMorphTarget);
-    return subMorphTargetId;
+void CalCoreSubmesh::addMorphTarget(CalCoreMorphTargetPtr pCoreSubMorphTarget) {
+    m_morphTargets.push_back(pCoreSubMorphTarget);
 }
 
-size_t CalCoreSubmesh::getCoreSubMorphTargetCount() {
-    return m_vectorCoreSubMorphTarget.size();
-}
-
-CalCoreSubmesh::CoreSubMorphTargetVector& CalCoreSubmesh::getVectorCoreSubMorphTarget() {
-    return m_vectorCoreSubMorphTarget;
+const CalCoreSubmesh::MorphTargetArray& CalCoreSubmesh::getMorphTargets() const {
+    return m_morphTargets;
 }
 
 void CalCoreSubmesh::scale(float factor) {
@@ -136,7 +130,7 @@ void CalCoreSubmesh::scale(float factor) {
     m_boundingVolume.min *= factor;
     m_boundingVolume.max *= factor;
 
-    for (CoreSubMorphTargetVector::iterator i = m_vectorCoreSubMorphTarget.begin(); i != m_vectorCoreSubMorphTarget.end(); ++i) {
+    for (MorphTargetArray::iterator i = m_morphTargets.begin(); i != m_morphTargets.end(); ++i) {
         (*i)->scale(factor);
     }
 }
@@ -163,7 +157,7 @@ void CalCoreSubmesh::fixup(const CalCoreSkeletonPtr& skeleton) {
 }
 
 bool CalCoreSubmesh::isStatic() const {
-    return m_isStatic && m_vectorCoreSubMorphTarget.empty();
+    return m_isStatic && m_morphTargets.empty();
 }
 
 BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) const {

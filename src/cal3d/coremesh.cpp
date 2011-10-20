@@ -26,20 +26,19 @@ size_t CalCoreMesh::sizeInBytes() const {
     return sizeof(*this) + ::sizeInBytes(submeshes);
 }
 
-size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName) {
+bool CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName) {
     //Check if the numbers of vertices allow a blending
     CalCoreMesh::CalCoreSubmeshVector& otherVectorCoreSubmesh = pCoreMesh->submeshes;
     if (submeshes.size() != otherVectorCoreSubmesh.size()) {
         CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, "This mesh has children with different numbers of materials");
-        return -1;
+        return false;
     }
     if (submeshes.size() == 0) {
         CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, "Mesh has no submeshes");
-        return -1;
+        return false;
     }
     CalCoreMesh::CalCoreSubmeshVector::iterator iteratorCoreSubmesh = submeshes.begin();
     CalCoreMesh::CalCoreSubmeshVector::iterator otherIteratorCoreSubmesh = otherVectorCoreSubmesh.begin();
-    size_t subMorphTargetID = (*iteratorCoreSubmesh)->getCoreSubMorphTargetCount();
     while (iteratorCoreSubmesh != submeshes.end()) {
         size_t count1 = (*iteratorCoreSubmesh)->getVertexCount();
         size_t count2 = (*otherIteratorCoreSubmesh)->getVertexCount();
@@ -53,7 +52,7 @@ size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& 
 #endif
             (buf, sizeof(buf) - 1, "This mesh has a morph target child with different number of vertices: %s (%d vs child's %d)", morphTargetName.c_str(), count1, count2);
             CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, buf);
-            return -1;
+            return false;
         }
         ++iteratorCoreSubmesh;
         ++otherIteratorCoreSubmesh;
@@ -74,11 +73,11 @@ size_t CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& 
             vertices.push_back(blendVertex);
         }
         CalCoreMorphTargetPtr pCalCoreMorphTarget(new CalCoreMorphTarget(morphTargetName, vertexCount, vertices));
-        (*iteratorCoreSubmesh)->addCoreSubMorphTarget(pCalCoreMorphTarget);
+        (*iteratorCoreSubmesh)->addMorphTarget(pCalCoreMorphTarget);
         ++iteratorCoreSubmesh;
         ++otherIteratorCoreSubmesh;
     }
-    return subMorphTargetID;
+    return true;
 }
 
 void CalCoreMesh::scale(float factor) {

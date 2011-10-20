@@ -116,7 +116,7 @@ public:
         }
     };
 
-    typedef std::vector<CalCoreMorphTargetPtr> CoreSubMorphTargetVector;
+    typedef std::vector<CalCoreMorphTargetPtr> MorphTargetArray;
     typedef std::vector<Face> VectorFace;
     typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
     typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
@@ -152,13 +152,8 @@ public:
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
     bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
 
-    size_t addCoreSubMorphTarget(CalCoreMorphTargetPtr pCoreSubMorphTarget);
-    const CalCoreMorphTargetPtr& getCoreSubMorphTarget(size_t id) {
-        assert(id < m_vectorCoreSubMorphTarget.size());
-        return m_vectorCoreSubMorphTarget[id];
-    }
-    size_t getCoreSubMorphTargetCount();
-    CoreSubMorphTargetVector& getVectorCoreSubMorphTarget();
+    void addMorphTarget(CalCoreMorphTargetPtr morphTarget);
+    const MorphTargetArray& getMorphTargets() const;
     
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
@@ -185,7 +180,7 @@ private:
  
     std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
 
-    CoreSubMorphTargetVector m_vectorCoreSubMorphTarget;
+    MorphTargetArray m_morphTargets;
 
     bool m_isStatic;
     InfluenceSet m_staticInfluenceSet;

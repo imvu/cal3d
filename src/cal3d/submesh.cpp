@@ -38,20 +38,21 @@ void cal3d::MorphTarget::resetState() {
     replacementAttenuation = ReplacementAttenuationNull;
 }
 
-CalSubmesh::CalSubmesh(const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh)
+CalSubmesh::CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh)
     : coreSubmesh(pCoreSubmesh) {
     assert(pCoreSubmesh);
 
-    const size_t morphTargetCount = coreSubmesh->getCoreSubMorphTargetCount();
+    const CalCoreSubmesh::MorphTargetArray& coreMorphTargets = coreSubmesh->getMorphTargets();
+    const size_t morphTargetCount = coreMorphTargets.size();
     morphTargets.reserve(morphTargetCount);
     for (size_t i = 0; i < morphTargetCount; ++i) {
-        morphTargets.push_back(cal3d::MorphTarget(coreSubmesh->getCoreSubMorphTarget(i)));
+        morphTargets.push_back(cal3d::MorphTarget(coreMorphTargets[i]));
     }
 }
 
 void CalSubmesh::setMorphTargetWeight(std::string const& morphName, float weight) {
     for (size_t i = 0; i < morphTargets.size(); i++) {
-        const CalCoreMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
+        const CalCoreMorphTargetPtr& target = coreSubmesh->getMorphTargets()[i];
         if (target->name == morphName) {
             morphTargets[i].weight = weight;
             return;
@@ -69,7 +70,7 @@ void CalSubmesh::clearMorphTargetScales() {
 
 void CalSubmesh::clearMorphTargetState(std::string const& morphName) {
     for (size_t i = 0; i < morphTargets.size(); i++) {
-        const CalCoreMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
+        const CalCoreMorphTargetPtr& target = coreSubmesh->getMorphTargets()[i];
         if (target->name == morphName) {
             morphTargets[i].resetState();
         }
@@ -87,7 +88,7 @@ void CalSubmesh::blendMorphTargetScale(
     size_t size = morphTargets.size();
     for (size_t i = 0; i < size; i++) {
         cal3d::MorphTarget& morphTargetState = morphTargets[i];
-        const CalCoreMorphTargetPtr& target = coreSubmesh->getCoreSubMorphTarget(i);
+        const CalCoreMorphTargetPtr& target = coreSubmesh->getMorphTargets()[i];
         if (target->name == morphName) {
             CalMorphTargetType mtype = target->morphTargetType;
             switch (mtype) {

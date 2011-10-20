@@ -266,8 +266,8 @@ TEST(morph_targets_performance_test) {
 
     CalCoreSubmeshPtr coreSubmesh(djinnCoreSubmesh(N));
 
-    coreSubmesh->addCoreSubMorphTarget(djinnMorphTarget(N, "foo1"));
-    coreSubmesh->addCoreSubMorphTarget(djinnMorphTarget(N, "foo2"));
+    coreSubmesh->addMorphTarget(djinnMorphTarget(N, "foo1"));
+    coreSubmesh->addMorphTarget(djinnMorphTarget(N, "foo2"));
 
     CalSubmesh submesh(coreSubmesh);
     submesh.setMorphTargetWeight("foo1", 0.25f);
@@ -302,7 +302,7 @@ TEST(bunch_of_unweighted_morph_targets_performance_test) {
     for (int i = 0; i < M; ++i) {
         char buf[80];
         sprintf(buf, "%d", i);
-        coreSubmesh->addCoreSubMorphTarget(djinnMorphTarget(N, buf));
+        coreSubmesh->addMorphTarget(djinnMorphTarget(N, buf));
     }
 
     CalSubmesh submesh(coreSubmesh);
@@ -355,7 +355,7 @@ TEST(single_morph_target) {
     morphVertices.push_back(bv);
 
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("foo", 3, morphVertices));
-    coreSubmesh->addCoreSubMorphTarget(morphTarget);
+    coreSubmesh->addMorphTarget(morphTarget);
 
     CalSubmesh submesh(coreSubmesh);
     submesh.setMorphTargetWeight("foo", 0.5f);
@@ -407,7 +407,7 @@ TEST(two_morph_targets) {
     morphVertices1.push_back(bv);
 
     CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo", 3, morphVertices1));
-    coreSubmesh->addCoreSubMorphTarget(morphTarget1);
+    coreSubmesh->addMorphTarget(morphTarget1);
 
     CalCoreMorphTarget::MorphVertexArray morphVertices2;
     bv.vertexId = 0;
@@ -418,7 +418,7 @@ TEST(two_morph_targets) {
     morphVertices2.push_back(bv);
 
     CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar", 3, morphVertices2));
-    coreSubmesh->addCoreSubMorphTarget(morphTarget2);
+    coreSubmesh->addMorphTarget(morphTarget2);
 
     CalSubmesh submesh(coreSubmesh);
     submesh.setMorphTargetWeight("foo", 0.25f);
@@ -466,14 +466,14 @@ TEST(two_disjoint_morph_targets) {
     morphVertices1.push_back(bv);
 
     CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo", 2, morphVertices1));
-    coreSubmesh->addCoreSubMorphTarget(morphTarget1);
+    coreSubmesh->addMorphTarget(morphTarget1);
 
     CalCoreMorphTarget::MorphVertexArray morphVertices2;
     bv.vertexId = 1;
     morphVertices2.push_back(bv);
 
     CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar", 2, morphVertices2));
-    coreSubmesh->addCoreSubMorphTarget(morphTarget2);
+    coreSubmesh->addMorphTarget(morphTarget2);
 
     CalSubmesh submesh(coreSubmesh);
     submesh.setMorphTargetWeight("foo", 1.0f);
