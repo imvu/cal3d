@@ -37,7 +37,7 @@ CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount)
     , morphTargetType(calculateType(n.c_str()))
     , m_vectorBlendVertex(vertexCount)
 {
-    BlendVertex* null = 0;
+    MorphVertex* null = 0;
     std::fill(m_vectorBlendVertex.begin(), m_vectorBlendVertex.end(), null);
 }
 
@@ -52,28 +52,27 @@ size_t CalCoreMorphTarget::size() const {
     r += sizeof(CalMorphTargetType);
 
     // Assume single texture coordinate pair.
-    r += (sizeof(BlendVertex) + sizeof(CalCoreSubmesh::TextureCoordinate)) * m_vectorBlendVertex.size();
+    r += (sizeof(MorphVertex) + sizeof(CalCoreSubmesh::TextureCoordinate)) * m_vectorBlendVertex.size();
     r += name.size();
     return r;
 }
 
-bool CalCoreMorphTarget::setBlendVertex(int blendVertexId, const BlendVertex& blendVertex) {
+bool CalCoreMorphTarget::setMorphVertex(int blendVertexId, const MorphVertex& blendVertex) {
     if ((blendVertexId < 0) || (blendVertexId >= (int)m_vectorBlendVertex.size())) {
         return false;
     }
 
     if (m_vectorBlendVertex[blendVertexId] == NULL) {
-        m_vectorBlendVertex[blendVertexId] = new BlendVertex();
+        m_vectorBlendVertex[blendVertexId] = new MorphVertex();
     }
-    m_vectorBlendVertex[blendVertexId]->position = blendVertex.position;
-    m_vectorBlendVertex[blendVertexId]->normal = blendVertex.normal;
+    *m_vectorBlendVertex[blendVertexId] = blendVertex;
 
     return true;
 }
 
 void CalCoreMorphTarget::scale(float factor) {
-    for (std::vector<BlendVertex*>::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
-        BlendVertex* v = *i;
+    for (std::vector<MorphVertex*>::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
+        MorphVertex* v = *i;
         if (v) {
             v->position.x *= factor;
             v->position.y *= factor;

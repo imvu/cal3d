@@ -204,7 +204,7 @@ struct PythonVertex {
 
 struct PythonBlendVertex {
     PythonBlendVertex() {}
-    PythonBlendVertex(const CalCoreMorphTarget::BlendVertex& bv, int id) {
+    PythonBlendVertex(const CalCoreMorphTarget::MorphVertex& bv, int id) {
         position.x = bv.position.x;
         position.y = bv.position.y;
         position.z = bv.position.z;
@@ -233,10 +233,10 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
 
 boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
     boost::python::list pVerts;
-    const CalCoreMorphTarget::VectorBlendVertex& vertices = target.getVertices();
+    const CalCoreMorphTarget::MorphVertexArray& vertices = target.getVertices();
     
     for (int blendId = 0; blendId < vertices.size(); ++blendId) {
-        CalCoreMorphTarget::BlendVertex const* bv = vertices[blendId];
+        CalCoreMorphTarget::MorphVertex const* bv = vertices[blendId];
         if(bv)
         {
             PythonBlendVertex vertex(*bv, blendId);
@@ -367,7 +367,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     exportVector<CalCoreSubmesh::Influence>("InfluenceVector");
     
-    class_<PythonBlendVertex>("BlendVertex")
+    class_<PythonBlendVertex>("MorphVertex")
         .def_readwrite("position", &PythonBlendVertex::position)
         .def_readwrite("normal", &PythonBlendVertex::normal)
         .def_readwrite("id", &PythonBlendVertex::vertexId)

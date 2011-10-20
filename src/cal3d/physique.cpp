@@ -415,9 +415,9 @@ namespace {
         const CalCoreSubmesh::Vertex* sourceVertices,
         const cal3d::MorphTarget* morphTarget
     ) {
-        CalCoreMorphTarget::BlendVertex* const* const morphVertices = cal3d::pointerFromVector(morphTarget->coreMorphTarget->getVertices());
+        CalCoreMorphTarget::MorphVertex* const* const morphVertices = cal3d::pointerFromVector(morphTarget->coreMorphTarget->getVertices());
         for (size_t i = 0; i < vertexCount; ++i) {
-            if (CalCoreMorphTarget::BlendVertex* morphVertex = morphVertices[i]) {
+            if (CalCoreMorphTarget::MorphVertex* morphVertex = morphVertices[i]) {
                 MorphSubmeshCache[i].position += morphTarget->weight * (morphVertex->position - sourceVertices[i].position);
                 MorphSubmeshCache[i].normal   += morphTarget->weight * (morphVertex->normal   - sourceVertices[i].normal);
             }

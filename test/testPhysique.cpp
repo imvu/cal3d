@@ -250,10 +250,10 @@ static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
 static CalCoreMorphTargetPtr djinnMorphTarget(int N, const char* name) {
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(name, N));
     for (int k = 0; k < N; ++k) {
-        CalCoreMorphTarget::BlendVertex bv;
+        CalCoreMorphTarget::MorphVertex bv;
         bv.position.set(1.0f, 2.0f, 3.0f, 1.0f);
         bv.normal.set(0.0f, 0.0f, 1.0f, 0.0f);
-        morphTarget->setBlendVertex(k, bv);
+        morphTarget->setMorphVertex(k, bv);
     }
     return morphTarget;
 }
@@ -341,12 +341,12 @@ TEST(single_morph_target) {
     coreSubmesh->addVertex(v, 0, inf);
 
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("foo", 3));
-    CalCoreMorphTarget::BlendVertex bv;
+    CalCoreMorphTarget::MorphVertex bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));
     bv.normal.setAsVector(CalVector(1, 1, 1));
-    morphTarget->setBlendVertex(0, bv);
-    morphTarget->setBlendVertex(1, bv);
-    morphTarget->setBlendVertex(2, bv);
+    morphTarget->setMorphVertex(0, bv);
+    morphTarget->setMorphVertex(1, bv);
+    morphTarget->setMorphVertex(2, bv);
     coreSubmesh->addCoreSubMorphTarget(morphTarget);
 
     CalSubmesh submesh(coreSubmesh);
@@ -386,20 +386,20 @@ TEST(two_morph_targets) {
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
-    CalCoreMorphTarget::BlendVertex bv;
+    CalCoreMorphTarget::MorphVertex bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));
     bv.normal.setAsVector(CalVector(1, 1, 1));
 
     CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo", 3));
-    morphTarget1->setBlendVertex(0, bv);
-    morphTarget1->setBlendVertex(1, bv);
-    morphTarget1->setBlendVertex(2, bv);
+    morphTarget1->setMorphVertex(0, bv);
+    morphTarget1->setMorphVertex(1, bv);
+    morphTarget1->setMorphVertex(2, bv);
     coreSubmesh->addCoreSubMorphTarget(morphTarget1);
 
     CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar", 3));
-    morphTarget2->setBlendVertex(0, bv);
-    morphTarget2->setBlendVertex(1, bv);
-    morphTarget2->setBlendVertex(2, bv);
+    morphTarget2->setMorphVertex(0, bv);
+    morphTarget2->setMorphVertex(1, bv);
+    morphTarget2->setMorphVertex(2, bv);
     coreSubmesh->addCoreSubMorphTarget(morphTarget2);
 
     CalSubmesh submesh(coreSubmesh);
@@ -439,17 +439,17 @@ TEST(two_disjoint_morph_targets) {
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
-    CalCoreMorphTarget::BlendVertex bv;
+    CalCoreMorphTarget::MorphVertex bv;
     bv.position.setAsPoint(CalVector(1, 1, 1));
     bv.normal.setAsVector(CalVector(1, 1, 1));
 
     CalCoreMorphTargetPtr morphTarget1(new CalCoreMorphTarget("foo", 2));
-    morphTarget1->setBlendVertex(0, bv);
+    morphTarget1->setMorphVertex(0, bv);
 
     coreSubmesh->addCoreSubMorphTarget(morphTarget1);
 
     CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar", 2));
-    morphTarget2->setBlendVertex(1, bv);
+    morphTarget2->setMorphVertex(1, bv);
     coreSubmesh->addCoreSubMorphTarget(morphTarget2);
 
     CalSubmesh submesh(coreSubmesh);

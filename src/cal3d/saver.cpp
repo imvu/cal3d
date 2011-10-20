@@ -656,9 +656,9 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
         CalCoreMorphTargetPtr morphTarget = vectorMorphs[morphId];
         CalPlatform::writeString(os, morphTarget->name);
 
-        const CalCoreMorphTarget::VectorBlendVertex& vertices = morphTarget->getVertices();
+        const CalCoreMorphTarget::MorphVertexArray& vertices = morphTarget->getVertices();
         for (int blendId = 0; blendId < vertices.size(); ++blendId) {
-            CalCoreMorphTarget::BlendVertex const* bv = vertices[blendId];
+            CalCoreMorphTarget::MorphVertex const* bv = vertices[blendId];
             if (!bv) {
                 continue;
             }
@@ -1250,9 +1250,9 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
             morph.SetAttribute("NAME", morphTarget->name);
 
             int morphVertCount = 0;
-            const CalCoreMorphTarget::VectorBlendVertex& vertices = morphTarget->getVertices();
+            const CalCoreMorphTarget::MorphVertexArray& vertices = morphTarget->getVertices();
             for (int blendId = 0; blendId < vertices.size(); ++blendId) {
-                CalCoreMorphTarget::BlendVertex const* bv = vertices[blendId];
+                CalCoreMorphTarget::MorphVertex const* bv = vertices[blendId];
                 if (!bv) {
                     continue;
                 }

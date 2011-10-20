@@ -989,7 +989,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
             TiXmlElement* blendVert = morph->FirstChildElement();
             for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
-                CalCoreMorphTarget::BlendVertex Vertex;
+                CalCoreMorphTarget::MorphVertex Vertex;
 
                 bool copyOrig = true;
                 if (blendVert && !cal3d_stricmp(blendVert->Value(), "BLENDVERTEX")) {
@@ -1032,7 +1032,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                         texcoord = texcoord->NextSiblingElement();
                     }
                     blendVert = blendVert->NextSiblingElement();
-                    morphTarget->setBlendVertex(blendVertI, Vertex);
+                    morphTarget->setMorphVertex(blendVertI, Vertex);
                 }
             }
             pCoreSubmesh->addCoreSubMorphTarget(morphTarget);

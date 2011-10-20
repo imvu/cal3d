@@ -16,11 +16,11 @@
 
 class CAL3D_API CalCoreMorphTarget {
 public:
-    struct BlendVertex : public cal3d::AlignedMemory<16> {
+    struct MorphVertex : public cal3d::AlignedMemory<16> {
         CalPoint4 position;
         CalVector4 normal;
     };
-    typedef std::vector<BlendVertex*> VectorBlendVertex;
+    typedef std::vector<MorphVertex*> MorphVertexArray;
 
     const std::string name;
     const CalMorphTargetType morphTargetType;
@@ -29,14 +29,14 @@ public:
     ~CalCoreMorphTarget();
 
     size_t size() const;
-    const std::vector<BlendVertex*>& getVertices() const {
+    const MorphVertexArray& getVertices() const {
         return m_vectorBlendVertex;
     }
-    bool setBlendVertex(int vertexId, const BlendVertex& vertex);
+    bool setMorphVertex(int vertexId, const MorphVertex& vertex);
 
     void scale(float factor);
 
 private:
-    std::vector<BlendVertex*> m_vectorBlendVertex;
+    MorphVertexArray m_vectorBlendVertex;
 };
 typedef boost::shared_ptr<CalCoreMorphTarget> CalCoreMorphTargetPtr;

@@ -937,7 +937,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         dataSrc.readInteger(blendVertId);
 
         for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
-            CalCoreMorphTarget::BlendVertex Vertex;
+            CalCoreMorphTarget::MorphVertex Vertex;
 
             if (blendVertI >= blendVertId) {
                 CalVectorFromDataSrc(dataSrc, &Vertex.position);
@@ -948,7 +948,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
                     dataSrc.readFloat(textureCoordinate.v);
                 }
 
-                morphTarget->setBlendVertex(blendVertI, Vertex);
+                morphTarget->setMorphVertex(blendVertI, Vertex);
                 dataSrc.readInteger(blendVertId);
             }
         }
