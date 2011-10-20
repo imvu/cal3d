@@ -1101,7 +1101,7 @@ bool CalSaver::saveXmlCoreMorphAnimation(const std::string& strFilename, CalCore
 
 
 bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh) {
-    std::ofstream of(strFilename);
+    std::ofstream of(strFilename.c_str());
     return CalSaver::saveXmlCoreMesh(of, pCoreMesh);
 }
 
