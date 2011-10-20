@@ -1,6 +1,9 @@
 #include "TestPrologue.h"
+#include <cal3d/buffersource.h>
 #include <cal3d/coremesh.h>
 #include <cal3d/mesh.h>
+#include <cal3d/loader.h>
+#include <cal3d/saver.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/submesh.h>
 #include <cal3d/physique.h>
@@ -9,9 +12,56 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/coremorphtarget.h>
 
-TEST(saving_and_loading_submesh_with_morph_stores_differences) {
-    CalCoreSubmesh csm(0, 0, 0);
-    
+TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_absolute_in_file) {
+    CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 0, 0));
+    CalCoreSubmesh::Vertex vertex;
+    vertex.position = CalVector4(1, 1, 1, 1);
+    vertex.normal = CalVector4(-1, -1 -1, 0);
+    csm->addVertex(vertex, CalColor32(), CalCoreSubmesh::InfluenceVector());
+
+    CalCoreMorphTarget::MorphVertexArray morphVertices;
+    CalCoreMorphTarget::MorphVertex mv;
+    mv.vertexId = 0;
+    mv.position = CalVector4(2, 2, 2, 1);
+    mv.normal = CalVector4(-2, -2, -2, 0);
+    morphVertices.push_back(mv);
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, morphVertices));
+    csm->addMorphTarget(morphTarget);
+
+    CalCoreMesh cm;
+    cm.submeshes.push_back(csm);
+
+    { // test binary format
+
+        std::ostringstream os;
+        CHECK(CalSaver::saveCoreMesh(os, &cm));
+
+        std::string buffer = os.str();
+        CalBufferSource source(buffer.c_str(), buffer.size());
+        CalCoreMeshPtr loaded = CalLoader::loadCoreMesh(source);
+        CHECK(loaded);
+
+        CHECK_EQUAL(1u, loaded->submeshes.size());
+        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets().size());
+        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets()[0]->morphVertices.size());
+        CHECK_EQUAL(CalVector4(2, 2, 2, 1),    loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].position);
+        CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
+    }
+
+#if 0
+    { // test XML format
+
+        std::ostringstream os;
+        CHECK(CalSaver::saveCoreMesh(os, &cm));
+
+        CalBufferSource source(os.str().c_str(), os.str().size());
+        CalCoreMeshPtr loaded = CalLoader::loadCoreMesh(source);
+        CHECK(loaded);
+
+        CHECK_EQUAL(CalVector4(1, 1, 1, 1),    loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].position);
+        CHECK_EQUAL(CalVector4(-1, -1, -1, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
+    }
+#endif
 }
 
 const CalColor32 black = 0;
