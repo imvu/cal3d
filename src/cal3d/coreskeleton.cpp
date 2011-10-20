@@ -13,6 +13,7 @@
 #endif
 
 #include <queue>
+#include <set>
 #include "cal3d/error.h"
 #include "cal3d/coreskeleton.h"
 #include "cal3d/corebone.h"
