@@ -25,6 +25,18 @@ namespace cal3d {
             , _capacity(0)
         {}
 
+        SSEArray(const SSEArray& other)
+            : _data(reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * other.size())))
+            , _size(other.size())
+            , _capacity(other.size())
+        {
+            const T* s = other.data();
+            for (T* d = _data; d != _data + _size; ++d, ++s) {
+                void* p = d;
+                new(p) T(*s);
+            }
+        }
+
         SSEArray(size_t initial_size)
             : _data(reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * initial_size)))
             , _size(initial_size)
