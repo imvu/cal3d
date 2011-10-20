@@ -1,7 +1,41 @@
 #include <TestFramework/TestFramework.h>
 #include "cal3d/memory.h"
+#include "cal3d/streamops.h"
+#include "cal3d/vector4.h"
 
 TEST(can_grow_SSEArray) {
-    cal3d::SSEArray<__m128> v;
-    v.push_back(__m128());
+    cal3d::SSEArray<CalVector4> v;
+
+    v.push_back(CalVector4(1, 2, 3, 4));
+    CHECK_EQUAL(1u, v.size());
+
+    CHECK_EQUAL(CalVector4(1, 2, 3, 4), v[0]);
+
+    v.push_back(CalVector4(5, 6, 7, 8));
+    CHECK_EQUAL(2u, v.size());
+    CHECK_EQUAL(CalVector4(1, 2, 3, 4), v[0]);
+    CHECK_EQUAL(CalVector4(5, 6, 7, 8), v[1]);
+}
+
+struct MagicValue {
+    MagicValue()
+        : value(10)
+    {}
+
+    MagicValue(const MagicValue& v) {
+        CHECK_EQUAL(v.value, value);
+    }
+
+    MagicValue& operator=(const MagicValue& v) {
+        CHECK_EQUAL(v.value, value);
+        return *this;
+    }
+
+    unsigned value;
+};
+
+TEST(sized_initializer_uses_constructor) {
+    cal3d::SSEArray<MagicValue> v(1);
+    CHECK_EQUAL(1u, v.size());
+    CHECK_EQUAL(10u, v[0].value);
 }

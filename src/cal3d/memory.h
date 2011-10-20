@@ -5,7 +5,7 @@
 #include "cal3d/platform.h"
 
 namespace cal3d {
-    void* allocate_aligned_data(size_t size);
+    CAL3D_API void* allocate_aligned_data(size_t size);
 
     // Can't use std::vector w/ __declspec(align(16)) :(
     // http://ompf.org/forum/viewtopic.php?f=11&t=686
@@ -20,19 +20,23 @@ namespace cal3d {
         typedef T const* const_iterator;
 
         SSEArray()
-            : data(0)
+            : _data(0)
             , _size(0)
+            , _capacity(0)
         {}
 
         SSEArray(size_t initial_size)
-            : data(reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * initial_size)))
+            : _data(reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * initial_size)))
             , _size(initial_size)
+            , _capacity(initial_size)
         {
-            std::fill(data, data + _size, T());
+            for (T* d = _data; d != _data + _size; ++d) {
+                new(d) T;
+            }
         }
 
         ~SSEArray() {
-            CAL3D_ALIGNED_FREE(data);
+            CAL3D_ALIGNED_FREE(_data);
         }
 
         // does not preserve array contents
@@ -40,20 +44,21 @@ namespace cal3d {
             if (_size != new_size) {
                 T* new_data = reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * new_size));
 
-                if (data) {
-                    CAL3D_ALIGNED_FREE(data);
+                if (_data) {
+                    CAL3D_ALIGNED_FREE(_data);
                 }
                 _size = new_size;
-                data = new_data;
+                _capacity = new_size;
+                _data = new_data;
             }
         }
 
         T& operator[](size_t idx) {
-            return data[idx];
+            return _data[idx];
         }
 
         const T& operator[](size_t idx) const {
-            return data[idx];
+            return _data[idx];
         }
 
         size_t size() const {
@@ -61,17 +66,32 @@ namespace cal3d {
         }
 
         void push_back(const T& v) {
+            if (_size + 1 > _capacity) {
+                size_t new_capacity = _capacity ? (_capacity * 2) : 1;
+                T* new_data = reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * new_capacity));
+                std::copy(_data, _data + _size, new_data);
+                new(new_data + _size) T(v);
+
+                CAL3D_ALIGNED_FREE(_data);
+                
+                ++_size;
+                _capacity = new_capacity;
+                _data = new_data;
+            }
         }
 
-        iterator begin() { return data; }
-        const_iterator begin() const { return data; }
-        iterator end() { return data + _size; }
-        const_iterator end() const { return data + _size; }
+        iterator begin() { return _data; }
+        const_iterator begin() const { return _data; }
+        iterator end() { return _data + _size; }
+        const_iterator end() const { return _data + _size; }
 
-        T* data;
+        T* data() { return _data; }
+        const T* data() const { return _data; }
 
     private:
+        T* _data;
         size_t _size;
+        size_t _capacity;
     };
 
     template<unsigned Alignment>
@@ -104,12 +124,12 @@ namespace cal3d {
 
     template<typename T>
     T* pointerFromVector(SSEArray<T>& v) {
-        return v.data;
+        return v.data();
     }
 
     template<typename T>
     const T* pointerFromVector(const SSEArray<T>& v) {
-        return v.data;
+        return v.data();
     }
 }
 
