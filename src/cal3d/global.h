@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <set>
 #include <map>
 #include "cal3d/platform.h"
 

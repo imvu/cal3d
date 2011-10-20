@@ -22,8 +22,8 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
     , m_isStatic(false)
     , m_currentVertexId(0)
     , m_hasVertexColors(false)
+    , m_vertices(vertexCount)
 {
-    m_vertices.resize(vertexCount);
     m_vertexColors.resize(vertexCount);
 
     m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);

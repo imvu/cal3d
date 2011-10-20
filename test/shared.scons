@@ -3,13 +3,14 @@ Import('*')
 sources = Split('''
     testAnimationCompression.cpp
     testBone.cpp
-    testLoader.cpp
     testCoreSkeleton.cpp
     testCoreTrack.cpp
+    testLoader.cpp
+    testMemory.cpp
+    testPhysique.cpp
     testSubmesh.cpp
     testTinyXml.cpp
     testVector.cpp
-    testPhysique.cpp
 ''')
 
 # Build the unit tests.

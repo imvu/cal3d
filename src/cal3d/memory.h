@@ -1,5 +1,9 @@
 #pragma once
 
+#include <map>
+#include <set>
+#include "cal3d/platform.h"
+
 namespace cal3d {
     void* allocate_aligned_data(size_t size);
 
@@ -20,12 +24,19 @@ namespace cal3d {
             , _size(0)
         {}
 
+        SSEArray(size_t initial_size)
+            : data(reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * initial_size)))
+            , _size(initial_size)
+        {
+            std::fill(data, data + _size, T());
+        }
+
         ~SSEArray() {
             CAL3D_ALIGNED_FREE(data);
         }
 
-        // destructive
-        void resize(size_t new_size) {
+        // does not preserve array contents
+        void destructive_resize(size_t new_size) {
             if (_size != new_size) {
                 T* new_data = reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * new_size));
 
@@ -47,6 +58,9 @@ namespace cal3d {
 
         size_t size() const {
             return _size;
+        }
+
+        void push_back(const T& v) {
         }
 
         iterator begin() { return data; }

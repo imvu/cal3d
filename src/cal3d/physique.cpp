@@ -431,7 +431,7 @@ namespace {
         const cal3d::MorphTarget* morphTargetEnd
     ) {
         if (vertexCount > MorphSubmeshCache.size()) {
-            MorphSubmeshCache.resize(vertexCount);
+            MorphSubmeshCache.destructive_resize(vertexCount);
         }
 
         cal3d::verify(morphTarget->weight != 0.0f, "Don't bother accumulating morphs until you have found an active morph target");
