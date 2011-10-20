@@ -415,10 +415,12 @@ namespace {
         const CalCoreSubmesh::Vertex* sourceVertices,
         const cal3d::MorphTarget* morphTarget
     ) {
+        // VC++ isn't hoisting this SSE register out of the loop, so do it manually.
         CalVector4 weight(morphTarget->weight);
 
-        CalCoreMorphTarget::MorphVertex const* morphVertex = cal3d::pointerFromVector(morphTarget->coreMorphTarget->getVertices());
-        CalCoreMorphTarget::MorphVertex const* lastMorphVertex = morphVertex + morphTarget->coreMorphTarget->getVertices().size();
+        const CalCoreMorphTarget::MorphVertexArray& morphVertices = morphTarget->coreMorphTarget->morphVertices;
+        const CalCoreMorphTarget::MorphVertex* morphVertex = cal3d::pointerFromVector(morphVertices);
+        const CalCoreMorphTarget::MorphVertex* lastMorphVertex = morphVertex + morphVertices.size();
         for (; morphVertex != lastMorphVertex; ++morphVertex) {
             size_t i = morphVertex->vertexId;
             MorphSubmeshCache[i].position += weight * (morphVertex->position - sourceVertices[i].position);
@@ -438,6 +440,10 @@ namespace {
 
         cal3d::verify(morphTarget->weight != 0.0f, "Don't bother accumulating morphs until you have found an active morph target");
 
+        // In theory we could initialize the accumulation buffer with
+        // "morphTarget", since we know it's active.  It would reduce
+        // memory traffic but increase code complexity, and probably
+        // never matters in practice.
         std::copy(sourceVertices, sourceVertices + vertexCount, MorphSubmeshCache.begin());
 
         // Now find active morph targets and accumulate them

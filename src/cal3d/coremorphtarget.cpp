@@ -32,11 +32,15 @@ static CalMorphTargetType calculateType(const char* s2) {
     return CalMorphTargetTypeAdditive;
 }
 
-CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount)
+CalCoreMorphTarget::CalCoreMorphTarget(const std::string& n, size_t vertexCount, const MorphVertexArray& morphVertices)
     : name(n)
     , morphTargetType(calculateType(n.c_str()))
-    , vertexCount(vertexCount)
+    , morphVertices(morphVertices)
 {
+    cal3d::verify(morphVertices.size() <= vertexCount, "Cannot morph more vertices than in the base mesh");
+    for (size_t i = 0; i < morphVertices.size(); ++i) {
+        cal3d::verify(morphVertices[i].vertexId < vertexCount, "Cannot morph vertices outside of the base mesh");
+    }
 }
 
 size_t CalCoreMorphTarget::size() const {
@@ -44,20 +48,14 @@ size_t CalCoreMorphTarget::size() const {
     r += sizeof(CalMorphTargetType);
 
     // Assume single texture coordinate pair.
-    r += (sizeof(MorphVertex) + sizeof(CalCoreSubmesh::TextureCoordinate)) * m_vectorBlendVertex.size();
+    r += ::sizeInBytes(morphVertices);
     r += name.size();
     return r;
 }
 
-void CalCoreMorphTarget::addMorphVertex(const MorphVertex& blendVertex) {
-    cal3d::verify(blendVertex.vertexId < vertexCount, "Cannot morph out-of-range vertex");
-    cal3d::verify(m_vectorBlendVertex.size() < vertexCount, "Cannot add more morph vertices than mesh vertices");
-
-    m_vectorBlendVertex.push_back(blendVertex);
-}
-
 void CalCoreMorphTarget::scale(float factor) {
-    for (MorphVertexArray::iterator i = m_vectorBlendVertex.begin(); i != m_vectorBlendVertex.end(); ++i) {
+    MorphVertexArray& mv = const_cast<MorphVertexArray&>(morphVertices);
+    for (MorphVertexArray::iterator i = mv.begin(); i != mv.end(); ++i) {
         i->position.x *= factor;
         i->position.y *= factor;
         i->position.z *= factor;

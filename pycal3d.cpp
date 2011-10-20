@@ -233,7 +233,7 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
 
 boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
     boost::python::list pVerts;
-    const CalCoreMorphTarget::MorphVertexArray& vertices = target.getVertices();
+    const CalCoreMorphTarget::MorphVertexArray& vertices = target.morphVertices;
     
     for (int blendId = 0; blendId < vertices.size(); ++blendId) {
         CalCoreMorphTarget::MorphVertex const& bv = vertices[blendId];

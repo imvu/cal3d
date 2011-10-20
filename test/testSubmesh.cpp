@@ -148,7 +148,7 @@ TEST(is_not_static_if_has_morph_targets) {
     inf[1].weight = 1.0f;
     csm.addVertex(v, black, inf);
 
-    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("", 0));
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("", 0, CalCoreMorphTarget::MorphVertexArray()));
     csm.addCoreSubMorphTarget(morphTarget);
 
     CHECK(!csm.isStatic());

@@ -985,7 +985,8 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
-            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount));
+
+            CalCoreMorphTarget::MorphVertexArray morphVertices;
 
             TiXmlElement* blendVert = morph->FirstChildElement();
             for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
@@ -1033,9 +1034,10 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     }
                     blendVert = blendVert->NextSiblingElement();
                     Vertex.vertexId = blendVertI;
-                    morphTarget->addMorphVertex(Vertex);
+                    morphVertices.push_back(Vertex);
                 }
             }
+            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount, morphVertices));
             pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
 
             morph = morph->NextSiblingElement();

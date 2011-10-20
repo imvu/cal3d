@@ -45,6 +45,12 @@ TEST(can_copy_SSEArray) {
     CHECK_EQUAL(CalVector4(8, 6, 4, 2), u[3]);
 }
 
+TEST(can_copy_empty_SSEArray) {
+    cal3d::SSEArray<CalVector4> v;
+    cal3d::SSEArray<CalVector4> u(v);
+    CHECK_EQUAL(0u, u.size());
+}
+
 struct MagicValue {
     MagicValue()
         : value(10)

@@ -931,10 +931,10 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         std::string morphName;
         dataSrc.readString(morphName);
 
-        CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morphName, vertexCount));
-
         int blendVertId;
         dataSrc.readInteger(blendVertId);
+
+        CalCoreMorphTarget::MorphVertexArray morphVertices;
 
         for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
             CalCoreMorphTarget::MorphVertex Vertex;
@@ -949,10 +949,11 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
                 }
 
                 Vertex.vertexId = blendVertI;
-                morphTarget->addMorphVertex(Vertex);
+                morphVertices.push_back(Vertex);
                 dataSrc.readInteger(blendVertId);
             }
         }
+        CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morphName, vertexCount, morphVertices));
         pCoreSubmesh->addCoreSubMorphTarget(morphTarget);
     }
 

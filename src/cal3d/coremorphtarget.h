@@ -25,19 +25,12 @@ public:
 
     const std::string name;
     const CalMorphTargetType morphTargetType;
-    const size_t vertexCount;
+    const MorphVertexArray morphVertices;
 
-    CalCoreMorphTarget(const std::string& name, size_t vertexCount);
+    CalCoreMorphTarget(const std::string& name, const size_t vertexCount, const MorphVertexArray& morphVertices);
 
     size_t size() const;
-    const MorphVertexArray& getVertices() const {
-        return m_vectorBlendVertex;
-    }
-    void addMorphVertex(const MorphVertex& vertex);
 
     void scale(float factor);
-
-private:
-    MorphVertexArray m_vectorBlendVertex;
 };
 typedef boost::shared_ptr<CalCoreMorphTarget> CalCoreMorphTargetPtr;
