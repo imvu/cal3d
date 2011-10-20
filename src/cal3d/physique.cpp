@@ -415,12 +415,14 @@ namespace {
         const CalCoreSubmesh::Vertex* sourceVertices,
         const cal3d::MorphTarget* morphTarget
     ) {
+        CalVector4 weight(morphTarget->weight);
+
         CalCoreMorphTarget::MorphVertex const* morphVertex = cal3d::pointerFromVector(morphTarget->coreMorphTarget->getVertices());
         CalCoreMorphTarget::MorphVertex const* lastMorphVertex = morphVertex + morphTarget->coreMorphTarget->getVertices().size();
         for (; morphVertex != lastMorphVertex; ++morphVertex) {
             size_t i = morphVertex->vertexId;
-            MorphSubmeshCache[i].position += morphTarget->weight * (morphVertex->position - sourceVertices[i].position);
-            MorphSubmeshCache[i].normal   += morphTarget->weight * (morphVertex->normal   - sourceVertices[i].normal);
+            MorphSubmeshCache[i].position += weight * (morphVertex->position - sourceVertices[i].position);
+            MorphSubmeshCache[i].normal   += weight * (morphVertex->normal   - sourceVertices[i].normal);
         }
     }
 
