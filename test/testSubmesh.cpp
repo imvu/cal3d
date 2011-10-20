@@ -48,20 +48,22 @@ TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_abso
         CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
     }
 
-#if 0
     { // test XML format
 
         std::ostringstream os;
-        CHECK(CalSaver::saveCoreMesh(os, &cm));
+        CHECK(CalSaver::saveXmlCoreMesh(os, &cm));
 
-        CalBufferSource source(os.str().c_str(), os.str().size());
+        std::string buffer = os.str();
+        CalBufferSource source(buffer.c_str(), buffer.size());
         CalCoreMeshPtr loaded = CalLoader::loadCoreMesh(source);
         CHECK(loaded);
 
-        CHECK_EQUAL(CalVector4(1, 1, 1, 1),    loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].position);
-        CHECK_EQUAL(CalVector4(-1, -1, -1, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
+        CHECK_EQUAL(1u, loaded->submeshes.size());
+        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets().size());
+        CHECK_EQUAL(1u, loaded->submeshes[0]->getMorphTargets()[0]->morphVertices.size());
+        CHECK_EQUAL(CalVector4(2, 2, 2, 1),    loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].position);
+        CHECK_EQUAL(CalVector4(-2, -2, -2, 0), loaded->submeshes[0]->getMorphTargets()[0]->morphVertices[0].normal);
     }
-#endif
 }
 
 const CalColor32 black = 0;

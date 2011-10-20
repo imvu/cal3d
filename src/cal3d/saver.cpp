@@ -36,7 +36,7 @@
 #include "cal3d/xmlformat.h"
 
 template<typename T>
-std::string save(boost::shared_ptr<T> t, bool (saveBinary)(std::ostream&, T*)) {
+std::string save(const boost::shared_ptr<T>& t, bool (saveBinary)(std::ostream&, T*)) {
     std::ostringstream os;
     if (saveBinary(os, t.get())) {
         return os.str();
@@ -1106,11 +1106,14 @@ bool CalSaver::saveXmlCoreMorphAnimation(const std::string& strFilename, CalCore
 
 
 bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh) {
+    std::ofstream of(strFilename);
+    return CalSaver::saveXmlCoreMesh(of, pCoreMesh);
+}
 
-    TiXmlDocument doc(strFilename);
+bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
+    TiXmlDocument doc;
 
     std::stringstream str;
-
 
     TiXmlElement header("HEADER");
     header.SetAttribute("MAGIC", cal3d::MESH_XMLFILE_EXTENSION);
@@ -1323,11 +1326,7 @@ bool CalSaver::saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCor
     }
     doc.InsertEndChild(mesh);
 
-    if (!doc.SaveFile()) {
-        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-        return false;
-    }
-
+    doc.Print(os);
     return true;
 }
 

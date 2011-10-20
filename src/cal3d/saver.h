@@ -55,6 +55,7 @@ public:
     static bool saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAnimation);
     static bool saveXmlCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation);
     static bool saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh);
+    static bool saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh);
     static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
 
 private:
