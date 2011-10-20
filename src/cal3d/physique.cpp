@@ -408,30 +408,45 @@ void automaticallyDetectSkinRoutine(
 }
 
 namespace {
-    struct EnabledMorph {
-        float weight;
-        const CalCoreMorphTarget::BlendVertex* const* blendVertices;
-    };
-
     SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
-    std::vector<EnabledMorph> enabledMorphCache;
 
-    size_t getEnabledMorphs(const CalSubmesh* submesh) {
-        const size_t morphTargetCount = submesh->morphTargets.size();
-        if (enabledMorphCache.size() < morphTargetCount) {
-            enabledMorphCache.resize(morphTargetCount);
-        }
-
-        size_t enabledMorphTargetCount = 0;
-        for (size_t i = 0; i < morphTargetCount; ++i) {
-            float weight = submesh->morphTargets[i].weight;
-            if (weight != 0.0) {
-                enabledMorphCache[enabledMorphTargetCount].weight = weight;
-                enabledMorphCache[enabledMorphTargetCount].blendVertices = cal3d::pointerFromVector(submesh->coreSubmesh->getCoreSubMorphTarget(i)->getVertices());
-                ++enabledMorphTargetCount;
+    void accumulateMorphTarget(
+        size_t vertexCount,
+        const CalCoreSubmesh::Vertex* sourceVertices,
+        const cal3d::MorphTarget* morphTarget
+    ) {
+        CalCoreMorphTarget::BlendVertex* const* const morphVertices = cal3d::pointerFromVector(morphTarget->coreMorphTarget->getVertices());
+        for (size_t i = 0; i < vertexCount; ++i) {
+            if (CalCoreMorphTarget::BlendVertex* morphVertex = morphVertices[i]) {
+                MorphSubmeshCache[i].position += morphTarget->weight * (morphVertex->position - sourceVertices[i].position);
+                MorphSubmeshCache[i].normal   += morphTarget->weight * (morphVertex->normal   - sourceVertices[i].normal);
             }
         }
-        return enabledMorphTargetCount;
+    }
+
+    const CalCoreSubmesh::Vertex* accumulateMorphTargets(
+        size_t vertexCount,
+        const CalCoreSubmesh::Vertex* sourceVertices,
+        const cal3d::MorphTarget* morphTarget,
+        const cal3d::MorphTarget* morphTargetEnd
+    ) {
+        if (vertexCount > MorphSubmeshCache.size()) {
+            MorphSubmeshCache.resize(vertexCount);
+        }
+
+        cal3d::verify(morphTarget->weight != 0.0f, "Don't bother accumulating morphs until you have found an active morph target");
+
+        std::copy(sourceVertices, sourceVertices + vertexCount, MorphSubmeshCache.begin());
+
+        // Now find active morph targets and accumulate them
+        while (morphTarget != morphTargetEnd) {
+            if (morphTarget->weight != 0.0f) {
+                accumulateMorphTarget(vertexCount, sourceVertices, morphTarget);
+            }
+            ++morphTarget;
+        }
+
+        return cal3d::pointerFromVector(MorphSubmeshCache);
     }
 }
 
@@ -444,29 +459,18 @@ void CalPhysique::calculateVerticesAndNormals(
     const size_t vertexCount = coreSubmesh->getVertexCount();
     const CalCoreSubmesh::Vertex* sourceVertices = cal3d::pointerFromVector(coreSubmesh->getVectorVertex());
 
-    const size_t enabledMorphCount = getEnabledMorphs(submesh);
-    if (enabledMorphCount) {
-        EnabledMorph* enabledMorphs = cal3d::pointerFromVector(enabledMorphCache);
+    // TODO: We could kill the O(PossibleMorphTargets) loop by maintaining
+    // the set of active morph targets in CalSubmesh
 
-        if (vertexCount > MorphSubmeshCache.size()) {
-            MorphSubmeshCache.resize(vertexCount);
+    const cal3d::MorphTarget* morphTarget = cal3d::pointerFromVector(submesh->morphTargets);
+    const cal3d::MorphTarget* morphTargetEnd = morphTarget + submesh->morphTargets.size();
+    for (; morphTarget != morphTargetEnd; ++morphTarget) {
+        if (morphTarget->weight != 0.0f) {
+            // found one!
+            // accumulate the morphed vertices in a temporary buffer and skin it
+            sourceVertices = accumulateMorphTargets(vertexCount, sourceVertices, morphTarget, morphTargetEnd);
+            break;
         }
-
-        std::copy(sourceVertices, sourceVertices + vertexCount, MorphSubmeshCache.begin());
-
-        for (unsigned morphIndex = 0; morphIndex < enabledMorphCount; ++morphIndex) {
-            float currentWeight = enabledMorphs[morphIndex].weight;
-            CalCoreMorphTarget::BlendVertex const* const* blendVertices = enabledMorphs[morphIndex].blendVertices;
-            for (size_t vertexId = 0; vertexId < vertexCount; ++vertexId) {
-                const CalCoreMorphTarget::BlendVertex* blendVertex = blendVertices[vertexId];
-                if (blendVertex) {
-                    MorphSubmeshCache[vertexId].position += currentWeight * (blendVertex->position - sourceVertices[vertexId].position);
-                    MorphSubmeshCache[vertexId].normal   += currentWeight * (blendVertex->normal   - sourceVertices[vertexId].normal);
-                }
-            }
-        }
-
-        sourceVertices = MorphSubmeshCache.data;
     }
 
     return optimizedSkinRoutine(
