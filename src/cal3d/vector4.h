@@ -142,6 +142,13 @@ struct CalBase4 {
         //w += v.w;
     }
 
+    void operator-=(const CalBase4& v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        //w -= v.w;
+    }
+
     void operator*=(const CalBase4& rhs) {
         x *= rhs.x;
         y *= rhs.y;
@@ -160,6 +167,14 @@ struct CalBase4 {
     }
 }
 CAL3D_ALIGN_TAIL(16);
+
+inline CalBase4 operator+(const CalBase4& lhs, const CalBase4& rhs) {
+    return CalBase4(
+        lhs.x + rhs.x,
+        lhs.y + rhs.y,
+        lhs.z + rhs.z,
+        lhs.w + rhs.w);
+}
 
 inline CalBase4 operator*(float f, const CalBase4& v) {
     return CalBase4(
