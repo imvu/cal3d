@@ -252,6 +252,8 @@ public:
     }
 };
 
+template<class T>
+void ConvertFromString(char const* strIn, T* dataOut);
 
 template<class T, class MT>
 class FromXmlAttribute  : public IMemberHolder<T> {
@@ -490,9 +492,6 @@ public:
     }
 
 };
-
-template<class T>
-void ConvertFromString(char const* strIn, T* dataOut);
 
 template<class T>
 class GenericTiXmlBinding : public TiXmlBinding<T> {
