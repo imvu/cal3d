@@ -154,9 +154,9 @@ TEST(loading_mesh_sorts_influences) {
     CalCoreMeshPtr mesh(CalLoader::loadCoreMesh(cbs));
     CalCoreSubmeshPtr submesh(mesh->submeshes[0]);
     CHECK_EQUAL(1u, submesh->getVectorVertex().size());
-    CHECK_EQUAL(CalCoreSubmesh::Influence(2, 0.5, false), submesh->getInfluences()[0]);
-    CHECK_EQUAL(CalCoreSubmesh::Influence(1, 0.3, false), submesh->getInfluences()[1]);
-    CHECK_EQUAL(CalCoreSubmesh::Influence(0, 0.2, true), submesh->getInfluences()[2]);
+    CHECK_EQUAL(CalCoreSubmesh::Influence(2, 0.5f, false), submesh->getInfluences()[0]);
+    CHECK_EQUAL(CalCoreSubmesh::Influence(1, 0.3f, false), submesh->getInfluences()[1]);
+    CHECK_EQUAL(CalCoreSubmesh::Influence(0, 0.2f, true), submesh->getInfluences()[2]);
 }
 
 const char animationText[] =
