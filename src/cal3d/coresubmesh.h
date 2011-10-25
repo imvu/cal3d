@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <ostream>
 #include <set>
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -189,3 +190,7 @@ private:
     CalAABox m_boundingVolume;
 };
 typedef boost::shared_ptr<CalCoreSubmesh> CalCoreSubmeshPtr;
+
+inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Influence& influence) {
+    return os << "CalCoreSubmesh::Influence(" << influence.boneId << ", " << influence.weight << ", " << influence.lastInfluenceForThisVertex << ")";
+}

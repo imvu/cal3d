@@ -64,6 +64,10 @@ bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId,
     return true;
 }
 
+bool descendingByWeight(const CalCoreSubmesh::Influence& lhs, const CalCoreSubmesh::Influence& rhs) {
+    return lhs.weight > rhs.weight;
+}
+
 void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& inf_) {
     assert(m_currentVertexId < m_vertices.size());
 
@@ -100,6 +104,8 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
         i.boneId = 0;
         i.weight = 0.0f;
         inf.push_back(i);
+    } else {
+        std::sort(inf.begin(), inf.end(), descendingByWeight);
     }
 
     // Mark the last influence as the last one.  :)

@@ -131,6 +131,34 @@ TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
     delete [] pBuf;
 }
 
+const char unsortedInfluences[] =
+    "<HEADER MAGIC=\"XMF\" VERSION=\"919\" />"
+    "<MESH NUMSUBMESH=\"1\">"
+    "    <SUBMESH NUMVERTICES=\"1\" NUMFACES=\"1\" NUMLODSTEPS=\"0\" NUMSPRINGS=\"0\" NUMMORPHS=\"0\" NUMTEXCOORDS=\"1\" MATERIAL=\"1\">"
+    "        <VERTEX NUMINFLUENCES=\"3\" ID=\"0\">"
+    "            <POS>5759.05 -1176.88 -0.00023478</POS>"
+    "            <NORM>1.27676e-008 2.40249e-008 -1</NORM>"
+    "            <COLOR>0 0 0</COLOR>"
+    "            <TEXCOORD>0 0</TEXCOORD>"
+    "            <INFLUENCE ID=\"0\">0.2</INFLUENCE>"
+    "            <INFLUENCE ID=\"1\">0.3</INFLUENCE>"
+    "            <INFLUENCE ID=\"2\">0.5</INFLUENCE>"
+    "        </VERTEX>"
+    "        <FACE VERTEXID=\"0 0 0\" />"
+    "    </SUBMESH>"
+    "</MESH>"
+    ;
+
+TEST(loading_mesh_sorts_influences) {
+    CalBufferSource cbs(fromString(unsortedInfluences));
+    CalCoreMeshPtr mesh(CalLoader::loadCoreMesh(cbs));
+    CalCoreSubmeshPtr submesh(mesh->submeshes[0]);
+    CHECK_EQUAL(1u, submesh->getVectorVertex().size());
+    CHECK_EQUAL(CalCoreSubmesh::Influence(2, 0.5, false), submesh->getInfluences()[0]);
+    CHECK_EQUAL(CalCoreSubmesh::Influence(1, 0.3, false), submesh->getInfluences()[1]);
+    CHECK_EQUAL(CalCoreSubmesh::Influence(0, 0.2, true), submesh->getInfluences()[2]);
+}
+
 const char animationText[] =
     "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />\n"
     "<ANIMATION NUMTRACKS=\"1\" DURATION=\"40\">\n"

@@ -117,8 +117,8 @@ TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
 
     influences = csm->getInfluences();
     CHECK_EQUAL(2u, influences.size());
-    CHECK_EQUAL(1, influences[0].boneId);
-    CHECK_EQUAL(0, influences[1].boneId);
+    CHECK_EQUAL(0, influences[0].boneId);
+    CHECK_EQUAL(1, influences[1].boneId);
 
     CalMatrix identity;
     BoneTransform bt[2] = {
