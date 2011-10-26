@@ -42,7 +42,7 @@ sources = Split('''
 
 sources = ['src/cal3d/' + s for s in sources]
 
-shared_lib_env = env.Clone(tools=[boost])
+shared_lib_env = env.Clone(tools=['boost'])
 shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
     CPPPATH=['../src'])
@@ -58,7 +58,7 @@ SConscript('test/shared.scons')
 
 # Python bindings
 
-pyd_env = env.Clone(tools=[boost, boost_python, python, 'cal3d'])
+pyd_env = env.Clone(tools=['boost', boost_python, python, 'cal3d'])
 
 imvu_python_extension(
     pyd_env,
