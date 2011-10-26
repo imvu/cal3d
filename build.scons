@@ -78,7 +78,7 @@ if 'exp' not in env.get('MSVS_VERSION', '').lower():
     else:
       csInclude = '#/Ext/3dsmax' + maxVersion + '/maxsdk/include/cs'
 
-    exporter_env = env.Clone(tools=[cal3d, boost])
+    exporter_env = env.Clone(tools=['cal3d', boost])
     exporter_env.Append(
         CPPPATH=['../plugins/cal3d_max_exporter',
                  '#/Source/cal3d/plugins/src',
