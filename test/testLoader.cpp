@@ -497,7 +497,7 @@ TEST(load_animation_for_non_existent_bone) {
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs2);
     CHECK(anim);
     anim->fixup(skel);
-    CHECK_EQUAL(anim->tracks.size(), 0);
+    CHECK_EQUAL(anim->tracks.size(), 0u);
 }
 
 
@@ -558,7 +558,7 @@ BOOST_STATIC_ASSERT(sizeof(hmmmAnimation) == hmmmLength);
 TEST(load_hmmm) {
     CalBufferSource cbs(fromString(hmmmAnimation));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
-    CHECK_EQUAL(anim->tracks.size(), 70);
+    CHECK_EQUAL(anim->tracks.size(), 70u);
 
     CalCoreKeyframe expected[14] = {
         CalCoreKeyframe(0, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(0, 0, -0.179775f, 0.983708f)),

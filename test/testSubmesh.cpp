@@ -221,7 +221,7 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
 
     CalSubmesh* submesh = mesh.submeshes[0].get();
     const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->coreSubmesh->getVectorVectorTextureCoordinate()[0];
-    CHECK_EQUAL(0, texCoords.size());
+    CHECK_EQUAL(0u, texCoords.size());
 }
 
 TEST(CalRenderer_getNormals_when_there_are_no_normals) {

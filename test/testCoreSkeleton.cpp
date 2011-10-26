@@ -45,8 +45,8 @@ TEST(loader_topologically_sorts) {
     CHECK_EQUAL(cs.coreBones[0].get(), bones[1].get());
     CHECK_EQUAL(cs.coreBones[1].get(), bones[0].get());
 
-    CHECK_EQUAL(1, cs.boneIdTranslation[0]);
-    CHECK_EQUAL(0, cs.boneIdTranslation[1]);
+    CHECK_EQUAL(1u, cs.boneIdTranslation[0]);
+    CHECK_EQUAL(0u, cs.boneIdTranslation[1]);
 }
 
 TEST(addCoreBone_adds_id_translation_to_table) {
@@ -54,7 +54,7 @@ TEST(addCoreBone_adds_id_translation_to_table) {
     CalCoreBonePtr bone(new CalCoreBone("a"));
     skeleton.addCoreBone(bone);
     CHECK_EQUAL(skeleton.coreBones.size(), skeleton.boneIdTranslation.size());
-    CHECK_EQUAL(0, skeleton.boneIdTranslation[0]);
+    CHECK_EQUAL(0u, skeleton.boneIdTranslation[0]);
 }
 
 TEST(loader_disregards_self_parents) {
@@ -117,8 +117,8 @@ TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
 
     influences = csm->getInfluences();
     CHECK_EQUAL(2u, influences.size());
-    CHECK_EQUAL(0, influences[0].boneId);
-    CHECK_EQUAL(1, influences[1].boneId);
+    CHECK_EQUAL(0u, influences[0].boneId);
+    CHECK_EQUAL(1u, influences[1].boneId);
 
     CalMatrix identity;
     BoneTransform bt[2] = {
@@ -150,7 +150,7 @@ TEST(fixup_out_of_range_influences_resets_to_zero) {
 
     influences = csm->getInfluences();
     CHECK_EQUAL(1u, influences.size());
-    CHECK_EQUAL(0, influences[0].boneId);
+    CHECK_EQUAL(0u, influences[0].boneId);
 }
 
 TEST(topologically_sorted_skeletons_can_fixup_animations) {
