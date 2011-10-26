@@ -171,7 +171,7 @@ public:
     }
 
 private:
-    int m_currentVertexId;
+    unsigned m_currentVertexId;
 
     // The following arrays should always be the same size.
     VectorVertex m_vertices;

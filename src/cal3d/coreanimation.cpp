@@ -26,7 +26,7 @@ size_t CalCoreAnimation::sizeInBytes() const {
     return sizeof(*this) + ::sizeInBytes(tracks);
 }
 
-const CalCoreTrack* CalCoreAnimation::getCoreTrack(int coreBoneId) const {
+const CalCoreTrack* CalCoreAnimation::getCoreTrack(unsigned coreBoneId) const {
     for (
         TrackList::const_iterator iteratorCoreTrack = tracks.begin();
         iteratorCoreTrack != tracks.end();

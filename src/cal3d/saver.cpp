@@ -726,8 +726,7 @@ bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename,
         return false;
     }
 
-    // save all core keyframes
-    for (int i = 0; i < pCoreTrack->keyframes.size(); ++i) {
+    for (size_t i = 0; i < pCoreTrack->keyframes.size(); ++i) {
         if (!saveCoreKeyframe(file, strFilename, &pCoreTrack->keyframes[i])) {
             return false;
         }
@@ -755,7 +754,7 @@ bool CalSaver::saveCoreMorphTrack(std::ostream& file, const std::string& strFile
     }
 
     // save all core keyframes
-    for (int i = 0; i < pCoreMorphTrack->keyframes.size(); ++i) {
+    for (size_t i = 0; i < pCoreMorphTrack->keyframes.size(); ++i) {
         // save the core keyframe
         if (!saveCoreMorphKeyframe(file, strFilename, &pCoreMorphTrack->keyframes[i])) {
             return false;
@@ -949,7 +948,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
         track.SetAttribute("NUMKEYFRAMES", pCoreTrack->keyframes.size());
 
         // save all core keyframes
-        for (int i = 0; i < pCoreTrack->keyframes.size(); ++i) {
+        for (size_t i = 0; i < pCoreTrack->keyframes.size(); ++i) {
             const CalCoreKeyframe& pCoreKeyframe = pCoreTrack->keyframes[i];
 
             TiXmlElement keyframe("KEYFRAME");
@@ -1050,7 +1049,7 @@ bool CalSaver::saveXmlCoreMorphAnimation(const std::string& strFilename, CalCore
         track.SetAttribute("NUMKEYFRAMES", pCoreMorphTrack->keyframes.size());
 
         // save all core keyframes
-        for (int i = 0; i < pCoreMorphTrack->keyframes.size(); ++i) {
+        for (size_t i = 0; i < pCoreMorphTrack->keyframes.size(); ++i) {
             CalCoreMorphKeyframe pCoreMorphKeyframe = pCoreMorphTrack->keyframes[i];
 
             TiXmlElement keyframe("KEYFRAME");

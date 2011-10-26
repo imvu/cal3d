@@ -64,7 +64,7 @@ bool CalBufferSource::readInteger(int& value) {
 bool CalBufferSource::readString(std::string& strValue) {
     // Reading a string consists of first reading an integer to see how long the string is.
     // Peak at this value before actually reading so that we don't end up reading off the end of our buffer.
-    int stringLength;
+    unsigned stringLength;
     if (!readInteger(stringLength) || (stringLength + 4 + 1) > mLength){
         return false;
     }

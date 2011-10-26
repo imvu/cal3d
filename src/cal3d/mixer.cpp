@@ -123,7 +123,7 @@ void CalMixer::updateSkeleton(
             itct != tracks.end();
             ++itct
         ) {
-            if (itct->coreBoneId >= int(bones.size())) {
+            if (itct->coreBoneId >= bones.size()) {
                 continue;
             }
 

@@ -1,7 +1,8 @@
+#include <boost/python.hpp>
+
 #include <vector>
 
 #include <boost/math/constants/constants.hpp>
-#include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include <cal3d/buffersource.h>
@@ -235,7 +236,7 @@ boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
     boost::python::list pVerts;
     const CalCoreMorphTarget::VertexOffsetArray& vertices = target.vertexOffsets;
     
-    for (int blendId = 0; blendId < vertices.size(); ++blendId) {
+    for (unsigned blendId = 0; blendId < vertices.size(); ++blendId) {
         VertexOffset const& bv = vertices[blendId];
         PythonBlendVertex vertex(bv);
         pVerts.append(vertex);

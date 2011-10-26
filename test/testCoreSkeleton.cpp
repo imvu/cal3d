@@ -165,5 +165,5 @@ TEST(topologically_sorted_skeletons_can_fixup_animations) {
     ca.tracks.push_back(ct);
 
     ca.fixup(cs);
-    CHECK_EQUAL(1, ca.tracks[0].coreBoneId);
+    CHECK_EQUAL(1u, ca.tracks[0].coreBoneId);
 }

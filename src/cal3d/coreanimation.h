@@ -19,7 +19,7 @@ typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
 class CAL3D_API CalCoreAnimation {
 public:
     size_t sizeInBytes() const;
-    const CalCoreTrack* getCoreTrack(int coreBoneId) const;
+    const CalCoreTrack* getCoreTrack(unsigned coreBoneId) const;
 
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void scale(float factor);

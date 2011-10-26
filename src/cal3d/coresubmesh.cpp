@@ -19,10 +19,10 @@
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)
     : coreMaterialThreadId(0)
-    , m_isStatic(false)
     , m_currentVertexId(0)
-    , m_hasVertexColors(false)
     , m_vertices(vertexCount)
+    , m_hasVertexColors(false)
+    , m_isStatic(false)
 {
     m_vertexColors.resize(vertexCount);
 
@@ -129,7 +129,7 @@ void CalCoreSubmesh::scale(float factor) {
     // needed because we shouldn't modify the w term
     CalVector4 scaleFactor(factor, factor, factor, 1.0f);
 
-    for (int vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
+    for (size_t vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
         m_vertices[vertexId].position *= scaleFactor;
     }
 

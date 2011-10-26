@@ -23,8 +23,8 @@ class CAL3D_API CalCoreTrack {
 public:
     typedef std::vector<CalCoreKeyframe> KeyframeList;
 
-    // would be const, except store a std::vector of these
-    int coreBoneId;
+    // would be const, except we store a std::vector of these
+    unsigned coreBoneId;
     KeyframeList keyframes;
 
     bool translationRequired;

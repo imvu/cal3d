@@ -57,8 +57,8 @@ public:
 
     PoolEntry<T> preAllocations_[PreAllocations];
 
-    ClassFactory():
-        count_(0), head_(NULL), allocCount_(0) {
+    ClassFactory()
+    : head_(NULL), count_(0), allocCount_(0) {
         int i;
         for (i = 0; i < PreAllocations; i++) {
             PoolEntry<T> * iter = &preAllocations_[i];

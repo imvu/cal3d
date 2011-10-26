@@ -50,7 +50,7 @@ bool CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& mo
 #else
             snprintf
 #endif
-            (buf, sizeof(buf) - 1, "This mesh has a morph target child with different number of vertices: %s (%d vs child's %d)", morphTargetName.c_str(), count1, count2);
+            (buf, sizeof(buf) - 1, "This mesh has a morph target child with different number of vertices: %s (%zu vs child's %zu)", morphTargetName.c_str(), count1, count2);
             CalError::setLastError(CalError::INTERNAL, __FILE__, __LINE__, buf);
             return false;
         }
@@ -65,7 +65,7 @@ bool CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& mo
         const CalCoreSubmesh::VectorVertex& vectorVertex = (*otherIteratorCoreSubmesh)->getVectorVertex();
 
         CalCoreMorphTarget::VertexOffsetArray vertices;
-        for (int i = 0; i < vertexCount; ++i) {
+        for (unsigned i = 0; i < vertexCount; ++i) {
             VertexOffset blendVertex;
             blendVertex.vertexId = i;
             blendVertex.position = vectorVertex[i].position;
