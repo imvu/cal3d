@@ -139,14 +139,14 @@ struct CalBase4 {
         x += v.x;
         y += v.y;
         z += v.z;
-        //w += v.w;
+        w += v.w;
     }
 
     void operator-=(const CalBase4& v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
-        //w -= v.w;
+        w -= v.w;
     }
 
     void operator*=(const CalBase4& rhs) {
@@ -160,6 +160,7 @@ struct CalBase4 {
         x *= f;
         y *= f;
         z *= f;
+        w *= f;
     }
 
     CalVector asCalVector() const {
