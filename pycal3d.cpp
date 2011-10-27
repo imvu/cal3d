@@ -19,13 +19,16 @@
 #include <cal3d/error.h>
 
 using namespace boost::python;
+using namespace cal3d;
+
+typedef boost::shared_ptr<Buffer> BufferPtr;
 
 CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalLoader::loadCoreAnimation(cbs);
 }
 
-bool saveCoreAnimation(const boost::shared_ptr<CalCoreAnimation>& animation, const std::string& path) {
+bool saveCoreAnimation(const CalCoreAnimationPtr& animation, const std::string& path) {
     return CalSaver::saveCoreAnimation(path, animation.get());
 }
 
@@ -34,7 +37,7 @@ CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const cal3d::Buffer& buffer) {
     return CalLoader::loadCoreSkeleton(cbs);
 }
 
-bool saveCoreSkeleton(const boost::shared_ptr<CalCoreSkeleton>& skeleton, const std::string& path) {
+bool saveCoreSkeleton(const CalCoreSkeletonPtr& skeleton, const std::string& path) {
     return CalSaver::saveCoreSkeleton(path, skeleton.get());
 }
 
@@ -43,7 +46,7 @@ CalCoreMaterialPtr loadCoreMaterialFromBuffer(const cal3d::Buffer& buffer) {
     return CalLoader::loadCoreMaterial(cbs);
 }
 
-bool saveCoreMaterial(const boost::shared_ptr<CalCoreMaterial>& material, const std::string& path) {
+bool saveCoreMaterial(const CalCoreMaterialPtr& material, const std::string& path) {
     return CalSaver::saveCoreMaterial(path, material.get());
 }
 
@@ -52,7 +55,7 @@ CalCoreMeshPtr loadCoreMeshFromBuffer(const cal3d::Buffer& buffer) {
     return CalLoader::loadCoreMesh(cbs);
 }
 
-bool saveCoreMesh(const boost::shared_ptr<CalCoreMesh>& mesh, const std::string& path) {
+bool saveCoreMesh(const CalCoreMeshPtr& mesh, const std::string& path) {
     return CalSaver::saveCoreMesh(path, mesh.get());
 }
 
@@ -61,7 +64,7 @@ CalCoreMorphAnimationPtr loadCoreMorphAnimationFromBuffer(const cal3d::Buffer& b
     return CalLoader::loadCoreMorphAnimation(cbs);
 }
 
-bool saveCoreMorphAnimation(const boost::shared_ptr<CalCoreMorphAnimation>& animatedMorph, const std::string& path) {
+bool saveCoreMorphAnimation(const CalCoreMorphAnimationPtr& animatedMorph, const std::string& path) {
     return CalSaver::saveCoreMorphAnimation(path, animatedMorph.get());
 }
 
@@ -134,8 +137,8 @@ namespace cal3d {
             return data;
         }
 
-        boost::shared_ptr<Buffer> clone() const {
-            return boost::shared_ptr<Buffer>(new PythonBuffer(get()));
+        BufferPtr clone() const {
+            return BufferPtr(new PythonBuffer(get()));
         }
     private:
         PyObject* get() const {
@@ -279,6 +282,16 @@ BOOST_PYTHON_MODULE(_cal3d)
 {
     cal3d::BufferFromPythonObject();
 
+    class_<cal3d::UserData, cal3d::UserDataPtr, boost::noncopyable>("UserData", no_init)
+        ;
+
+    class_<cal3d::UserDataHolder, boost::noncopyable>("CoreMaterial", no_init)
+        .add_property(
+            "userData",
+            make_function(&cal3d::UserDataHolder::getUserData, return_value_policy<return_by_value>()),
+            &cal3d::UserDataHolder::setUserData)
+        ;
+
     class_<CalVector>("Vector")
         .def("__repr__", &VectorRepr)
         .def_readwrite("x", &CalVector::x)
@@ -300,7 +313,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("rotation", &cal3d::RotateTranslate::rotation)
         ;
 
-    class_<CalCoreBone, boost::shared_ptr<CalCoreBone> >("CoreBone",
+    class_<CalCoreBone, CalCoreBonePtr >("CoreBone",
         init<std::string, int>())
         .def(init<std::string>())
         .def_readwrite("parentIndex", &CalCoreBone::parentId)
@@ -311,7 +324,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     exportVector<CalCoreBonePtr>("BoneVector");
 
-    class_<CalCoreSkeleton, boost::shared_ptr<CalCoreSkeleton>, boost::noncopyable>("CoreSkeleton")
+    class_<CalCoreSkeleton, CalCoreSkeletonPtr, boost::noncopyable>("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
         .def("scale", &CalCoreSkeleton::scale)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
@@ -320,7 +333,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     {
         scope CalCoreMaterial_class(
-            class_<CalCoreMaterial, boost::shared_ptr<CalCoreMaterial> >("CoreMaterial")
+            class_<CalCoreMaterial, CalCoreMaterialPtr, bases<cal3d::UserDataHolder> >("CoreMaterial")
                 .def_readwrite("maps", &CalCoreMaterial::maps)
         );
 
@@ -369,14 +382,14 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("id", &PythonBlendVertex::vertexId)
         ;
     
-    class_<CalCoreMorphTarget, boost::shared_ptr<CalCoreMorphTarget>, boost::noncopyable>("CoreMorphTarget", no_init)
+    class_<CalCoreMorphTarget, CalCoreMorphTargetPtr, boost::noncopyable>("CoreMorphTarget", no_init)
         .def_readonly("name", &CalCoreMorphTarget::name)
         .add_property("blendVertices", &getBlendVertices)
         ;
     
-    exportVector<boost::shared_ptr<CalCoreMorphTarget> >("MorphTargetVector");
+    exportVector<CalCoreMorphTargetPtr>("MorphTargetVector");
     
-    class_<CalCoreSubmesh, boost::shared_ptr<CalCoreSubmesh>, boost::noncopyable>("CoreSubmesh", no_init)
+    class_<CalCoreSubmesh, CalCoreSubmeshPtr, boost::noncopyable>("CoreSubmesh", no_init)
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .def_readwrite("triangles", &CalCoreSubmesh::faces)
         .add_property("vertices", &getVertices)
