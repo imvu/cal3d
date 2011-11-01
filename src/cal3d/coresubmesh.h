@@ -44,7 +44,7 @@ public:
 
     struct Influence {
         Influence() {
-            boneId = -1;
+            boneId = static_cast<unsigned>(-1);
             weight = 0.0f;
             lastInfluenceForThisVertex = 0;
         }
