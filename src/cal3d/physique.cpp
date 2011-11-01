@@ -411,7 +411,6 @@ namespace {
     cal3d::SSEArray<CalCoreSubmesh::Vertex> MorphSubmeshCache;
 
     void accumulateMorphTarget(
-        size_t vertexCount,
         const cal3d::MorphTarget* morphTarget
     ) {
         // VC++ isn't hoisting this SSE register out of the loop, so do it manually.
@@ -448,7 +447,7 @@ namespace {
         // Now find active morph targets and accumulate them
         while (morphTarget != morphTargetEnd) {
             if (morphTarget->weight != 0.0f) {
-                accumulateMorphTarget(vertexCount, morphTarget);
+                accumulateMorphTarget(morphTarget);
             }
             ++morphTarget;
         }

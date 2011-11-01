@@ -25,7 +25,7 @@ public:
         , weight(w)
     {}
 
-    void scale(float factor) {
+    void scale(float) {
     }
 };
 

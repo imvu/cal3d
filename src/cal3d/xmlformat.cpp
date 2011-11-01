@@ -49,7 +49,7 @@ template<class T>
 static inline bool _ValidateTag(
     T* element,
     char const* requiredTag,
-    const CalCoreMeshPtr& pCoreMesh,
+    const CalCoreMeshPtr& /*pCoreMesh*/,
     const boost::shared_ptr<CalCoreSubmesh>& /*pCoreSubmesh*/,
     char const* file,
     int line
