@@ -99,12 +99,7 @@ if 'exp' not in env.get('MSVS_VERSION', '').lower():
     exporter_env['CPPDEFINES'].remove(('NOMINMAX',))
     exporter_env['CPPDEFINES'].remove(('UNICODE',))
     exporter_env['CPPDEFINES'].remove(('_UNICODE',))
-
-    exporter_env.Append(CCFLAGS=[
-        '/wd4238', # rvalue passed as lvalue reference
-        '/wd4100', # unreferenced formal parameters
-        '/wd4239', # nonstandard extension used : 'default argument' : conversion from 'X' to 'X &'
-    ])
+    exporter_env['WARNINGS_AS_ERRORS'] = False
 
     PCH_OBJ = imvu_enable_pch(exporter_env, 'plugins/src/PCH.cpp', 'PCH.h')
 
