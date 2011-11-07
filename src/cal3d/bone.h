@@ -46,11 +46,11 @@ public:
 private:
     // from core bone. stored locally for better cache locality
     const cal3d::RotateTranslate coreRelativeTransform;
-    const cal3d::Transform coreBoneSpaceTransform;
+    const cal3d::Transform coreInverseBindPoseTransform;
 
     // animated bone state
     float m_accumulatedWeight;
     float m_accumulatedWeightAbsolute;
     float m_accumulatedReplacementAttenuation;
-    CalVector m_meshScaleAbsolute; // w.r.t. absolute coord system in 3dsMax (Z up), not local coord of bone.
+    CalVector m_meshScaleAbsolute;
 };

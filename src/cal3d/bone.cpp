@@ -25,7 +25,7 @@
 CalBone::CalBone(const CalCoreBone& coreBone)
     : parentId(coreBone.parentId)
     , coreRelativeTransform(coreBone.relativeTransform)
-    , coreBoneSpaceTransform(coreBone.inverseBindPoseTransform)
+    , coreInverseBindPoseTransform(coreBone.inverseBindPoseTransform)
 {
     resetPose();
 }
@@ -91,5 +91,5 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         absoluteTransform = absoluteTransform * cal3d::Scale(m_meshScaleAbsolute);
     }
 
-    return absoluteTransform * coreBoneSpaceTransform;
+    return absoluteTransform * coreInverseBindPoseTransform;
 }
