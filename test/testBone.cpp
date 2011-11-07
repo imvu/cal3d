@@ -32,6 +32,12 @@ TEST_F(BoneFixture, bone_with_no_animation_returns_bind_position) {
     CHECK_EQUAL(1.0f, bt.rowx.w);
 }
 
+TEST_F(BoneFixture, bone_with_zero_weight_is_replaced) {
+    bone.blendPose(0.0f, makeTranslation(0, 0, 0), false, 1.0f);
+    BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
+    CHECK_EQUAL(1.0f, bt.rowx.w);
+}
+
 TEST_F(BoneFixture, bone_with_one_full_animation_returns_animation) {
     bone.blendPose(1.0f, makeTranslation(0, 0, 0), false, 1.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);

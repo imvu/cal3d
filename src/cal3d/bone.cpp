@@ -58,21 +58,19 @@ void CalBone::blendPose(
     bool replace,
     float rampValue
 ) {
-    const float rampedWeight = unrampedWeight * rampValue;
-    const float attenuatedWeight = rampedWeight * m_accumulatedReplacementAttenuation;
+    const float attenuatedWeight = unrampedWeight * rampValue * m_accumulatedReplacementAttenuation;
+    if (!attenuatedWeight) {
+        return;
+    }
+
     if (replace) {
         m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
     }
 
-    if (m_accumulatedWeightAbsolute == 0.0f) {
-        m_accumulatedWeightAbsolute = attenuatedWeight;
-        relativeTransform = transform;
-    } else {
-        float factor = attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
-        assert(factor <= 1.0f);
-        relativeTransform = blend(factor, relativeTransform, transform);
-        m_accumulatedWeightAbsolute += attenuatedWeight;
-    }
+    float factor = attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
+    assert(factor <= 1.0f);
+    relativeTransform = blend(factor, relativeTransform, transform);
+    m_accumulatedWeightAbsolute += attenuatedWeight;
 }
 
 BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
