@@ -36,11 +36,11 @@ CalSkeleton::CalSkeleton(const CalCoreSkeletonPtr& pCoreSkeleton) {
     boneTransforms.destructive_resize(boneCount);
 }
 
-void CalSkeleton::clearState() {
+void CalSkeleton::resetPose() {
     std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::resetPose));
 }
 
-void CalSkeleton::calculateState(bool includeRootTransform) {
+void CalSkeleton::calculateAbsolutePose(bool includeRootTransform) {
     CalBone* bones_ptr = cal3d::pointerFromVector(bones);
     for (unsigned i = 0; i < bones.size(); ++i) {
         boneTransforms[i] = bones_ptr[i].calculateAbsolutePose(bones_ptr, includeRootTransform);

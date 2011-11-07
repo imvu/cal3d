@@ -41,12 +41,10 @@ void CalMixer::setManualAnimationAttributes(
 
     // now update composition function
 
-    CalAnimation::CompositionFunction oldValue = animation->compositionFunction;
-
     // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
     // it at the front, which wouldn't preserve the property that the most recently inserted
     // animation is highest priority.
-    if (oldValue == p.compositionFunction_) {
+    if (animation->compositionFunction == p.compositionFunction_) {
         return;
     }
     animation->compositionFunction = p.compositionFunction_;
@@ -99,7 +97,7 @@ void CalMixer::updateSkeleton(
     const std::vector<BoneScaleAdjustment>& boneScaleAdjustments,
     RootTransformFlag includeRoot
 ) {
-    skeleton->clearState();
+    skeleton->resetPose();
 
     CalSkeleton::BoneArray& bones = skeleton->bones;
 
@@ -137,8 +135,7 @@ void CalMixer::updateSkeleton(
         }
     }
 
-    // let the skeleton calculate its final state
-    skeleton->calculateState(includeRoot == IncludeRootTransform);
+    skeleton->calculateAbsolutePose(includeRoot == IncludeRootTransform);
 }
 
 void CalMixer::applyBoneAdjustments(
