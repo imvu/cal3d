@@ -33,8 +33,9 @@ void cal3d::TransformAccumulator::addTransform(float weight, const RotateTransla
     if (weight) {
         totalWeight += weight;
         float factor = weight / totalWeight;
-        cal3d::verify(factor > 0.0f, "factor must be positive");
-        cal3d::verify(factor <= 1.0f, "factor cannot exc");
+        // I'm not comfortable asserting these, given floating point math.
+        //cal3d::verify(factor > 0.0f, "factor must be positive");
+        //cal3d::verify(factor <= 1.0f, "factor cannot exceed 1.0f");
         currentTransform = blend(factor, transform, currentTransform);
     }
 }
@@ -49,7 +50,6 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 
 void CalBone::resetPose() {
     relativeTransform = coreRelativeTransform; // if no animations are applied, use this
-    m_accumulatedWeight = 0.0f;
     m_accumulatedWeightAbsolute = 0.0f;
     m_accumulatedReplacementAttenuation = 1.0f;
     m_meshScaleAbsolute.set(1, 1, 1);
