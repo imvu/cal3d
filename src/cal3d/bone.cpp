@@ -21,6 +21,23 @@
 #include "cal3d/skeleton.h"
 #include "cal3d/coreskeleton.h"
 
+cal3d::TransformAccumulator::TransformAccumulator() {
+    totalWeight = 0;
+}
+
+void cal3d::TransformAccumulator::reset(const RotateTranslate& defaultPose) {
+    totalWeight = 0;
+}
+
+void cal3d::TransformAccumulator::addTransform(float weight, const RotateTranslate& transform) {
+    if (weight) {
+        totalWeight += weight;
+        float factor = weight / totalWeight;
+        cal3d::verify(factor > 0.0f, "factor must be positive");
+        cal3d::verify(factor <= 1.0f, "factor cannot exc");
+        currentTransform = blend(factor, transform, currentTransform);
+    }
+}
 
 CalBone::CalBone(const CalCoreBone& coreBone)
     : parentId(coreBone.parentId)

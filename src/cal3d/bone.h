@@ -18,6 +18,24 @@ class CalCoreBone;
 class CalSkeleton;
 class CalModel;
 
+namespace cal3d {
+    class CAL3D_API TransformAccumulator {
+    public:
+        TransformAccumulator();
+
+        void reset(const RotateTranslate& defaultPose);
+
+        void addTransform(float weight, const RotateTranslate& transform);
+        const RotateTranslate& getWeightedMean() {
+            return currentTransform;
+        }
+
+    private:
+        float totalWeight;
+        RotateTranslate currentTransform;
+    };
+}
+
 class CAL3D_API CalBone {
 public:
     const int parentId;
