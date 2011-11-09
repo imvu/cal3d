@@ -125,12 +125,11 @@ void CalMixer::updateSkeleton(
                 continue;
             }
 
-            // Replace and CrossFade both blend with the replace function.
-            bool replace = animation->compositionFunction != CalAnimation::CompositionFunctionAverage;
             bones[itct->coreBoneId].blendPose(
                 animation->weight,
                 itct->getState(animation->time),
-                replace,
+                // Replace and CrossFade both blend with the replace function.
+                animation->compositionFunction != CalAnimation::CompositionFunctionAverage,
                 animation->rampValue);
         }
     }

@@ -27,16 +27,19 @@ cal3d::TransformAccumulator::TransformAccumulator() {
 
 void cal3d::TransformAccumulator::reset(const RotateTranslate& defaultPose) {
     totalWeight = 0;
+    currentTransform = defaultPose;
 }
 
 void cal3d::TransformAccumulator::addTransform(float weight, const RotateTranslate& transform) {
     if (weight) {
         totalWeight += weight;
         float factor = weight / totalWeight;
-        // I'm not comfortable asserting these, given floating point math.
-        //cal3d::verify(factor > 0.0f, "factor must be positive");
-        //cal3d::verify(factor <= 1.0f, "factor cannot exceed 1.0f");
-        currentTransform = blend(factor, transform, currentTransform);
+        // I'm not comfortable asserting these, given floating point
+        // math.  For example, imagine that totalWeight is HUGE and
+        // weight is small.  Would dividing produce a zero factor?
+        // cal3d::verify(factor > 0.0f, "factor must be positive");
+        // cal3d::verify(factor <= 1.0f, "factor cannot exceed 1.0f");
+        currentTransform = blend(factor, currentTransform, transform);
     }
 }
 
@@ -49,8 +52,7 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 }
 
 void CalBone::resetPose() {
-    relativeTransform = coreRelativeTransform; // if no animations are applied, use this
-    m_accumulatedWeightAbsolute = 0.0f;
+    transformAccumulator.reset(coreRelativeTransform); // if no animations are applied, use this
     m_accumulatedReplacementAttenuation = 1.0f;
     m_meshScaleAbsolute.set(1, 1, 1);
 }
@@ -75,31 +77,26 @@ void CalBone::blendPose(
     bool replace,
     float rampValue
 ) {
-    const float attenuatedWeight = unrampedWeight * rampValue * m_accumulatedReplacementAttenuation;
-    if (!attenuatedWeight) {
-        return;
-    }
+    const float attenuatedWeight = rampValue * unrampedWeight * m_accumulatedReplacementAttenuation;
+    if (attenuatedWeight) {
+        if (replace) {
+            m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
+        }
 
-    if (replace) {
-        m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
+        transformAccumulator.addTransform(attenuatedWeight, transform);
     }
-
-    float factor = attenuatedWeight / (m_accumulatedWeightAbsolute + attenuatedWeight);
-    assert(factor <= 1.0f);
-    relativeTransform = blend(factor, relativeTransform, transform);
-    m_accumulatedWeightAbsolute += attenuatedWeight;
 }
 
 BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
     if (parentId == -1) {
         if (includeRootTransform) {
             // no parent, this means absolute state == relative state
-            absoluteTransform = relativeTransform;
+            absoluteTransform = getRelativeTransform();
         } else {
             absoluteTransform = cal3d::RotateTranslate();
         }
     } else {
-        absoluteTransform = bones[parentId].absoluteTransform * relativeTransform;
+        absoluteTransform = bones[parentId].absoluteTransform * getRelativeTransform();
     }
 
     if (m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1) {

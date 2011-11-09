@@ -26,7 +26,7 @@ namespace cal3d {
         void reset(const RotateTranslate& defaultPose);
 
         void addTransform(float weight, const RotateTranslate& transform);
-        const RotateTranslate& getWeightedMean() {
+        const RotateTranslate& getWeightedMean() const {
             return currentTransform;
         }
 
@@ -39,10 +39,13 @@ namespace cal3d {
 class CAL3D_API CalBone {
 public:
     const int parentId;
-    cal3d::RotateTranslate relativeTransform;
     cal3d::Transform absoluteTransform;
 
     CalBone(const CalCoreBone& coreBone);
+
+    const cal3d::RotateTranslate& getRelativeTransform() const {
+        return transformAccumulator.getWeightedMean();
+    }
 
     const CalVector& getOriginalTranslation() const {
         return coreRelativeTransform.translation;
@@ -67,7 +70,7 @@ private:
     const cal3d::Transform coreInverseBindPoseTransform;
 
     // animated bone state
-    float m_accumulatedWeightAbsolute;
     float m_accumulatedReplacementAttenuation;
+    cal3d::TransformAccumulator transformAccumulator;
     CalVector m_meshScaleAbsolute;
 };
