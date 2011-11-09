@@ -77,13 +77,13 @@ void CalBone::blendPose(
     bool replace,
     float rampValue
 ) {
-    const float attenuatedWeight = rampValue * unrampedWeight * m_accumulatedReplacementAttenuation;
+    const float attenuatedWeight = rampValue * m_accumulatedReplacementAttenuation;
     if (attenuatedWeight) {
         if (replace) {
             m_accumulatedReplacementAttenuation *= (1.0f - rampValue);
         }
 
-        transformAccumulator.addTransform(attenuatedWeight, transform);
+        transformAccumulator.addTransform(unrampedWeight * attenuatedWeight, transform);
     }
 }
 
