@@ -22,7 +22,6 @@ struct AnimationAttributes {
     float time;
     float weight;
     float rampValue;
-    unsigned priority; // 0 is lowest
 };
 
 struct BoneTransformAdjustment {
@@ -73,5 +72,6 @@ private:
         const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
         const std::vector<BoneScaleAdjustment>& boneScaleAdjustments);
 
-    std::list<CalAnimationPtr> activeAnimations;
+    typedef std::list<CalAnimationPtr> AnimationList;
+    AnimationList activeAnimations;
 };

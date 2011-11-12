@@ -22,9 +22,12 @@
 #include "cal3d/bone.h"
 #include "cal3d/animation.h"
 
-
 void CalMixer::addManualAnimation(const CalAnimationPtr& animation) {
-    activeAnimations.push_front(animation);
+    AnimationList::iterator i = activeAnimations.begin();
+    while (i != activeAnimations.end() && animation->priority < (*i)->priority) {
+        ++i;
+    }
+    activeAnimations.insert(i, animation);
 }
 
 void CalMixer::removeManualAnimation(const CalAnimationPtr& animation) {
@@ -38,53 +41,6 @@ void CalMixer::setManualAnimationAttributes(
     animation->time = p.time;
     animation->weight = p.weight;
     animation->rampValue = p.rampValue;
-
-    // now update composition function
-
-    // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
-    // it at the front, which wouldn't preserve the property that the most recently inserted
-    // animation is highest priority.
-    if (animation->priority == p.priority) {
-        return;
-    }
-    animation->priority = p.priority;
-
-    activeAnimations.remove(animation);
-    // Now insert it back in in the appropriate position.  Replace animations go in at the front.
-    // Average animations go in after the replace animations.
-    switch (p.priority) {
-        case 2: {
-            // Replace animations go on the front of the list.
-            activeAnimations.push_front(animation);
-            break;
-        }
-        case 1: {
-            // Crossfade animations go after replace, but before Average.
-            std::list<CalAnimationPtr>::iterator aait2 = activeAnimations.begin();
-            for (; aait2 != activeAnimations.end(); aait2++) {
-                if ((*aait2)->priority != 2) {
-                    break;
-                }
-            }
-            activeAnimations.insert(aait2, animation);
-            break;
-        }
-        case 0: {
-            // Average animations go before the first Average animation.
-            std::list<CalAnimationPtr>::iterator aait2 = activeAnimations.begin();
-            for (; aait2 != activeAnimations.end(); aait2++) {
-                if ((*aait2)->priority == 0) {  // Skip over replace and crossFade animations
-                    break;
-                }
-            }
-            activeAnimations.insert(aait2, animation);
-            break;
-        }
-        default: {
-            assert(!"Unexpected");
-            break;
-        }
-    }
 }
 
 
