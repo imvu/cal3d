@@ -19,11 +19,10 @@ typedef boost::shared_ptr<class CalAnimation> CalAnimationPtr;
 class CalSkeleton;
 
 struct AnimationAttributes {
-    bool on_;
-    float time_;
-    float weight_;
-    float rampValue_;
-    unsigned priority_; // 0 is lowest
+    float time;
+    float weight;
+    float rampValue;
+    unsigned priority; // 0 is lowest
 };
 
 struct BoneTransformAdjustment {

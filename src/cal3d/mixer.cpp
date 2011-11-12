@@ -35,25 +35,25 @@ void CalMixer::setManualAnimationAttributes(
     const CalAnimationPtr& animation,
     const AnimationAttributes& p
 ) {
-    animation->time = p.time_;
-    animation->weight = p.weight_;
-    animation->rampValue = p.rampValue_;
+    animation->time = p.time;
+    animation->weight = p.weight;
+    animation->rampValue = p.rampValue;
 
     // now update composition function
 
     // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
     // it at the front, which wouldn't preserve the property that the most recently inserted
     // animation is highest priority.
-    if (animation->priority == p.priority_) {
+    if (animation->priority == p.priority) {
         return;
     }
-    animation->priority = p.priority_;
+    animation->priority = p.priority;
 
     activeAnimations.remove(animation);
 
     // Now insert it back in in the appropriate position.  Replace animations go in at the front.
     // Average animations go in after the replace animations.
-    switch (p.priority_) {
+    switch (p.priority) {
         case 2: {
             // Replace animations go on the front of the list.
             activeAnimations.push_front(animation);

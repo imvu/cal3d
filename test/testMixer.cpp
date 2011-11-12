@@ -53,10 +53,10 @@ TEST_F(MixerFixture, one_low_priority_animation_poses_bone) {
     CalAnimationPtr anim(makeAnimation(CalVector(1, 1, 1)));
 
     AnimationAttributes attr;
-    attr.priority_ = 0;
-    attr.time_ = 0.0f;
-    attr.weight_ = 1.0f;
-    attr.rampValue_ = 1.0f;
+    attr.priority = 0;
+    attr.time = 0.0f;
+    attr.weight = 1.0f;
+    attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(anim);
     mixer.setManualAnimationAttributes(anim, attr);
@@ -69,18 +69,18 @@ TEST_F(MixerFixture, high_priority_animation_trumps_low_priority_animation) {
     CalAnimationPtr high(makeAnimation(CalVector(-1, -1, -1)));
 
     AnimationAttributes attr;
-    attr.priority_ = 0;
-    attr.time_ = 0.0f;
-    attr.weight_ = 1.0f;
-    attr.rampValue_ = 1.0f;
+    attr.priority = 0;
+    attr.time = 0.0f;
+    attr.weight = 1.0f;
+    attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(low);
     mixer.setManualAnimationAttributes(low, attr);
 
-    attr.priority_ = 2;
-    attr.time_ = 0.0f;
-    attr.weight_ = 1.0f;
-    attr.rampValue_ = 1.0f;
+    attr.priority = 2;
+    attr.time = 0.0f;
+    attr.weight = 1.0f;
+    attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(high);
     mixer.setManualAnimationAttributes(high, attr);
