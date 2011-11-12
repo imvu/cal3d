@@ -20,7 +20,6 @@ class CalSkeleton;
 
 struct AnimationAttributes {
     float time;
-    float weight;
     float rampValue;
 };
 

@@ -7,13 +7,13 @@ typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
 
 class CAL3D_API CalAnimation {
 public:
-    CalAnimation(const CalCoreAnimationPtr& pCoreAnimation, unsigned priority);
+    CalAnimation(const CalCoreAnimationPtr& pCoreAnimation, float weight, unsigned priority);
 
     const CalCoreAnimationPtr coreAnimation;
 
-    float time;
-    float weight;
-    float rampValue;
+    float time; // current time
+    float rampValue; // 0->1 fade in, 1->0 fade out
+    const float weight;
     const unsigned priority; // 0 is lowest
 };
 typedef boost::shared_ptr<CalAnimation> CalAnimationPtr;

@@ -37,7 +37,7 @@ TEST_F(MixerFixture, no_animation_leaves_bone_in_bind_pose) {
     CHECK_EQUAL(cal3d::Transform(), skeleton.bones[0].absoluteTransform);
 }
 
-static CalAnimationPtr makeAnimation(CalVector t, unsigned priority) {
+static CalAnimationPtr makeAnimation(CalVector t, unsigned priority, float weight = 1.0f) {
     CalCoreTrack::KeyframeList keyframes;
     keyframes.push_back(CalCoreKeyframe(0, t, CalQuaternion()));
     CalCoreTrack track(0, keyframes);
@@ -45,7 +45,7 @@ static CalAnimationPtr makeAnimation(CalVector t, unsigned priority) {
     CalCoreAnimationPtr coreAnimation(new CalCoreAnimation());
     coreAnimation->tracks.push_back(track);
 
-    CalAnimationPtr anim(new CalAnimation(coreAnimation, priority));
+    CalAnimationPtr anim(new CalAnimation(coreAnimation, weight, priority));
     return anim;
 }
 
@@ -54,7 +54,6 @@ TEST_F(MixerFixture, one_low_priority_animation_poses_bone) {
 
     AnimationAttributes attr;
     attr.time = 0.0f;
-    attr.weight = 1.0f;
     attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(anim);
@@ -69,7 +68,6 @@ TEST_F(MixerFixture, high_priority_animation_trumps_low_priority_animation) {
 
     AnimationAttributes attr;
     attr.time = 0.0f;
-    attr.weight = 1.0f;
     attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(low);
@@ -88,7 +86,6 @@ TEST_F(MixerFixture, high_priority_can_be_inserted_before_low_priority_animation
 
     AnimationAttributes attr;
     attr.time = 0.0f;
-    attr.weight = 1.0f;
     attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(high);
@@ -107,7 +104,6 @@ TEST_F(MixerFixture, second_high_priority_trumps_first) {
 
     AnimationAttributes attr;
     attr.time = 0.0f;
-    attr.weight = 1.0f;
     attr.rampValue = 1.0f;
 
     mixer.addManualAnimation(first);

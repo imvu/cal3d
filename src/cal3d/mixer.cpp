@@ -39,7 +39,6 @@ void CalMixer::setManualAnimationAttributes(
     const AnimationAttributes& p
 ) {
     animation->time = p.time;
-    animation->weight = p.weight;
     animation->rampValue = p.rampValue;
 }
 
