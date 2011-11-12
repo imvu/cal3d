@@ -82,6 +82,10 @@ namespace cal3d {
         CalVector translation;
     };
 
+    inline bool operator==(const Transform& lhs, const Transform& rhs) {
+        return lhs.basis == rhs.basis && lhs.translation == rhs.translation;
+    }
+
     CAL3D_API Transform operator*(const Transform& outer, const Transform& inner);
     CAL3D_API Transform operator*(const Transform& outer, const Scale& inner);
 

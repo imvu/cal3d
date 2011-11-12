@@ -30,9 +30,25 @@ inline std::ostream& operator<<(std::ostream& os, const CalQuaternion& quat) {
     return os << "CalQuaternion(" << quat.x << "," << quat.y << "," << quat.z << "," << quat.w << ")";
 }
 
+inline std::ostream& operator<<(std::ostream& os, const CalMatrix& m) {
+    os << "CalMatrix(";
+    const float* p = &m.dxdx;
+    for (size_t i = 0; i < 9; ++i) {
+        if (i) {
+            os << ", ";
+        }
+        os << p[i];
+    }
+    return os << ")";
+}
+
 namespace cal3d {
     inline std::ostream& operator<<(std::ostream& os, const RotateTranslate& t) {
-        return os << "cal3d::Transform(" << t.rotation << ", " << t.translation << ")";
+        return os << "cal3d::RotateTranslate(" << t.rotation << ", " << t.translation << ")";
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, const Transform& t) {
+        return os << "cal3d::Transform(" << t.basis << ", " << t.translation << ")";
     }
 }
 

@@ -126,8 +126,7 @@ void CalMixer::updateSkeleton(
             bones[itct->coreBoneId].blendPose(
                 animation->weight,
                 itct->getState(animation->time),
-                // Replace and CrossFade both blend with the replace function.
-                animation->priority != 0,
+                animation->priority != 0, // higher priority animations replace 0-priority animations
                 animation->rampValue);
         }
     }

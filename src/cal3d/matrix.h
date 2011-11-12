@@ -38,6 +38,17 @@ public:
     explicit CalMatrix(const CalQuaternion& q);
 };
 
+inline bool operator==(const CalMatrix& lhs, const CalMatrix& rhs) {
+    const float* lp = &lhs.dxdx;
+    const float* rp = &rhs.dxdx;
+    for (size_t i = 0; i < 9; ++i) {
+        if (lp[i] != rp[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 inline CalVector operator*(const CalMatrix& m, const CalVector& v) {
     return CalVector(
         m.dxdx * v.x + m.dxdy * v.y + m.dxdz * v.z,
