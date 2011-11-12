@@ -88,3 +88,28 @@ TEST_F(MixerFixture, high_priority_animation_trumps_low_priority_animation) {
     updateSkeleton();
     CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
 }
+
+TEST_F(MixerFixture, high_priority_can_be_inserted_before_low_priority_animation) {
+    CalAnimationPtr low(makeAnimation(CalVector(1, 1, 1)));
+    CalAnimationPtr high(makeAnimation(CalVector(-1, -1, -1)));
+
+    AnimationAttributes attr;
+    attr.priority = 2;
+    attr.time = 0.0f;
+    attr.weight = 1.0f;
+    attr.rampValue = 1.0f;
+
+    mixer.addManualAnimation(high);
+    mixer.setManualAnimationAttributes(high, attr);
+
+    attr.priority = 0;
+    attr.time = 0.0f;
+    attr.weight = 1.0f;
+    attr.rampValue = 1.0f;
+
+    mixer.addManualAnimation(low);
+    mixer.setManualAnimationAttributes(low, attr);
+
+    updateSkeleton();
+    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
+}

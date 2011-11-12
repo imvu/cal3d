@@ -50,7 +50,6 @@ void CalMixer::setManualAnimationAttributes(
     animation->priority = p.priority;
 
     activeAnimations.remove(animation);
-
     // Now insert it back in in the appropriate position.  Replace animations go in at the front.
     // Average animations go in after the replace animations.
     switch (p.priority) {
