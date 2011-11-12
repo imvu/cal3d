@@ -23,7 +23,7 @@ struct AnimationAttributes {
     float time_;
     float weight_;
     float rampValue_;
-    CalAnimation::CompositionFunction compositionFunction_;
+    unsigned priority_; // 0 is lowest
 };
 
 struct BoneTransformAdjustment {

@@ -7,12 +7,6 @@ typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
 
 class CAL3D_API CalAnimation {
 public:
-    enum CompositionFunction {
-        CompositionFunctionReplace,
-        CompositionFunctionAverage,
-        CompositionFunctionCrossFade
-    };
-
     CalAnimation(const CalCoreAnimationPtr& pCoreAnimation);
 
     const CalCoreAnimationPtr coreAnimation;
@@ -20,7 +14,6 @@ public:
     float time;
     float weight;
     float rampValue;
-
-    CompositionFunction compositionFunction;
+    unsigned priority; // 0 is lowest
 };
 typedef boost::shared_ptr<CalAnimation> CalAnimationPtr;

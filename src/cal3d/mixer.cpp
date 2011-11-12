@@ -44,39 +44,37 @@ void CalMixer::setManualAnimationAttributes(
     // If the value isn't changing, then exit here.  Otherwise I would remove it and reinsert
     // it at the front, which wouldn't preserve the property that the most recently inserted
     // animation is highest priority.
-    if (animation->compositionFunction == p.compositionFunction_) {
+    if (animation->priority == p.priority_) {
         return;
     }
-    animation->compositionFunction = p.compositionFunction_;
+    animation->priority = p.priority_;
 
     activeAnimations.remove(animation);
 
     // Now insert it back in in the appropriate position.  Replace animations go in at the front.
     // Average animations go in after the replace animations.
-    switch (p.compositionFunction_) {
-        case CalAnimation::CompositionFunctionReplace: {
+    switch (p.priority_) {
+        case 2: {
             // Replace animations go on the front of the list.
             activeAnimations.push_front(animation);
             break;
         }
-        case CalAnimation::CompositionFunctionCrossFade: {
+        case 1: {
             // Crossfade animations go after replace, but before Average.
             std::list<CalAnimationPtr>::iterator aait2 = activeAnimations.begin();
             for (; aait2 != activeAnimations.end(); aait2++) {
-                CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
-                if (cf != CalAnimation::CompositionFunctionReplace) {
+                if ((*aait2)->priority != 2) {
                     break;
                 }
             }
             activeAnimations.insert(aait2, animation);
             break;
         }
-        case CalAnimation::CompositionFunctionAverage: {
+        case 0: {
             // Average animations go before the first Average animation.
             std::list<CalAnimationPtr>::iterator aait2 = activeAnimations.begin();
             for (; aait2 != activeAnimations.end(); aait2++) {
-                CalAnimation::CompositionFunction cf = (*aait2)->compositionFunction;
-                if (cf == CalAnimation::CompositionFunctionAverage) {  // Skip over replace and crossFade animations
+                if ((*aait2)->priority == 0) {  // Skip over replace and crossFade animations
                     break;
                 }
             }
@@ -129,7 +127,7 @@ void CalMixer::updateSkeleton(
                 animation->weight,
                 itct->getState(animation->time),
                 // Replace and CrossFade both blend with the replace function.
-                animation->compositionFunction != CalAnimation::CompositionFunctionAverage,
+                animation->priority != 0,
                 animation->rampValue);
         }
     }
