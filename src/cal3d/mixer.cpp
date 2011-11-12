@@ -71,7 +71,8 @@ void CalMixer::updateSkeleton(
             bones[track->coreBoneId].blendPose(
                 animation->weight,
                 track->getState(animation->time),
-                animation->priority != 0, // higher priority animations replace 0-priority animations
+                // higher priority animations replace 0-priority animations
+                animation->priority != 0 ? animation->rampValue : 0.0f,
                 animation->rampValue);
         }
     }
@@ -94,7 +95,7 @@ void CalMixer::applyBoneAdjustments(
             cal3d::RotateTranslate(
                 ba.localOri,
                 bo.getOriginalTranslation() /* adjustedLocalPos */),
-            true, /* replace */
+            ba.rampValue, /* subsequentAttenuation */
             ba.rampValue /* rampValue */);
     }
 

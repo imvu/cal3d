@@ -58,8 +58,8 @@ TEST_F(BoneFixture, bone_with_two_replacements_uses_first_replacement) {
 }
 
 TEST_F(BoneFixture, bone_with_two_replacements_uses_first_replacement_partially_scaled) {
-    bone.blendPose(1.0f, makeTranslation(2, 2, 2), true, 0.8f);
-    bone.blendPose(1.0f, makeTranslation(10, 10, 10), true, 1.0f);
+    bone.blendPose(1.0f, makeTranslation(2, 2, 2), 0.8f, 0.8f);
+    bone.blendPose(1.0f, makeTranslation(10, 10, 10), 1.0f, 1.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(3.6f, bt.rowx.w);
 }
@@ -69,9 +69,9 @@ inline float lerp(float a, float s, float t) {
 }
 
 TEST_F(BoneFixture, bone_with_two_replacements_and_one_nonreplacement_blends_more_to_the_first_replacement) {
-    bone.blendPose(1.0f, makeTranslation(2, 2, 2), true, 0.5f);
-    bone.blendPose(1.0f, makeTranslation(10, 10, 10), true, 0.5f);
-    bone.blendPose(1.0f, makeTranslation(100, 100, 100), false, 0.5f);
+    bone.blendPose(1.0f, makeTranslation(2, 2, 2), 0.5f, 0.5f);
+    bone.blendPose(1.0f, makeTranslation(10, 10, 10), 0.5f, 0.5f);
+    bone.blendPose(1.0f, makeTranslation(100, 100, 100), 0.5f, 0.5f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(lerp(1.0f / 7.0f, lerp(1.0f / 3.0f, 2, 10), 100), bt.rowx.w);
 }

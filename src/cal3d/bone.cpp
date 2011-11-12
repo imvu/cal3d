@@ -53,7 +53,7 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 
 void CalBone::resetPose() {
     transformAccumulator.reset(coreRelativeTransform); // if no animations are applied, use this
-    m_accumulatedReplacementAttenuation = 1.0f;
+    currentAttenuation = 1.0f;
     m_meshScaleAbsolute.set(1, 1, 1);
 }
 
@@ -74,13 +74,14 @@ void CalBone::resetPose() {
 void CalBone::blendPose(
     float weight,
     const cal3d::RotateTranslate& transform,
-    bool replace,
+    float subsequentAttenuation,
     float rampValue
 ) {
-    const float attenuation = rampValue * m_accumulatedReplacementAttenuation;
-    m_accumulatedReplacementAttenuation *= (1.0f - replace ? rampValue : 0.0f);
+    const float attenuation = rampValue * currentAttenuation;
 
     transformAccumulator.addTransform(weight * attenuation, transform);
+
+    currentAttenuation *= (1.0f - subsequentAttenuation);
 }
 
 BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {

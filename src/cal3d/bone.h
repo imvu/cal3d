@@ -59,7 +59,7 @@ public:
     void blendPose(
         float unrampedWeight,
         const cal3d::RotateTranslate& transform,
-        bool replace = false,
+        float subsequentAttenuation = 0.0f,
         float rampValue = 1.0f);
 
     BoneTransform calculateAbsolutePose(const CalBone* bones, bool includeRootTransform);
@@ -70,7 +70,7 @@ private:
     const cal3d::Transform coreInverseBindPoseTransform;
 
     // animated bone state
-    float m_accumulatedReplacementAttenuation;
+    float currentAttenuation;
     cal3d::TransformAccumulator transformAccumulator;
     CalVector m_meshScaleAbsolute;
 };
