@@ -60,17 +60,17 @@ void CalMixer::updateSkeleton(
         const CalCoreAnimation::TrackList& tracks = animation->coreAnimation->tracks;
 
         for (
-            CalCoreAnimation::TrackList::const_iterator itct = tracks.begin();
-            itct != tracks.end();
-            ++itct
+            CalCoreAnimation::TrackList::const_iterator track = tracks.begin();
+            track != tracks.end();
+            ++track
         ) {
-            if (itct->coreBoneId >= bones.size()) {
+            if (track->coreBoneId >= bones.size()) {
                 continue;
             }
 
-            bones[itct->coreBoneId].blendPose(
+            bones[track->coreBoneId].blendPose(
                 animation->weight,
-                itct->getState(animation->time),
+                track->getState(animation->time),
                 animation->priority != 0, // higher priority animations replace 0-priority animations
                 animation->rampValue);
         }
