@@ -52,12 +52,7 @@ static CalAnimationPtr makeAnimation(CalVector t, unsigned priority, float weigh
 TEST_F(MixerFixture, one_low_priority_animation_poses_bone) {
     CalAnimationPtr anim(makeAnimation(CalVector(1, 1, 1), 0));
 
-    AnimationAttributes attr;
-    attr.time = 0.0f;
-    attr.rampValue = 1.0f;
-
-    mixer.addManualAnimation(anim);
-    mixer.setManualAnimationAttributes(anim, attr);
+    mixer.addAnimation(anim);
     updateSkeleton();
     CHECK_EQUAL(CalVector(1, 1, 1), skeleton.bones[0].absoluteTransform.translation);
 }
@@ -66,15 +61,8 @@ TEST_F(MixerFixture, high_priority_animation_trumps_low_priority_animation) {
     CalAnimationPtr low(makeAnimation(CalVector(1, 1, 1), 0));
     CalAnimationPtr high(makeAnimation(CalVector(-1, -1, -1), 1));
 
-    AnimationAttributes attr;
-    attr.time = 0.0f;
-    attr.rampValue = 1.0f;
-
-    mixer.addManualAnimation(low);
-    mixer.setManualAnimationAttributes(low, attr);
-
-    mixer.addManualAnimation(high);
-    mixer.setManualAnimationAttributes(high, attr);
+    mixer.addAnimation(low);
+    mixer.addAnimation(high);
 
     updateSkeleton();
     CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
@@ -84,15 +72,8 @@ TEST_F(MixerFixture, high_priority_can_be_inserted_before_low_priority_animation
     CalAnimationPtr low(makeAnimation(CalVector(1, 1, 1), 0));
     CalAnimationPtr high(makeAnimation(CalVector(-1, -1, -1), 2));
 
-    AnimationAttributes attr;
-    attr.time = 0.0f;
-    attr.rampValue = 1.0f;
-
-    mixer.addManualAnimation(high);
-    mixer.setManualAnimationAttributes(high, attr);
-
-    mixer.addManualAnimation(low);
-    mixer.setManualAnimationAttributes(low, attr);
+    mixer.addAnimation(high);
+    mixer.addAnimation(low);
 
     updateSkeleton();
     CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
@@ -102,15 +83,8 @@ TEST_F(MixerFixture, second_high_priority_trumps_first) {
     CalAnimationPtr first(makeAnimation(CalVector(1, 1, 1), 2));
     CalAnimationPtr second(makeAnimation(CalVector(-1, -1, -1), 2));
 
-    AnimationAttributes attr;
-    attr.time = 0.0f;
-    attr.rampValue = 1.0f;
-
-    mixer.addManualAnimation(first);
-    mixer.setManualAnimationAttributes(first, attr);
-
-    mixer.addManualAnimation(second);
-    mixer.setManualAnimationAttributes(second, attr);
+    mixer.addAnimation(first);
+    mixer.addAnimation(second);
 
     updateSkeleton();
     CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);

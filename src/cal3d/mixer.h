@@ -18,11 +18,6 @@
 typedef boost::shared_ptr<class CalAnimation> CalAnimationPtr;
 class CalSkeleton;
 
-struct AnimationAttributes {
-    float time;
-    float rampValue;
-};
-
 struct BoneTransformAdjustment {
     unsigned boneId;
 
@@ -55,9 +50,8 @@ enum RootTransformFlag {
 
 class CAL3D_API CalMixer {
 public:
-    void addManualAnimation(const CalAnimationPtr& animation);
-    void removeManualAnimation(const CalAnimationPtr& animation);
-    void setManualAnimationAttributes(const CalAnimationPtr& animation, const AnimationAttributes& p);
+    void addAnimation(const CalAnimationPtr& animation);
+    void removeAnimation(const CalAnimationPtr& animation);
 
     void updateSkeleton(
         CalSkeleton* skeleton,

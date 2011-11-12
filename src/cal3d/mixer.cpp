@@ -22,7 +22,7 @@
 #include "cal3d/bone.h"
 #include "cal3d/animation.h"
 
-void CalMixer::addManualAnimation(const CalAnimationPtr& animation) {
+void CalMixer::addAnimation(const CalAnimationPtr& animation) {
     AnimationList::iterator i = activeAnimations.begin();
     while (i != activeAnimations.end() && animation->priority < (*i)->priority) {
         ++i;
@@ -30,18 +30,9 @@ void CalMixer::addManualAnimation(const CalAnimationPtr& animation) {
     activeAnimations.insert(i, animation);
 }
 
-void CalMixer::removeManualAnimation(const CalAnimationPtr& animation) {
+void CalMixer::removeAnimation(const CalAnimationPtr& animation) {
     activeAnimations.remove(animation);
 }
-
-void CalMixer::setManualAnimationAttributes(
-    const CalAnimationPtr& animation,
-    const AnimationAttributes& p
-) {
-    animation->time = p.time;
-    animation->rampValue = p.rampValue;
-}
-
 
 void CalMixer::updateSkeleton(
     CalSkeleton* skeleton,
