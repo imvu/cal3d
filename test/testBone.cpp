@@ -33,33 +33,33 @@ TEST_F(BoneFixture, bone_with_no_animation_returns_bind_position) {
 }
 
 TEST_F(BoneFixture, bone_with_zero_weight_is_replaced) {
-    bone.blendPose(0.0f, makeTranslation(0, 0, 0), false, 1.0f);
+    bone.blendPose(0.0f, makeTranslation(0, 0, 0), 0.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(1.0f, bt.rowx.w);
 }
 
 TEST_F(BoneFixture, bone_with_one_full_animation_returns_animation) {
-    bone.blendPose(1.0f, makeTranslation(0, 0, 0), false, 1.0f);
+    bone.blendPose(1.0f, makeTranslation(0, 0, 0), 0.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(0.0f, bt.rowx.w);
 }
 
 TEST_F(BoneFixture, bone_with_scaled_animation_returns_blend_of_bind_position_and_animation) {
-    bone.blendPose(1.0f, makeTranslation(0, 0, 0), false, 0.5f);
+    bone.blendPose(0.5f, makeTranslation(0, 0, 0), 0.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(0.0f, bt.rowx.w);
 }
 
 TEST_F(BoneFixture, bone_with_two_replacements_uses_first_replacement) {
-    bone.blendPose(1.0f, makeTranslation(2, 2, 2), true, 1.0f);
-    bone.blendPose(1.0f, makeTranslation(0, 0, 0), true, 1.0f);
+    bone.blendPose(1.0f, makeTranslation(2, 2, 2), 1.0f);
+    bone.blendPose(1.0f, makeTranslation(0, 0, 0), 1.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(2.0f, bt.rowx.w);
 }
 
 TEST_F(BoneFixture, bone_with_two_replacements_uses_first_replacement_partially_scaled) {
-    bone.blendPose(1.0f, makeTranslation(2, 2, 2), 0.8f, 0.8f);
-    bone.blendPose(1.0f, makeTranslation(10, 10, 10), 1.0f, 1.0f);
+    bone.blendPose(0.8f, makeTranslation(2, 2, 2), 0.8f);
+    bone.blendPose(1.0f, makeTranslation(10, 10, 10), 1.0f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(3.6f, bt.rowx.w);
 }
@@ -69,18 +69,12 @@ inline float lerp(float a, float s, float t) {
 }
 
 TEST_F(BoneFixture, bone_with_two_replacements_and_one_nonreplacement_blends_more_to_the_first_replacement) {
-    bone.blendPose(1.0f, makeTranslation(2, 2, 2), 0.5f, 0.5f);
-    bone.blendPose(1.0f, makeTranslation(10, 10, 10), 0.5f, 0.5f);
-    bone.blendPose(1.0f, makeTranslation(100, 100, 100), 0.5f, 0.5f);
+    bone.blendPose(0.5f, makeTranslation(2, 2, 2), 0.5f);
+    bone.blendPose(0.5f, makeTranslation(10, 10, 10), 0.5f);
+    bone.blendPose(0.5f, makeTranslation(100, 100, 100), 0.5f);
     BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
     CHECK_EQUAL(lerp(1.0f / 7.0f, lerp(1.0f / 3.0f, 2, 10), 100), bt.rowx.w);
 }
-
-//TEST_F(BoneFixture, can_ramp_in_at_zero) {
-//    bone.blendPose(1.0f, makeTranslation(2, 2, 2), true, 0.0f);
-//    BoneTransform bt = bone.calculateAbsolutePose(&bone, true);
-//    CHECK_EQUAL(1.0f, bt.rowx.w);
-//}
 
 FIXTURE(MixerFixture) {
     static CalCoreSkeletonPtr fakeSkeleton() {

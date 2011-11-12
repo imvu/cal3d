@@ -69,11 +69,10 @@ void CalMixer::updateSkeleton(
             }
 
             bones[track->coreBoneId].blendPose(
-                animation->weight,
+                animation->weight * animation->rampValue,
                 track->getState(animation->time),
                 // higher priority animations replace 0-priority animations
-                animation->priority != 0 ? animation->rampValue : 0.0f,
-                animation->rampValue);
+                animation->priority != 0 ? animation->rampValue : 0.0f);
         }
     }
 
@@ -91,12 +90,11 @@ void CalMixer::applyBoneAdjustments(
         const BoneTransformAdjustment& ba = boneTransformAdjustments[i];
         CalBone& bo = bones[ba.boneId];
         bo.blendPose(
-            1.0f, /* unrampedWeight */
+            ba.rampValue, /* weight */
             cal3d::RotateTranslate(
                 ba.localOri,
                 bo.getOriginalTranslation() /* adjustedLocalPos */),
-            ba.rampValue, /* subsequentAttenuation */
-            ba.rampValue /* rampValue */);
+            ba.rampValue /* subsequentAttenuation */);
     }
 
     for (size_t i = 0; i < boneScaleAdjustments.size(); i++) {

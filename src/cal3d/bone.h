@@ -57,10 +57,9 @@ public:
 
     void resetPose();
     void blendPose(
-        float unrampedWeight,
+        float weight,
         const cal3d::RotateTranslate& transform,
-        float subsequentAttenuation = 0.0f,
-        float rampValue = 1.0f);
+        float subsequentAttenuation);
 
     BoneTransform calculateAbsolutePose(const CalBone* bones, bool includeRootTransform);
 

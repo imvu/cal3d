@@ -74,13 +74,9 @@ void CalBone::resetPose() {
 void CalBone::blendPose(
     float weight,
     const cal3d::RotateTranslate& transform,
-    float subsequentAttenuation,
-    float rampValue
+    float subsequentAttenuation
 ) {
-    const float attenuation = rampValue * currentAttenuation;
-
-    transformAccumulator.addTransform(weight * attenuation, transform);
-
+    transformAccumulator.addTransform(weight * currentAttenuation, transform);
     currentAttenuation *= (1.0f - subsequentAttenuation);
 }
 
