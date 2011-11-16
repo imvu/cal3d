@@ -62,10 +62,12 @@ class materialTestData:
 
    
 
-    def __init__(self):
+    def __init__(self, 
+        diffuseMapName="foo_diffuse.png", 
+        opacityMapName="foo_opacity.png"):
         self.stringToTextureMap = {}
-        self.diffuseMapName = "desert-camo-512.jpg"
-        self.opacityMapName = "512sq-opmap.jpg"
+        self.diffuseMapName = diffuseMapName
+        self.opacityMapName = opacityMapName
         self.basecoatDiffuseMapName = "basecoat_diffuse.jpg"
         self.basecoatOpacityMapName = "basecoat_opacity.jpg"        
         self.material = materialTestData.material_template % (self.diffuseMapName, self.opacityMapName)        
@@ -83,6 +85,9 @@ class materialTestData:
         rgb = chr(r) + chr(g) + chr(b)
         s = size.x * size.y * rgb
         self.stringToTextureMap[name] = ModelTextureData(name, s, size.x, size.y, size.x, size.y, False)
+
+    def getTextureData(self, name):
+        return self.stringToTextureMap[name]
 
 meshDataPrefix =\
     "<HEADER MAGIC=\"XMF\" VERSION=\"919\" />"\
@@ -145,6 +150,55 @@ skeletonTestData = \
         <CHILDID>1</CHILDID>
     </BONE>
     <BONE NAME="FooChild" NUMCHILDS="0" ID="1">
+        <TRANSLATION>0 -10 500</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 10 -470</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>0</PARENTID>
+    </BONE>
+</SKELETON>"""
+
+
+animationTestData = \
+"""
+<HEADER VERSION="910" MAGIC="XAF" />
+<ANIMATION NUMTRACKS="2" DURATION="2">
+    <TRACK NUMKEYFRAMES="2" BONEID="0">
+        <KEYFRAME TIME="0">
+            <TRANSLATION>0 10 20</TRANSLATION>
+            <ROTATION>0.569964 -0.437345 0.517176 -0.465187</ROTATION>
+        </KEYFRAME>
+        <KEYFRAME TIME="1">
+            <TRANSLATION>0 10 20</TRANSLATION>
+            <ROTATION>0.564503 -0.461901 0.501256 -0.465538</ROTATION>
+        </KEYFRAME>
+    </TRACK>
+    <TRACK NUMKEYFRAMES="2" BONEID="1">
+        <KEYFRAME TIME="0">
+            <TRANSLATION>40 50 60</TRANSLATION>
+            <ROTATION>0.322539 0.588375 -0.579296 0.462817</ROTATION>
+        </KEYFRAME>
+        <KEYFRAME TIME="1">
+            <TRANSLATION>40 50 60</TRANSLATION>
+            <ROTATION>-0.0611443 -0.627387 0.771113 0.0896201</ROTATION>
+        </KEYFRAME>
+    </TRACK>
+</ANIMATION>
+"""
+
+
+attachmentSkeletonTestData = \
+"""<HEADER VERSION=\"910\" MAGIC="XSF" />
+    <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">
+    <BONE NAME="AuxRoot" NUMCHILDS="1" ID="0">
+        <TRANSLATION>0 0 -30</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 0 30</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>-1</PARENTID>
+        <CHILDID>1</CHILDID>
+    </BONE>
+    <BONE NAME="AuxChild" NUMCHILDS="0" ID="1">
         <TRANSLATION>0 -10 500</TRANSLATION>
         <ROTATION>0 0 0 1</ROTATION>
         <LOCALTRANSLATION>0 10 -470</LOCALTRANSLATION>
