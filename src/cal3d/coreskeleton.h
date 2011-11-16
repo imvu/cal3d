@@ -10,13 +10,13 @@
 
 #pragma once
 
-#include <list>
-#include <map>
+#include <set>
 #include <string>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
+#include "cal3d/transform.h"
 
 typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
 
@@ -29,6 +29,8 @@ public:
 
     void scale(float factor);
 
+    cal3d::RotateTranslate getAdjustedRootTransform(size_t boneIndex) const;
+
     const std::vector<CalCoreBonePtr>& coreBones; // points to the internal m_coreBones
     const std::vector<CalCoreBonePtr>& getCoreBones() const {
         return coreBones;
@@ -40,6 +42,7 @@ public:
     CalVector sceneAmbientColor;
 
 private:
+    std::set<size_t> adjustedRoots;
     std::vector<CalCoreBonePtr> m_coreBones;
 };
 

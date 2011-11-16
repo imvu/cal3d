@@ -14,10 +14,14 @@
 #include "cal3d/global.h"
 #include "cal3d/coretrack.h"
 
-typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
+CAL3D_PTR(CalCoreSkeleton);
 
 class CAL3D_API CalCoreAnimation {
 public:
+    CalCoreAnimation()
+        : duration(0.0f)
+    {}
+
     size_t sizeInBytes() const;
     const CalCoreTrack* getCoreTrack(unsigned coreBoneId) const;
 
@@ -28,6 +32,7 @@ public:
     typedef std::vector<CalCoreTrack> TrackList;
     TrackList tracks;
 };
+CAL3D_PTR(CalCoreAnimation);
 
 inline bool operator==(const CalCoreAnimation& lhs, const CalCoreAnimation& rhs) {
     return lhs.duration == rhs.duration &&

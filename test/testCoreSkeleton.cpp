@@ -1,10 +1,13 @@
 #include "TestPrologue.h"
+#include <cal3d/animation.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/corebone.h>
 #include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
 #include <cal3d/coreskeleton.h>
 #include <cal3d/matrix.h>
+#include <cal3d/mixer.h>
+#include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
 
 TEST(coreskeleton_can_only_have_one_root) {
@@ -34,6 +37,38 @@ TEST(coreskeleton_second_roots_are_transformed_relative_to_first_root) {
     CHECK_EQUAL(root2, cs.coreBones[1]);
     CHECK_EQUAL(0, root2->parentId);
     CHECK_EQUAL(CalVector(-2, -2, -2), root2->relativeTransform.translation);
+}
+
+TEST(coreskeleton_second_root_animations_are_transformed_relative_to_first_root) {
+    CalCoreBonePtr root1(new CalCoreBone("root1"));
+    root1->relativeTransform.translation = CalVector(1, 1, 1);
+    CalCoreBonePtr root2(new CalCoreBone("root2"));
+    root2->relativeTransform.translation = CalVector(-1, -1, -1);
+
+    CalCoreTrack::KeyframeList keyframes;
+    keyframes.push_back(CalCoreKeyframe(0.0f, CalVector(-1, -1, -1), CalQuaternion()));
+    keyframes.push_back(CalCoreKeyframe(1.0f, CalVector(-1, -1, -1), CalQuaternion()));
+    CalCoreTrack track(1, keyframes);
+
+    CalCoreAnimationPtr coreAnim(new CalCoreAnimation);
+    coreAnim->tracks.push_back(track);
+    
+    CalCoreSkeletonPtr cs(new CalCoreSkeleton);
+    cs->addCoreBone(root1);
+    cs->addCoreBone(root2);
+
+    coreAnim->fixup(cs);
+
+    CalAnimationPtr anim(new CalAnimation(coreAnim, 1.0f, 1));
+    anim->time = 0.0f;
+
+    CalSkeleton skeleton(cs);
+
+    CalMixer mixer;
+    mixer.addAnimation(anim);
+    mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), std::vector<BoneScaleAdjustment>(), IgnoreRootTransform);
+
+    CHECK_EQUAL(CalVector(-2, -2, -2), skeleton.bones[1].absoluteTransform.translation);
 }
 
 TEST(loader_topologically_sorts) {

@@ -48,10 +48,27 @@ void CalCoreTrack::scale(float factor) {
     std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
 }
 
-void CalCoreTrack::fixup(const CalCoreBone& bone) {
+void CalCoreTrack::fixup(const CalCoreBone& bone, const cal3d::RotateTranslate& adjustedRootTransform) {
     for (KeyframeList::iterator i = keyframes.begin(); i != keyframes.end(); ++i) {
         if (exactlyEqual(i->transform.translation, InvalidTranslation)) {
+            /**
+             * If we're pulling translation from the skeleton, the
+             * adjustedRootTransform is already included in the bone
+             * relative transform.  That is,
+             * bone.relativeTransform.translation, at this point, is:
+             *
+             *     adjustedRootTransform.rotation * originalBone.translation + adjustedRootTransform.translation
+             *
+             * Thus, to produce the effect of:
+             * 
+             *     i->transform = adjustedRootTransform * i->transform
+             *
+             * we simply need to update the rotation.
+             */
+            i->transform.rotation = adjustedRootTransform.rotation * i->transform.rotation;
             i->transform.translation = bone.relativeTransform.translation;
+        } else {
+            i->transform = adjustedRootTransform * i->transform;
         }
     }
 }

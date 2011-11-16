@@ -110,6 +110,7 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     if (!m_coreBones.empty() && coreBone->parentId == -1) {
         coreBone->parentId = 0;
         coreBone->relativeTransform = invert(m_coreBones[0]->relativeTransform) * coreBone->relativeTransform;
+        adjustedRoots.insert(m_coreBones.size());
     }
 
     size_t newIndex = m_coreBones.size();
@@ -135,6 +136,14 @@ void CalCoreSkeleton::scale(float factor) {
         ++i
     ) {
         (*i)->scale(factor);
+    }
+}
+
+cal3d::RotateTranslate CalCoreSkeleton::getAdjustedRootTransform(size_t boneIndex) const {
+    if (adjustedRoots.count(boneIndex)) {
+        return invert(m_coreBones[0]->relativeTransform);
+    } else {
+        return cal3d::RotateTranslate();
     }
 }
 
