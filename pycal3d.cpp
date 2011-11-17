@@ -293,7 +293,10 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     class_<CalVector>("Vector")
+        .def(init<float, float, float>())
         .def("__repr__", &VectorRepr)
+        .def(self == self)
+        .def(self != self)
         .def_readwrite("x", &CalVector::x)
         .def_readwrite("y", &CalVector::y)
         .def_readwrite("z", &CalVector::z)

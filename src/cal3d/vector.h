@@ -76,6 +76,9 @@ public:
     bool operator==(const CalVector& v) const {
         return (cal3d::close(x, v.x) && cal3d::close(y, v.y) && cal3d::close(z, v.z));
     }
+    bool operator!=(const CalVector& v) const {
+        return !(*this == v);
+    }
 
     void clear() {
         x = 0.0f;
