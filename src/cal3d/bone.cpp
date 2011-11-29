@@ -92,8 +92,14 @@ static cal3d::Transform removeScale(cal3d::Transform t) {
     return t;
 }
 
+template<typename T>
+T* null_ptr() {
+    T* p = 0;
+    return p;
+}
+
 BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
-    const auto& parentBone = (parentId == -1) ? nullptr : &bones[parentId];
+    const auto& parentBone = (parentId == -1) ? null_ptr<CalBone>() : &bones[parentId];
 
     const auto& parentScale = parentBone
         ? parentBone->absoluteScale
