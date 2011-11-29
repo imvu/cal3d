@@ -55,6 +55,7 @@ void CalBone::resetPose() {
     transformAccumulator.reset(coreRelativeTransform); // if no animations are applied, use this
     currentAttenuation = 1.0f;
     scale.setIdentity();
+    absoluteScale.setIdentity();
 }
 
 /*****************************************************************************/
@@ -80,14 +81,32 @@ void CalBone::blendPose(
     currentAttenuation *= (1.0f - subsequentAttenuation);
 }
 
-BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
-    const auto& parentTransform = (parentId == -1)
-        ? cal3d::Transform()
-        : bones[parentId].absoluteTransform;
-    const auto& myTransform = (parentId == -1 && !includeRootTransform)
-        ? cal3d::RotateTranslate()
-        : getRelativeTransform();
+static void removeScale(CalMatrix& m) {
+    m.cx.normalize();
+    m.cy.normalize();
+    m.cz.normalize();
+}
 
-    absoluteTransform = parentTransform * myTransform * scale;
+static cal3d::Transform removeScale(cal3d::Transform t) {
+    removeScale(t.basis);
+    return t;
+}
+
+BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
+    const auto& parentBone = (parentId == -1) ? nullptr : &bones[parentId];
+
+    const auto& parentScale = parentBone
+        ? parentBone->absoluteScale
+        : cal3d::Scale();
+    absoluteScale = parentScale * scale;
+
+    const auto& parentTransform = parentBone
+        ? parentBone->absoluteTransform
+        : cal3d::Transform();
+    const auto& myTransform = (parentBone || includeRootTransform)
+        ? getRelativeTransform()
+        : cal3d::RotateTranslate();
+
+    absoluteTransform = removeScale(parentTransform * myTransform) * absoluteScale;
     return absoluteTransform * coreInverseBindPoseTransform;
 }

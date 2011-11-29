@@ -66,6 +66,7 @@ private:
     const cal3d::Transform coreInverseBindPoseTransform;
 
     // animated bone state
+    cal3d::Scale absoluteScale;
     float currentAttenuation;
     cal3d::TransformAccumulator transformAccumulator;
 };
