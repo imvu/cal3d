@@ -81,20 +81,13 @@ void CalBone::blendPose(
 }
 
 BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
-    if (parentId == -1) {
-        if (includeRootTransform) {
-            // no parent, this means absolute state == relative state
-            absoluteTransform = getRelativeTransform();
-        } else {
-            absoluteTransform = cal3d::RotateTranslate();
-        }
-    } else {
-        absoluteTransform = bones[parentId].absoluteTransform * getRelativeTransform();
-    }
+    const auto& parentTransform = (parentId == -1)
+        ? cal3d::Transform()
+        : bones[parentId].absoluteTransform;
+    const auto& myTransform = (parentId == -1 && !includeRootTransform)
+        ? cal3d::RotateTranslate()
+        : getRelativeTransform();
 
-    if (!scale.isIdentity()) {
-        absoluteTransform = absoluteTransform * scale;
-    }
-
+    absoluteTransform = parentTransform * myTransform * scale;
     return absoluteTransform * coreInverseBindPoseTransform;
 }

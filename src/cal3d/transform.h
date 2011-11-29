@@ -76,7 +76,7 @@ namespace cal3d {
         Transform()
         {}
 
-        Transform(const RotateTranslate& t)
+        explicit Transform(const RotateTranslate& t)
             : basis(t.rotation)
             , translation(t.translation)
         {}
@@ -105,5 +105,14 @@ namespace cal3d {
 
     inline CalVector operator*(const Transform& t, const CalVector& v) {
         return t.translation + t.basis * v;
+    }
+
+    // todo: special-case
+    inline Transform operator*(const Transform& outer, const RotateTranslate& inner) {
+        return outer * Transform(inner);
+    }
+
+    inline Transform operator*(const RotateTranslate& outer, const Transform& inner) {
+        return Transform(outer) * inner;
     }
 }
