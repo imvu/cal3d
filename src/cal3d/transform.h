@@ -88,6 +88,7 @@ namespace cal3d {
 
     CAL3D_API Transform operator*(const Transform& outer, const Transform& inner);
     CAL3D_API Transform operator*(const Transform& outer, const Scale& inner);
+    CAL3D_API Transform operator*(const Scale& outer, const Transform& inner);
 
     inline CalVector operator*(const Transform& t, const CalVector& v) {
         return t.translation + t.basis * v;

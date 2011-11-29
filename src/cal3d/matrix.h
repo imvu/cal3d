@@ -29,6 +29,12 @@ public:
         , dxdz(0), dydz(0), dzdz(1)
     {}
 
+    inline CalMatrix(const CalVector& cx, const CalVector& cy, const CalVector& cz)
+        : dxdx(cx.x), dydx(cx.y), dzdx(cx.z)
+        , dxdy(cy.x), dydy(cy.y), dzdy(cy.z)
+        , dxdz(cz.x), dydz(cz.y), dzdz(cz.z)
+    {}
+
     inline CalMatrix(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz)
         : dxdx(xx), dydx(yx), dzdx(zx)
         , dxdy(xy), dydy(yy), dzdy(zy)
