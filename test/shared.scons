@@ -11,6 +11,7 @@ sources = Split('''
     testPhysique.cpp
     testSubmesh.cpp
     testTinyXml.cpp
+    testTransform.cpp
     testVector.cpp
 ''')
 
