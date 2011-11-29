@@ -19,34 +19,28 @@ class CalQuaternion;
 class CAL3D_API CalMatrix {
 public:
     // column-major
-    float dxdx, dydx, dzdx;
-    float dxdy, dydy, dzdy;
-    float dxdz, dydz, dzdz;
+    CalVector cx;
+    CalVector cy;
+    CalVector cz;
 
     inline CalMatrix()
-        : dxdx(1), dydx(0), dzdx(0)
-        , dxdy(0), dydy(1), dzdy(0)
-        , dxdz(0), dydz(0), dzdz(1)
+        : cx(1, 0, 0)
+        , cy(0, 1, 0)
+        , cz(0, 0, 1)
     {}
 
     inline CalMatrix(const CalVector& cx, const CalVector& cy, const CalVector& cz)
-        : dxdx(cx.x), dydx(cx.y), dzdx(cx.z)
-        , dxdy(cy.x), dydy(cy.y), dzdy(cy.z)
-        , dxdz(cz.x), dydz(cz.y), dzdz(cz.z)
-    {}
-
-    inline CalMatrix(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz)
-        : dxdx(xx), dydx(yx), dzdx(zx)
-        , dxdy(xy), dydy(yy), dzdy(zy)
-        , dxdz(xz), dydz(yz), dzdz(zz)
+        : cx(cx)
+        , cy(cy)
+        , cz(cz)
     {}
 
     explicit CalMatrix(const CalQuaternion& q);
 };
 
 inline bool operator==(const CalMatrix& lhs, const CalMatrix& rhs) {
-    const float* lp = &lhs.dxdx;
-    const float* rp = &rhs.dxdx;
+    const float* lp = &lhs.cx.x;
+    const float* rp = &rhs.cx.x;
     for (size_t i = 0; i < 9; ++i) {
         if (lp[i] != rp[i]) {
             return false;
@@ -57,32 +51,35 @@ inline bool operator==(const CalMatrix& lhs, const CalMatrix& rhs) {
 
 inline CalVector operator*(const CalMatrix& m, const CalVector& v) {
     return CalVector(
-        m.dxdx * v.x + m.dxdy * v.y + m.dxdz * v.z,
-        m.dydx * v.x + m.dydy * v.y + m.dydz * v.z,
-        m.dzdx * v.x + m.dzdy * v.y + m.dzdz * v.z);
+        m.cx.x * v.x + m.cy.x * v.y + m.cz.x * v.z,
+        m.cx.y * v.x + m.cy.y * v.y + m.cz.y * v.z,
+        m.cx.z * v.x + m.cy.z * v.y + m.cz.z * v.z);
 }
 
 inline CalMatrix operator*(const CalMatrix& outer, const CalMatrix& inner) {
-    float ndxdx = outer.dxdx * inner.dxdx + outer.dxdy * inner.dydx + outer.dxdz * inner.dzdx;
-    float ndydx = outer.dydx * inner.dxdx + outer.dydy * inner.dydx + outer.dydz * inner.dzdx;
-    float ndzdx = outer.dzdx * inner.dxdx + outer.dzdy * inner.dydx + outer.dzdz * inner.dzdx;
+    float ndxdx = outer.cx.x * inner.cx.x + outer.cy.x * inner.cx.y + outer.cz.x * inner.cx.z;
+    float ndydx = outer.cx.y * inner.cx.x + outer.cy.y * inner.cx.y + outer.cz.y * inner.cx.z;
+    float ndzdx = outer.cx.z * inner.cx.x + outer.cy.z * inner.cx.y + outer.cz.z * inner.cx.z;
 
-    float ndxdy = outer.dxdx * inner.dxdy + outer.dxdy * inner.dydy + outer.dxdz * inner.dzdy;
-    float ndydy = outer.dydx * inner.dxdy + outer.dydy * inner.dydy + outer.dydz * inner.dzdy;
-    float ndzdy = outer.dzdx * inner.dxdy + outer.dzdy * inner.dydy + outer.dzdz * inner.dzdy;
+    float ndxdy = outer.cx.x * inner.cy.x + outer.cy.x * inner.cy.y + outer.cz.x * inner.cy.z;
+    float ndydy = outer.cx.y * inner.cy.x + outer.cy.y * inner.cy.y + outer.cz.y * inner.cy.z;
+    float ndzdy = outer.cx.z * inner.cy.x + outer.cy.z * inner.cy.y + outer.cz.z * inner.cy.z;
 
-    float ndxdz = outer.dxdx * inner.dxdz + outer.dxdy * inner.dydz + outer.dxdz * inner.dzdz;
-    float ndydz = outer.dydx * inner.dxdz + outer.dydy * inner.dydz + outer.dydz * inner.dzdz;
-    float ndzdz = outer.dzdx * inner.dxdz + outer.dzdy * inner.dydz + outer.dzdz * inner.dzdz;
+    float ndxdz = outer.cx.x * inner.cz.x + outer.cy.x * inner.cz.y + outer.cz.x * inner.cz.z;
+    float ndydz = outer.cx.y * inner.cz.x + outer.cy.y * inner.cz.y + outer.cz.y * inner.cz.z;
+    float ndzdz = outer.cx.z * inner.cz.x + outer.cy.z * inner.cz.y + outer.cz.z * inner.cz.z;
 
     return CalMatrix(
-        ndxdx,
-        ndydx,
-        ndzdx,
-        ndxdy,
-        ndydy,
-        ndzdy,
-        ndxdz,
-        ndydz,
-        ndzdz);
+        CalVector(
+            ndxdx,
+            ndydx,
+            ndzdx),
+        CalVector(
+            ndxdy,
+            ndydy,
+            ndzdy),
+        CalVector(
+            ndxdz,
+            ndydz,
+            ndzdz));
 }

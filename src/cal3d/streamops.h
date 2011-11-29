@@ -32,7 +32,7 @@ inline std::ostream& operator<<(std::ostream& os, const CalQuaternion& quat) {
 
 inline std::ostream& operator<<(std::ostream& os, const CalMatrix& m) {
     os << "CalMatrix(";
-    const float* p = &m.dxdx;
+    const float* p = &m.cx.x;
     for (size_t i = 0; i < 9; ++i) {
         if (i) {
             os << ", ";
