@@ -25,6 +25,10 @@ namespace cal3d {
         CalVector scale;
     };
 
+    inline Scale operator*(const Scale& lhs, const Scale& rhs) {
+        return Scale(lhs.scale * rhs.scale);
+    }
+
     struct RotateTranslate {
         RotateTranslate()
         {}
