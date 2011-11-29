@@ -99,6 +99,6 @@ void CalMixer::applyBoneAdjustments(
 
     for (size_t i = 0; i < boneScaleAdjustments.size(); i++) {
         const BoneScaleAdjustment& ba = boneScaleAdjustments[i];
-        bones[ba.boneId].setMeshScaleAbsolute(ba.meshScaleAbsolute);
+        bones[ba.boneId].scale = ba.scale;
     }
 }

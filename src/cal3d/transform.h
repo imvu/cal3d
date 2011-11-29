@@ -6,9 +6,22 @@
 
 namespace cal3d {
     struct Scale {
-        Scale(const CalVector& s)
-        : scale(s)
+        Scale()
+            : scale(1, 1, 1)
         {}
+
+        Scale(const CalVector& s)
+            : scale(s)
+        {}
+
+        void setIdentity() {
+            scale = CalVector(1, 1, 1);
+        }
+
+        bool isIdentity() const {
+            return scale == CalVector(1, 1, 1);
+        }
+
         CalVector scale;
     };
 

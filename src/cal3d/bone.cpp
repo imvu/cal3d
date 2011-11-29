@@ -54,7 +54,7 @@ CalBone::CalBone(const CalCoreBone& coreBone)
 void CalBone::resetPose() {
     transformAccumulator.reset(coreRelativeTransform); // if no animations are applied, use this
     currentAttenuation = 1.0f;
-    m_meshScaleAbsolute.set(1, 1, 1);
+    scale.setIdentity();
 }
 
 /*****************************************************************************/
@@ -92,8 +92,8 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeR
         absoluteTransform = bones[parentId].absoluteTransform * getRelativeTransform();
     }
 
-    if (m_meshScaleAbsolute.x != 1 || m_meshScaleAbsolute.y != 1 || m_meshScaleAbsolute.z != 1) {
-        absoluteTransform = absoluteTransform * cal3d::Scale(m_meshScaleAbsolute);
+    if (!scale.isIdentity()) {
+        absoluteTransform = absoluteTransform * scale;
     }
 
     return absoluteTransform * coreInverseBindPoseTransform;

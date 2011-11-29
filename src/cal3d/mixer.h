@@ -32,15 +32,11 @@ struct BoneTransformAdjustment {
 struct BoneScaleAdjustment {
     BoneScaleAdjustment(unsigned i, const CalVector& scale)
         : boneId(i)
-        , meshScaleAbsolute(scale)
+        , scale(scale)
     {}
 
     unsigned boneId;
-
-    // Scales X, Y, and Z of mesh by these parameters.  The scale parameters are with
-    // respect to the absolute coordinate space, e.g., Z is up in 3dMax, as opposed
-    // to the local coordinate space of the bone.
-    CalVector meshScaleAbsolute;
+    CalVector scale;
 };
 
 enum RootTransformFlag {

@@ -40,6 +40,7 @@ class CAL3D_API CalBone {
 public:
     const int parentId;
     cal3d::Transform absoluteTransform;
+    cal3d::Scale scale;
 
     CalBone(const CalCoreBone& coreBone);
 
@@ -49,10 +50,6 @@ public:
 
     const CalVector& getOriginalTranslation() const {
         return coreRelativeTransform.translation;
-    }
-
-    void setMeshScaleAbsolute(const CalVector& sv) {
-        m_meshScaleAbsolute = sv;
     }
 
     void resetPose();
@@ -71,5 +68,4 @@ private:
     // animated bone state
     float currentAttenuation;
     cal3d::TransformAccumulator transformAccumulator;
-    CalVector m_meshScaleAbsolute;
 };
