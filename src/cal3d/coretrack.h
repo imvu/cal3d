@@ -38,7 +38,7 @@ public:
         const CalCoreBone& bone,
         const cal3d::RotateTranslate& adjustedRootTransform);
 
-    cal3d::RotateTranslate getState(float time) const;
+    cal3d::RotateTranslate getCurrentTransform(float time) const;
 
     CalCoreTrackPtr compress(double translationTolerance, double rotationToleranceDegrees, CalCoreSkeleton* skelOrNull) const;
     void translationCompressibility(

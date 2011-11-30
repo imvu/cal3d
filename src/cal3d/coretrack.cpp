@@ -281,7 +281,7 @@ void CalCoreTrack::translationCompressibility(
     }
 }
 
-cal3d::RotateTranslate CalCoreTrack::getState(float time) const {
+cal3d::RotateTranslate CalCoreTrack::getCurrentTransform(float time) const {
     if (keyframes.empty()) {
         return cal3d::RotateTranslate();
     }

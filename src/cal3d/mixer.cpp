@@ -62,7 +62,7 @@ void CalMixer::updateSkeleton(
 
             bones[track->coreBoneId].blendPose(
                 animation->weight * animation->rampValue,
-                track->getState(animation->time),
+                track->getCurrentTransform(animation->time),
                 // higher priority animations replace 0-priority animations
                 animation->priority != 0 ? animation->rampValue : 0.0f);
         }

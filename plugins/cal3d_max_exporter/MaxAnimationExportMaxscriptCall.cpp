@@ -95,7 +95,7 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 		}	
 
 		//Set all bones in our array of nodes selected
-		std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
+		const std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
 		int NumElemInTabMaxscript = param->m_tabbones.Count();
 
@@ -144,7 +144,7 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 	coreAnimation.duration = duration;
 
 	// get bone candidate vector
-	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
+	const std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
 	size_t boneCandidateId;
 	for(boneCandidateId = 0; boneCandidateId < vectorBoneCandidate.size(); boneCandidateId++)

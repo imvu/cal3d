@@ -123,7 +123,7 @@ bool CExporter::ExportAnimation(const std::string& strFilename)
 	coreAnimation.duration = duration;
 
 	// get bone candidate vector
-	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
+	const std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
 	size_t boneCandidateId;
 	for(boneCandidateId = 0; boneCandidateId < vectorBoneCandidate.size(); boneCandidateId++)
@@ -672,7 +672,7 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 	CalCoreSkeleton coreSkeleton;
 
 	// get bone candidate vector
-	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
+	const std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
   CalVector sceneAmbientColor;
   m_pInterface->GetAmbientLight( sceneAmbientColor );
