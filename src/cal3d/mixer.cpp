@@ -42,7 +42,7 @@ void CalMixer::updateSkeleton(
 ) {
     skeleton->resetPose();
 
-    CalSkeleton::BoneArray& bones = skeleton->bones;
+    auto& bones = skeleton->bones;
 
     // The bone adjustments are "replace" so they have to go first, giving them
     // highest priority and full influence.  Subsequent animations affecting the same bones,
@@ -50,20 +50,12 @@ void CalMixer::updateSkeleton(
     applyBoneAdjustments(skeleton, boneTransformAdjustments, boneScaleAdjustments);
 
     // loop through all animation actions
-    for (
-        std::list<CalAnimationPtr>::const_iterator itaa = activeAnimations.begin();
-        itaa != activeAnimations.end();
-        ++itaa
-    ) {
-        const CalAnimation* animation = itaa->get();
+    for (auto itaa = activeAnimations.begin(); itaa != activeAnimations.end(); ++itaa) {
+        const auto& animation = itaa->get();
 
-        const CalCoreAnimation::TrackList& tracks = animation->coreAnimation->tracks;
+        const auto& tracks = animation->coreAnimation->tracks;
 
-        for (
-            CalCoreAnimation::TrackList::const_iterator track = tracks.begin();
-            track != tracks.end();
-            ++track
-        ) {
+        for (auto track = tracks.begin(); track != tracks.end(); ++track) {
             if (track->coreBoneId >= bones.size()) {
                 continue;
             }
