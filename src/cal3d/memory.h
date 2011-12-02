@@ -1,7 +1,9 @@
 #pragma once
 
+#include <list>
 #include <map>
 #include <set>
+#include <boost/noncopyable.hpp>
 #include "cal3d/platform.h"
 
 namespace cal3d {
