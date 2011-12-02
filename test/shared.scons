@@ -17,7 +17,7 @@ sources = Split('''
 
 # Build the unit tests.
 
-env = env.Clone(tools=['cal3d', 'boost_test', python, 'testframework'])
+env = env.Clone(tools=['cal3d', python, 'testframework'])
 env.Append(CPPPATH=['../../..',
                     '../../../avatarwindow'])
 
