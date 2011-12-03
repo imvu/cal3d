@@ -17,13 +17,11 @@ sources = Split('''
 
 # Build the unit tests.
 
-env = env.Clone(tools=['cal3d', python, 'testframework'])
+env = env.Clone(tools=['cal3d', 'testframework'])
 env.Append(CPPPATH=['../../..',
                     '../../../avatarwindow'])
 
 imvu_test_program(
     env,
     'test_cal3d${IMVU_LIBRARY_SUFFIX}',
-    [ env.Object('TestFrameworkMain', '#/Source/TestFramework/TestFrameworkMain.cpp'),
-      env.Object('StubFrameworkTeardown', '#/Source/TestFramework/StubFrameworkTeardown.cpp'),
-      sources ])
+    sources)
