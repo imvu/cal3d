@@ -13,8 +13,8 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
-typedef boost::shared_ptr<class CalCoreSubmesh> CalCoreSubmeshPtr;
+CAL3D_PTR(CalCoreSkeleton);
+CAL3D_PTR(CalCoreSubmesh);
 
 class CAL3D_API CalCoreMesh {
 public:
@@ -28,4 +28,4 @@ public:
 
     CalCoreSubmeshVector submeshes;
 };
-typedef boost::shared_ptr<CalCoreMesh> CalCoreMeshPtr;
+CAL3D_PTR(CalCoreMesh);

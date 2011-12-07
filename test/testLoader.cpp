@@ -124,7 +124,7 @@ TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
     //load the buffer back in
     //should not crash
     CalBufferSource cbs2(pBuf, ssm.str().length());
-    shared_ptr<CalCoreMesh> badMesh(CalLoader::loadCoreMesh(cbs2));
+    CalCoreMeshPtr badMesh(CalLoader::loadCoreMesh(cbs2));
     CalCoreMesh* pMesh = badMesh.get();
 
     CHECK(!pMesh);
@@ -364,7 +364,7 @@ const char simple_two_bone_skeleton[] =
 TEST(simple_two_bone_skeleton) {
     float tol = 0.001f;
     CalBufferSource cbs(fromString(simple_two_bone_skeleton));
-    boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadCoreSkeleton(cbs));
+    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
     CHECK(skel);
     CHECK_EQUAL(skel->coreBones.size(), 2u);
     CalVector sceneAmbientClr = skel->sceneAmbientColor;
@@ -490,7 +490,7 @@ const char animation_for_a_nonexistent_bone[] =
 
 TEST(load_animation_for_non_existent_bone) {
     CalBufferSource cbs(fromString(one_bone_skeleton));
-    boost::shared_ptr<CalCoreSkeleton> skel(CalLoader::loadCoreSkeleton(cbs));
+    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
     CHECK(skel);
 
     CalBufferSource cbs2(fromString(animation_for_a_nonexistent_bone));
@@ -596,7 +596,7 @@ TEST(CalVectorFromDataSrc) {
 
 
 TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
-    boost::shared_ptr<CalCoreSubmesh> sm(new CalCoreSubmesh(1, 0, 0));
+    CalCoreSubmeshPtr sm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex v;
     sm->addVertex(v, CalMakeColor(CalVector(1, 1, 1)), std::vector<CalCoreSubmesh::Influence>());
 

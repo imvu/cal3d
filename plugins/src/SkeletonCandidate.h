@@ -11,11 +11,11 @@
 #ifndef SKELETON_CANDIDATE_H
 #define SKELETON_CANDIDATE_H
 
-#include <boost/shared_ptr.hpp>
+#include <cal3d/global.h>
 
 class CBoneCandidate;
 class CBaseNode;
-class CalCoreSkeleton;
+CAL3D_PTR(CalCoreSkeleton);
 class CalCoreBone;
 class CalQuaternion;
 class CalVector;
@@ -26,7 +26,7 @@ protected:
 	std::vector<CBoneCandidate *> m_vectorBoneCandidate;
 	std::list<int> m_listRootBoneCandidateId;
 	std::string m_strFilename;
-        boost::shared_ptr<CalCoreSkeleton> m_skeleton;
+        CalCoreSkeletonPtr m_skeleton;
 
 public:
 	CSkeletonCandidate();

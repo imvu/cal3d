@@ -69,10 +69,10 @@ BOOL CSkeletonHierarchyPage::BeginPage()
 	if(m_pSkeletonCandidate != 0)
 	{
 		// get root bone candidate list
-		std::list<int>& listRootBoneCandidateId = m_pSkeletonCandidate->GetListRootBoneCandidateId();
+		const auto& listRootBoneCandidateId = m_pSkeletonCandidate->GetListRootBoneCandidateId();
 
 		// loop through all root bone candidates
-		std::list<int>::iterator iteratorBoneCandidateId;
+		std::list<int>::const_iterator iteratorBoneCandidateId;
 		for(iteratorBoneCandidateId = listRootBoneCandidateId.begin(); iteratorBoneCandidateId != listRootBoneCandidateId.end(); ++iteratorBoneCandidateId)
 		{
 			// insert bone candidate into the tree control

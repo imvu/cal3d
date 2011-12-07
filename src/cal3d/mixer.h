@@ -15,7 +15,7 @@
 #include "cal3d/animation.h"
 #include "cal3d/quaternion.h"
 
-typedef boost::shared_ptr<class CalAnimation> CalAnimationPtr;
+CAL3D_PTR(CalAnimation);
 class CalSkeleton;
 
 struct BoneTransformAdjustment {

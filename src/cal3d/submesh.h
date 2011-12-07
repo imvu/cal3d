@@ -15,7 +15,7 @@
 #include "cal3d/global.h"
 #include "cal3d/vector.h"
 
-typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
+CAL3D_PTR(CalCoreMaterial);
 
 namespace cal3d {
     class CAL3D_API MorphTarget {

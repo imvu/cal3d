@@ -34,4 +34,4 @@ public:
 
     void scale(float factor);
 };
-typedef boost::shared_ptr<CalCoreMorphTarget> CalCoreMorphTargetPtr;
+CAL3D_PTR(CalCoreMorphTarget);

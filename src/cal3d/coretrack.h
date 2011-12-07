@@ -15,9 +15,9 @@
 #include "cal3d/global.h"
 #include "cal3d/transform.h"
 
-typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
+CAL3D_PTR(CalCoreBone);
 class CalCoreSkeleton;
-typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
+CAL3D_PTR(CalCoreTrack);
 
 class CAL3D_API CalCoreTrack {
 public:
@@ -49,7 +49,7 @@ public:
 private:
     KeyframeList::const_iterator getUpperBound(float time) const;
 };
-typedef boost::shared_ptr<CalCoreTrack> CalCoreTrackPtr;
+CAL3D_PTR(CalCoreTrack);
 
 inline bool operator==(const CalCoreTrack& lhs, const CalCoreTrack& rhs) {
     return lhs.coreBoneId == rhs.coreBoneId &&

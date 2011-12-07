@@ -13,16 +13,16 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-class CalCoreMesh;
-class CalSubmesh;
+CAL3D_PTR(CalCoreMesh);
+CAL3D_PTR(CalSubmesh);
 
 class CAL3D_API CalMesh {
 public:
-    typedef std::vector<boost::shared_ptr<CalSubmesh> > SubmeshVector;
+    typedef std::vector<CalSubmeshPtr> SubmeshVector;
 
-    CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh);
+    CalMesh(const CalCoreMeshPtr& pCoreMesh);
 
-    const boost::shared_ptr<CalCoreMesh> coreMesh;
+    const CalCoreMeshPtr coreMesh;
     const SubmeshVector submeshes;
 };
-typedef boost::shared_ptr<CalMesh> CalMeshPtr;
+CAL3D_PTR(CalMesh);

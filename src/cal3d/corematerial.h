@@ -30,4 +30,4 @@ public:
         return maps.size() > 1;    // Should come from check box.
     }
 };
-typedef boost::shared_ptr<CalCoreMaterial> CalCoreMaterialPtr;
+CAL3D_PTR(CalCoreMaterial);

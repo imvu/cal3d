@@ -42,4 +42,4 @@ public:
         return lightType != LIGHT_TYPE_NONE;
     }
 };
-typedef boost::shared_ptr<CalCoreBone> CalCoreBonePtr;
+CAL3D_PTR(CalCoreBone);

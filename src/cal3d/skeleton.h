@@ -18,7 +18,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/vector4.h"
 
-typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
+CAL3D_PTR(CalCoreSkeleton);
 
 class CAL3D_API CalSkeleton {
 public:

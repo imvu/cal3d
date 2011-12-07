@@ -50,7 +50,7 @@ static inline bool _ValidateTag(
     T* element,
     char const* requiredTag,
     const CalCoreMeshPtr& /*pCoreMesh*/,
-    const boost::shared_ptr<CalCoreSubmesh>& /*pCoreSubmesh*/,
+    const CalCoreSubmeshPtr& /*pCoreSubmesh*/,
     char const* file,
     int line
 ) {
@@ -80,7 +80,7 @@ static inline bool TexCoordFromXml(
     char const* tag,
     CalCoreSubmesh::TextureCoordinate* texCoord,
     const CalCoreMeshPtr& pCoreMesh,
-    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+    const CalCoreSubmeshPtr& pCoreSubmesh
 ) {
     if (!ValidateTag(texcoord, tag, pCoreMesh, pCoreSubmesh)) {
         return false;
@@ -114,7 +114,7 @@ static inline bool CalVectorFromXml(
     char const* tag,
     CalVector* calVec,
     const CalCoreMeshPtr& pCoreMesh,
-    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+    const CalCoreSubmeshPtr& pCoreSubmesh
 ) {
     if (!ValidateTag(pos, tag, pCoreMesh, pCoreSubmesh)) {
         return false;
@@ -137,7 +137,7 @@ static inline bool CalVectorFromXml(
     char const* tag,
     CalVector4* calVec,
     const CalCoreMeshPtr& pCoreMesh,
-    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+    const CalCoreSubmeshPtr& pCoreSubmesh
 ) {
     CalVector v;
     if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
@@ -154,7 +154,7 @@ static inline bool CalVectorFromXml(
     char const* tag,
     CalPoint4* calVec,
     const CalCoreMeshPtr& pCoreMesh,
-    const boost::shared_ptr<CalCoreSubmesh>& pCoreSubmesh
+    const CalCoreSubmeshPtr& pCoreSubmesh
 ) {
     CalVector v;
     if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
@@ -427,7 +427,7 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
         }
         int parentId = atoi(parentid->Value());
 
-        boost::shared_ptr<CalCoreBone> pCoreBone(new CalCoreBone(strName, parentId));
+        CalCoreBonePtr pCoreBone(new CalCoreBone(strName, parentId));
 
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, rw);
@@ -788,7 +788,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             morphCount = atoi(numMorphStr);
         }
 
-        boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
+        CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
 
         pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 

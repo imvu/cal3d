@@ -33,4 +33,4 @@ public:
 
     size_t sizeInBytes() const;
 };
-typedef boost::shared_ptr<CalCoreMorphAnimation> CalCoreMorphAnimationPtr;
+CAL3D_PTR(CalCoreMorphAnimation);

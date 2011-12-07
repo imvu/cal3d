@@ -212,9 +212,9 @@ TEST(is_not_static_if_has_morph_targets) {
 }
 
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
-    boost::shared_ptr<CalCoreSubmesh> coreSubmesh(new CalCoreSubmesh(0, 1, 0));
+    CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(0, 1, 0));
 
-    boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
+    CalCoreMeshPtr coreMesh(new CalCoreMesh);
     coreMesh->submeshes.push_back(coreSubmesh);
 
     CalMesh mesh(coreMesh);
@@ -225,12 +225,12 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
 }
 
 TEST(CalRenderer_getNormals_when_there_are_no_normals) {
-    boost::shared_ptr<CalCoreSubmesh> coreSubmesh(new CalCoreSubmesh(0, 0, 0));
+    CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(0, 0, 0));
 
-    boost::shared_ptr<CalCoreMesh> coreMesh(new CalCoreMesh);
+    CalCoreMeshPtr coreMesh(new CalCoreMesh);
     coreMesh->submeshes.push_back(coreSubmesh);
 
-    boost::shared_ptr<CalCoreSkeleton> coreSkeleton(new CalCoreSkeleton);
+    CalCoreSkeletonPtr coreSkeleton(new CalCoreSkeleton);
 
     CalSkeleton skeleton(coreSkeleton);
     CalMesh mesh(coreMesh);

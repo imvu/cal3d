@@ -18,7 +18,7 @@
 #include "cal3d/vector.h"
 #include "cal3d/transform.h"
 
-typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
+CAL3D_PTR(CalCoreBone);
 
 class CAL3D_API CalCoreSkeleton : private boost::noncopyable {
 public:
@@ -46,4 +46,4 @@ private:
     std::vector<CalCoreBonePtr> m_coreBones;
 };
 
-typedef boost::shared_ptr<CalCoreSkeleton> CalCoreSkeletonPtr;
+CAL3D_PTR(CalCoreSkeleton);

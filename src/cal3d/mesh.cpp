@@ -18,7 +18,7 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/submesh.h"
 
-CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
+CalMesh::CalMesh(const CalCoreMeshPtr& pCoreMesh)
     : coreMesh(pCoreMesh) {
     assert(pCoreMesh);
 
@@ -30,6 +30,6 @@ CalMesh::CalMesh(const boost::shared_ptr<CalCoreMesh>& pCoreMesh)
     size_t submeshCount = vectorCoreSubmesh.size();
     m_vectorSubmesh.reserve(submeshCount);
     for (size_t submeshId = 0; submeshId < submeshCount; ++submeshId) {
-        m_vectorSubmesh.push_back(boost::shared_ptr<CalSubmesh>(new CalSubmesh(vectorCoreSubmesh[submeshId])));
+        m_vectorSubmesh.push_back(CalSubmeshPtr(new CalSubmesh(vectorCoreSubmesh[submeshId])));
     }
 }

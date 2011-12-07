@@ -556,7 +556,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 			std::vector<CVertexCandidate *>& vectorVertexCandidate = pSubmeshCandidate->GetVectorVertexCandidate();
 
             // allocate new core submesh instance
-            boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(new CalCoreSubmesh(
+            CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(
                     vectorVertexCandidate.size(),
                     pSubmeshCandidate->GetMapCount(),
                     vectorFace.size()));

@@ -18,17 +18,17 @@
 #include "cal3d/datasource.h"
 #include "cal3d/tinyxml.h"
 
-typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
-typedef boost::shared_ptr<class CalCoreBone> CalCoreBonePtr;
-typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
-typedef boost::shared_ptr<class CalCoreMorphAnimation> CalCoreMorphAnimationPtr;
-typedef boost::shared_ptr<class CalCoreTrack> CalCoreTrackPtr;
-typedef boost::shared_ptr<class CalCoreKeyframe> CalCoreKeyframePtr;
-typedef boost::shared_ptr<class CalCoreMorphTrack> CalCoreMorphTrackPtr;
-typedef boost::shared_ptr<class CalCoreMorphKeyframe> CalCoreMorphKeyframePtr;
-typedef boost::shared_ptr<class CalCoreMesh> CalCoreMeshPtr;
-typedef boost::shared_ptr<class CalCoreSubmesh> CalCoreSubmeshPtr;
-typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
+CAL3D_PTR(CalCoreSkeleton);
+CAL3D_PTR(CalCoreBone);
+CAL3D_PTR(CalCoreAnimation);
+CAL3D_PTR(CalCoreMorphAnimation);
+CAL3D_PTR(CalCoreTrack);
+CAL3D_PTR(CalCoreKeyframe);
+CAL3D_PTR(CalCoreMorphTrack);
+CAL3D_PTR(CalCoreMorphKeyframe);
+CAL3D_PTR(CalCoreMesh);
+CAL3D_PTR(CalCoreSubmesh);
+CAL3D_PTR(CalCoreMaterial);
 class CalVector;
 class CalQuaternion;
 class CalBufferSource;

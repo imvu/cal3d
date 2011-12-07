@@ -13,17 +13,17 @@
 
 #include "cal3d/global.h"
 
-typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
+CAL3D_PTR(CalCoreSkeleton);
 class CalCoreBone;
-typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
-typedef boost::shared_ptr<class CalCoreMorphAnimation> CalCoreMorphAnimationPtr;
+CAL3D_PTR(CalCoreAnimation);
+CAL3D_PTR(CalCoreMorphAnimation);
 class CalCoreTrack;
 class CalCoreKeyframe;
 class CalCoreMorphTrack;
 class CalCoreMorphKeyframe;
-typedef boost::shared_ptr<class CalCoreMesh> CalCoreMeshPtr;
+CAL3D_PTR(CalCoreMesh);
 class CalCoreSubmesh;
-typedef boost::shared_ptr<class CalCoreMaterial> CalCoreMaterialPtr;
+CAL3D_PTR(CalCoreMaterial);
 class CalVector;
 class CalQuaternion;
 

@@ -22,8 +22,8 @@
 #include "cal3d/vector4.h"
 #include "cal3d/bonetransform.h"
 
-typedef boost::shared_ptr<class CalCoreMorphTarget> CalCoreMorphTargetPtr;
-typedef boost::shared_ptr<class CalCoreSkeleton> CalCoreSkeletonPtr;
+CAL3D_PTR(CalCoreMorphTarget);
+CAL3D_PTR(CalCoreSkeleton);
 
 enum CalMorphTargetType {
     CalMorphTargetTypeAdditive,
@@ -189,7 +189,7 @@ private:
     std::vector<Influence> m_influences;
     CalAABox m_boundingVolume;
 };
-typedef boost::shared_ptr<CalCoreSubmesh> CalCoreSubmeshPtr;
+CAL3D_PTR(CalCoreSubmesh);
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Influence& influence) {
     return os << "CalCoreSubmesh::Influence(" << influence.boneId << ", " << influence.weight << ", " << influence.lastInfluenceForThisVertex << ")";

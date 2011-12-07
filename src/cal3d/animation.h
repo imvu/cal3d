@@ -3,7 +3,7 @@
 #include <boost/shared_ptr.hpp>
 #include "cal3d/global.h"
 
-typedef boost::shared_ptr<class CalCoreAnimation> CalCoreAnimationPtr;
+CAL3D_PTR(CalCoreAnimation);
 
 class CAL3D_API CalAnimation {
 public:
@@ -16,4 +16,4 @@ public:
     const float weight;
     const unsigned priority; // 0 is lowest
 };
-typedef boost::shared_ptr<CalAnimation> CalAnimationPtr;
+CAL3D_PTR(CalAnimation);

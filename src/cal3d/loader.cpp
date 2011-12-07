@@ -407,7 +407,7 @@ CalCoreMeshPtr CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
     // load all core submeshes
     for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
         // load the core submesh
-        boost::shared_ptr<CalCoreSubmesh> pCoreSubmesh(loadCoreSubmesh(dataSrc, version));
+        CalCoreSubmeshPtr pCoreSubmesh(loadCoreSubmesh(dataSrc, version));
         if (!pCoreSubmesh) {
             return null;
         }
