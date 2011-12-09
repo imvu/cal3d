@@ -20,9 +20,8 @@ class CAL3D_API CalMesh {
 public:
     typedef std::vector<CalSubmeshPtr> SubmeshVector;
 
-    CalMesh(const CalCoreMeshPtr& pCoreMesh, const std::vector<int>& backfacingBones);
+    CalMesh(const CalCoreMeshPtr& coreMesh, const std::vector<int>& backfacingBones);
 
-    const CalCoreMeshPtr coreMesh;
     const SubmeshVector submeshes;
     const std::vector<int> backfacingBones;
 };

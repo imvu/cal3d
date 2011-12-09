@@ -27,8 +27,7 @@ CalMesh::SubmeshVector fromCoreSubmeshes(const CalCoreMesh::CalCoreSubmeshVector
     return rv;
 }
 
-CalMesh::CalMesh(const CalCoreMeshPtr& pCoreMesh, const std::vector<int>& backfacingBones)
-    : coreMesh(pCoreMesh)
-    , submeshes(fromCoreSubmeshes(pCoreMesh->submeshes))
+CalMesh::CalMesh(const CalCoreMeshPtr& coreMesh, const std::vector<int>& backfacingBones)
+    : submeshes(fromCoreSubmeshes(coreMesh->submeshes))
     , backfacingBones(backfacingBones)
 {}
