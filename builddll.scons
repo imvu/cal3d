@@ -23,7 +23,6 @@ sources = Split('''
     loader.cpp
     matrix.cpp
     memory.cpp
-    mesh.cpp
     mixer.cpp
     physique.cpp
     platform.cpp

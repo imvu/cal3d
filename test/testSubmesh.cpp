@@ -1,7 +1,6 @@
 #include "TestPrologue.h"
 #include <cal3d/buffersource.h>
 #include <cal3d/coremesh.h>
-#include <cal3d/mesh.h>
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
 #include <cal3d/skeleton.h>

@@ -19,7 +19,6 @@
 #include <boost/static_assert.hpp>
 #include "cal3d/error.h"
 #include "cal3d/physique.h"
-#include "cal3d/mesh.h"
 #include "cal3d/submesh.h"
 #include "cal3d/skeleton.h"
 #include "cal3d/bone.h"
