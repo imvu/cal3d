@@ -18,18 +18,16 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/submesh.h"
 
-CalMesh::CalMesh(const CalCoreMeshPtr& pCoreMesh)
-    : coreMesh(pCoreMesh) {
-    assert(pCoreMesh);
-
-    // clone the mesh structure of the core mesh
-    CalCoreMesh::CalCoreSubmeshVector& vectorCoreSubmesh = pCoreMesh->submeshes;
-
-    SubmeshVector& m_vectorSubmesh = const_cast<SubmeshVector&>(submeshes); // Oh for a 'readonly' keyword like C#
-
-    size_t submeshCount = vectorCoreSubmesh.size();
-    m_vectorSubmesh.reserve(submeshCount);
-    for (size_t submeshId = 0; submeshId < submeshCount; ++submeshId) {
-        m_vectorSubmesh.push_back(CalSubmeshPtr(new CalSubmesh(vectorCoreSubmesh[submeshId])));
+CalMesh::SubmeshVector fromCoreSubmeshes(const CalCoreMesh::CalCoreSubmeshVector& coreSubmeshes) {
+    CalMesh::SubmeshVector rv;
+    rv.reserve(coreSubmeshes.size());
+    for (size_t i = 0; i < coreSubmeshes.size(); ++i) {
+        rv.push_back(CalSubmeshPtr(new CalSubmesh(coreSubmeshes[i])));
     }
+    return rv;
 }
+
+CalMesh::CalMesh(const CalCoreMeshPtr& pCoreMesh)
+    : coreMesh(pCoreMesh)
+    , submeshes(fromCoreSubmeshes(pCoreMesh->submeshes))
+{}
