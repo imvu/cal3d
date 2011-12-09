@@ -217,10 +217,9 @@ TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CalCoreMeshPtr coreMesh(new CalCoreMesh);
     coreMesh->submeshes.push_back(coreSubmesh);
 
-    CalMesh mesh(coreMesh);
+    CalSubmesh submesh(coreSubmesh);
 
-    CalSubmesh* submesh = mesh.submeshes[0].get();
-    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh->coreSubmesh->getVectorVectorTextureCoordinate()[0];
+    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh.coreSubmesh->getVectorVectorTextureCoordinate()[0];
     CHECK_EQUAL(0u, texCoords.size());
 }
 
@@ -233,14 +232,11 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CalCoreSkeletonPtr coreSkeleton(new CalCoreSkeleton);
 
     CalSkeleton skeleton(coreSkeleton);
-    CalMesh mesh(coreMesh);
-
-    CalSubmesh* submesh = mesh.submeshes[0].get();
-    CHECK(submesh);
+    CalSubmesh submesh(coreSubmesh);
 
     CalPhysique::calculateVerticesAndNormals(
         skeleton.boneTransforms.data(),
-        submesh,
+        &submesh,
         0);
 }
 

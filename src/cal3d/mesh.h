@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <vector>
 #include "cal3d/global.h"
 
 CAL3D_PTR(CalCoreMesh);
@@ -20,9 +20,10 @@ class CAL3D_API CalMesh {
 public:
     typedef std::vector<CalSubmeshPtr> SubmeshVector;
 
-    CalMesh(const CalCoreMeshPtr& pCoreMesh);
+    CalMesh(const CalCoreMeshPtr& pCoreMesh, const std::vector<int>& backfacingBones);
 
     const CalCoreMeshPtr coreMesh;
     const SubmeshVector submeshes;
+    const std::vector<int> backfacingBones;
 };
 CAL3D_PTR(CalMesh);
