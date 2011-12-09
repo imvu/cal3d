@@ -23,6 +23,5 @@ public:
     CalMesh(const CalCoreMeshPtr& coreMesh, const std::vector<int>& backfacingBones);
 
     const SubmeshVector submeshes;
-    const std::vector<int> backfacingBones;
 };
 CAL3D_PTR(CalMesh);

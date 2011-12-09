@@ -37,9 +37,10 @@ class CAL3D_API CalSubmesh : public cal3d::UserDataHolder {
 public:
     const CalCoreSubmeshPtr coreSubmesh;
     CalCoreMaterialPtr material;
+    std::vector<int> backfacingBones;
     std::vector<cal3d::MorphTarget> morphTargets; // index maps to CoreSubMorphTarget in CoreSubmesh
 
-    CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh);
+    CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh, const std::vector<int>& backfacingBones);
 
     void setMorphTargetWeight(std::string const& morphName, float weight);
     void clearMorphTargetScales();

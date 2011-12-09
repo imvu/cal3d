@@ -269,7 +269,7 @@ TEST(morph_targets_performance_test) {
     coreSubmesh->addMorphTarget(djinnMorphTarget(N, "foo1"));
     coreSubmesh->addMorphTarget(djinnMorphTarget(N, "foo2"));
 
-    CalSubmesh submesh(coreSubmesh);
+    CalSubmesh submesh(coreSubmesh, std::vector<int>());
     submesh.setMorphTargetWeight("foo1", 0.25f);
     submesh.setMorphTargetWeight("foo2", 0.25f);
 
@@ -305,7 +305,7 @@ TEST(bunch_of_unweighted_morph_targets_performance_test) {
         coreSubmesh->addMorphTarget(djinnMorphTarget(N, buf));
     }
 
-    CalSubmesh submesh(coreSubmesh);
+    CalSubmesh submesh(coreSubmesh, std::vector<int>());
     submesh.setMorphTargetWeight("0", 0.25f);
 
     BoneTransform bt;
@@ -357,7 +357,7 @@ TEST(single_morph_target) {
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("foo", 3, vertexOffsets));
     coreSubmesh->addMorphTarget(morphTarget);
 
-    CalSubmesh submesh(coreSubmesh);
+    CalSubmesh submesh(coreSubmesh, std::vector<int>());
     submesh.setMorphTargetWeight("foo", 0.5f);
     
     BoneTransform bt;
@@ -420,7 +420,7 @@ TEST(two_morph_targets) {
     CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar", 3, morphVertices2));
     coreSubmesh->addMorphTarget(morphTarget2);
 
-    CalSubmesh submesh(coreSubmesh);
+    CalSubmesh submesh(coreSubmesh, std::vector<int>());
     submesh.setMorphTargetWeight("foo", 0.25f);
     submesh.setMorphTargetWeight("bar", 0.25f);
     
@@ -475,7 +475,7 @@ TEST(two_disjoint_morph_targets) {
     CalCoreMorphTargetPtr morphTarget2(new CalCoreMorphTarget("bar", 2, morphVertices2));
     coreSubmesh->addMorphTarget(morphTarget2);
 
-    CalSubmesh submesh(coreSubmesh);
+    CalSubmesh submesh(coreSubmesh, std::vector<int>());
     submesh.setMorphTargetWeight("foo", 1.0f);
     submesh.setMorphTargetWeight("bar", 1.0f);
     

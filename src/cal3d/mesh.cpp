@@ -18,16 +18,15 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/submesh.h"
 
-CalMesh::SubmeshVector fromCoreSubmeshes(const CalCoreMesh::CalCoreSubmeshVector& coreSubmeshes) {
+CalMesh::SubmeshVector fromCoreSubmeshes(const CalCoreMesh::CalCoreSubmeshVector& coreSubmeshes, const std::vector<int>& backfacingBones) {
     CalMesh::SubmeshVector rv;
     rv.reserve(coreSubmeshes.size());
     for (size_t i = 0; i < coreSubmeshes.size(); ++i) {
-        rv.push_back(CalSubmeshPtr(new CalSubmesh(coreSubmeshes[i])));
+        rv.push_back(CalSubmeshPtr(new CalSubmesh(coreSubmeshes[i], backfacingBones)));
     }
     return rv;
 }
 
 CalMesh::CalMesh(const CalCoreMeshPtr& coreMesh, const std::vector<int>& backfacingBones)
-    : submeshes(fromCoreSubmeshes(coreMesh->submeshes))
-    , backfacingBones(backfacingBones)
+    : submeshes(fromCoreSubmeshes(coreMesh->submeshes, backfacingBones))
 {}

@@ -214,12 +214,7 @@ TEST(is_not_static_if_has_morph_targets) {
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(0, 1, 0));
 
-    CalCoreMeshPtr coreMesh(new CalCoreMesh);
-    coreMesh->submeshes.push_back(coreSubmesh);
-
-    CalSubmesh submesh(coreSubmesh);
-
-    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = submesh.coreSubmesh->getVectorVectorTextureCoordinate()[0];
+    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = coreSubmesh->getVectorVectorTextureCoordinate()[0];
     CHECK_EQUAL(0u, texCoords.size());
 }
 
@@ -232,7 +227,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CalCoreSkeletonPtr coreSkeleton(new CalCoreSkeleton);
 
     CalSkeleton skeleton(coreSkeleton);
-    CalSubmesh submesh(coreSubmesh);
+    CalSubmesh submesh(coreSubmesh, std::vector<int>());
 
     CalPhysique::calculateVerticesAndNormals(
         skeleton.boneTransforms.data(),
