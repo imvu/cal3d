@@ -336,7 +336,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     {
         scope CalCoreMaterial_class(
-            class_<CalCoreMaterial, CalCoreMaterialPtr, bases<cal3d::UserDataHolder> >("CoreMaterial")
+            class_<CalCoreMaterial, CalCoreMaterialPtr>("CoreMaterial")
                 .def_readwrite("maps", &CalCoreMaterial::maps)
         );
 
