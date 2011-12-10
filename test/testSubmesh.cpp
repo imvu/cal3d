@@ -226,7 +226,7 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
     CalCoreSkeletonPtr coreSkeleton(new CalCoreSkeleton);
 
     CalSkeleton skeleton(coreSkeleton);
-    CalSubmesh submesh(coreSubmesh, std::vector<int>());
+    CalSubmesh submesh(coreSubmesh);
 
     CalPhysique::calculateVerticesAndNormals(
         skeleton.boneTransforms.data(),

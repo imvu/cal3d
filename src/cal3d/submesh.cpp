@@ -38,9 +38,8 @@ void cal3d::MorphTarget::resetState() {
     replacementAttenuation = ReplacementAttenuationNull;
 }
 
-CalSubmesh::CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh, const std::vector<int>& backfacingBones)
+CalSubmesh::CalSubmesh(const CalCoreSubmeshPtr& pCoreSubmesh)
     : coreSubmesh(pCoreSubmesh)
-    , backfacingBones(backfacingBones)
 {
     assert(pCoreSubmesh);
 
