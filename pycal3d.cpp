@@ -282,16 +282,6 @@ BOOST_PYTHON_MODULE(_cal3d)
 {
     cal3d::BufferFromPythonObject();
 
-    class_<cal3d::UserData, cal3d::UserDataPtr, boost::noncopyable>("UserData", no_init)
-        ;
-
-    class_<cal3d::UserDataHolder, boost::noncopyable>("CoreMaterial", no_init)
-        .add_property(
-            "userData",
-            make_function(&cal3d::UserDataHolder::getUserData, return_value_policy<return_by_value>()),
-            &cal3d::UserDataHolder::setUserData)
-        ;
-
     class_<CalVector>("Vector")
         .def(init<float, float, float>())
         .def("__repr__", &VectorRepr)

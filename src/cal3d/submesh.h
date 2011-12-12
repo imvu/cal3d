@@ -33,7 +33,7 @@ namespace cal3d {
 }
 
 
-class CAL3D_API CalSubmesh : public cal3d::UserDataHolder {
+class CAL3D_API CalSubmesh {
 public:
     const CalCoreSubmeshPtr coreSubmesh;
     std::vector<cal3d::MorphTarget> morphTargets; // index maps to CoreSubMorphTarget in CoreSubmesh

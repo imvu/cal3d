@@ -44,26 +44,6 @@ namespace cal3d {
 
 namespace cal3d {
 
-    class UserData {
-    public:
-        virtual ~UserData() {}
-    };
-    CAL3D_PTR(UserData);
-
-    struct CAL3D_API UserDataHolder {
-    public:
-        void setUserData(const UserDataPtr& userData) {
-            m_userData = userData;
-        }
-
-        const UserDataPtr& getUserData() const {
-            return m_userData;
-        }
-
-    private:
-        UserDataPtr m_userData;
-    };
-
     const char SKELETON_FILE_MAGIC[4]  = { 'C', 'S', 'F', '\0' };
     const char ANIMATION_FILE_MAGIC[4] = { 'C', 'A', 'F', '\0' };
     const char ANIMATEDMORPH_FILE_MAGIC[4] = { 'C', 'P', 'F', '\0' };
