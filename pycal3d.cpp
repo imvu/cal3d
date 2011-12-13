@@ -248,7 +248,7 @@ boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
 }
 
 template<typename T>
-void exportVector(const char* name) {
+static void exportVector(const char* name) {
     class_<std::vector<T> >(name)
         .def(vector_indexing_suite< std::vector<T>, true>())
         ;
