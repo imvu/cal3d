@@ -383,6 +383,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     exportVector<CalCoreMorphTargetPtr>("MorphTargetVector");
     
     class_<CalCoreSubmesh, CalCoreSubmeshPtr, boost::noncopyable>("CoreSubmesh", no_init)
+        .def(init<int, int, int>())
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .def_readwrite("triangles", &CalCoreSubmesh::faces)
         .add_property("vertices", &getVertices)
