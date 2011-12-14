@@ -852,7 +852,7 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         dataSrc.readInteger(morphCount);
     }
 
-    CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
+    CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount ? true : false, faceCount));
     pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
     for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
@@ -882,12 +882,12 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
         for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
             CalCoreSubmesh::TextureCoordinate textureCoordinate;
 
-            // load data of the influence
             dataSrc.readFloat(textureCoordinate.u);
             dataSrc.readFloat(textureCoordinate.v);
 
-            // set texture coordinate in the core submesh instance
-            pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinateId, textureCoordinate);
+            if (textureCoordinateId == 0) {
+                pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinate);
+            }
         }
 
         // get the number of influences

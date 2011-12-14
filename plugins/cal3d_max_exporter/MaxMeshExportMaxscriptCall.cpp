@@ -178,7 +178,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			// allocate new core submesh instance
                         CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(
                           vectorVertexCandidate.size(),
-                          pSubmeshCandidate->GetMapCount(),
+                          pSubmeshCandidate->GetMapCount() ? true : false,
                           vectorFace.size()));
 
 			// set the core material id
@@ -221,7 +221,9 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 					textureCoordinate.v = vectorTextureCoordinate[textureCoordinateId].v;
 
 					// set texture coordinate
-					pCoreSubmesh->setTextureCoordinate(pVertexCandidate->GetLodId(), textureCoordinateId, textureCoordinate);
+                                        if (textureCoordinateId == 0) {
+    					    pCoreSubmesh->setTextureCoordinate(pVertexCandidate->GetLodId(), textureCoordinate);
+                                        }
 				}
 
 				// get the influence vector

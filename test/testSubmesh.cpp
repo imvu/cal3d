@@ -213,7 +213,7 @@ TEST(is_not_static_if_has_morph_targets) {
 TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(0, 1, 0));
 
-    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = coreSubmesh->getVectorVectorTextureCoordinate()[0];
+    const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = coreSubmesh->getTextureCoordinates();
     CHECK_EQUAL(0u, texCoords.size());
 }
 

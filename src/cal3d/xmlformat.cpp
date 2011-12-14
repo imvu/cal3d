@@ -788,7 +788,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             morphCount = atoi(numMorphStr);
         }
 
-        CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount, faceCount));
+        CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount ? true : false, faceCount));
 
         pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
@@ -920,7 +920,9 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 ReadPair(texcoorddata->Value(), &textureCoordinate.u, &textureCoordinate.v);
 
                 // set texture coordinate in the core submesh instance
-                pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinateId, textureCoordinate);
+                if (textureCoordinateId == 0) {
+                    pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinate);
+                }
                 texcoord = texcoord->NextSiblingElement();
             }
 

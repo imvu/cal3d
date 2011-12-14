@@ -17,7 +17,7 @@
 #include "cal3d/coremorphtarget.h"
 #include "cal3d/transform.h"
 
-CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount)
+CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
     : coreMaterialThreadId(0)
     , m_currentVertexId(0)
     , m_vertices(vertexCount)
@@ -26,9 +26,8 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int 
 {
     m_vertexColors.resize(vertexCount);
 
-    m_vectorvectorTextureCoordinate.resize(textureCoordinateCount);
-    for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
-        m_vectorvectorTextureCoordinate[textureCoordinateId].resize(vertexCount);
+    if (hasTextureCoordinates) {
+        m_textureCoordinates.resize(vertexCount);
     }
 
     faces.resize(faceCount);
@@ -51,17 +50,8 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     return r;
 }
 
-bool CalCoreSubmesh::setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate) {
-    if ((textureCoordinateId < 0) || (textureCoordinateId >= (int)m_vectorvectorTextureCoordinate.size())) {
-        return false;
-    }
-    if ((vertexId < 0) || (vertexId >= (int)m_vectorvectorTextureCoordinate[textureCoordinateId].size())) {
-        return false;
-    }
-
-    m_vectorvectorTextureCoordinate[textureCoordinateId][vertexId] = textureCoordinate;
-
-    return true;
+void CalCoreSubmesh::setTextureCoordinate(int vertexId, const TextureCoordinate& textureCoordinate) {
+    m_textureCoordinates[vertexId] = textureCoordinate;
 }
 
 bool descendingByWeight(const CalCoreSubmesh::Influence& lhs, const CalCoreSubmesh::Influence& rhs) {

@@ -389,7 +389,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("vertices", &getVertices)
         .add_property("hasVertexColors", &CalCoreSubmesh::hasVertexColors)
         .add_property("colors", make_function(&CalCoreSubmesh::getVertexColors, return_value_policy<return_by_value>()))
-        .add_property("texcoords", make_function(&CalCoreSubmesh::getVectorVectorTextureCoordinate, return_value_policy<return_by_value>()))
+        .add_property("texcoords", make_function(&CalCoreSubmesh::getTextureCoordinates, return_value_policy<return_by_value>()))
         .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
         .add_property("subMorphTargets", make_function(&CalCoreSubmesh::getMorphTargets, return_value_policy<return_by_value>()))
         ;

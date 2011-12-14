@@ -120,11 +120,10 @@ public:
     typedef std::vector<CalCoreMorphTargetPtr> MorphTargetArray;
     typedef std::vector<Face> VectorFace;
     typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
-    typedef std::vector<VectorTextureCoordinate > VectorVectorTextureCoordinate;
     typedef cal3d::SSEArray<Vertex> VectorVertex;
     typedef std::vector<Influence> InfluenceVector;
 
-    CalCoreSubmesh(int vertexCount, int textureCoordinateCount, int faceCount);
+    CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount);
 
     size_t sizeInBytes() const;
 
@@ -134,8 +133,11 @@ public:
     bool hasVertexColors() const {
         return m_hasVertexColors;
     }
-    const std::vector<std::vector<TextureCoordinate> >& getVectorVectorTextureCoordinate() const {
-        return m_vectorvectorTextureCoordinate;
+    bool hasTextureCoordinates() const {
+        return !m_textureCoordinates.empty();
+    }
+    const VectorTextureCoordinate& getTextureCoordinates() const {
+        return m_textureCoordinates;
     }
 
     const VectorVertex& getVectorVertex() const {
@@ -151,7 +153,7 @@ public:
     }
 
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
-    bool setTextureCoordinate(int vertexId, int textureCoordinateId, const TextureCoordinate& textureCoordinate);
+    void setTextureCoordinate(int vertexId, const TextureCoordinate& textureCoordinate);
 
     void addMorphTarget(CalCoreMorphTargetPtr morphTarget);
     const MorphTargetArray& getMorphTargets() const;
@@ -179,7 +181,7 @@ private:
     bool m_hasVertexColors;    
     std::vector<CalColor32> m_vertexColors;
  
-    std::vector<std::vector<TextureCoordinate> > m_vectorvectorTextureCoordinate;
+    VectorTextureCoordinate m_textureCoordinates;
 
     MorphTargetArray m_morphTargets;
 

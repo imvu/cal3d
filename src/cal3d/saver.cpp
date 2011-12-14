@@ -570,7 +570,10 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     CalPlatform::writeInteger(os, 0); // spring count
 
     // get the texture coordinate vector vector
-    const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
+    std::vector<CalCoreSubmesh::VectorTextureCoordinate> vectorvectorTextureCoordinate;
+    if (pCoreSubmesh->hasTextureCoordinates()) {
+        vectorvectorTextureCoordinate.push_back(pCoreSubmesh->getTextureCoordinates());
+    }
 
     // write the number of texture coordinates per vertex
     CalPlatform::writeInteger(os, vectorvectorTextureCoordinate.size());
@@ -1130,21 +1133,24 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
 
         const CalCoreSubmesh::MorphTargetArray& vectorMorphs = pCoreSubmesh->getMorphTargets();
 
+        // get the texture coordinate vector vector
+        std::vector<std::vector<CalCoreSubmesh::TextureCoordinate>> vectorvectorTextureCoordinate;
+        if (pCoreSubmesh->hasTextureCoordinates()) {
+            vectorvectorTextureCoordinate.push_back(pCoreSubmesh->getTextureCoordinates());
+        }
+
         submesh.SetAttribute("NUMVERTICES", pCoreSubmesh->getVertexCount());
         submesh.SetAttribute("NUMFACES", pCoreSubmesh->faces.size());
         submesh.SetAttribute("MATERIAL", pCoreSubmesh->coreMaterialThreadId);
         submesh.SetAttribute("NUMLODSTEPS", 0);
         submesh.SetAttribute("NUMSPRINGS", 0);
         submesh.SetAttribute("NUMMORPHS", vectorMorphs.size());
-
-        submesh.SetAttribute("NUMTEXCOORDS", pCoreSubmesh->getVectorVectorTextureCoordinate().size());
+        submesh.SetAttribute("NUMTEXCOORDS", vectorvectorTextureCoordinate.size());
 
         const cal3d::SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
         const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
         const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
-        // get the texture coordinate vector vector
-        const std::vector<std::vector<CalCoreSubmesh::TextureCoordinate> >& vectorvectorTextureCoordinate = pCoreSubmesh->getVectorVectorTextureCoordinate();
 
         const CalCoreSubmesh::Influence* currentInfluence = cal3d::pointerFromVector(pCoreSubmesh->getInfluences());
         for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {
