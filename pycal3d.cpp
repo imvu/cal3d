@@ -249,7 +249,7 @@ boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
 
 template<typename T>
 static void exportVector(const char* name) {
-    class_<std::vector<T> >(name)
+    class_<std::vector<T>>(name)
         .def(vector_indexing_suite< std::vector<T>, true>())
         ;
 }
@@ -359,7 +359,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     exportVector<CalCoreSubmesh::TextureCoordinate>("TextureCoordinateVector");
-    exportVector<std::vector<CalCoreSubmesh::TextureCoordinate> >("TextureCoordinateVectorVector");
+    exportVector<std::vector<CalCoreSubmesh::TextureCoordinate>>("TextureCoordinateVectorVector");
 
     class_<CalCoreSubmesh::Influence>("Influence")
         .def_readwrite("boneId", &CalCoreSubmesh::Influence::boneId)
