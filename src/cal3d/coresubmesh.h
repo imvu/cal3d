@@ -110,6 +110,8 @@ public:
     CAL3D_ALIGN_TAIL(16);
 
     struct Face {
+        Face(){}
+        Face(CalIndex v0, CalIndex v1, CalIndex v2){vertexId[0]=v0; vertexId[1]= v1; vertexId[2]=v2;}
         CalIndex vertexId[3];
 
         bool operator==(const Face& rhs) const {
@@ -196,3 +198,4 @@ CAL3D_PTR(CalCoreSubmesh);
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Influence& influence) {
     return os << "CalCoreSubmesh::Influence(" << influence.boneId << ", " << influence.weight << ", " << influence.lastInfluenceForThisVertex << ")";
 }
+   CAL3D_API  CalCoreSubmeshPtr   MakeCube();

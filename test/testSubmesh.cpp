@@ -11,6 +11,11 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/coremorphtarget.h>
 
+
+inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Face& f) {
+    return os << '(' << f.vertexId[0] << ", " << f.vertexId[1] << ", " << f.vertexId[2] << ')';
+}
+
 TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_absolute_in_file) {
     CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex vertex;
@@ -267,3 +272,23 @@ TEST(aabox_is_min_max_of_all_vertices) {
         CalAABox(CalVector(1.0f, 1.0f, 1.0f), CalVector(3.0f, 3.0f, 3.0f)),
         csm.getBoundingVolume());
 }
+
+TEST(face_constructors) {
+    CalCoreSubmesh::Face f2(20, 21, 22);    
+    CHECK_EQUAL(f2.vertexId[0],20);
+    CHECK_EQUAL(f2.vertexId[1],21);
+    CHECK_EQUAL(f2.vertexId[2],22);  
+}
+
+TEST(make_cube) {
+    CalCoreSubmeshPtr submeshPtr = MakeCube();
+    const CalCoreSubmesh::VectorVertex &vertices =  submeshPtr->getVectorVertex();
+    CHECK_EQUAL(submeshPtr->getVertexCount(), static_cast<size_t>(24));
+    CHECK_EQUAL(CalVector(0,0,1), (vertices[0].position.asCalVector()));   
+    CHECK_EQUAL(CalVector(1,0,1), (vertices[23].position.asCalVector()));
+    CHECK_EQUAL(CalVector(0,0,1), (vertices[0].normal.asCalVector()));
+    CHECK_EQUAL(CalVector(0,-1,0), (vertices[23].normal.asCalVector()));
+    CHECK_EQUAL(submeshPtr->faces[0], CalCoreSubmesh::Face(0,1,2));
+    CHECK_EQUAL(submeshPtr->faces[11], CalCoreSubmesh::Face(20, 23, 21));
+    }
+
