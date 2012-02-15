@@ -14,9 +14,7 @@ FIXTURE(MixerFixture) {
 
     static CalCoreSkeletonPtr fakeMixerSkeleton() {
         CalCoreSkeletonPtr p(new CalCoreSkeleton());
-        CalCoreBonePtr actualRoot(new CalCoreBone("actualRoot"));
-        CalCoreBonePtr root(new CalCoreBone("root", 0));
-        p->addCoreBone(actualRoot);
+        CalCoreBonePtr root(new CalCoreBone("root"));
         p->addCoreBone(root);
         return p;
     }
@@ -35,13 +33,13 @@ FIXTURE(MixerFixture) {
 
 TEST_F(MixerFixture, no_animation_leaves_bone_in_bind_pose) {
     updateSkeleton();
-    CHECK_EQUAL(cal3d::Transform(), skeleton.bones[1].absoluteTransform);
+    CHECK_EQUAL(cal3d::Transform(), skeleton.bones[0].absoluteTransform);
 }
 
 static CalAnimationPtr makeAnimation(CalVector t, unsigned priority, float weight = 1.0f) {
     CalCoreTrack::KeyframeList keyframes;
     keyframes.push_back(CalCoreKeyframe(0, t, CalQuaternion()));
-    CalCoreTrack track(1, keyframes);
+    CalCoreTrack track(0, keyframes);
 
     CalCoreAnimationPtr coreAnimation(new CalCoreAnimation());
     coreAnimation->tracks.push_back(track);
@@ -55,7 +53,7 @@ TEST_F(MixerFixture, one_low_priority_animation_poses_bone) {
 
     mixer.addAnimation(anim);
     updateSkeleton();
-    CHECK_EQUAL(CalVector(1, 1, 1), skeleton.bones[1].absoluteTransform.translation);
+    CHECK_EQUAL(CalVector(1, 1, 1), skeleton.bones[0].absoluteTransform.translation);
 }
 
 TEST_F(MixerFixture, high_priority_animation_trumps_low_priority_animation) {
@@ -66,7 +64,7 @@ TEST_F(MixerFixture, high_priority_animation_trumps_low_priority_animation) {
     mixer.addAnimation(high);
 
     updateSkeleton();
-    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[1].absoluteTransform.translation);
+    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
 }
 
 TEST_F(MixerFixture, high_priority_can_be_inserted_before_low_priority_animation) {
@@ -77,7 +75,7 @@ TEST_F(MixerFixture, high_priority_can_be_inserted_before_low_priority_animation
     mixer.addAnimation(low);
 
     updateSkeleton();
-    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[1].absoluteTransform.translation);
+    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
 }
 
 TEST_F(MixerFixture, second_high_priority_trumps_first) {
@@ -88,5 +86,5 @@ TEST_F(MixerFixture, second_high_priority_trumps_first) {
     mixer.addAnimation(second);
 
     updateSkeleton();
-    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[1].absoluteTransform.translation);
+    CHECK_EQUAL(CalVector(-1, -1, -1), skeleton.bones[0].absoluteTransform.translation);
 }

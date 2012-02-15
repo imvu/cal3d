@@ -106,10 +106,7 @@ void CalBone::calculateAbsolutePose(const CalBone* bones) {
     const auto& parentTransform = parentBone
         ? parentBone->absoluteTransform
         : cal3d::Transform();
-    const auto& myTransform = parentBone
-        ? getRelativeTransform()
-        : cal3d::RotateTranslate();
 
     absoluteScale = parentScale * scale;
-    absoluteTransform = removeScale(parentTransform * myTransform) * absoluteScale;
+    absoluteTransform = removeScale(parentTransform * getRelativeTransform()) * absoluteScale;
 }

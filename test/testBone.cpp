@@ -12,29 +12,22 @@ static cal3d::RotateTranslate makeTranslation(float x, float y, float z) {
 
 FIXTURE(BoneFixture) {
     SETUP(BoneFixture)
-        : parent("parent")
-        , coreBone(testBone())
-        , parentBone(parent)
+        : coreBone(testBone())
         , bone(coreBone)
     {}
 
     static CalCoreBone testBone() {
-        CalCoreBone cb("test", 0);
+        CalCoreBone cb("test");
         // bind pose = 1.0f, 1.0f, 1.0f
         cb.relativeTransform = makeTranslation(1.0f, 1.0f, 1.0f);
         return cb;
     }
 
-    CalCoreBone parent;
     CalCoreBone coreBone;
-
-    // must be contiguous in memory
-    CalBone parentBone;
     CalBone bone;
 
     BoneTransform calculateAbsolutePose() {
-        parentBone.calculateAbsolutePose(&parentBone);
-        bone.calculateAbsolutePose(&parentBone);
+        bone.calculateAbsolutePose(&bone);
         return bone.absoluteTransform;
     }
 };
