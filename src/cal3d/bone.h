@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "cal3d/bonetransform.h"
 #include "cal3d/global.h"
 #include "cal3d/transform.h"
 
@@ -58,12 +57,11 @@ public:
         const cal3d::RotateTranslate& transform,
         float subsequentAttenuation);
 
-    BoneTransform calculateAbsolutePose(const CalBone* bones);
+    void calculateAbsolutePose(const CalBone* bones);
 
 private:
     // from core bone. stored locally for better cache locality
     const cal3d::RotateTranslate coreRelativeTransform;
-    const cal3d::Transform coreInverseBindPoseTransform;
 
     // animated bone state
     cal3d::Scale absoluteScale;

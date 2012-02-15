@@ -34,7 +34,8 @@ FIXTURE(BoneFixture) {
 
     BoneTransform calculateAbsolutePose() {
         parentBone.calculateAbsolutePose(&parentBone);
-        return bone.calculateAbsolutePose(&parentBone);
+        bone.calculateAbsolutePose(&parentBone);
+        return bone.absoluteTransform;
     }
 };
 

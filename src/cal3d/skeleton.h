@@ -31,5 +31,6 @@ public:
 
     // same length
     BoneArray bones;
+    std::vector<cal3d::RotateTranslate> inverseBindPoseTransforms;
     cal3d::SSEArray<BoneTransform> boneTransforms;
 };

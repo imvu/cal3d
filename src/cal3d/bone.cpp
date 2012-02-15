@@ -46,7 +46,6 @@ void cal3d::TransformAccumulator::addTransform(float weight, const RotateTransla
 CalBone::CalBone(const CalCoreBone& coreBone)
     : parentId(coreBone.parentId)
     , coreRelativeTransform(coreBone.relativeTransform)
-    , coreInverseBindPoseTransform(coreBone.inverseBindPoseTransform)
 {
     resetPose();
 }
@@ -98,7 +97,7 @@ T* null_ptr() {
     return p;
 }
 
-BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones) {
+void CalBone::calculateAbsolutePose(const CalBone* bones) {
     const auto& parentBone = (parentId == -1) ? null_ptr<CalBone>() : &bones[parentId];
 
     const auto& parentScale = parentBone
@@ -113,5 +112,4 @@ BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones) {
 
     absoluteScale = parentScale * scale;
     absoluteTransform = removeScale(parentTransform * myTransform) * absoluteScale;
-    return absoluteTransform * coreInverseBindPoseTransform;
 }
