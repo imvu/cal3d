@@ -107,10 +107,15 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     cal3d::verify(coreBone->parentId == -1 || size_t(coreBone->parentId) < coreBones.size(), "bones must be added in topological order");
 
     // skeletons can only have one root
-    if (!m_coreBones.empty() && coreBone->parentId == -1) {
-        coreBone->parentId = 0;
-        coreBone->relativeTransform = invert(m_coreBones[0]->relativeTransform) * coreBone->relativeTransform;
-        adjustedRoots.insert(m_coreBones.size());
+    if (coreBone->parentId == -1) {
+        if (m_coreBones.empty()) {
+            inverseOriginalRootTransform = invert(coreBone->relativeTransform);
+            coreBone->relativeTransform = cal3d::RotateTranslate();
+        } else {
+            coreBone->parentId = 0;
+            coreBone->relativeTransform = inverseOriginalRootTransform * coreBone->relativeTransform;
+            adjustedRoots.insert(m_coreBones.size());
+        }
     }
 
     size_t newIndex = m_coreBones.size();
@@ -141,7 +146,7 @@ void CalCoreSkeleton::scale(float factor) {
 
 cal3d::RotateTranslate CalCoreSkeleton::getAdjustedRootTransform(size_t boneIndex) const {
     if (adjustedRoots.count(boneIndex)) {
-        return invert(m_coreBones[0]->relativeTransform);
+        return inverseOriginalRootTransform;
     } else {
         return cal3d::RotateTranslate();
     }

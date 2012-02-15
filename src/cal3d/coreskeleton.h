@@ -42,6 +42,7 @@ public:
     CalVector sceneAmbientColor;
 
 private:
+    cal3d::RotateTranslate inverseOriginalRootTransform;
     std::set<size_t> adjustedRoots;
     std::vector<CalCoreBonePtr> m_coreBones;
 };

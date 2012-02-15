@@ -202,3 +202,18 @@ TEST(topologically_sorted_skeletons_can_fixup_animations) {
     ca.fixup(cs);
     CHECK_EQUAL(1u, ca.tracks[0].coreBoneId);
 }
+
+TEST(loader_zeroes_out_root_transform_of_skeleton) {
+    CalCoreBonePtr root0(new CalCoreBone("root0"));
+    CalCoreBonePtr root1(new CalCoreBone("root1"));
+
+    root0->relativeTransform.translation = CalVector(-1, -1, -1);
+    root1->relativeTransform.translation = CalVector(2, 2, 2);
+
+    CalCoreSkeleton cs;
+    cs.addCoreBone(root0);
+    cs.addCoreBone(root1);
+
+    CHECK_EQUAL(CalVector(0, 0, 0), root0->relativeTransform.translation);
+    CHECK_EQUAL(CalVector(3, 3, 3), root1->relativeTransform.translation);
+}
