@@ -104,7 +104,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 	CalCoreSkeleton coreSkeleton;
 
 	// get bone candidate vector
-	std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
+	const std::vector<CBoneCandidate *>& vectorBoneCandidate = skeletonCandidate.GetVectorBoneCandidate();
 
 	// start the progress info
   CStackProgress progress(m_pInterface, "Exporting to skeleton file...");

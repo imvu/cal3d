@@ -105,7 +105,7 @@ void CSkeletonHierarchyPage::DoDataExchange(CDataExchange* pDX)
 LRESULT CSkeletonHierarchyPage::EndPage()
 {
 	// get bone candidate vector
-	std::vector<CBoneCandidate *>& vectorBoneCandidate = m_pSkeletonCandidate->GetVectorBoneCandidate();
+	const std::vector<CBoneCandidate *>& vectorBoneCandidate = m_pSkeletonCandidate->GetVectorBoneCandidate();
 
 	// write back the select state of all bone candidates
 	HTREEITEM hItem;
@@ -162,7 +162,7 @@ LRESULT CSkeletonHierarchyPage::EndPage()
 void CSkeletonHierarchyPage::InsertBoneCandidate(int boneCandidateId, HTREEITEM hParentItem)
 {
 	// get bone candidate vector
-	std::vector<CBoneCandidate *>& vectorBoneCandidate = m_pSkeletonCandidate->GetVectorBoneCandidate();
+	const std::vector<CBoneCandidate *>& vectorBoneCandidate = m_pSkeletonCandidate->GetVectorBoneCandidate();
 
 	// check if we have a valid bone candidate id
 	if((boneCandidateId < 0) || (boneCandidateId >= (int)vectorBoneCandidate.size())) return;
