@@ -40,9 +40,9 @@ void CalSkeleton::resetPose() {
     std::for_each(bones.begin(), bones.end(), std::mem_fun_ref(&CalBone::resetPose));
 }
 
-void CalSkeleton::calculateAbsolutePose(bool includeRootTransform) {
+void CalSkeleton::calculateAbsolutePose() {
     CalBone* bones_ptr = cal3d::pointerFromVector(bones);
     for (unsigned i = 0; i < bones.size(); ++i) {
-        boneTransforms[i] = bones_ptr[i].calculateAbsolutePose(bones_ptr, includeRootTransform);
+        boneTransforms[i] = bones_ptr[i].calculateAbsolutePose(bones_ptr);
     }
 }

@@ -58,7 +58,7 @@ public:
         const cal3d::RotateTranslate& transform,
         float subsequentAttenuation);
 
-    BoneTransform calculateAbsolutePose(const CalBone* bones, bool includeRootTransform);
+    BoneTransform calculateAbsolutePose(const CalBone* bones);
 
 private:
     // from core bone. stored locally for better cache locality

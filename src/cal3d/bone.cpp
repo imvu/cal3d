@@ -98,21 +98,20 @@ T* null_ptr() {
     return p;
 }
 
-BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones, bool includeRootTransform) {
+BoneTransform CalBone::calculateAbsolutePose(const CalBone* bones) {
     const auto& parentBone = (parentId == -1) ? null_ptr<CalBone>() : &bones[parentId];
 
     const auto& parentScale = parentBone
         ? parentBone->absoluteScale
         : cal3d::Scale();
-    absoluteScale = parentScale * scale;
-
     const auto& parentTransform = parentBone
         ? parentBone->absoluteTransform
         : cal3d::Transform();
-    const auto& myTransform = (parentBone || includeRootTransform)
+    const auto& myTransform = parentBone
         ? getRelativeTransform()
         : cal3d::RotateTranslate();
 
+    absoluteScale = parentScale * scale;
     absoluteTransform = removeScale(parentTransform * myTransform) * absoluteScale;
     return absoluteTransform * coreInverseBindPoseTransform;
 }

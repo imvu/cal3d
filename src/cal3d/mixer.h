@@ -39,11 +39,6 @@ struct BoneScaleAdjustment {
     CalVector scale;
 };
 
-enum RootTransformFlag {
-    IgnoreRootTransform,
-    IncludeRootTransform,
-};
-
 class CAL3D_API CalMixer {
 public:
     void addAnimation(const CalAnimationPtr& animation);
@@ -52,8 +47,7 @@ public:
     void updateSkeleton(
         CalSkeleton* skeleton,
         const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
-        const std::vector<BoneScaleAdjustment>& boneScaleAdjustments,
-        RootTransformFlag includeRoot);
+        const std::vector<BoneScaleAdjustment>& boneScaleAdjustments);
 
 private:
     void applyBoneAdjustments(

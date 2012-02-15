@@ -37,8 +37,7 @@ void CalMixer::removeAnimation(const CalAnimationPtr& animation) {
 void CalMixer::updateSkeleton(
     CalSkeleton* skeleton,
     const std::vector<BoneTransformAdjustment>& boneTransformAdjustments,
-    const std::vector<BoneScaleAdjustment>& boneScaleAdjustments,
-    RootTransformFlag includeRoot
+    const std::vector<BoneScaleAdjustment>& boneScaleAdjustments
 ) {
     skeleton->resetPose();
 
@@ -68,7 +67,7 @@ void CalMixer::updateSkeleton(
         }
     }
 
-    skeleton->calculateAbsolutePose(includeRoot == IncludeRootTransform);
+    skeleton->calculateAbsolutePose();
 }
 
 void CalMixer::applyBoneAdjustments(

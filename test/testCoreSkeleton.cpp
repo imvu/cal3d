@@ -66,7 +66,7 @@ TEST(coreskeleton_second_root_animations_are_transformed_relative_to_first_root)
 
     CalMixer mixer;
     mixer.addAnimation(anim);
-    mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), std::vector<BoneScaleAdjustment>(), IgnoreRootTransform);
+    mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), std::vector<BoneScaleAdjustment>());
 
     CHECK_EQUAL(CalVector(-2, -2, -2), skeleton.bones[1].absoluteTransform.translation);
 }

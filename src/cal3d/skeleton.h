@@ -27,7 +27,7 @@ public:
     CalSkeleton(const CalCoreSkeletonPtr& coreSkeleton);
 
     void resetPose();
-    void calculateAbsolutePose(bool includeRootTransform);
+    void calculateAbsolutePose();
 
     // same length
     BoneArray bones;
