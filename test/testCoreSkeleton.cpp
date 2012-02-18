@@ -217,7 +217,7 @@ TEST(multiroot_skeletons_can_fixup_animation_transforms) {
 
     CHECK_EQUAL(CalVector(0, 0, 0), root0->relativeTransform.translation);
     CHECK_EQUAL(CalVector(2, 2, 2), root1->relativeTransform.translation);
-    CHECK_EQUAL(0u, root1->parentId);
+    CHECK_EQUAL(0, root1->parentId);
 
     CalCoreKeyframe kf;
     kf.transform.translation = CalVector(2, 2, 2);
