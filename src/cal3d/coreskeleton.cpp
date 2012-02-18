@@ -114,8 +114,8 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
         } else {
             coreBone->parentId = 0;
             coreBone->relativeTransform = inverseOriginalRootTransform * coreBone->relativeTransform;
-            adjustedRoots.insert(m_coreBones.size());
         }
+        adjustedRoots.insert(m_coreBones.size());
     }
 
     size_t newIndex = m_coreBones.size();
@@ -135,11 +135,7 @@ int CalCoreSkeleton::getBoneId(const CalCoreBone* coreBone) const {
 }
 
 void CalCoreSkeleton::scale(float factor) {
-    for (
-        std::vector<CalCoreBonePtr>::const_iterator i = coreBones.begin();
-        i != coreBones.end();
-        ++i
-    ) {
+    for (auto i = coreBones.begin(); i != coreBones.end(); ++i) {
         (*i)->scale(factor);
     }
 }

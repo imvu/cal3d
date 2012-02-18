@@ -203,6 +203,41 @@ TEST(topologically_sorted_skeletons_can_fixup_animations) {
     CHECK_EQUAL(1u, ca.tracks[0].coreBoneId);
 }
 
+TEST(multiroot_skeletons_can_fixup_animation_transforms) {
+    CalCoreBonePtr root0(new CalCoreBone("r0"));
+    root0->relativeTransform.translation = CalVector(-1, -1, -1);
+
+    CalCoreBonePtr root1(new CalCoreBone("r1"));
+    root1->relativeTransform.translation = CalVector(1, 1, 1);
+
+    std::vector<CalCoreBonePtr> bones;
+    CalCoreSkeletonPtr cs(new CalCoreSkeleton);
+    cs->addCoreBone(root0);
+    cs->addCoreBone(root1);
+
+    CHECK_EQUAL(CalVector(0, 0, 0), root0->relativeTransform.translation);
+    CHECK_EQUAL(CalVector(2, 2, 2), root1->relativeTransform.translation);
+    CHECK_EQUAL(0u, root1->parentId);
+
+    CalCoreKeyframe kf;
+    kf.transform.translation = CalVector(2, 2, 2);
+
+    std::vector<CalCoreKeyframe> keyframes;
+    keyframes.push_back(kf);
+
+    CalCoreTrack ct0(0, keyframes);
+    CalCoreTrack ct1(1, keyframes);
+
+    CalCoreAnimation ca;
+    ca.tracks.push_back(ct0);
+    ca.tracks.push_back(ct1);
+
+    ca.fixup(cs);
+
+    CHECK_EQUAL(CalVector(3, 3, 3), ca.tracks[0].keyframes[0].transform.translation);
+    CHECK_EQUAL(CalVector(3, 3, 3), ca.tracks[1].keyframes[0].transform.translation);
+}
+
 TEST(loader_zeroes_out_root_transform_of_skeleton) {
     CalCoreBonePtr root0(new CalCoreBone("root0"));
     CalCoreBonePtr root1(new CalCoreBone("root1"));
