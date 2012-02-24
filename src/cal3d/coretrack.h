@@ -34,6 +34,7 @@ public:
 
     size_t sizeInBytes() const;
     void scale(float factor);
+    void zeroTransforms();
     void fixup(
         const CalCoreBone& bone,
         const cal3d::RotateTranslate& adjustedRootTransform);

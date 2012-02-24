@@ -48,8 +48,14 @@ void CalCoreTrack::scale(float factor) {
     std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
 }
 
+void CalCoreTrack::zeroTransforms() {
+    for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
+        i->transform = cal3d::RotateTranslate();
+    }
+}
+
 void CalCoreTrack::fixup(const CalCoreBone& bone, const cal3d::RotateTranslate& adjustedRootTransform) {
-    for (KeyframeList::iterator i = keyframes.begin(); i != keyframes.end(); ++i) {
+    for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
         if (exactlyEqual(i->transform.translation, InvalidTranslation)) {
             /**
              * If we're pulling translation from the skeleton, the

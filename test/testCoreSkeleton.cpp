@@ -234,8 +234,35 @@ TEST(multiroot_skeletons_can_fixup_animation_transforms) {
 
     ca.fixup(cs);
 
-    CHECK_EQUAL(CalVector(3, 3, 3), ca.tracks[0].keyframes[0].transform.translation);
+    CHECK_EQUAL(CalVector(0, 0, 0), ca.tracks[0].keyframes[0].transform.translation);
     CHECK_EQUAL(CalVector(3, 3, 3), ca.tracks[1].keyframes[0].transform.translation);
+}
+
+TEST(fixup_zeroes_out_transforms_of_root_bone_keyframes) {
+    CalCoreBonePtr root(new CalCoreBone("root"));
+    CalCoreBonePtr bone(new CalCoreBone("bone", 0));
+
+    CalCoreSkeletonPtr cs(new CalCoreSkeleton);
+    cs->addCoreBone(root);
+    cs->addCoreBone(bone);
+    
+    CalCoreKeyframe kf;
+    kf.transform.translation = CalVector(2, 2, 2);
+
+    std::vector<CalCoreKeyframe> keyframes;
+    keyframes.push_back(kf);
+
+    CalCoreTrack ct0(0, keyframes);
+    CalCoreTrack ct1(1, keyframes);
+
+    CalCoreAnimation ca;
+    ca.tracks.push_back(ct0);
+    ca.tracks.push_back(ct1);
+
+    ca.fixup(cs);
+    
+    CHECK_EQUAL(CalVector(0, 0, 0), ca.tracks[0].keyframes[0].transform.translation);
+    CHECK_EQUAL(CalVector(2, 2, 2), ca.tracks[1].keyframes[0].transform.translation);
 }
 
 TEST(loader_zeroes_out_root_transform_of_skeleton) {

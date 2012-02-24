@@ -46,26 +46,30 @@ void CalCoreAnimation::scale(float factor) {
 }
 
 void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton) {
-    TrackList output;
+    const auto& coreBones = skeleton->coreBones;
 
-    for (
-        TrackList::iterator i = tracks.begin();
-        i != tracks.end();
-        ++i
-    ) {
-        if (i->coreBoneId >= skeleton->coreBones.size()) {
+    TrackList output;
+    output.reserve(coreBones.size());
+
+    for (auto i = tracks.begin(); i != tracks.end(); ++i) {
+        if (i->coreBoneId >= coreBones.size()) {
             continue;
         }
 
         cal3d::verify(skeleton->coreBones.size() == skeleton->boneIdTranslation.size(), "coreBones and boneIdTranslation must be the same size");
 
-        cal3d::verify(i->coreBoneId < skeleton->coreBones.size(), "untranslated track ID out of the range of bones...");
+        cal3d::verify(i->coreBoneId < coreBones.size(), "untranslated track ID out of the range of bones...");
         i->coreBoneId = skeleton->boneIdTranslation[i->coreBoneId];
-        cal3d::verify(i->coreBoneId < skeleton->coreBones.size(), "translated track ID out of the range of bones...");
+        cal3d::verify(i->coreBoneId < coreBones.size(), "translated track ID out of the range of bones...");
 
-        i->fixup(
-            *skeleton->coreBones[i->coreBoneId],
-            skeleton->getAdjustedRootTransform(i->coreBoneId));
+        const auto& coreBone = *coreBones[i->coreBoneId];
+        if (coreBone.parentId == -1) {
+            i->zeroTransforms();
+        } else {
+            i->fixup(
+                coreBone,
+                skeleton->getAdjustedRootTransform(i->coreBoneId));
+        }
         output.push_back(*i);
     }
 
