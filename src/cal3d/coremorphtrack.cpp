@@ -22,6 +22,15 @@ size_t sizeInBytes(CalCoreMorphKeyframe const&) {
     return sizeof(CalCoreMorphKeyframe);
 }
 
+CalCoreMorphTrack::CalCoreMorphTrack(){
+}
+
+CalCoreMorphTrack::CalCoreMorphTrack(const std::string& name, const MorphKeyframeList& kf)
+    : morphName(name)
+    , keyframes(kf)
+{
+}
+
 size_t CalCoreMorphTrack::size() const {
     return sizeof(*this) + morphName.capacity() + sizeInBytes(keyframes);
 }

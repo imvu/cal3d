@@ -34,3 +34,8 @@ public:
     size_t sizeInBytes() const;
 };
 CAL3D_PTR(CalCoreMorphAnimation);
+
+inline bool operator==(const CalCoreMorphAnimation& lhs, const CalCoreMorphAnimation& rhs) {
+    return lhs.duration == rhs.duration &&
+           lhs.tracks == rhs.tracks;
+}

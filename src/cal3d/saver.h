@@ -43,6 +43,8 @@ public:
     static bool saveCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation);
     static bool saveCoreMorphAnimation(std::ostream& file, CalCoreMorphAnimation* pCoreMorphAnimation);
 
+    static std::string saveCoreMorphAnimationXmlToBuffer(CalCoreMorphAnimationPtr pCoreMorphAnimation);
+
     static bool saveCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);
     static bool saveCoreMaterial(std::ostream& file, CalCoreMaterial* pCoreMaterial);
 
@@ -56,6 +58,7 @@ public:
     static bool saveXmlCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation);
     static bool saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAnimation);
     static bool saveXmlCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation);
+    static bool saveXmlCoreMorphAnimation(std::ostream& os, CalCoreMorphAnimation* pCoreMorphAnimation);
     static bool saveXmlCoreMesh(const std::string& strFilename, CalCoreMesh* pCoreMesh);
     static bool saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh);
     static bool saveXmlCoreMaterial(const std::string& strFilename, CalCoreMaterial* pCoreMaterial);

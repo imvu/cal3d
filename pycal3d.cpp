@@ -406,7 +406,6 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("time", &CalCoreKeyframe::time)
         .def_readwrite("transform", &CalCoreKeyframe::transform)
         ;
-
     exportVector<CalCoreKeyframe>("CoreKeyframeVector");
 
     class_<CalCoreTrack>("CoreTrack", init<int, const CalCoreTrack::KeyframeList&>())
@@ -415,7 +414,6 @@ BOOST_PYTHON_MODULE(_cal3d)
 
         .def("getCurrentTransform", &CalCoreTrack::getCurrentTransform)
         ;
-
     exportVector<CalCoreTrack>("CoreTrackVector");
 
     class_<CalCoreAnimation, CalCoreAnimationPtr>("CoreAnimation")
@@ -426,20 +424,24 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     class_<CalCoreMorphKeyframe>("CoreMorphKeyframe")
-        .add_property("time", &CalCoreMorphKeyframe::time)
-        .add_property("weight", &CalCoreMorphKeyframe::weight)
+        .def_readwrite("time", &CalCoreMorphKeyframe::time)
+        .def_readwrite("weight", &CalCoreMorphKeyframe::weight)
         ;
+    exportVector<CalCoreMorphKeyframe>("CoreMorphKeyframeVector");
 
-    class_<CalCoreMorphTrack, CalCoreMorphTrackPtr>("CoreMorphTrack")
-        .def_readonly("name", &CalCoreMorphTrack::morphName)
-        .add_property("keyframes", &getKeyframes)
+    class_<CalCoreMorphTrack, CalCoreMorphTrackPtr>("CoreMorphTrack", init<const std::string&, const CalCoreMorphTrack::MorphKeyframeList&>())
+        .def_readwrite("name", &CalCoreMorphTrack::morphName)
+        .def_readwrite("keyframes", &CalCoreMorphTrack::keyframes)
+
+        .def("getState", &CalCoreMorphTrack::getState)
         ;
+    exportVector<CalCoreMorphTrack>("CoreMorphTrackVector");
 
     class_<CalCoreMorphAnimation, CalCoreMorphAnimationPtr>("CoreMorphAnimation")
         .def("removeZeroScaleTracks", &CalCoreMorphAnimation::removeZeroScaleTracks)
         .def("scale", &CalCoreMorphAnimation::scale)
-        .def_readonly("duration", &CalCoreMorphAnimation::duration)
-        .add_property("tracks", &getTracks)
+        .def_readwrite("duration", &CalCoreMorphAnimation::duration)
+        .def_readwrite("tracks", &CalCoreMorphAnimation::tracks)
         ;
 
     def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
@@ -462,6 +464,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     def("loadCoreMorphAnimationFromBuffer", &loadCoreMorphAnimationFromBuffer);
     def("saveCoreMorphAnimation", &saveCoreMorphAnimation);
     def("saveCoreMorphAnimationToBuffer", &CalSaver::saveCoreMorphAnimationToBuffer);
+    def("saveCoreMorphAnimationXmlToBuffer", &CalSaver::saveCoreMorphAnimationXmlToBuffer);
 
     def("getLastErrorText", &CalError::getLastErrorText);
 }

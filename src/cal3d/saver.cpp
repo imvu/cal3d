@@ -62,6 +62,15 @@ std::string CalSaver::saveCoreMorphAnimationToBuffer(CalCoreMorphAnimationPtr pC
     return save(pCoreMorphAnimation, &saveCoreMorphAnimation);
 }
 
+std::string CalSaver::saveCoreMorphAnimationXmlToBuffer(CalCoreMorphAnimationPtr pCoreMorphAnimation) {
+    std::ostringstream os;
+    if (saveXmlCoreMorphAnimation(os, pCoreMorphAnimation.get())) {
+        return os.str();
+    } else {
+        return "";
+    }
+}
+
 std::string CalSaver::saveCoreMaterialToBuffer(CalCoreMaterialPtr pCoreMaterial) {
     return save(pCoreMaterial, &saveCoreMaterial);
 }
@@ -1030,8 +1039,15 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
   *         \li \b false if an error happend
   *****************************************************************************/
 
+
+
 bool CalSaver::saveXmlCoreMorphAnimation(const std::string& strFilename, CalCoreMorphAnimation* pCoreMorphAnimation) {
-    TiXmlDocument doc(strFilename);
+    std::ofstream of(strFilename.c_str());
+    return saveXmlCoreMorphAnimation(of, pCoreMorphAnimation);
+}
+
+bool CalSaver::saveXmlCoreMorphAnimation(std::ostream& os, CalCoreMorphAnimation* pCoreMorphAnimation) {
+    TiXmlDocument doc;
     std::stringstream str;
 
     TiXmlElement animation("ANIMATION");
@@ -1089,10 +1105,8 @@ bool CalSaver::saveXmlCoreMorphAnimation(const std::string& strFilename, CalCore
 
     doc.InsertEndChild(animation);
 
-    if (!doc.SaveFile()) {
-        CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
-        return false;
-    }
+    doc.Print(os);
+
     return true;
 }
 

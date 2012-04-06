@@ -17,8 +17,13 @@ class CalCoreMorphKeyframe;
 
 class CAL3D_API CalCoreMorphTrack {
 public:
+    typedef std::vector<CalCoreMorphKeyframe> MorphKeyframeList;
+
     std::string morphName;
-    std::vector<CalCoreMorphKeyframe> keyframes;
+    MorphKeyframeList keyframes;
+
+    CalCoreMorphTrack();
+    CalCoreMorphTrack(const std::string& morphName, const MorphKeyframeList& keyframes);
 
     size_t size() const;
 
@@ -30,3 +35,8 @@ public:
 private:
     std::vector<CalCoreMorphKeyframe>::iterator getUpperBound(float time);
 };
+
+inline bool operator==(const CalCoreMorphTrack& lhs, const CalCoreMorphTrack& rhs) {
+    return lhs.morphName == rhs.morphName &&
+           lhs.keyframes == rhs.keyframes;
+}

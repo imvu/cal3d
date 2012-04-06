@@ -32,3 +32,7 @@ public:
 inline bool operator<(CalCoreMorphKeyframe lhs, CalCoreMorphKeyframe rhs) {
     return lhs.time < rhs.time;
 }
+
+inline bool operator==(const CalCoreMorphKeyframe& lhs, const CalCoreMorphKeyframe& rhs) {
+    return cal3d::close(lhs.time, rhs.time) && cal3d::close(lhs.weight, rhs.weight);
+}
