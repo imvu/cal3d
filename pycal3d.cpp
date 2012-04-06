@@ -412,6 +412,8 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreTrack>("CoreTrack", init<int, const CalCoreTrack::KeyframeList&>())
         .def_readwrite("coreBoneId", &CalCoreTrack::coreBoneId)
         .def_readwrite("keyframes", &CalCoreTrack::keyframes)
+
+        .def("getCurrentTransform", &CalCoreTrack::getCurrentTransform)
         ;
 
     exportVector<CalCoreTrack>("CoreTrackVector");
@@ -443,6 +445,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
     def("saveCoreAnimation", &saveCoreAnimation);
     def("saveCoreAnimationToBuffer", &CalSaver::saveCoreAnimationToBuffer);
+    def("saveCoreAnimationXmlToBuffer", &CalSaver::saveCoreAnimationXmlToBuffer);
 
     def("loadCoreSkeletonFromBuffer", &loadCoreSkeletonFromBuffer);
     def("saveCoreSkeleton", &saveCoreSkeleton);

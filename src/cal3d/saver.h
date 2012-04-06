@@ -35,6 +35,8 @@ public:
     static std::string saveCoreMeshToBuffer(CalCoreMeshPtr pCoreMesh);
     static std::string saveCoreSkeletonToBuffer(CalCoreSkeletonPtr pCoreSkeleton);
 
+    static std::string saveCoreAnimationXmlToBuffer(CalCoreAnimationPtr pCoreAnimation);
+
     static bool saveCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation);
     static bool saveCoreAnimation(std::ostream& stream, CalCoreAnimation* coreAnimation);
 

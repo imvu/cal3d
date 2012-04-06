@@ -49,6 +49,15 @@ std::string CalSaver::saveCoreAnimationToBuffer(CalCoreAnimationPtr pCoreAnimati
     return save(pCoreAnimation, &saveCoreAnimation);
 }
 
+std::string CalSaver::saveCoreAnimationXmlToBuffer(CalCoreAnimationPtr pCoreAnimation) {
+    std::ostringstream os;
+    if (saveXmlCoreAnimation(os, pCoreAnimation.get())) {
+        return os.str();
+    } else {
+        return "";
+    }
+}
+
 std::string CalSaver::saveCoreMorphAnimationToBuffer(CalCoreMorphAnimationPtr pCoreMorphAnimation) {
     return save(pCoreMorphAnimation, &saveCoreMorphAnimation);
 }
