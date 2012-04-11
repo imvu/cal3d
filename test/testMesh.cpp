@@ -8,8 +8,8 @@ TEST(can_replace_base_mesh_with_morph_target) {
     CalCoreSubmesh::Face face(0, 0, 0);
 
     CalCoreSubmesh::Vertex vertex;
-    vertex.position = CalPoint4(0, 0, 0);
-    vertex.normal = CalVector4(0, 0, 0);
+    vertex.position = CalPoint4(1, 1, 1);
+    vertex.normal = CalVector4(1, 1, 1);
 
     CalCoreSubmesh::Influence influence;
     influence.boneId = 0;
@@ -26,8 +26,8 @@ TEST(can_replace_base_mesh_with_morph_target) {
 
     VertexOffset aVO;
     aVO.vertexId = 0;
-    aVO.position = CalPoint4(1, 1, 1);
-    aVO.normal = CalVector4(1, 1, 1);
+    aVO.position = CalVector4(2, 2, 2);
+    aVO.normal = CalVector4(2, 2, 2);
 
     CalCoreMorphTarget::VertexOffsetArray aVertexOffsets;
     aVertexOffsets.push_back(aVO);
@@ -35,8 +35,8 @@ TEST(can_replace_base_mesh_with_morph_target) {
 
     VertexOffset bVO;
     bVO.vertexId = 0;
-    bVO.position = CalPoint4(2, 2, 2);
-    bVO.normal = CalVector4(2, 2, 2);
+    bVO.position = CalVector4(3, 3, 3);
+    bVO.normal = CalVector4(3, 3, 3);
 
     CalCoreMorphTarget::VertexOffsetArray bVertexOffsets;
     bVertexOffsets.push_back(bVO);
@@ -47,14 +47,14 @@ TEST(can_replace_base_mesh_with_morph_target) {
 
     mesh.submeshes.push_back(submesh);
     
-    CHECK_EQUAL(CalPoint4(0, 0, 0), submesh->getVectorVertex()[0].position);
-    CHECK_EQUAL(CalVector4(0, 0, 0), submesh->getVectorVertex()[0].normal);
+    CHECK_EQUAL(CalPoint4(1, 1, 1), submesh->getVectorVertex()[0].position);
+    CHECK_EQUAL(CalVector4(1, 1, 1), submesh->getVectorVertex()[0].normal);
 
     mesh.replaceMeshWithMorphTarget("b"); // testing case insensitivity?
-    CHECK_EQUAL(CalPoint4(0, 0, 0), submesh->getVectorVertex()[0].position);
-    CHECK_EQUAL(CalVector4(0, 0, 0), submesh->getVectorVertex()[0].normal);
+    CHECK_EQUAL(CalPoint4(1, 1, 1), submesh->getVectorVertex()[0].position);
+    CHECK_EQUAL(CalVector4(1, 1, 1), submesh->getVectorVertex()[0].normal);
 
     mesh.replaceMeshWithMorphTarget("B"); // testing case insensitivity?
-    CHECK_EQUAL(CalPoint4(2, 2, 2), submesh->getVectorVertex()[0].position);
-    CHECK_EQUAL(CalVector4(2, 2, 2), submesh->getVectorVertex()[0].normal);
+    CHECK_EQUAL(CalPoint4(4, 4, 4), submesh->getVectorVertex()[0].position);
+    CHECK_EQUAL(CalVector4(4, 4, 4), submesh->getVectorVertex()[0].normal);
 }

@@ -177,8 +177,8 @@ void CalCoreSubmesh::replaceMeshWithMorphTarget(const std::string& morphTargetNa
         if ((*i)->name == morphTargetName) {
             const auto& offsets = (*i)->vertexOffsets;
             for (auto o = offsets.begin(); o != offsets.end(); ++o) {
-                m_vertices[o->vertexId].position = o->position;
-                m_vertices[o->vertexId].normal = o->normal;
+                m_vertices[o->vertexId].position += o->position;
+                m_vertices[o->vertexId].normal += o->normal;
             }
         }
     }
