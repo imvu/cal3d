@@ -22,6 +22,8 @@ public:
     size_t sizeInBytes() const;
     bool addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& morphTargetName);
     
+    void replaceMeshWithMorphTarget(const std::string& morphTargetName);
+
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
 

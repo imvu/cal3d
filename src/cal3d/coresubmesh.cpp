@@ -172,6 +172,18 @@ BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) con
     return rm;
 }
 
+void CalCoreSubmesh::replaceMeshWithMorphTarget(const std::string& morphTargetName) {
+    for (auto i = m_morphTargets.begin(); i != m_morphTargets.end(); ++i) {
+        if ((*i)->name == morphTargetName) {
+            const auto& offsets = (*i)->vertexOffsets;
+            for (auto o = offsets.begin(); o != offsets.end(); ++o) {
+                m_vertices[o->vertexId].position = o->position;
+                m_vertices[o->vertexId].normal = o->normal;
+            }
+        }
+    }
+}
+
 /*
           f8, f9
             :
@@ -189,7 +201,7 @@ BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) con
 */
 
  
-CalCoreSubmeshPtr MakeCube( ) {
+CalCoreSubmeshPtr MakeCube() {
     CalCoreSubmeshPtr cube(new CalCoreSubmesh(24, true, 12));
     
     const CalColor32 black = 0;
@@ -428,4 +440,4 @@ CalCoreSubmeshPtr MakeCube( ) {
     CalCoreSubmesh::Face f11(20, 23, 21);    
     cube->faces[11] = f11;
     return cube;
-    }
+}

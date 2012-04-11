@@ -7,6 +7,7 @@ sources = Split('''
     testCoreTrack.cpp
     testLoader.cpp
     testMemory.cpp
+    testMesh.cpp
     testMixer.cpp
     testPhysique.cpp
     testSubmesh.cpp

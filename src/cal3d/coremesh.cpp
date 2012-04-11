@@ -80,14 +80,20 @@ bool CalCoreMesh::addAsMorphTarget(CalCoreMesh* pCoreMesh, std::string const& mo
     return true;
 }
 
+void CalCoreMesh::replaceMeshWithMorphTarget(const std::string& morphTargetName) {
+    for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
+        (*i)->replaceMeshWithMorphTarget(morphTargetName);
+    }
+}
+
 void CalCoreMesh::scale(float factor) {
-    for (CalCoreSubmeshVector::iterator i = submeshes.begin(); i != submeshes.end(); ++i) {
+    for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
         (*i)->scale(factor);
     }
 }
 
 void CalCoreMesh::fixup(const CalCoreSkeletonPtr& skeleton) {
-    for (CalCoreSubmeshVector::iterator i = submeshes.begin(); i != submeshes.end(); ++i) {
+    for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
         (*i)->fixup(skeleton);
     }
 }

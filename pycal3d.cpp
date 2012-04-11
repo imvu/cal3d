@@ -398,6 +398,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     class_<CalCoreMesh, CalCoreMeshPtr>("CoreMesh")
         .def_readwrite("submeshes", &CalCoreMesh::submeshes)
+        .def("replaceMeshWithMorphTarget", &CalCoreMesh::replaceMeshWithMorphTarget)
         .def("scale", &CalCoreMesh::scale)
         .def("fixup", &CalCoreMesh::fixup)
         ;
