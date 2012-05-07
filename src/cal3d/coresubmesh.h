@@ -34,7 +34,16 @@ enum CalMorphTargetType {
 
 class CAL3D_API CalCoreSubmesh {
 public:
+    // TODO: replace with Vec2f
     struct TextureCoordinate {
+        TextureCoordinate() {
+        }
+
+        TextureCoordinate(float u, float v)
+            : u(u)
+            , v(v)
+        {}
+
         float u, v;
 
         bool operator==(const TextureCoordinate& rhs) const {
@@ -138,6 +147,7 @@ public:
     bool hasTextureCoordinates() const {
         return !m_textureCoordinates.empty();
     }
+    bool hasTextureCoordinatesOutside0_1() const;
     const VectorTextureCoordinate& getTextureCoordinates() const {
         return m_textureCoordinates;
     }

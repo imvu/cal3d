@@ -54,7 +54,19 @@ void CalCoreSubmesh::setTextureCoordinate(int vertexId, const TextureCoordinate&
     m_textureCoordinates[vertexId] = textureCoordinate;
 }
 
-bool descendingByWeight(const CalCoreSubmesh::Influence& lhs, const CalCoreSubmesh::Influence& rhs) {
+bool CalCoreSubmesh::hasTextureCoordinatesOutside0_1() const {
+    for (auto i = m_textureCoordinates.begin(); i != m_textureCoordinates.end(); ++i) {
+        if (
+            i->u < 0 || i->u > 1 ||
+            i->v < 0 || i->v > 1
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool descendingByWeight(const CalCoreSubmesh::Influence& lhs, const CalCoreSubmesh::Influence& rhs) {
     return lhs.weight > rhs.weight;
 }
 

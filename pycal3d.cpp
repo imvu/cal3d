@@ -354,6 +354,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     exportVector<PythonVertex>("VertexVector");
 
     class_<CalCoreSubmesh::TextureCoordinate>("TextureCoordinate")
+        .def(init<float, float>())
         .def_readwrite("u", &CalCoreSubmesh::TextureCoordinate::u)
         .def_readwrite("v", &CalCoreSubmesh::TextureCoordinate::v)
         ;
@@ -392,6 +393,9 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("texcoords", make_function(&CalCoreSubmesh::getTextureCoordinates, return_value_policy<return_by_value>()))
         .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
         .add_property("subMorphTargets", make_function(&CalCoreSubmesh::getMorphTargets, return_value_policy<return_by_value>()))
+
+        .def("setTextureCoordinate", &CalCoreSubmesh::setTextureCoordinate)
+        .def("hasTextureCoordinatesOutside0_1", &CalCoreSubmesh::hasTextureCoordinatesOutside0_1)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");
