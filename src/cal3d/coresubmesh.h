@@ -36,8 +36,10 @@ class CAL3D_API CalCoreSubmesh {
 public:
     // TODO: replace with Vec2f
     struct TextureCoordinate {
-        TextureCoordinate() {
-        }
+        TextureCoordinate()
+            : u(0)
+            , v(0) 
+        {}
 
         TextureCoordinate(float u, float v)
             : u(u)
