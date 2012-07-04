@@ -216,9 +216,9 @@ struct CalVector4 : CalBase4 {
         : CalBase4(_x, _y, _z, _w)
     {}
 
-    CAL3D_FORCEINLINE void setAsVector(const CalVector& r) {
-        *this = CalVector4(r.x, r.y, r.z, 0.0f);
-    }
+    explicit CalVector4(const CalVector& v)
+        : CalBase4(v.x, v.y, v.z, 0.0f)
+    {}
 };
 
 struct CalPoint4 : CalBase4 {
@@ -232,7 +232,7 @@ struct CalPoint4 : CalBase4 {
     : CalBase4(_x, _y, _z, _w)
     {}
 
-    CAL3D_FORCEINLINE void setAsPoint(const CalVector& r) {
-        *this = CalPoint4(r.x, r.y, r.z, 1.0f);
-    }
+    explicit CalPoint4(const CalVector& v)
+        : CalBase4(v.x, v.y, v.z, 1.0f)
+    {}
 };

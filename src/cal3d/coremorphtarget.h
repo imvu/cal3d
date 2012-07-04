@@ -18,6 +18,16 @@ struct VertexOffset {
     size_t vertexId;
     CalPoint4 position;
     CalVector4 normal;
+
+    VertexOffset()
+        : vertexId(0) 
+    {}
+
+    VertexOffset(const size_t vertexId, const CalPoint4& p, const CalVector4& n)
+        : vertexId(vertexId)
+        , position(p)
+        , normal(n)
+    {}
 };
 
 class CAL3D_API CalCoreMorphTarget {

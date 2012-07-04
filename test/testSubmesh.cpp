@@ -249,7 +249,7 @@ TEST(aabox_is_single_point_with_one_vertex) {
     CalVector pos(1.0f, 2.0f, 3.0f);
 
     CalCoreSubmesh::Vertex v;
-    v.position.setAsPoint(pos);
+    v.position = CalPoint4(pos);
     csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
     CHECK_EQUAL(CalAABox(pos, pos), csm.getBoundingVolume());
@@ -259,13 +259,13 @@ TEST(aabox_is_min_max_of_all_vertices) {
     CalCoreSubmesh csm(3, 0, 0);
 
     CalCoreSubmesh::Vertex v;
-    v.position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
+    v.position = CalPoint4(CalVector(1.0f, 2.0f, 3.0f));
     csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
-    v.position.setAsPoint(CalVector(2.0f, 3.0f, 1.0f));
+    v.position = CalPoint4(CalVector(2.0f, 3.0f, 1.0f));
     csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
-    v.position.setAsPoint(CalVector(3.0f, 1.0f, 2.0f));
+    v.position = CalPoint4(CalVector(3.0f, 1.0f, 2.0f));
     csm.addVertex(v, CalColor32(), std::vector<CalCoreSubmesh::Influence>());
 
     CHECK_EQUAL(

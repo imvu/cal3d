@@ -141,7 +141,7 @@ static inline bool CalVectorFromXml(
 ) {
     CalVector v;
     if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
-        calVec->setAsVector(v);
+        *calVec = CalVector4(v);
         return true;
     } else {
         return false;
@@ -158,7 +158,7 @@ static inline bool CalVectorFromXml(
 ) {
     CalVector v;
     if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
-        calVec->setAsPoint(v);
+        *calVec = CalPoint4(v);
         return true;
     } else {
         return false;

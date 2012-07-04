@@ -87,7 +87,7 @@ bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector* calVec)
 bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalPoint4* calVec) {
     CalVector v;
     if (CalVectorFromDataSrc(dataSrc, &v)) {
-        calVec->setAsPoint(v);
+        *calVec = CalPoint4(v);
         return true;
     } else {
         return false;
@@ -97,7 +97,7 @@ bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalPoint4* calVec)
 bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector4* calVec) {
     CalVector v;
     if (CalVectorFromDataSrc(dataSrc, &v)) {
-        calVec->setAsVector(v);
+        *calVec = CalVector4(v);
         return true;
     } else {
         return false;

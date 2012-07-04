@@ -205,8 +205,8 @@ ABSTRACT_TEST(skin_10000_vertices_1_influence_cycle_count) {
     CalCoreSubmesh::Vertex v[N];
     CalCoreSubmesh::Influence i[N];
     for (int k = 0; k < N; ++k) {
-        v[k].position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
-        v[k].normal.setAsVector(CalVector(0.0f, 0.0f, 1.0f));
+        v[k].position = CalPoint4(CalVector(1.0f, 2.0f, 3.0f));
+        v[k].normal = CalVector4(CalVector(0.0f, 0.0f, 1.0f));
         i[k].boneId = 0;
         i[k].weight = 1.0f;
         i[k].lastInfluenceForThisVertex = true;
@@ -236,8 +236,8 @@ static CalCoreSubmeshPtr djinnCoreSubmesh(int N) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(N, 0, 0));
     for (int k = 0; k < N; ++k) {
         CalCoreSubmesh::Vertex v;
-        v.position.setAsPoint(CalVector(1.0f, 2.0f, 3.0f));
-        v.normal.setAsVector(CalVector(0.0f, 0.0f, 1.0f));
+        v.position = CalPoint4(CalVector(1.0f, 2.0f, 3.0f));
+        v.normal = CalVector4(CalVector(0.0f, 0.0f, 1.0f));
         std::vector<CalCoreSubmesh::Influence> inf(1);
         inf[0].boneId = 0;
         inf[0].weight = 1.0f;
@@ -336,8 +336,8 @@ TEST(single_morph_target) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(3, 0, 1));
     CalCoreSubmesh::Vertex v;
 
-    v.position.setAsPoint(CalVector(0, 0, 0));
-    v.normal.setAsVector(CalVector(0, 0, 0));
+    v.position = CalPoint4(CalVector(0, 0, 0));
+    v.normal = CalVector4(CalVector(0, 0, 0));
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
@@ -345,8 +345,8 @@ TEST(single_morph_target) {
     CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
 
     VertexOffset bv;
-    bv.position.setAsPoint(CalVector(1, 1, 1));
-    bv.normal.setAsVector(CalVector(1, 1, 1));
+    bv.position = CalPoint4(CalVector(1, 1, 1));
+    bv.normal = CalVector4(CalVector(1, 1, 1));
     bv.vertexId = 0;
     vertexOffsets.push_back(bv);
     bv.vertexId = 1;
@@ -388,15 +388,15 @@ TEST(two_morph_targets) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(3, 0, 1));
     CalCoreSubmesh::Vertex v;
 
-    v.position.setAsPoint(CalVector(0, 0, 0));
-    v.normal.setAsVector(CalVector(0, 0, 0));
+    v.position = CalPoint4(CalVector(0, 0, 0));
+    v.normal = CalVector4(CalVector(0, 0, 0));
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
     VertexOffset bv;
-    bv.position.setAsPoint(CalVector(1, 1, 1));
-    bv.normal.setAsVector(CalVector(1, 1, 1));
+    bv.position = CalPoint4(CalVector(1, 1, 1));
+    bv.normal = CalVector4(CalVector(1, 1, 1));
 
     CalCoreMorphTarget::VertexOffsetArray morphVertices1;
     bv.vertexId = 0;
@@ -452,14 +452,14 @@ TEST(two_disjoint_morph_targets) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(2, 0, 1));
     CalCoreSubmesh::Vertex v;
 
-    v.position.setAsPoint(CalVector(0, 0, 0));
-    v.normal.setAsVector(CalVector(0, 0, 0));
+    v.position = CalPoint4(CalVector(0, 0, 0));
+    v.normal = CalVector4(CalVector(0, 0, 0));
     coreSubmesh->addVertex(v, 0, inf);
     coreSubmesh->addVertex(v, 0, inf);
 
     VertexOffset bv;
-    bv.position.setAsPoint(CalVector(1, 1, 1));
-    bv.normal.setAsVector(CalVector(1, 1, 1));
+    bv.position = CalPoint4(CalVector(1, 1, 1));
+    bv.normal = CalVector4(CalVector(1, 1, 1));
 
     CalCoreMorphTarget::VertexOffsetArray morphVertices1;
     bv.vertexId = 0;

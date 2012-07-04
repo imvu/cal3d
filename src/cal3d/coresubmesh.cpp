@@ -119,14 +119,6 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
 }
 
-void CalCoreSubmesh::addMorphTarget(CalCoreMorphTargetPtr pCoreSubMorphTarget) {
-    m_morphTargets.push_back(pCoreSubMorphTarget);
-}
-
-const CalCoreSubmesh::MorphTargetArray& CalCoreSubmesh::getMorphTargets() const {
-    return m_morphTargets;
-}
-
 void CalCoreSubmesh::scale(float factor) {
     // needed because we shouldn't modify the w term
     CalVector4 scaleFactor(factor, factor, factor, 1.0f);

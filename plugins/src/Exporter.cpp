@@ -578,7 +578,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
                                 CalVector position;
 				pVertexCandidate->GetPosition(position);
                                 position -= positionOffset;
-                                vertex.position.setAsPoint(position);
+                                vertex.position = CalPoint4(position);
 
                                 // set the vertex color
                                 CalVector vc;
@@ -588,7 +588,7 @@ bool CExporter::meshCandidateToCoreMesh(CMeshCandidate const & meshCandidate, Ca
 				// set the vertex normal
 				CalVector normal;
 				pVertexCandidate->GetNormal(normal);
-                                vertex.normal.setAsVector(normal);
+                                vertex.normal = CalVector4(normal);
 
 				// get the texture coordinate vector
 				std::vector<CVertexCandidate::TextureCoordinate>& vectorTextureCoordinate = pVertexCandidate->GetVectorTextureCoordinate();

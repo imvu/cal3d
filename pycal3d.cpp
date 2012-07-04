@@ -122,7 +122,7 @@ namespace cal3d {
         }
 
         ~PythonBuffer() {
-            boost::python::PyGILState_AssertIsCurrent();
+            PyGILState_AssertIsCurrent();
             decref(get());
         }
 
@@ -151,7 +151,7 @@ namespace cal3d {
             converter::registry::push_back(
                 &convertible,
                 &construct,
-                boost::python::type_id<Buffer>()
+                type_id<Buffer>()
             );
         }
 
@@ -164,7 +164,7 @@ namespace cal3d {
 
         static void construct(
             PyObject* obj_ptr,
-            boost::python::converter::rvalue_from_python_stage1_data* data
+            converter::rvalue_from_python_stage1_data* data
         ) {
             // Note that we're registered as a converter to the Buffer interface,
             // so Boost has already allocated sizeof(Buffer) for us.  Since we're
@@ -172,7 +172,7 @@ namespace cal3d {
             // PythonStringBuffer and Buffer have the same size.
             BOOST_STATIC_ASSERT(sizeof(Buffer) == sizeof(PythonBuffer));
 
-            void* storage = ((boost::python::converter::rvalue_from_python_storage<PythonBuffer>*)data)->storage.bytes;
+            void* storage = ((converter::rvalue_from_python_storage<PythonBuffer>*)data)->storage.bytes;
 
             new(storage) PythonBuffer(obj_ptr);
 
@@ -188,45 +188,47 @@ CalIndex getFaceIndex(const CalCoreSubmesh::Face& f) {
 
 struct PythonVertex {
     PythonVertex() {}
-    PythonVertex(const CalCoreSubmesh::Vertex& v) {
-        position.x = v.position.x;
-        position.y = v.position.y;
-        position.z = v.position.z;
+    PythonVertex(const CalCoreSubmesh::Vertex& v)
+        : position(v.position.asCalVector())
+        , normal(v.normal.asCalVector())
+    {}
 
-        normal.x = v.normal.x;
-        normal.y = v.normal.y;
-        normal.z = v.normal.z;
+    CalCoreSubmesh::Vertex asVertex() const {
+        CalCoreSubmesh::Vertex v;
+        v.position = CalPoint4(position);
+        v.normal = CalVector4(normal);
+        return v;
     }
-    
-    CalVector position;
-    CalVector normal;
 
     bool operator==(const PythonVertex& rhs) const {
         return position == rhs.position && normal == rhs.normal;
     }
-};
-
-struct PythonBlendVertex {
-    PythonBlendVertex() {}
-    PythonBlendVertex(const VertexOffset& bv) {
-        vertexId = bv.vertexId;
-
-        position.x = bv.position.x;
-        position.y = bv.position.y;
-        position.z = bv.position.z;
-        
-        normal.x = bv.normal.x;
-        normal.y = bv.normal.y;
-        normal.z = bv.normal.z;
-    }
     
     CalVector position;
     CalVector normal;
-    int vertexId;
-    
-    bool operator==(const PythonBlendVertex& rhs) const {
-        return position == rhs.position && normal == rhs.normal;
+};
+
+struct PythonVertexOffset {
+    PythonVertexOffset()
+        : vertexId(0)
+    {}
+
+    PythonVertexOffset(const VertexOffset& bv)
+        : vertexId(bv.vertexId)
+        , position(bv.position.asCalVector())
+        , normal(bv.normal.asCalVector())
+    {}
+
+    VertexOffset asVertexOffset() const {
+        return VertexOffset(
+            vertexId,
+            CalPoint4(position),
+            CalVector4(normal));
     }
+    
+    int vertexId;
+    CalVector position;
+    CalVector normal;
 };
 
 std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
@@ -235,13 +237,26 @@ std::vector<PythonVertex> getVertices(const CalCoreSubmesh& submesh) {
         submesh.getVectorVertex().end());
 }
 
-boost::python::list getBlendVertices(const CalCoreMorphTarget& target) {
-    boost::python::list pVerts;
+void addVertex(CalCoreSubmesh& submesh, const PythonVertex& vertex, CalColor32 vertexColor, const std::vector<CalCoreSubmesh::Influence>& influences) {
+    return submesh.addVertex(vertex.asVertex(), vertexColor, influences);
+}
+
+CalCoreMorphTargetPtr makeMorphTarget(const std::string& name, size_t vertexCount, list vertexOffsets) {
+    SSEArray<VertexOffset> vos;
+    for (boost::python::ssize_t i = 0; i < len(vertexOffsets); ++i) {
+        const PythonVertexOffset& pvo = extract<PythonVertexOffset>(vertexOffsets[i]);
+        vos.push_back(pvo.asVertexOffset());
+    }
+    return CalCoreMorphTargetPtr(new CalCoreMorphTarget(name, vertexCount, vos));
+}
+
+list getVertexOffsets(const CalCoreMorphTarget& target) {
+    list pVerts;
     const CalCoreMorphTarget::VertexOffsetArray& vertices = target.vertexOffsets;
     
     for (unsigned blendId = 0; blendId < vertices.size(); ++blendId) {
         VertexOffset const& bv = vertices[blendId];
-        PythonBlendVertex vertex(bv);
+        PythonVertexOffset vertex(bv);
         pVerts.append(vertex);
     }    
     return pVerts;
@@ -363,6 +378,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     exportVector<std::vector<CalCoreSubmesh::TextureCoordinate>>("TextureCoordinateVectorVector");
 
     class_<CalCoreSubmesh::Influence>("Influence")
+        .def(init<unsigned, float, bool>())
         .def_readwrite("boneId", &CalCoreSubmesh::Influence::boneId)
         .def_readwrite("weight", &CalCoreSubmesh::Influence::weight)
         .def_readwrite("isLast", &CalCoreSubmesh::Influence::lastInfluenceForThisVertex)
@@ -370,15 +386,16 @@ BOOST_PYTHON_MODULE(_cal3d)
 
     exportVector<CalCoreSubmesh::Influence>("InfluenceVector");
     
-    class_<PythonBlendVertex>("MorphVertex")
-        .def_readwrite("position", &PythonBlendVertex::position)
-        .def_readwrite("normal", &PythonBlendVertex::normal)
-        .def_readwrite("id", &PythonBlendVertex::vertexId)
+    class_<PythonVertexOffset>("VertexOffset")
+        .def_readwrite("id", &PythonVertexOffset::vertexId)
+        .def_readwrite("position", &PythonVertexOffset::position)
+        .def_readwrite("normal", &PythonVertexOffset::normal)
         ;
     
     class_<CalCoreMorphTarget, CalCoreMorphTargetPtr, boost::noncopyable>("CoreMorphTarget", no_init)
+        .def("__init__", make_constructor(&makeMorphTarget))
         .def_readonly("name", &CalCoreMorphTarget::name)
-        .add_property("blendVertices", &getBlendVertices)
+        .add_property("blendVertices", &getVertexOffsets)
         ;
     
     exportVector<CalCoreMorphTargetPtr>("MorphTargetVector");
@@ -393,6 +410,8 @@ BOOST_PYTHON_MODULE(_cal3d)
         .add_property("texcoords", make_function(&CalCoreSubmesh::getTextureCoordinates, return_value_policy<return_by_value>()))
         .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
         .add_property("subMorphTargets", make_function(&CalCoreSubmesh::getMorphTargets, return_value_policy<return_by_value>()))
+        .def("addMorphTarget", &CalCoreSubmesh::addMorphTarget)
+        .def("addVertex", &addVertex)
 
         .def("setTextureCoordinate", &CalCoreSubmesh::setTextureCoordinate)
         .def("hasTextureCoordinatesOutside0_1", &CalCoreSubmesh::hasTextureCoordinatesOutside0_1)
