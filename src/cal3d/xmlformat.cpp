@@ -754,7 +754,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    // get the number of submeshes
+    //  get the number of submeshes
     int submeshCount = atoi(mesh->Attribute("NUMSUBMESH"));
 
     // allocate a new core mesh instance
