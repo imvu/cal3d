@@ -361,7 +361,7 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
 
 
         TiXmlElement* translationBoneSpace = rotation->NextSiblingElement();
-        if (!rotation || cal3d_stricmp(translationBoneSpace->Value(), "LOCALTRANSLATION") != 0) {
+        if (!translationBoneSpace || cal3d_stricmp(translationBoneSpace->Value(), "LOCALTRANSLATION") != 0) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return null;
         }
