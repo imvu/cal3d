@@ -619,16 +619,10 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
         CalPlatform::writeFloat(os, vertex.normal.x);
         CalPlatform::writeFloat(os, vertex.normal.y);
         CalPlatform::writeFloat(os, vertex.normal.z);
-        if (pCoreSubmesh->hasVertexColors()) {
-            CalVector vc(CalVectorFromColor(vertexColors[vertexId]));
-            CalPlatform::writeFloat(os, vc.x);
-            CalPlatform::writeFloat(os, vc.y);
-            CalPlatform::writeFloat(os, vc.z);
-        } else {
-            CalPlatform::writeFloat(os, 1);
-            CalPlatform::writeFloat(os, 1);
-            CalPlatform::writeFloat(os, 1);
-        }
+        CalVector vc(CalVectorFromColor(vertexColors[vertexId]));
+        CalPlatform::writeFloat(os, vc.x);
+        CalPlatform::writeFloat(os, vc.y);
+        CalPlatform::writeFloat(os, vc.z);
         CalPlatform::writeInteger(os, -1); // collapseId
         CalPlatform::writeInteger(os, 0); // faceCollapseCount
 

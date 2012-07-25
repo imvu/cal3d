@@ -143,9 +143,6 @@ public:
     int coreMaterialThreadId;
     std::vector<Face> faces;
 
-    bool hasVertexColors() const {
-        return m_hasVertexColors;
-    }
     bool hasTextureCoordinates() const {
         return !m_textureCoordinates.empty();
     }
@@ -198,7 +195,6 @@ private:
     // The following arrays should always be the same size.
     VectorVertex m_vertices;
 
-    bool m_hasVertexColors;    
     std::vector<CalColor32> m_vertexColors;
  
     VectorTextureCoordinate m_textureCoordinates;
