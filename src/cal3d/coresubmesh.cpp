@@ -15,6 +15,7 @@
 #include "cal3d/coreskeleton.h"
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coremorphtarget.h"
+#include "cal3d/vector4.h"
 #include "cal3d/transform.h"
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
@@ -131,6 +132,23 @@ void CalCoreSubmesh::scale(float factor) {
         (*i)->scale(factor);
     }
 }
+
+
+void CalCoreSubmesh::applyZupToYup() {
+
+    for (size_t vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
+        cal3d::applyZupToYup( (m_vertices[vertexId].position) );
+        cal3d::applyZupToYup( (m_vertices[vertexId].normal) );
+    }
+
+    cal3d::applyZupToYup( m_boundingVolume.min );
+    cal3d::applyZupToYup( m_boundingVolume.max );
+
+    for (MorphTargetArray::iterator i = m_morphTargets.begin(); i != m_morphTargets.end(); ++i) {
+        (*i)->applyZupToYup();
+    }
+}
+
 
 void CalCoreSubmesh::fixup(const CalCoreSkeletonPtr& skeleton) {
     for (size_t i = 0; i < m_influences.size(); ++i) {

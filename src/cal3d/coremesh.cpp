@@ -91,6 +91,11 @@ void CalCoreMesh::scale(float factor) {
     }
 }
 
+void CalCoreMesh::applyZupToYup() {
+    for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
+        (*i)->applyZupToYup();
+    }
+}
 void CalCoreMesh::fixup(const CalCoreSkeletonPtr& skeleton) {
     for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
         (*i)->fixup(skeleton);

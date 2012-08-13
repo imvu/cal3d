@@ -142,3 +142,12 @@ inline CalVector cross(const CalVector& a, const CalVector& u) {
 inline CalVector lerp(float f, CalVector left, CalVector right) {
     return (1 - f) * left + f * right;
 }
+
+namespace cal3d {    
+    inline void applyZupToYup(CalVector &v) {
+        float temp = v.y;
+        v.y = v.z;
+        v.z = temp;
+        v.z = -v.z;
+    }
+}

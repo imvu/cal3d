@@ -26,6 +26,7 @@ public:
 
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
+    void applyZupToYup();
 
     CalCoreSubmeshVector submeshes;
 };

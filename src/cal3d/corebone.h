@@ -37,6 +37,7 @@ public:
 
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);
+    void applyZupToYup();
 
     bool hasLightingData() const {
         return lightType != LIGHT_TYPE_NONE;

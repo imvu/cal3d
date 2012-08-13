@@ -5,6 +5,7 @@
 #include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
+#include "TestCoreSkeleton.h"
 
 static cal3d::RotateTranslate makeTranslation(float x, float y, float z) {
     return cal3d::RotateTranslate(CalQuaternion(), CalVector(x, y, z));
@@ -82,26 +83,8 @@ TEST_F(BoneFixture, bone_with_two_replacements_and_one_nonreplacement_blends_mor
 }
 
 FIXTURE(MixerFixture) {
-    static CalCoreSkeletonPtr fakeSkeleton() {
-        CalCoreBonePtr actualRoot(new CalCoreBone("actualRoot"));
-
-        CalCoreBonePtr coreRoot(new CalCoreBone("root", 0));
-        coreRoot->relativeTransform.translation.x = 1;
-        coreRoot->inverseBindPoseTransform.translation = CalVector(10, 10, 10);
-
-        CalCoreBonePtr coreBone(new CalCoreBone("bone", 1));
-        coreBone->relativeTransform.translation.x = 2;
-        coreBone->inverseBindPoseTransform.translation = CalVector(20, 20, 20);
-
-        CalCoreSkeletonPtr cs(new CalCoreSkeleton);
-        cs->addCoreBone(actualRoot);
-        cs->addCoreBone(coreRoot);
-        cs->addCoreBone(coreBone);
-        return cs;
-    }
-
     SETUP(MixerFixture)
-        : skeleton(fakeSkeleton())
+        : skeleton(makeFakeSkeleton())
     {}
 
     CalSkeleton skeleton;

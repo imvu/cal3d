@@ -1,4 +1,5 @@
 #include "TestPrologue.h"
+#include <libzero/Math.h>
 #include <cal3d/streamops.h>
 #include <cal3d/transform.h>
 
@@ -34,4 +35,20 @@ TEST(non_uniform_scale_before_and_after_transform) {
 
     CHECK_EQUAL(CalVector(-3, 3, 12), (transform * scale) * CalVector(1, 2, 3));
     CHECK_EQUAL(CalVector(-1, 6, 18), (scale * transform) * CalVector(1, 2, 3));
+}
+
+
+TEST(applyZupToYup_transform) {
+    CalQuaternion quat;
+    CalVector axis(1,1,1);
+    axis.normalize();
+    quat.setAxisAngle(axis, DegreesToRadians(30));
+    CalVector trans(1.0f, 2.0f, 3.0f);
+    cal3d::RotateTranslate rotTrans(quat, trans);
+    cal3d::applyZupToYup(rotTrans);
+    CalVector transformedAxis(axis.x, axis.z, -axis.y);
+    cal3d::applyZupToYup(quat);
+    cal3d::applyZupToYup(trans);
+    CHECK_EQUAL(trans, rotTrans.translation);
+    CHECK_EQUAL(quat, rotTrans.rotation);
 }
