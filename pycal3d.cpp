@@ -335,7 +335,6 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreSkeleton, CalCoreSkeletonPtr, boost::noncopyable>("CoreSkeleton")
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
         .def("scale", &CalCoreSkeleton::scale)
-        .def("applyZupToYup", &CalCoreSkeleton::applyZupToYup)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
         .add_property("bones", make_function(&CalCoreSkeleton::getCoreBones, return_value_policy<return_by_value>()))
         ;
@@ -423,7 +422,6 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("submeshes", &CalCoreMesh::submeshes)
         .def("replaceMeshWithMorphTarget", &CalCoreMesh::replaceMeshWithMorphTarget)
         .def("scale", &CalCoreMesh::scale)
-        .def("applyZupToYup", &CalCoreMesh::applyZupToYup)
         .def("fixup", &CalCoreMesh::fixup)
         ;
 
@@ -444,7 +442,6 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreAnimation, CalCoreAnimationPtr>("CoreAnimation")
         .def("scale", &CalCoreAnimation::scale)
         .def("fixup", &CalCoreAnimation::fixup)
-        .def("applyZupToYup", &CalCoreAnimation::applyZupToYup)
         .def_readwrite("duration", &CalCoreAnimation::duration)
         .def_readwrite("tracks", &CalCoreAnimation::tracks)
         ;

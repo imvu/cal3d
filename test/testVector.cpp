@@ -1,9 +1,11 @@
 #include "TestPrologue.h"
 #include <cal3d/color.h>
-#include <cal3d/vector.h>
 #include <cal3d/vector4.h>
-#include <cal3d/quaternion.h>
-#include <cal3d/streamops.h>
+
+
+inline std::ostream& operator<<(std::ostream& os, const CalVector& v) {
+    return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
+}
 
 
 TEST(Vector) {
@@ -53,24 +55,4 @@ TEST(Point4_default) {
     CHECK_EQUAL(1.0, f[3]);
 
     CHECK_EQUAL(1.0, CalPoint4().w);
-}
-
-TEST(applyZupToYup) {
-    CalPoint4 point4(0.0f, 1.0f, 2.0f, 3.0f);
-    CalVector4 vec4(0.0f, 1.0f, 2.0f, 3.0f);
-    CalVector vec(0.0f, 1.0f, 2.0f);
-    CalQuaternion quat(0.0f, 1.0f, 2.0f, 3.0f);
-    CalPoint4 point4_x(0.0f, 2.0f, -1.0f, 3.0f);
-    CalVector4 vec4_x(0.0f, 2.0f, -1.0f, 3.0f);
-    CalQuaternion quat_x(0.0f, 2.0f, -1.0f, 3.0f);    
-    CalVector vec_x(0.0f, 2.0f, -1.0f);
-    cal3d::applyZupToYup(point4);
-    cal3d::applyZupToYup(vec4);
-    cal3d::applyZupToYup(vec);
-    cal3d::applyZupToYup(quat);
-    CHECK_EQUAL((point4_x.asCalVector()), (point4.asCalVector()));    
-    CHECK_EQUAL((vec4_x.asCalVector()), (vec4.asCalVector()));
-    CHECK_EQUAL((point4_x.asCalVector()), (point4.asCalVector()));
-    CHECK_EQUAL(vec_x, vec);    
-    CHECK_EQUAL(quat_x, quat);
 }

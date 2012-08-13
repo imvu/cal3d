@@ -38,7 +38,6 @@ public:
     void fixup(
         const CalCoreBone& bone,
         const cal3d::RotateTranslate& adjustedRootTransform);
-    void applyZupToYup();
 
     cal3d::RotateTranslate getCurrentTransform(float time) const;
 

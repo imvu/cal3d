@@ -26,7 +26,6 @@ public:
     const CalCoreTrack* getCoreTrack(unsigned coreBoneId) const;
 
     void fixup(const CalCoreSkeletonPtr& skeleton);
-    void applyZupToYup();
     void scale(float factor);
 
     float duration;

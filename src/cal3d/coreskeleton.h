@@ -35,9 +35,6 @@ public:
     const std::vector<CalCoreBonePtr>& getCoreBones() const {
         return coreBones;
     }
-
-    void applyZupToYup();
-
     std::vector<unsigned> boneIdTranslation; // mapping from exported-to-file ID to the in-memory index
 
     std::vector<int> getChildIds(const CalCoreBone* coreBone) const;

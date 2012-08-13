@@ -1,7 +1,5 @@
 #include "TestPrologue.h"
-#include <libzero/Math.h>
 #include <cal3d/coretrack.h>
-#include <cal3d/transform.h>
 #include <cal3d/streamops.h>
 
 FIXTURE(TrackFixture) {
@@ -49,19 +47,4 @@ TEST_F(TrackFixture, getState_with_two_keyframes_at_same_time) {
     t = track.getCurrentTransform(1.5);
     CHECK_EQUAL(CalQuaternion(), t.rotation);
     CHECK_EQUAL(CalVector(6, 6, 6), t.translation);
-}
-
-TEST_F(TrackFixture, applyZupToYup) {
-    CalCoreTrack::KeyframeList keyframes;
-    CalQuaternion quat;
-    quat.setAxisAngle(CalVector(0,1,0), DegreesToRadians(45.0f));    
-    cal3d::RotateTranslate keyframeTransformOriginal( quat, CalVector(1.0f,2.0f,3.0f));
-    keyframes.push_back(CalCoreKeyframe(0, keyframeTransformOriginal.translation, keyframeTransformOriginal.rotation));
-    CalCoreTrack track(0, keyframes);
-    track.applyZupToYup();
-    CalCoreTrack::KeyframeList kfl = track.keyframes;
-    const CalCoreKeyframe &kf = kfl[0];
-    cal3d::applyZupToYup(keyframeTransformOriginal);
-    CHECK_EQUAL(keyframeTransformOriginal.translation, kf.transform.translation);
-    CHECK_EQUAL(keyframeTransformOriginal.rotation, kf.transform.rotation);
 }

@@ -170,10 +170,3 @@ std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const
     }
     return rv;
 }
-
- void CalCoreSkeleton::applyZupToYup() {
-    for (size_t i = 0; i < m_coreBones.size(); ++i) {
-        m_coreBones[i]->applyZupToYup();
-    }
-    cal3d::applyZupToYup(inverseOriginalRootTransform);
- }
