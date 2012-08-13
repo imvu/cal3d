@@ -5,7 +5,7 @@
 #include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
-#include "TestCoreSkeleton.h"
+#include "testCoreSkeleton.h"
 
 static cal3d::RotateTranslate makeTranslation(float x, float y, float z) {
     return cal3d::RotateTranslate(CalQuaternion(), CalVector(x, y, z));

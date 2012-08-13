@@ -10,7 +10,7 @@
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
 #include <libzero/Math.h>
-#include "TestCoreSkeleton.h"
+#include "testCoreSkeleton.h"
 
     CalCoreSkeletonPtr makeFakeSkeleton() {
         CalCoreBonePtr actualRoot(new CalCoreBone("actualRoot"));
