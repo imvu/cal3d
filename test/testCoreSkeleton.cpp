@@ -9,6 +9,26 @@
 #include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
+#include <libzero/Math.h>
+#include "testCoreSkeleton.h"
+
+    CalCoreSkeletonPtr makeFakeSkeleton() {
+        CalCoreBonePtr actualRoot(new CalCoreBone("actualRoot"));
+
+        CalCoreBonePtr coreRoot(new CalCoreBone("root", 0));
+        coreRoot->relativeTransform.translation.x = 1;
+        coreRoot->inverseBindPoseTransform.translation = CalVector(10, 10, 10);
+
+        CalCoreBonePtr coreBone(new CalCoreBone("bone", 1));
+        coreBone->relativeTransform.translation.x = 2;
+        coreBone->inverseBindPoseTransform.translation = CalVector(20, 20, 20);
+
+        CalCoreSkeletonPtr cs(new CalCoreSkeleton);
+        cs->addCoreBone(actualRoot);
+        cs->addCoreBone(coreRoot);
+        cs->addCoreBone(coreBone);
+        return cs;
+    }
 
 TEST(coreskeleton_can_only_have_one_root) {
     CalCoreBonePtr root1(new CalCoreBone("root1"));
@@ -279,3 +299,65 @@ TEST(loader_zeroes_out_root_transform_of_skeleton) {
     CHECK_EQUAL(CalVector(0, 0, 0), root0->relativeTransform.translation);
     CHECK_EQUAL(CalVector(3, 3, 3), root1->relativeTransform.translation);
 }
+
+
+FIXTURE(SkeletonFixture) {
+    SETUP(SkeletonFixture)
+        : skeleton(makeFakeSkeleton())
+    {}
+    CalCoreSkeletonPtr skeleton;
+};
+
+TEST_F(SkeletonFixture, applyZupToYup_skeleton) {    
+    const std::vector<CalCoreBonePtr>& bones = skeleton->getCoreBones();
+
+    const CalCoreBonePtr  & b0 = bones[0];
+    const CalCoreBonePtr  & b1 = bones[1];
+    const CalCoreBonePtr  & b2 = bones[2];
+    cal3d::RotateTranslate b0RelativeTransformExpected = b0->relativeTransform;
+    cal3d::RotateTranslate b1RelativeTransformExpected = b1->relativeTransform;
+    cal3d::RotateTranslate b2RelativeTransformExpected = b2->relativeTransform;
+    
+    cal3d::RotateTranslate b0InverseBindPoseTransformExpected = b0->inverseBindPoseTransform;
+    cal3d::RotateTranslate b1InverseBindPoseTransformExpected = b1->inverseBindPoseTransform;
+    cal3d::RotateTranslate b2InverseBindPoseTransformExpected = b2->inverseBindPoseTransform;
+    
+    cal3d::applyZupToYup(b0RelativeTransformExpected);
+    cal3d::applyZupToYup(b1RelativeTransformExpected);
+    cal3d::applyZupToYup(b2RelativeTransformExpected);
+    
+    cal3d::applyZupToYup(b0InverseBindPoseTransformExpected);
+    cal3d::applyZupToYup(b1InverseBindPoseTransformExpected);
+    cal3d::applyZupToYup(b2InverseBindPoseTransformExpected);
+    
+    cal3d::RotateTranslate rt = skeleton->getAdjustedRootTransform(0);
+    cal3d::applyZupToYup(rt);
+
+    skeleton->applyZupToYup();
+
+    CHECK_EQUAL(b0RelativeTransformExpected.translation, b0->relativeTransform.translation);
+    CHECK_EQUAL(b0RelativeTransformExpected.rotation, b0->relativeTransform.rotation);
+    
+    CHECK_EQUAL(b0InverseBindPoseTransformExpected.translation, b0->inverseBindPoseTransform.translation);
+    CHECK_EQUAL(b0InverseBindPoseTransformExpected.rotation, b0->inverseBindPoseTransform.rotation);
+    
+
+    CHECK_EQUAL(b1RelativeTransformExpected.translation, b1->relativeTransform.translation);
+    CHECK_EQUAL(b1RelativeTransformExpected.rotation, b1->relativeTransform.rotation);
+    
+    CHECK_EQUAL(b1InverseBindPoseTransformExpected.translation, b1->inverseBindPoseTransform.translation);
+    CHECK_EQUAL(b1InverseBindPoseTransformExpected.rotation, b1->inverseBindPoseTransform.rotation);
+
+    
+    CHECK_EQUAL(b2RelativeTransformExpected.translation, b2->relativeTransform.translation);
+    CHECK_EQUAL(b2RelativeTransformExpected.rotation, b2->relativeTransform.rotation);
+    
+    CHECK_EQUAL(b2InverseBindPoseTransformExpected.translation, b2->inverseBindPoseTransform.translation);
+    CHECK_EQUAL(b2InverseBindPoseTransformExpected.rotation, b2->inverseBindPoseTransform.rotation);   
+
+    cal3d::RotateTranslate rt2 = skeleton->getAdjustedRootTransform(0);
+    CHECK_EQUAL(rt.translation, rt2.translation);
+    CHECK_EQUAL(rt.rotation, rt2.rotation);
+}
+
+

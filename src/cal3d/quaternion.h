@@ -149,3 +149,12 @@ inline CalQuaternion slerp(float d, const CalQuaternion& left, const CalQuaterni
         inv_d * left.z + d * right.z,
         inv_d * left.w + d * right.w);
 }
+
+namespace cal3d {
+    inline void applyZupToYup(CalQuaternion &q) {
+        float temp = q.y;
+        q.y = q.z;
+        q.z = temp;
+        q.z = -q.z;
+    }
+}

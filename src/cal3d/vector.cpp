@@ -11,7 +11,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
+#include <algorithm>
 #include "cal3d/matrix.h"
 #include "cal3d/vector4.h"
 #include "cal3d/quaternion.h"
@@ -26,3 +26,18 @@ CalVector operator*(const CalQuaternion& q, const CalVector& v) {
         temp.y,
         temp.z);
 }
+
+
+
+namespace cal3d {
+    void applyZupToYup(CalVector4 &vec4) {    
+        std::swap(vec4.y, vec4.z);
+        vec4.z = -vec4.z;
+    }
+
+    void applyZupToYup(CalPoint4 &point4) {    
+        std::swap(point4.y, point4.z);
+        point4.z = -point4.z;
+    }
+}
+

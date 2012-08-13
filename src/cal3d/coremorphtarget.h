@@ -43,5 +43,6 @@ public:
     size_t size() const;
 
     void scale(float factor);
+    void applyZupToYup();
 };
 CAL3D_PTR(CalCoreMorphTarget);
