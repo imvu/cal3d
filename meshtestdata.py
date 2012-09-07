@@ -166,7 +166,7 @@ skeletonTestData = \
 </SKELETON>"""
 
 
-animationTestData = \
+skeletonAnimationTestData = \
 """
 <HEADER VERSION="910" MAGIC="XAF" />
 <ANIMATION NUMTRACKS="2" DURATION="2">
@@ -223,3 +223,19 @@ attachmentSkeletonTestData = \
         <PARENTID>0</PARENTID>
     </BONE>
 </SKELETON>"""
+
+morphAnimationTestData = \
+"""<HEADER VERSION="910" MAGIC="XPF" />
+    <ANIMATION NUMTRACKS="1" DURATION="0.166667">
+     <TRACK NUMKEYFRAMES="3" MORPHNAME="eyes.Blink.Clamped">
+        <KEYFRAME TIME="0">
+            <WEIGHT>0</WEIGHT>
+        </KEYFRAME>
+        <KEYFRAME TIME="0.0333333">
+            <WEIGHT>0.5</WEIGHT>
+        </KEYFRAME>
+        <KEYFRAME TIME="0.0666667">
+            <WEIGHT>1</WEIGHT>
+        </KEYFRAME>
+     </TRACK>
+    </ANIMATION>"""
