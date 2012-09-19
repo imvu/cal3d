@@ -137,6 +137,15 @@ class Test(imvu.test.TestCase):
         self.assertEqual(None, self.cal3d_.getFormat(xml_that_crashes_due_to_missing_header))
         self.assertEqual(None, self.cal3d_.getFormat(xml_that_crashes_due_to_missing_header_attributes))
 
+    def test_cal3d_triangle(self):
+        #can call default constructor
+        t1 = cal3d.Triangle()
+        #can call the specific constructor
+        t2 = cal3d.Triangle(1,2,3)
+        self.assertEqual(t2.v1, 1)
+        self.assertEqual(t2.v2, 2)
+        self.assertEqual(t2.v3, 3)
+
 skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />
 <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">
     <BONE NAME="FemaleAnimeRoot" NUMCHILDS="1" ID="0">

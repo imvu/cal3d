@@ -355,6 +355,8 @@ BOOST_PYTHON_MODULE(_cal3d)
     }
 
     class_<CalCoreSubmesh::Face>("Triangle")
+        .def(init<>())
+        .def(init<CalIndex, CalIndex, CalIndex>())
         .add_property("v1", &getFaceIndex<0>)
         .add_property("v2", &getFaceIndex<1>)
         .add_property("v3", &getFaceIndex<2>)
