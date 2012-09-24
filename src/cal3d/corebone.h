@@ -15,6 +15,8 @@
 #include "cal3d/global.h"
 #include "cal3d/transform.h"
 
+class CalQuaternion;
+
 // these values are important - we use c-style casts to them :x
 enum CalLightType {
     LIGHT_TYPE_NONE,
@@ -38,6 +40,7 @@ public:
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);
     void applyZupToYup();
+    void applyCoordinateTransform(CalQuaternion &xfm);
 
     bool hasLightingData() const {
         return lightType != LIGHT_TYPE_NONE;

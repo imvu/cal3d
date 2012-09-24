@@ -24,6 +24,7 @@
 
 CAL3D_PTR(CalCoreMorphTarget);
 CAL3D_PTR(CalCoreSkeleton);
+class CalQuaternion;
 
 enum CalMorphTargetType {
     CalMorphTargetTypeAdditive,
@@ -178,6 +179,7 @@ public:
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void applyZupToYup();
+    void applyCoordinateTransform(CalQuaternion& xfm);
 
     bool isStatic() const;
     BoneTransform getStaticTransform(const BoneTransform* bones) const;

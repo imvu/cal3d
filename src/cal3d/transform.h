@@ -82,6 +82,11 @@ namespace cal3d {
         cal3d::applyZupToYup(transform.rotation);
     }
 
+    inline void applyCoordinateTransform(RotateTranslate &transform, CalQuaternion &xfm) {
+        cal3d::applyCoordinateTransform(transform.translation, xfm);
+        cal3d::applyCoordinateTransform(transform.rotation, xfm);
+    }
+
     struct Transform {
         Transform()
         {}

@@ -14,6 +14,8 @@
 #include "cal3d/vector.h"
 #include "cal3d/coresubmesh.h"
 
+class CalQuaternion;
+
 struct VertexOffset {
     size_t vertexId;
     CalPoint4 position;
@@ -44,5 +46,6 @@ public:
 
     void scale(float factor);
     void applyZupToYup();
+    void applyCoordinateTransform(CalQuaternion& xfm);
 };
 CAL3D_PTR(CalCoreMorphTarget);

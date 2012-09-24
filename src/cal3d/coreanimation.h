@@ -15,6 +15,7 @@
 #include "cal3d/coretrack.h"
 
 CAL3D_PTR(CalCoreSkeleton);
+class CalQuaternion;
 
 class CAL3D_API CalCoreAnimation {
 public:
@@ -27,6 +28,7 @@ public:
 
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void applyZupToYup();
+    void applyCoordinateTransform(CalQuaternion& xfm);
     void scale(float factor);
 
     float duration;
