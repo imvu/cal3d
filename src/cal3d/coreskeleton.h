@@ -19,7 +19,6 @@
 #include "cal3d/transform.h"
 
 CAL3D_PTR(CalCoreBone);
-class CalQuaternion;
 
 class CAL3D_API CalCoreSkeleton : private boost::noncopyable {
 public:
@@ -38,7 +37,6 @@ public:
     }
 
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
 
     std::vector<unsigned> boneIdTranslation; // mapping from exported-to-file ID to the in-memory index
 

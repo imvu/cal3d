@@ -16,9 +16,8 @@
 #include "cal3d/transform.h"
 
 CAL3D_PTR(CalCoreBone);
-CAL3D_PTR(CalCoreTrack);
 class CalCoreSkeleton;
-class CalQuaternion;
+CAL3D_PTR(CalCoreTrack);
 
 class CAL3D_API CalCoreTrack {
 public:
@@ -40,7 +39,6 @@ public:
         const CalCoreBone& bone,
         const cal3d::RotateTranslate& adjustedRootTransform);
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
 
     cal3d::RotateTranslate getCurrentTransform(float time) const;
 

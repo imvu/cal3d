@@ -73,13 +73,6 @@ struct CalBase4 {
     void operator-=(const CalBase4& rhs) {
         v = _mm_sub_ps(v, rhs.v);
     }
-
-    float lengthSquared() const {
-        return (float)(x * x + y * y + z * z);
-    }
-    float length() const {
-        return sqrtf(lengthSquared());
-    }
 };
 
 inline CalBase4 operator*(float f, const CalBase4& v) {
@@ -173,10 +166,6 @@ struct CalBase4 {
     CalVector asCalVector() const {
         return CalVector(x, y, z);
     }
-
-    CalVector4 asCalVector4() const {
-        return CalVector4(x, y, z, w);
-    }
 }
 CAL3D_ALIGN_TAIL(16);
 
@@ -230,10 +219,6 @@ struct CalVector4 : CalBase4 {
     explicit CalVector4(const CalVector& v)
         : CalBase4(v.x, v.y, v.z, 0.0f)
     {}
-
-    CalVector4 asCalVector4() const {
-        return *this;
-    }
 };
 
 struct CalPoint4 : CalBase4 {
@@ -250,19 +235,9 @@ struct CalPoint4 : CalBase4 {
     explicit CalPoint4(const CalVector& v)
         : CalBase4(v.x, v.y, v.z, 1.0f)
     {}
-
-    CalVector4 asCalVector4() const {
-        return CalVector4(x, y, z, w);
-    }
 };
 
-#define CHECK_CALVECTOR4_CLOSE(v1, v2, tolerance)   CHECK_CLOSE(0.0f, ((v1)-(v2)).length(), tolerance)
-#define CHECK_CALPOINT4_CLOSE(p1, p2, tolerance)    CHECK_CALVECTOR4_CLOSE(p1.asCalVector4(), p2.asCalVector4(), tolerance)
-
-class CalQuaternion;
 namespace cal3d {
     void CAL3D_API applyZupToYup(CalVector4 &vec4);
     void CAL3D_API applyZupToYup(CalPoint4 &point4);
-    void CAL3D_API applyCoordinateTransform(CalVector4 &vec4, CalQuaternion &xfm);
-    void CAL3D_API applyCoordinateTransform(CalPoint4 &point4, CalQuaternion &xfm);
 }

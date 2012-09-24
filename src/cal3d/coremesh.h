@@ -14,7 +14,6 @@
 
 CAL3D_PTR(CalCoreSkeleton);
 CAL3D_PTR(CalCoreSubmesh);
-class CalQuaternion;
 
 class CAL3D_API CalCoreMesh {
 public:
@@ -28,7 +27,6 @@ public:
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
 
     CalCoreSubmeshVector submeshes;
 };

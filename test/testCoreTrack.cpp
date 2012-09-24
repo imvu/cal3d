@@ -65,22 +65,3 @@ TEST_F(TrackFixture, applyZupToYup) {
     CHECK_EQUAL(keyframeTransformOriginal.translation, kf.transform.translation);
     CHECK_EQUAL(keyframeTransformOriginal.rotation, kf.transform.rotation);
 }
-
-TEST_F(TrackFixture, applyCoordinateTransform) {
-    CalQuaternion zUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
-    CalCoreAnimation animation;
-    CalCoreTrack::KeyframeList keyframes;
-    CalQuaternion quat;
-    quat.setAxisAngle(CalVector(0,1,0), DegreesToRadians(45.0f));
-    cal3d::RotateTranslate keyframeTransformOriginal( quat, CalVector(1.0f,2.0f,3.0f));
-    keyframes.push_back(CalCoreKeyframe(0, keyframeTransformOriginal.translation, keyframeTransformOriginal.rotation));
-    animation.tracks.push_back(CalCoreTrack(0, keyframes));
-    animation.applyCoordinateTransform(zUpToYUp);
-    CalCoreTrack ktr = animation.tracks[0];
-    CalCoreTrack::KeyframeList kfl = ktr.keyframes;
-    const CalCoreKeyframe &kf = kfl[0];
-    cal3d::applyCoordinateTransform(keyframeTransformOriginal, zUpToYUp);
-    CHECK_CALVECTOR_CLOSE(keyframeTransformOriginal.translation, kf.transform.translation, 0.000001);
-    CHECK_CALQUATERNION_CLOSE(keyframeTransformOriginal.rotation, kf.transform.rotation, 0.000001);
-}
-

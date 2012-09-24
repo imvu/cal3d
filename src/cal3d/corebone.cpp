@@ -34,10 +34,5 @@ void CalCoreBone::scale(float factor) {
 void CalCoreBone::applyZupToYup() {
     cal3d::applyZupToYup(relativeTransform);
     cal3d::applyZupToYup(inverseBindPoseTransform);
-}
-
-void CalCoreBone::applyCoordinateTransform(CalQuaternion &xfm) {
-    cal3d::applyCoordinateTransform(relativeTransform, xfm);
-    cal3d::applyCoordinateTransform(inverseBindPoseTransform, xfm);
-}
+ }
 

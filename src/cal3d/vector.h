@@ -14,7 +14,7 @@
 #include <math.h>
 #include "cal3d/global.h"
 
-struct CalVector4;
+class CalQuaternion;
 
 class CAL3D_API CalVector {
 public:
@@ -23,8 +23,6 @@ public:
     CalVector asCalVector() const {
         return *this;
     }
-
-    CalVector4 asCalVector4() const;
 
     void setAsPoint(const CalVector& v) {
         *this = v;
@@ -153,5 +151,3 @@ namespace cal3d {
         v.z = -v.z;
     }
 }
-
-#define CHECK_CALVECTOR_CLOSE(v1, v2, tolerance)   CHECK_CLOSE(0.0f, ((v1)-(v2)).length(), tolerance)

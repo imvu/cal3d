@@ -71,11 +71,3 @@ void CalCoreMorphTarget::applyZupToYup() {
     }
 }
 
-void CalCoreMorphTarget::applyCoordinateTransform(CalQuaternion& xfm) {
-    VertexOffsetArray& mv = const_cast<VertexOffsetArray&>(vertexOffsets);
-    for (VertexOffsetArray::iterator i = mv.begin(); i != mv.end(); ++i) {
-        cal3d::applyCoordinateTransform(i->position, xfm);
-        cal3d::applyCoordinateTransform(i->normal, xfm);
-    }
-}
-
