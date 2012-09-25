@@ -17,18 +17,6 @@
 #include "cal3d/quaternion.h"
 #include "cal3d/transform.h"
 
-CalVector operator*(const CalQuaternion& q, const CalVector& v) {
-    CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
-    temp = q * temp;
-
-    return CalVector(
-        temp.x,
-        temp.y,
-        temp.z);
-}
-
-
-
 namespace cal3d {
     void applyZupToYup(CalVector4 &vec4) {    
         std::swap(vec4.y, vec4.z);
@@ -38,6 +26,14 @@ namespace cal3d {
     void applyZupToYup(CalPoint4 &point4) {    
         std::swap(point4.y, point4.z);
         point4.z = -point4.z;
+    }
+
+    void applyCoordinateTransform(CalVector4 &vec4, CalQuaternion &xfm) {
+        vec4 = xfm * vec4;
+    }
+
+    void applyCoordinateTransform(CalPoint4 &point4, CalQuaternion &xfm) {
+        point4 = xfm * point4;
     }
 }
 

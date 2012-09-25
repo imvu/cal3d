@@ -359,3 +359,71 @@ TEST(applyZupToYup_mesh) {
         CHECK_EQUAL(morphTargetVertexOffset_Normal, (testVos.normal.asCalVector()));
     }
 }
+
+TEST(applyCoordinateTransform_mesh) {
+    CalQuaternion zUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
+    //make a cube submesh
+    CalCoreSubmeshPtr submeshPtr = MakeCube();
+    //put some morph target data into it
+    CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
+    VertexOffset mv;
+    mv.vertexId = 0;
+    mv.position = CalVector4(0, 1, 2, 0);
+    mv.normal = CalVector4(0, -1, -2, 0);
+    vertexOffsets.push_back(mv);
+    CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, vertexOffsets));
+    submeshPtr->addMorphTarget(morphTarget);
+
+    //make a mesh
+    CalCoreMesh cm;
+    cm.submeshes.push_back(submeshPtr);
+
+
+
+
+    //get some data for checking
+    const CalCoreSubmesh::VectorVertex &vertices =  submeshPtr->getVectorVertex();
+    CalVector firstVertexPos = vertices[0].position.asCalVector();
+    CalVector lastVertexPos = vertices[vertices.size()-1].position.asCalVector();
+    CalVector firstVertexNormal = vertices[0].normal.asCalVector();
+    CalVector lastVertexNormal = vertices[vertices.size()-1].normal.asCalVector();
+    CalVector morphTargetVertexOffset_Pos = mv.position.asCalVector();
+    CalVector morphTargetVertexOffset_Normal = mv.normal.asCalVector();
+    CalAABox bbox = submeshPtr->getBoundingVolume();
+
+    //do the ZupToYup
+    cm.applyCoordinateTransform(zUpToYUp);
+
+    //
+    cal3d::applyCoordinateTransform(firstVertexPos, zUpToYUp);
+    cal3d::applyCoordinateTransform(lastVertexPos, zUpToYUp);
+    cal3d::applyCoordinateTransform(firstVertexNormal, zUpToYUp);
+    cal3d::applyCoordinateTransform(lastVertexNormal, zUpToYUp);
+    cal3d::applyCoordinateTransform(morphTargetVertexOffset_Pos, zUpToYUp);
+    cal3d::applyCoordinateTransform(morphTargetVertexOffset_Normal, zUpToYUp);
+    cal3d::applyCoordinateTransform(bbox.max, zUpToYUp);
+    cal3d::applyCoordinateTransform(bbox.min, zUpToYUp);
+
+    {
+        const CalCoreSubmeshPtr testSubmeshPtr = cm.submeshes[0];
+        const CalCoreSubmesh::VectorVertex &testVertices =  testSubmeshPtr->getVectorVertex();
+        CHECK_EQUAL(firstVertexPos, (testVertices[0].position.asCalVector()));
+        CHECK_EQUAL(lastVertexPos, (testVertices[testVertices.size()-1].position.asCalVector()));
+        CHECK_EQUAL(firstVertexNormal, (testVertices[0].normal.asCalVector()));
+        CHECK_EQUAL(lastVertexNormal, (testVertices[testVertices.size()-1].normal.asCalVector()));
+
+
+        CalAABox testAabox = testSubmeshPtr->getBoundingVolume();
+        CHECK_EQUAL(bbox.max, testAabox.max);
+
+        const CalCoreSubmesh::MorphTargetArray& testMta = testSubmeshPtr->getMorphTargets();
+        const CalCoreMorphTargetPtr& testMtp = testMta[0];
+        const CalCoreMorphTarget::VertexOffsetArray& testVoses = testMtp->vertexOffsets;
+        const VertexOffset& testVos = testVoses[0];
+
+
+        CHECK_EQUAL(testVos.vertexId, static_cast<size_t>(0));
+        CHECK_EQUAL(morphTargetVertexOffset_Pos, (testVos.position.asCalVector()));
+        CHECK_EQUAL(morphTargetVertexOffset_Normal, (testVos.normal.asCalVector()));
+    }
+}

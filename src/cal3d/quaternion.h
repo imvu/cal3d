@@ -11,7 +11,7 @@
 #pragma once
 
 #include "cal3d/global.h"
-#include "cal3d/vector.h"
+#include "cal3d/vector4.h"
 
 class CAL3D_API CalQuaternion {
 public:
@@ -23,6 +23,10 @@ public:
     inline CalQuaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {};
     inline CalQuaternion(const CalQuaternion& q): x(q.x), y(q.y), z(q.z), w(q.w) {};
     inline CalQuaternion(float qx, float qy, float qz, float qw): x(qx), y(qy), z(qz), w(qw) {};
+
+    CalVector4 asCalVector4() const {
+        return CalVector4(x, y, z, w);
+    }
 
     inline void operator=(const CalQuaternion& q) {
         x = q.x;
@@ -75,36 +79,73 @@ public:
     }
 };
 
-// left-multiply, rotate v by quaternion and produce rotated vector
-CalVector CAL3D_API operator*(const CalQuaternion& q, const CalVector& v);
+inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
+    float x1 = outer.x;
+    float y1 = outer.y;
+    float z1 = outer.z;
+    float w1 = outer.w;
+    float x2 = inner.x;
+    float y2 = inner.y;
+    float z2 = inner.z;
+    float w2 = inner.w;
+
+    return CalQuaternion(
+        w1*x2 + x1*w2 + y1*z2 - z1*y2,
+        w1*y2 + y1*w2 + z1*x2 - x1*z2,
+        w1*z2 + z1*w2 + x1*y2 - y1*x2,
+        w1*w2 - x1*x2 - y1*y2 - z1*z2);
+}
 
 // Implicitly convert vector to quaternion (w=0), multiply times q
 inline CalQuaternion operator*(const CalVector& v, const CalQuaternion& q) {
-    float qx = q.x;
-    float qy = q.y;
-    float qz = q.z;
-    float qw = q.w;
-
-    return CalQuaternion(
-        qw * v.x            + qy * v.z - qz * v.y,
-        qw * v.y - qx * v.z            + qz * v.x,
-        qw * v.z + qx * v.y - qy * v.x,
-                 - qx * v.x - qy * v.y - qz * v.z);
+    CalQuaternion quatV(v.x, v.y, v.z, 0.0f);
+    return quatV * q;
 }
 
+// Implicitly convert vector to quaternion (w=0), multiply times q
+inline CalQuaternion operator*(const CalVector4& v, const CalQuaternion& q) {
+    CalQuaternion quatV(v.x, v.y, v.z, v.w);
+    return quatV * q;
+}
 
+// Implicitly convert point to quaternion (w=0), multiply times q
+inline CalQuaternion operator*(const CalPoint4& p, const CalQuaternion& q) {
+    CalQuaternion quatP(p.x, p.y, p.z, p.w);
+    return quatP * q;
+}
 
-inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
-    float qx = inner.x;
-    float qy = inner.y;
-    float qz = inner.z;
-    float qw = inner.w;
+// left-multiply, rotate v by quaternion and produce rotated vector
+inline CalVector operator*(const CalQuaternion& q, const CalVector& v) {
+    CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
+    temp = q * temp;
 
-    return CalQuaternion(
-        qw * outer.x + qx * outer.w + qy * outer.z - qz * outer.y,
-        qw * outer.y - qx * outer.z + qy * outer.w + qz * outer.x,
-        qw * outer.z + qx * outer.y - qy * outer.x + qz * outer.w,
-        qw * outer.w - qx * outer.x - qy * outer.y - qz * outer.z);
+    return CalVector(
+        temp.x,
+        temp.y,
+        temp.z);
+}
+
+// left-multiply, rotate v by quaternion and produce rotated vector
+inline CalVector4 operator*(const CalQuaternion& q, const CalVector4& v) {
+    CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
+    temp = q * temp;
+
+    return CalVector4(
+        temp.x,
+        temp.y,
+        temp.z,
+        temp.w);
+}
+
+inline CalPoint4 operator*(const CalQuaternion& q, const CalPoint4& p) {
+    CalQuaternion temp = p * CalQuaternion(-q.x, -q.y, -q.z, q.w);
+    temp = q * temp;
+
+    return CalPoint4(
+        temp.x,
+        temp.y,
+        temp.z,
+        temp.w);
 }
 
 inline bool operator==(const CalQuaternion& lhs, const CalQuaternion& rhs) {
@@ -150,11 +191,25 @@ inline CalQuaternion slerp(float d, const CalQuaternion& left, const CalQuaterni
         inv_d * left.w + d * right.w);
 }
 
+#define CHECK_CALQUATERNION_CLOSE(q1, q2, tolerance)    CHECK_CALVECTOR4_CLOSE(q1.asCalVector4(), q2.asCalVector4(), tolerance)
+
 namespace cal3d {
     inline void applyZupToYup(CalQuaternion &q) {
         float temp = q.y;
         q.y = q.z;
         q.z = temp;
         q.z = -q.z;
+    }
+
+    inline void applyCoordinateTransform(CalQuaternion &q, CalQuaternion &xfm) {
+        CalVector qVector(q.x, q.y, q.z);
+        CalVector result = xfm * qVector;
+        q.x = result.x;
+        q.y = result.y;
+        q.z = result.z;
+    }
+
+    inline void applyCoordinateTransform(CalVector &v, CalQuaternion &xfm) {
+        v = xfm * v;
     }
 }

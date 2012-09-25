@@ -119,7 +119,7 @@ TEST(scale_is_in_bone_space) {
     CalQuaternion aboutZ;
     aboutZ.setAxisAngle(CalVector(0, 0, 1), 3.1415927410125732421875f / 2.0f);
 
-    CHECK_EQUAL(CalVector(-4, 2, 8), aboutZ * CalVector(2, 4, 8));
+    CHECK_EQUAL(CalVector(4, -2, 8), aboutZ * CalVector(2, 4, 8));
 
     CalCoreBonePtr root(new CalCoreBone("root"));
     root->inverseBindPoseTransform = cal3d::RotateTranslate(aboutZ, CalVector(2, 4, 8));

@@ -96,6 +96,13 @@ void CalCoreMesh::applyZupToYup() {
         (*i)->applyZupToYup();
     }
 }
+
+void CalCoreMesh::applyCoordinateTransform(CalQuaternion& xfm) {
+    for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
+        (*i)->applyCoordinateTransform(xfm);
+    }
+}
+
 void CalCoreMesh::fixup(const CalCoreSkeletonPtr& skeleton) {
     for (auto i = submeshes.begin(); i != submeshes.end(); ++i) {
         (*i)->fixup(skeleton);
