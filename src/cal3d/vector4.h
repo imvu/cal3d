@@ -7,11 +7,7 @@
 #include <xmmintrin.h>
 #endif
 
-#ifdef IMVU_NO_INTRINSICS
-CAL3D_ALIGN_HEAD(16)
-#endif
-
-struct CalBase4 {
+CAL3D_ALIGN_HEAD(16) struct CalBase4 {
 #ifdef IMVU_NO_INTRINSICS
     float x, y, z, w;
 #else
@@ -160,11 +156,7 @@ struct CalBase4 {
     float length() const {
         return sqrtf(lengthSquared());
     }
-};
-
-#ifdef IMVU_NO_INTRINSICS
-CAL3D_ALIGN_TAIL(16);
-#endif
+} CAL3D_ALIGN_TAIL(16);
 
 
 inline CalBase4 operator+(const CalBase4& lhs, const CalBase4& rhs) {
