@@ -163,7 +163,6 @@ struct CalBase4 {
 };
 
 #ifdef IMVU_NO_INTRINSICS
-#else
 CAL3D_ALIGN_TAIL(16);
 #endif
 
