@@ -2,6 +2,8 @@
 from imvu import libzero
 from imvu.avatarwindow import ModelTextureData
 
+import cal3d
+
 class materialTestData:
 
     material_template =\
@@ -239,3 +241,101 @@ morphAnimationTestData = \
         </KEYFRAME>
      </TRACK>
     </ANIMATION>"""
+
+
+def makeTriangularStripSubmesh():
+    numVertices = 10
+    numTris = 8
+    """
+
+    0        2        4        6        8
+    X--------X--------X--------X--------X
+    |\,      |\,      |\,      |\,      |
+    |  \bo   |  \b1   |  \b2   |  \,b3  |
+    |    \,  |    \,  |    \,  |    \,  |
+    |      \,|      \,|      \,|      \,|
+    X--------X--------X--------X--------X
+    1        3        5        7        9
+
+    10 vertices numbered 0-9
+    8 faces
+    4 bones, b0-b3
+    vertices 0,1 are weighted fully to b0
+    vertices 8,9 are weighted fully to b3
+    every other vertex is weighted equally to the neighboring two bones
+    eg: vertex 3 is weighted to b0 and b1 with weights 0.5
+
+    """
+    #make the test mesh
+    bigMesh = cal3d.CoreSubmesh(numVertices, True, numTris)
+    def print_mesh(m):
+        for v in m.vertices:
+            print '%r, %r' % (v.position, v.normal)
+        for t in m.triangles:
+            print '%r %r %r' % (t.v1, t.v2, t.v3)
+        for i in m.influences:
+            print '%r, %r' % (i.boneId, i.weight)
+
+    def makeVertex(smesh, upperRow, infs, xPos):
+        v = cal3d.Vertex()
+        influences = cal3d.InfluenceVector()
+        for i in infs:
+            inf = cal3d.Influence(i[0], i[1], False)
+            influences.append(inf)
+        inf = influences[-1]
+        inf.isLast = True
+        if upperRow:
+            v.position = cal3d.Vector(xPos, 0.0, 0.0)
+        else:
+            v.position = cal3d.Vector(xPos, -1.0, 0.0)
+        v.normal = cal3d.Vector(0.0, 0.0, 1.0)
+        smesh.addVertex(v, 0, influences)
+    makeVertex(bigMesh, upperRow=True, infs=[(0,1.0)], xPos=0.0)
+    makeVertex(bigMesh, upperRow=False, infs=[(0,1.0)], xPos=0.0)
+    makeVertex(bigMesh, upperRow=True, infs=[(0, 0.5),(1, 0.5)], xPos=1.0)
+    makeVertex(bigMesh, upperRow=False, infs=[(0, 0.5),(1, 0.5)], xPos=1.0)
+    makeVertex(bigMesh, upperRow=True, infs=[(1, 0.5),(2, 0.5)], xPos=2.0)
+    makeVertex(bigMesh, upperRow=False, infs=[(1, 0.5),(2, 0.5)], xPos=2.0)
+    makeVertex(bigMesh, upperRow=True, infs=[(2, 0.5),(3, 0.5)], xPos=3.0)
+    makeVertex(bigMesh, upperRow=False, infs=[(2, 0.5),(3, 0.5)], xPos=3.0)
+    makeVertex(bigMesh, upperRow=True, infs=[(3, 1.0)], xPos=4.0)
+    makeVertex(bigMesh, upperRow=False, infs=[(3, 1.0)], xPos=4.0)
+    triangles = bigMesh.triangles
+    tIdx = 0
+    t = cal3d.Triangle(0, 1, 3)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(0, 3, 2)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(2, 3, 5)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(2, 5, 4)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(4, 5, 7)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(4, 7, 6)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(6, 7, 9)
+    triangles[tIdx] = t
+
+    tIdx += 1
+    t = cal3d.Triangle(6, 9, 8)
+    triangles[tIdx] = t
+
+    vIdx = 0
+    for v in bigMesh.vertices:
+        tcoord = cal3d.TextureCoordinate(v.position.x/4.0, -v.position.y)
+        bigMesh.setTextureCoordinate(vIdx, tcoord)
+    pass
+    return bigMesh
