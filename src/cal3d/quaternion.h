@@ -12,6 +12,7 @@
 
 #include "cal3d/global.h"
 #include "cal3d/vector4.h"
+#include "cal3d/matrix.h"
 
 class CAL3D_API CalQuaternion {
 public:
@@ -23,6 +24,7 @@ public:
     inline CalQuaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {};
     inline CalQuaternion(const CalQuaternion& q): x(q.x), y(q.y), z(q.z), w(q.w) {};
     inline CalQuaternion(float qx, float qy, float qz, float qw): x(qx), y(qy), z(qz), w(qw) {};
+    CalQuaternion(CalMatrix m);
 
     CalVector4 asCalVector4() const {
         return CalVector4(x, y, z, w);

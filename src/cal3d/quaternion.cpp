@@ -14,3 +14,33 @@
 
 #include "cal3d/quaternion.h"
 #include "cal3d/vector.h"
+
+CalQuaternion::CalQuaternion(CalMatrix m) {
+    float t, s;
+    t = 1.0f + m.cx.x + m.cy.y + m.cz.z;
+    if (t > 0.00000001f) {
+        s = 2.0f * sqrt(t);
+        x = (m.cz.y - m.cy.z) / s;
+        y = (m.cx.z - m.cz.x) / s;
+        z = (m.cy.x - m.cx.y) / s;
+        w = 0.25f * s;
+    } else if (m.cx.x > m.cy.y && m.cx.x > m.cz.z) {
+        s = 2.0f * sqrt(1.0f + m.cx.x - m.cy.y - m.cz.z);
+        x = 0.25f * s;
+        y = (m.cy.x + m.cx.y) / s;
+        z = (m.cx.z + m.cz.x) / s;
+        w = (m.cz.y - m.cy.z) / s;
+    } else if (m.cy.y > m.cz.z) {
+        s = 2.0f * sqrt(1.0f + m.cy.y - m.cx.x - m.cz.z);
+        x = (m.cy.x + m.cx.y) / s;
+        y = 0.25f * s;
+        z = (m.cz.y + m.cy.z) / s;
+        w = (m.cx.z - m.cz.x) / s;
+    } else {
+        s = 2.0f * sqrt(1.0f + m.cz.z - m.cx.x - m.cy.y);
+        x = (m.cx.z + m.cz.x) / s;
+        y = (m.cz.y + m.cy.z) / s;
+        z = 0.25f * s;
+        w = (m.cy.x - m.cx.y) / s;
+    }
+}

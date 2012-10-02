@@ -48,7 +48,6 @@ public:
         z += v.z;
     }
 
-
     void operator-=(const CalVector& v) {
         x -= v.x;
         y -= v.y;
@@ -95,7 +94,21 @@ public:
         return sqrtf(lengthSquared());
     }
     void normalize() {
-        *this /= length();
+        float l = length();
+        if (l >= 0.0001f) {
+            *this /= l;
+        } else {
+            if (x > y && x > z) {
+                clear();
+                x = 1.0f;
+            } else if (y > z) {
+                clear();
+                y = 1.0f;
+            } else {
+                clear();
+                z = 1.0f;
+            }
+        }
     }
 
     void set(float vx, float vy, float vz) {

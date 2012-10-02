@@ -1,8 +1,6 @@
 import re
 import os
-import sys
 import tempfile
-import weakref
 import imvu.test
 import imvu.fs
 from cal3d import pycal3d
@@ -88,7 +86,6 @@ class Test(imvu.test.TestCase):
         origData = re.sub("\s+", "", origData)
         self.assertNotEqual(len(data), len(origData));
 
-
     def assertGbHello2(self, morph):
         self.assertEqual(1, morph.duration)
         self.assertEqual(12, len(morph.tracks))
@@ -146,6 +143,152 @@ class Test(imvu.test.TestCase):
         self.assertEqual(t2.v2, 2)
         self.assertEqual(t2.v3, 3)
 
+    def test_vector_dot_product(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = cal3d.Vector(7, 11, 13)
+        dot = cal3d.dot(v1, v2)
+        self.assertEqual(dot, 2 * 7 + 3 * 11 + 5 * 13)
+
+    def test_vector_cross_product(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = cal3d.Vector(7, 11, 13)
+        v3 = cal3d.cross(v1, v2)
+        self.assertEqual(v3.x, -16)
+        self.assertEqual(v3.y, 9)
+        self.assertEqual(v3.z, 1)
+
+    def test_vector_unary_minus(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = -v1
+        self.assertEqual(v2.x, -2)
+        self.assertEqual(v2.y, -3)
+        self.assertEqual(v2.z, -5)
+
+    def test_vector_addition(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = cal3d.Vector(7, 11, 13)
+        v3 = v1 + v2
+        self.assertEqual(v3.x, 9)
+        self.assertEqual(v3.y, 14)
+        self.assertEqual(v3.z, 18)
+
+    def test_vector_subtraction(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = cal3d.Vector(7, 11, 13)
+        v3 = v1 - v2
+        self.assertEqual(v3.x, -5)
+        self.assertEqual(v3.y, -8)
+        self.assertEqual(v3.z, -8)
+
+    def test_vector_multiply(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = cal3d.Vector(7, 11, 13)
+        v3 = v1 * v2
+        self.assertEqual(v3.x, 14)
+        self.assertEqual(v3.y, 33)
+        self.assertEqual(v3.z, 65)
+
+    def test_vector_scalar_multiply(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = v1 * 7
+        self.assertEqual(v2.x, 14)
+        self.assertEqual(v2.y, 21)
+        self.assertEqual(v2.z, 35)
+
+    def test_vector_scalar_multiply_the_other_way(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v2 = 7 * v1
+        self.assertEqual(v2.x, 14)
+        self.assertEqual(v2.y, 21)
+        self.assertEqual(v2.z, 35)
+
+    def test_vector_length(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        r = v1.length()
+        self.assertAlmostEqual(r * r, 38, places=4)
+
+    def test_vector_normalize(self):
+        v1 = cal3d.Vector(2, 3, 5)
+        v1.normalize()
+        self.assertAlmostEqual(v1.length(), 1.0, places=4)
+
+    def test_quaternion_construction_from_components(self):
+        q1 = cal3d.Quaternion(2, 3, 5, 7)
+        self.assertEqual(q1.x, 2)
+        self.assertEqual(q1.y, 3)
+        self.assertEqual(q1.z, 5)
+        self.assertEqual(q1.w, 7)
+
+    def test_quaternion_construction_from_matrix(self):
+        m1 = cal3d.Matrix(
+            cal3d.Vector(1, 0, 0),
+            cal3d.Vector(0, 1, 0),
+            cal3d.Vector(0, 0, 1)
+        )
+        q1 = cal3d.Quaternion(m1)
+        self.assertEqual(q1.x, 0)
+        self.assertEqual(q1.y, 0)
+        self.assertEqual(q1.z, 0)
+        self.assertEqual(q1.w, 1)
+
+    def test_matrix_construction_from_quaternion(self):
+        q1 = cal3d.Quaternion(.70710678, 0, 0, .70710678)
+        m1 = cal3d.Matrix(q1)
+        self.assertAlmostEqual(m1.cx.x, 1, places=4)
+        self.assertAlmostEqual(m1.cx.y, 0, places=4)
+        self.assertAlmostEqual(m1.cx.z, 0, places=4)
+        self.assertAlmostEqual(m1.cy.x, 0, places=4)
+        self.assertAlmostEqual(m1.cy.y, 0, places=4)
+        self.assertAlmostEqual(m1.cy.z, -1, places=4)
+        self.assertAlmostEqual(m1.cz.x, 0, places=4)
+        self.assertAlmostEqual(m1.cz.y, 1, places=4)
+        self.assertAlmostEqual(m1.cz.z, 0, places=4)
+
+    def test_matrix_construction_from_vectors(self):
+        m1 = cal3d.Matrix(
+            cal3d.Vector(1, 2, 3),
+            cal3d.Vector(4, 5, 6),
+            cal3d.Vector(7, 8, 9)
+        )
+        self.assertAlmostEqual(m1.cx.x, 1, places=4)
+        self.assertAlmostEqual(m1.cx.y, 2, places=4)
+        self.assertAlmostEqual(m1.cx.z, 3, places=4)
+        self.assertAlmostEqual(m1.cy.x, 4, places=4)
+        self.assertAlmostEqual(m1.cy.y, 5, places=4)
+        self.assertAlmostEqual(m1.cy.z, 6, places=4)
+        self.assertAlmostEqual(m1.cz.x, 7, places=4)
+        self.assertAlmostEqual(m1.cz.y, 8, places=4)
+        self.assertAlmostEqual(m1.cz.z, 9, places=4)
+
+    def test_apply_coordinate_transform_to_skeleton(self):
+        skeleton = cal3d.loadCoreSkeletonFromBuffer(skeleton2)
+        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        skeleton.applyCoordinateTransform(xfm)
+        bones = skeleton.bones
+        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.x, 0)
+        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.y, 0)
+        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.z, -.70710678, places=4)
+        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.w, .70710678, places=4)
+
+    def test_apply_coordinate_transform_to_mesh(self):
+        mesh = cal3d.loadCoreMeshFromBuffer(mesh2)
+        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        mesh.applyCoordinateTransform(xfm)
+        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.x, 1.0, places=4)
+        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.y, 0.0, places=4)
+        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.z, 0.0, places=4)
+
+    def test_apply_coordinate_transform_to_animation(self):
+        animation = cal3d.loadCoreAnimationFromBuffer(animation3)
+        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        animation.applyCoordinateTransform(xfm)
+        track = animation.tracks[0]
+        keyFrame = track.keyframes[0]
+        self.assertAlmostEqual(keyFrame.transform.rotation.w, 0.70710678, places=4)
+        self.assertAlmostEqual(keyFrame.transform.rotation.x, 0.70710678, places=4)
+        self.assertAlmostEqual(keyFrame.transform.rotation.y, 0.0, places=4)
+        self.assertAlmostEqual(keyFrame.transform.rotation.z, 0.0, places=4)
+
 skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />
 <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">
     <BONE NAME="FemaleAnimeRoot" NUMCHILDS="1" ID="0">
@@ -162,6 +305,17 @@ skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />
         <LOCALTRANSLATION>0 10.3201 -489.784</LOCALTRANSLATION>
         <LOCALROTATION>0 0 0 1</LOCALROTATION>
         <PARENTID>0</PARENTID>
+    </BONE>
+</SKELETON>"""
+
+skeleton2 = """<HEADER VERSION="910" MAGIC="XSF" />
+<SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="1">
+    <BONE NAME="TestBone1" NUMCHILDS="1" ID="0">
+        <TRANSLATION>0 0 0</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 0 0</LOCALTRANSLATION>
+        <LOCALROTATION>.7071067811 0 0 .7071067811</LOCALROTATION>
+        <PARENTID>-1</PARENTID>
     </BONE>
 </SKELETON>"""
 
@@ -262,6 +416,7 @@ mesh1 = """<HEADER VERSION="910" MAGIC="XMF" />
                 <POSITION>7.69704 -121.396 862.701</POSITION>
                 <NORMAL>0.475756 -0.861712 -0.176376</NORMAL>
                 <TEXCOORD>0.508674 0.275276</TEXCOORD>
+            <COLOR>1.35632e-019 1.35632e-019 1.35632e-019</COLOR>
             </BLENDVERTEX>
             <BLENDVERTEX VERTEXID="1">
                 <POSITION>71.2067 -85.9199 860.71</POSITION>
@@ -315,6 +470,18 @@ mesh1 = """<HEADER VERSION="910" MAGIC="XMF" />
         <FACE VERTEXID="7 4 3" />
         <FACE VERTEXID="8 9 5" />
         <FACE VERTEXID="9 3 5" />
+    </SUBMESH>
+</MESH>"""
+
+mesh2 = """<HEADER VERSION="910" MAGIC="XMF" />
+<MESH NUMSUBMESH="1">
+    <SUBMESH NUMVERTICES="1" NUMFACES="0" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="1" MATERIAL="2">
+        <VERTEX NUMINFLUENCES="0" ID="0">
+            <POS>0.0 0.0 1.0</POS>
+            <NORM>0.0. 0.0 0.0</NORM>
+            <COLOR>0.0 0.0 0.0</COLOR>
+            <TEXCOORD>0.0 0.0</TEXCOORD>
+        </VERTEX>
     </SUBMESH>
 </MESH>"""
 
@@ -981,6 +1148,17 @@ animation2 = '''\
         </KEYFRAME>
         <KEYFRAME TIME="40">
             <ROTATION>0.5 0.5 0.5 -0.5</ROTATION>
+        </KEYFRAME>
+    </TRACK>
+</ANIMATION>
+'''
+
+animation3 = '''\
+<HEADER MAGIC="XAF" VERSION="919" />
+<ANIMATION NUMTRACKS="1" DURATION="40">
+    <TRACK BONEID="0" TRANSLATIONREQUIRED="0" TRANSLATIONISDYNAMIC="0" HIGHRANGEREQUIRED="1" NUMKEYFRAMES="1">
+        <KEYFRAME TIME="0">
+            <ROTATION>0.0 0.0 0.70710678 0.70710678</ROTATION>
         </KEYFRAME>
     </TRACK>
 </ANIMATION>

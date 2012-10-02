@@ -285,8 +285,22 @@ std::string QuaternionRepr(const CalQuaternion& q) {
     return os.str();
 }
 
+std::string MatrixRepr(const CalMatrix& m) {
+    std::ostringstream os;
+    os << "cal3d.Matrix(cx=[" << m.cx.x << "," << m.cx.y << "," << m.cx.z << "], cy = [" << m.cy.x << "," << m.cy.y << "," << m.cy.z << "], cz = [" << m.cz.x << "," << m.cz.y << "," << m.cz.z << "])";
+    return os.str();
+}
+
 std::string RotateTranslateRepr(const cal3d::RotateTranslate& t) {
     return "cal3d.RotateTranslate(" + QuaternionRepr(t.rotation) + ", " + VectorRepr(t.translation) + ")";
+}
+
+float CalVectorDot(const CalVector& v, const CalVector& u) {
+    return dot(v, u);
+}
+
+CalVector CalVectorCross(const CalVector& a, const CalVector &u) {
+    return cross(a, u);
 }
 
 #ifndef NDEBUG
@@ -302,17 +316,40 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("__repr__", &VectorRepr)
         .def(self == self)
         .def(self != self)
+        .def(-self)
         .def_readwrite("x", &CalVector::x)
         .def_readwrite("y", &CalVector::y)
         .def_readwrite("z", &CalVector::z)
+        .def(self + self)
+        .def(self - self)
+        .def(self * self)
+        .def(self * float())
+        .def(float() * self)
+        .def("length", &CalVector::length)
+        .def("normalize", &CalVector::normalize)
         ;
 
+    def("dot", &CalVectorDot);
+    def("cross", &CalVectorCross);
+
     class_<CalQuaternion>("Quaternion")
+        .def(init<float, float, float, float>())
+        .def(init<CalMatrix>())
         .def("__repr__", &QuaternionRepr)
         .def_readwrite("x", &CalQuaternion::x)
         .def_readwrite("y", &CalQuaternion::y)
         .def_readwrite("z", &CalQuaternion::z)
         .def_readwrite("w", &CalQuaternion::w)
+        .def("invert", &CalQuaternion::invert)
+        ;
+
+    class_<CalMatrix>("Matrix")
+        .def(init<CalQuaternion>())
+        .def(init<CalVector, CalVector, CalVector>())
+        .def("__repr__", &MatrixRepr)
+        .def_readwrite("cx", &CalMatrix::cx)
+        .def_readwrite("cy", &CalMatrix::cy)
+        .def_readwrite("cz", &CalMatrix::cz)
         ;
 
     class_<cal3d::RotateTranslate>("Transform")
@@ -336,6 +373,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("addCoreBone", &CalCoreSkeleton::addCoreBone)
         .def("scale", &CalCoreSkeleton::scale)
         .def("applyZupToYup", &CalCoreSkeleton::applyZupToYup)
+        .def("applyCoordinateTransform", &CalCoreSkeleton::applyCoordinateTransform)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
         .add_property("bones", make_function(&CalCoreSkeleton::getCoreBones, return_value_policy<return_by_value>()))
         ;
@@ -426,6 +464,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("replaceMeshWithMorphTarget", &CalCoreMesh::replaceMeshWithMorphTarget)
         .def("scale", &CalCoreMesh::scale)
         .def("applyZupToYup", &CalCoreMesh::applyZupToYup)
+        .def("applyCoordinateTransform", &CalCoreMesh::applyCoordinateTransform)
         .def("fixup", &CalCoreMesh::fixup)
         ;
 
@@ -447,6 +486,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("scale", &CalCoreAnimation::scale)
         .def("fixup", &CalCoreAnimation::fixup)
         .def("applyZupToYup", &CalCoreAnimation::applyZupToYup)
+        .def("applyCoordinateTransform", &CalCoreAnimation::applyCoordinateTransform)
         .def_readwrite("duration", &CalCoreAnimation::duration)
         .def_readwrite("tracks", &CalCoreAnimation::tracks)
         ;
