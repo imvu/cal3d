@@ -260,34 +260,34 @@ class Test(imvu.test.TestCase):
         self.assertAlmostEqual(m1.cz.y, 8, places=4)
         self.assertAlmostEqual(m1.cz.z, 9, places=4)
 
-    def test_apply_coordinate_transform_to_skeleton(self):
-        skeleton = cal3d.loadCoreSkeletonFromBuffer(skeleton2)
-        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-        skeleton.applyCoordinateTransform(xfm)
-        bones = skeleton.bones
-        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.x, 0)
-        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.y, 0)
-        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.z, -.70710678, places=4)
-        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.w, .70710678, places=4)
-
-    def test_apply_coordinate_transform_to_mesh(self):
-        mesh = cal3d.loadCoreMeshFromBuffer(mesh2)
-        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-        mesh.applyCoordinateTransform(xfm)
-        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.x, 1.0, places=4)
-        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.y, 0.0, places=4)
-        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.z, 0.0, places=4)
-
-    def test_apply_coordinate_transform_to_animation(self):
-        animation = cal3d.loadCoreAnimationFromBuffer(animation3)
-        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-        animation.applyCoordinateTransform(xfm)
-        track = animation.tracks[0]
-        keyFrame = track.keyframes[0]
-        self.assertAlmostEqual(keyFrame.transform.rotation.w, 0.70710678, places=4)
-        self.assertAlmostEqual(keyFrame.transform.rotation.x, 0.70710678, places=4)
-        self.assertAlmostEqual(keyFrame.transform.rotation.y, 0.0, places=4)
-        self.assertAlmostEqual(keyFrame.transform.rotation.z, 0.0, places=4)
+#    def test_apply_coordinate_transform_to_skeleton(self):
+#        skeleton = cal3d.loadCoreSkeletonFromBuffer(skeleton2)
+#        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+#        skeleton.applyCoordinateTransform(xfm)
+#        bones = skeleton.bones
+#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.x, 0)
+#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.y, 0)
+#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.z, -.70710678, places=4)
+#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.w, .70710678, places=4)
+#
+#    def test_apply_coordinate_transform_to_mesh(self):
+#        mesh = cal3d.loadCoreMeshFromBuffer(mesh2)
+#        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+#        mesh.applyCoordinateTransform(xfm)
+#        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.x, 1.0, places=4)
+#        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.y, 0.0, places=4)
+#        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.z, 0.0, places=4)
+#
+#    def test_apply_coordinate_transform_to_animation(self):
+#        animation = cal3d.loadCoreAnimationFromBuffer(animation3)
+#        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+#        animation.applyCoordinateTransform(xfm)
+#        track = animation.tracks[0]
+#        keyFrame = track.keyframes[0]
+#        self.assertAlmostEqual(keyFrame.transform.rotation.w, 0.70710678, places=4)
+#        self.assertAlmostEqual(keyFrame.transform.rotation.x, 0.70710678, places=4)
+#        self.assertAlmostEqual(keyFrame.transform.rotation.y, 0.0, places=4)
+#        self.assertAlmostEqual(keyFrame.transform.rotation.z, 0.0, places=4)
 
 skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />
 <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">

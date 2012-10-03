@@ -81,23 +81,41 @@ public:
     }
 };
 
+// This routine is wrong (it returns inner * outer instead of outer * inner as it should). There are other places
+// in the code where math is jimmied to reconcile differences in coordinate systems (see the comment "left-handed"
+// above, e.g.). It would be a big effort to get it all right, so I am re-instating the incorrect routine. The right
+// one is commented out below.
+
 inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
-    float x1 = outer.x;
-    float y1 = outer.y;
-    float z1 = outer.z;
-    float w1 = outer.w;
-    float x2 = inner.x;
-    float y2 = inner.y;
-    float z2 = inner.z;
-    float w2 = inner.w;
+    float qx = inner.x;
+    float qy = inner.y;
+    float qz = inner.z;
+    float qw = inner.w;
 
     return CalQuaternion(
-        w1*x2 + x1*w2 + y1*z2 - z1*y2,
-        w1*y2 + y1*w2 + z1*x2 - x1*z2,
-        w1*z2 + z1*w2 + x1*y2 - y1*x2,
-        w1*w2 - x1*x2 - y1*y2 - z1*z2);
+        qw * outer.x + qx * outer.w + qy * outer.z - qz * outer.y,
+        qw * outer.y - qx * outer.z + qy * outer.w + qz * outer.x,
+        qw * outer.z + qx * outer.y - qy * outer.x + qz * outer.w,
+        qw * outer.w - qx * outer.x - qy * outer.y - qz * outer.z);
 }
 
+//inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
+//    float x1 = outer.x;
+//    float y1 = outer.y;
+//    float z1 = outer.z;
+//    float w1 = outer.w;
+//    float x2 = inner.x;
+//    float y2 = inner.y;
+//    float z2 = inner.z;
+//    float w2 = inner.w;
+//
+//    return CalQuaternion(
+//        w1*x2 + x1*w2 + y1*z2 - z1*y2,
+//        w1*y2 + y1*w2 + z1*x2 - x1*z2,
+//        w1*z2 + z1*w2 + x1*y2 - y1*x2,
+//        w1*w2 - x1*x2 - y1*y2 - z1*z2);
+//}
+//
 // Implicitly convert vector to quaternion (w=0), multiply times q
 inline CalQuaternion operator*(const CalVector& v, const CalQuaternion& q) {
     CalQuaternion quatV(v.x, v.y, v.z, 0.0f);
