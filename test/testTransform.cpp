@@ -37,6 +37,26 @@ TEST(non_uniform_scale_before_and_after_transform) {
     CHECK_EQUAL(CalVector(-1, 6, 18), (scale * transform) * CalVector(1, 2, 3));
 }
 
+TEST(rotate_translate_multiply) {
+    cal3d::RotateTranslate rt1(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(-1.0f, 0.0f, 0.0f));
+    cal3d::RotateTranslate rt2(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(0.0f, -1.0f, 0.0f));
+    cal3d::RotateTranslate rt3 = rt2 * rt1;
+    CalVector original(1.0f, 0.0f, 0.0f);
+    CalVector expected(-1.0f, -2.0f, 0.0f);
+    CHECK_CALVECTOR_CLOSE(rt3 * original, expected, 0.000001f);
+}
+
+TEST(invert_transform) {
+    CalQuaternion rot(0.5f, 0.5f, 0.5f, 0.5f);
+    CalVector trans(2.0f, 3.0f, 5.0f);
+    cal3d::RotateTranslate rt(rot, trans);
+    cal3d::RotateTranslate rti = invert(rt);
+    CalVector vec1(7.0f, 11.0f, 13.0f);
+    CalVector vec1a = rt * vec1;
+    CalVector vec1b = rti * vec1a;
+    CHECK_CALVECTOR_CLOSE(vec1b, vec1, 0.000001f);
+}
+
 TEST(applyZupToYup_transform) {
     CalQuaternion quat;
     CalVector axis(1,1,1);
@@ -45,19 +65,18 @@ TEST(applyZupToYup_transform) {
     CalVector trans(1.0f, 2.0f, 3.0f);
     cal3d::RotateTranslate rotTrans(quat, trans);
     cal3d::applyZupToYup(rotTrans);
-    CalVector transformedAxis(axis.x, axis.z, -axis.y);
     cal3d::applyZupToYup(quat);
     cal3d::applyZupToYup(trans);
     CHECK_EQUAL(trans, rotTrans.translation);
     CHECK_EQUAL(quat, rotTrans.rotation);
 }
 
-//TEST(applyCoordinateTransform_transform) {
-//    CalQuaternion ZUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
-//    cal3d::RotateTranslate rt(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(2.0f, 3.0f, 5.0f));
-//
-//    cal3d::applyCoordinateTransform(rt, ZUpToYUp);
-//
-//    CHECK_CALVECTOR_CLOSE(rt.translation, CalVector(2.0f, 5.0f, -3.0f), 0.000001f);
-//    CHECK_CALQUATERNION_CLOSE(rt.rotation, CalQuaternion(0.0f, 0.70710678f, 0.0f, 0.70710678f), 0.000001f);
-//}
+TEST(applyCoordinateTransform_transform) {
+    CalQuaternion ZUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
+    cal3d::RotateTranslate rt(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(2.0f, 3.0f, 5.0f));
+
+    cal3d::applyCoordinateTransform(rt, ZUpToYUp);
+
+    CHECK_CALVECTOR_CLOSE(rt.translation, CalVector(2.0f, 5.0f, -3.0f), 0.000001f);
+    CHECK_CALQUATERNION_CLOSE(rt.rotation, CalQuaternion(0.0f, 0.70710678f, 0.0f, 0.70710678f), 0.000001f);
+}

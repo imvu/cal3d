@@ -113,7 +113,10 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
             coreBone->relativeTransform = cal3d::RotateTranslate();
         } else {
             coreBone->parentId = 0;
-            coreBone->relativeTransform = inverseOriginalRootTransform * coreBone->relativeTransform;
+            cal3d::RotateTranslate rt1 = coreBone->relativeTransform * inverseOriginalRootTransform;
+            cal3d::RotateTranslate rt2 = inverseOriginalRootTransform * coreBone->relativeTransform;
+            coreBone->relativeTransform.rotation = rt1.rotation;
+            coreBone->relativeTransform.translation = rt2.translation;
         }
         adjustedRoots.insert(m_coreBones.size());
     }
