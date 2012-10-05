@@ -71,7 +71,7 @@ void CalCoreTrack::fixup(const CalCoreBone& bone, const cal3d::RotateTranslate& 
              *
              * we simply need to update the rotation.
              */
-            i->transform.rotation = adjustedRootTransform.rotation * i->transform.rotation;
+            i->transform.rotation = i->transform.rotation * adjustedRootTransform.rotation;
             i->transform.translation = bone.relativeTransform.translation;
         } else {
             i->transform = adjustedRootTransform * i->transform;
