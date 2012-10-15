@@ -14,6 +14,14 @@
 #include "cal3d/vector4.h"
 #include "cal3d/matrix.h"
 
+// Note that cal3d quaternions, following the 3ds max C++ API, are based on left-handed rotations, meaning that positive
+// rotations are clockwise, looking from positive to negative along the axis of rotation. This means that the
+// x, y, z and w components do not have the conventional values for a specified axis and rotation angle. To convert
+// a conventional quaternion to a cal3d quaternion, it is necessary to negate the x, y, and z values.
+//
+// As a consequence of this non-standard representation, the algorithms for quaternion multiplication and for
+// conversion of quaternion to matrix given here are also non-standard.
+
 class CAL3D_API CalQuaternion {
 public:
     float x;
@@ -82,20 +90,16 @@ public:
 };
 
 inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
-    float x1 = outer.x;
-    float y1 = outer.y;
-    float z1 = outer.z;
-    float w1 = outer.w;
-    float x2 = inner.x;
-    float y2 = inner.y;
-    float z2 = inner.z;
-    float w2 = inner.w;
+    float qx = inner.x;
+    float qy = inner.y;
+    float qz = inner.z;
+    float qw = inner.w;
 
     return CalQuaternion(
-        w1*x2 + x1*w2 + y1*z2 - z1*y2,
-        w1*y2 + y1*w2 + z1*x2 - x1*z2,
-        w1*z2 + z1*w2 + x1*y2 - y1*x2,
-        w1*w2 - x1*x2 - y1*y2 - z1*z2);
+        qw * outer.x + qx * outer.w + qy * outer.z - qz * outer.y,
+        qw * outer.y - qx * outer.z + qy * outer.w + qz * outer.x,
+        qw * outer.z + qx * outer.y - qy * outer.x + qz * outer.w,
+        qw * outer.w - qx * outer.x - qy * outer.y - qz * outer.z);
 }
 
 // Implicitly convert vector to quaternion (w=0), multiply times q
