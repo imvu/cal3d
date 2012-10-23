@@ -67,7 +67,9 @@ TEST_F(TrackFixture, applyZupToYup) {
 }
 
 TEST_F(TrackFixture, applyCoordinateTransform) {
-    CalQuaternion zUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
+    // Note that cal3d quaternions are "left-handed", so that the following positive rotation is, in fact, the clockwise
+    // rotation needed to convert z-up coordinates to y-up.
+    CalQuaternion zUpToYUp(0.70710678f, 0.0f, 0.0f, 0.70710678f);
     CalCoreAnimation animation;
     CalCoreTrack::KeyframeList keyframes;
     CalQuaternion quat;

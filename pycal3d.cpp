@@ -340,6 +340,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("y", &CalQuaternion::y)
         .def_readwrite("z", &CalQuaternion::z)
         .def_readwrite("w", &CalQuaternion::w)
+        .def(self * self)
         .def("invert", &CalQuaternion::invert)
         ;
 

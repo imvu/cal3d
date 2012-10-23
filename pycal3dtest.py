@@ -220,18 +220,57 @@ class Test(imvu.test.TestCase):
         self.assertEqual(q1.w, 7)
 
     def test_quaternion_construction_from_matrix(self):
+        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
+        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
         m1 = cal3d.Matrix(
             cal3d.Vector(1, 0, 0),
-            cal3d.Vector(0, 1, 0),
-            cal3d.Vector(0, 0, 1)
+            cal3d.Vector(0, 0, -1),
+            cal3d.Vector(0, 1, 0)
         )
         q1 = cal3d.Quaternion(m1)
-        self.assertEqual(q1.x, 0)
-        self.assertEqual(q1.y, 0)
-        self.assertEqual(q1.z, 0)
-        self.assertEqual(q1.w, 1)
+        if q1.w < 0:
+            q1.x = -q1.x
+            q1.y = -q1.y
+            q1.z = -q1.z
+            q1.w = -q1.w
+        self.assertAlmostEqual(q1.x, .70710678, places=4)
+        self.assertAlmostEqual(q1.y, 0, places=4)
+        self.assertAlmostEqual(q1.z, 0, places=4)
+        self.assertAlmostEqual(q1.w, .70710678, places=4)
+
+
+    def test_quaternion_multiply(self):
+        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
+        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
+        q1 = cal3d.Quaternion(.70710678, 0, 0, .70710678)
+        q2 = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        q3 = q1 * q2
+        if q3.w < 0:
+            q3.x = -q3.x
+            q3.y = -q3.y
+            q3.z = -q3.z
+            q3.w = -q3.w
+        self.assertAlmostEqual(q3.x, 0.5, places=4)
+        self.assertAlmostEqual(q3.y, 0.5, places=4)
+        self.assertAlmostEqual(q3.z, -0.5, places=4)
+        self.assertAlmostEqual(q3.w, 0.5, places=4)
+
+    def test_quaternion_inversion(self):
+        q1 = cal3d.Quaternion(.70710678, 0, 0, .70710678)
+        q1.invert()
+        if q1.w < 0:
+            q1.x = -q1.x
+            q1.y = -q1.y
+            q1.z = -q1.z
+            q1.w = -q1.w
+        self.assertAlmostEqual(q1.x, -.70710678, places=4)
+        self.assertAlmostEqual(q1.y, 0, places=4)
+        self.assertAlmostEqual(q1.z, 0, places=4)
+        self.assertAlmostEqual(q1.w, .70710678, places=4)
 
     def test_matrix_construction_from_quaternion(self):
+        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
+        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
         q1 = cal3d.Quaternion(.70710678, 0, 0, .70710678)
         m1 = cal3d.Matrix(q1)
         self.assertAlmostEqual(m1.cx.x, 1, places=4)
@@ -260,34 +299,92 @@ class Test(imvu.test.TestCase):
         self.assertAlmostEqual(m1.cz.y, 8, places=4)
         self.assertAlmostEqual(m1.cz.z, 9, places=4)
 
-#    def test_apply_coordinate_transform_to_skeleton(self):
-#        skeleton = cal3d.loadCoreSkeletonFromBuffer(skeleton2)
-#        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-#        skeleton.applyCoordinateTransform(xfm)
-#        bones = skeleton.bones
-#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.x, 0)
-#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.y, 0)
-#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.z, -.70710678, places=4)
-#        self.assertAlmostEqual(bones[0].inverseBindPoseTransform.rotation.w, .70710678, places=4)
-#
-#    def test_apply_coordinate_transform_to_mesh(self):
-#        mesh = cal3d.loadCoreMeshFromBuffer(mesh2)
-#        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-#        mesh.applyCoordinateTransform(xfm)
-#        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.x, 1.0, places=4)
-#        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.y, 0.0, places=4)
-#        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.z, 0.0, places=4)
-#
-#    def test_apply_coordinate_transform_to_animation(self):
-#        animation = cal3d.loadCoreAnimationFromBuffer(animation3)
-#        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-#        animation.applyCoordinateTransform(xfm)
-#        track = animation.tracks[0]
-#        keyFrame = track.keyframes[0]
-#        self.assertAlmostEqual(keyFrame.transform.rotation.w, 0.70710678, places=4)
-#        self.assertAlmostEqual(keyFrame.transform.rotation.x, 0.70710678, places=4)
-#        self.assertAlmostEqual(keyFrame.transform.rotation.y, 0.0, places=4)
-#        self.assertAlmostEqual(keyFrame.transform.rotation.z, 0.0, places=4)
+    def test_matrix_component_getters(self):
+        m1 = cal3d.Matrix(
+            cal3d.Vector(1, 2, 3),
+            cal3d.Vector(4, 5, 6),
+            cal3d.Vector(7, 8, 9)
+        )
+        v1 = m1.cx
+        v2 = m1.cy
+        v3 = m1.cz
+        self.assertEqual(v1.x, 1)
+        self.assertEqual(v1.y, 2)
+        self.assertEqual(v1.z, 3)
+        self.assertEqual(v2.x, 4)
+        self.assertEqual(v2.y, 5)
+        self.assertEqual(v2.z, 6)
+        self.assertEqual(v3.x, 7)
+        self.assertEqual(v3.y, 8)
+        self.assertEqual(v3.z, 9)
+
+    def test_matrix_component_setters(self):
+        m1 = cal3d.Matrix(
+            cal3d.Vector(1, 2, 3),
+            cal3d.Vector(4, 5, 6),
+            cal3d.Vector(7, 8, 9)
+        )
+        m1.cx = cal3d.Vector(10, 11, 12)
+        m1.cy = cal3d.Vector(13, 14, 15)
+        m1.cz = cal3d.Vector(16, 17, 18)
+        v1 = m1.cx
+        v2 = m1.cy
+        v3 = m1.cz
+        self.assertEqual(v1.x, 10)
+        self.assertEqual(v1.y, 11)
+        self.assertEqual(v1.z, 12)
+        self.assertEqual(v2.x, 13)
+        self.assertEqual(v2.y, 14)
+        self.assertEqual(v2.z, 15)
+        self.assertEqual(v3.x, 16)
+        self.assertEqual(v3.y, 17)
+        self.assertEqual(v3.z, 18)
+
+    def test_apply_coordinate_transform_to_skeleton(self):
+        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
+        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
+        skeleton = cal3d.loadCoreSkeletonFromBuffer(skeleton2)
+        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        skeleton.applyCoordinateTransform(xfm)
+        q0 = skeleton.bones[0].inverseBindPoseTransform.rotation
+        if q0.w < 0:
+            q0.x = -q0.x
+            q0.y = -q0.y
+            q0.z = -q0.z
+            q0.w = -q0.w
+        self.assertAlmostEqual(q0.x, 0, places=4)
+        self.assertAlmostEqual(q0.y, 0, places=4)
+        self.assertAlmostEqual(q0.z, .70710678, places=4)
+        self.assertAlmostEqual(q0.w, .70710678, places=4)
+
+    def test_apply_coordinate_transform_to_mesh(self):
+        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
+        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
+        mesh = cal3d.loadCoreMeshFromBuffer(mesh2)
+        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        mesh.applyCoordinateTransform(xfm)
+        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.x, -1.0, places=4)
+        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.y, 0.0, places=4)
+        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.z, 0.0, places=4)
+
+    def test_apply_coordinate_transform_to_animation(self):
+        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
+        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
+        animation = cal3d.loadCoreAnimationFromBuffer(animation3)
+        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
+        animation.applyCoordinateTransform(xfm)
+        track = animation.tracks[0]
+        keyFrame = track.keyframes[0]
+        q0 = keyFrame.transform.rotation
+        if q0.w < 0:
+            q0.x = -q0.x
+            q0.y = -q0.y
+            q0.z = -q0.z
+            q0.w = -q0.w
+        self.assertAlmostEqual(q0.w, 0.70710678, places=4)
+        self.assertAlmostEqual(q0.x, -0.70710678, places=4)
+        self.assertAlmostEqual(q0.y, 0.0, places=4)
+        self.assertAlmostEqual(q0.z, 0.0, places=4)
 
 skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />
 <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">
