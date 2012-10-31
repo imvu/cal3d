@@ -167,9 +167,7 @@ public:
     void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
     void setTextureCoordinate(int vertexId, const TextureCoordinate& textureCoordinate);
 
-    void addMorphTarget(const CalCoreMorphTargetPtr& morphTarget) {
-        m_morphTargets.push_back(morphTarget);
-    }
+    void addMorphTarget(const CalCoreMorphTargetPtr& morphTarget);
     const MorphTargetArray& getMorphTargets() const {
         return m_morphTargets;
     }
