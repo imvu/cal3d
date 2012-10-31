@@ -202,12 +202,6 @@ BoneTransform CalCoreSubmesh::getStaticTransform(const BoneTransform* bones) con
     return rm;
 }
 
-void CalCoreSubmesh::addMorphTarget(const CalCoreMorphTargetPtr& morphTarget) {
-    if (morphTarget->vertexOffsets.size() > 0) {
-        m_morphTargets.push_back(morphTarget);
-    }
-}
-
 void CalCoreSubmesh::replaceMeshWithMorphTarget(const std::string& morphTargetName) {
     for (auto i = m_morphTargets.begin(); i != m_morphTargets.end(); ++i) {
         if ((*i)->name == morphTargetName) {

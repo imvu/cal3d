@@ -386,10 +386,6 @@ class Test(imvu.test.TestCase):
         self.assertAlmostEqual(q0.y, 0.0, places=4)
         self.assertAlmostEqual(q0.z, 0.0, places=4)
 
-    def test_empty_morph_is_removed(self):
-        mesh = cal3d.loadCoreMeshFromBuffer(mesh_with_empty_morph)
-        self.assertEqual(len(mesh.submeshes[0].subMorphTargets), 1)
-
 skeleton1 = """<HEADER VERSION="910" MAGIC="XSF" />
 <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">
     <BONE NAME="FemaleAnimeRoot" NUMCHILDS="1" ID="0">
@@ -422,7 +418,7 @@ skeleton2 = """<HEADER VERSION="910" MAGIC="XSF" />
 
 mesh1 = """<HEADER VERSION="910" MAGIC="XMF" />
 <MESH NUMSUBMESH="1">
-    <SUBMESH NUMVERTICES="11" NUMFACES="6" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="1" NUMTEXCOORDS="1" MATERIAL="2">
+    <SUBMESH NUMVERTICES="11" NUMFACES="6" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="9" NUMTEXCOORDS="1" MATERIAL="2">
         <VERTEX NUMINFLUENCES="1" ID="0">
             <POS>30.7542 -112.13 825.308</POS>
             <NORM>-0.857233 0.397024 0.327908</NORM>
@@ -504,7 +500,15 @@ mesh1 = """<HEADER VERSION="910" MAGIC="XMF" />
         
         
         
-        <MORPH NAME="eyes.Blink.Clamped" NUMBLENDVERTS="10" MORPHID="0">
+        <MORPH NAME="left.Eye.Down.Clamped" NUMBLENDVERTS="0" MORPHID="0" />
+        <MORPH NAME="left.Eye.Left.Clamped" NUMBLENDVERTS="0" MORPHID="1" />
+        <MORPH NAME="left.Eye.Right.Clamped" NUMBLENDVERTS="0" MORPHID="2" />
+        <MORPH NAME="left.Eye.Up.Clamped" NUMBLENDVERTS="0" MORPHID="3" />
+        <MORPH NAME="right.Eye.Down.Clamped" NUMBLENDVERTS="0" MORPHID="4" />
+        <MORPH NAME="right.Eye.Left.Clamped" NUMBLENDVERTS="0" MORPHID="5" />
+        <MORPH NAME="right.Eye.Right.Clamped" NUMBLENDVERTS="0" MORPHID="6" />
+        <MORPH NAME="right.Eye.Up.Clamped" NUMBLENDVERTS="0" MORPHID="7" />
+        <MORPH NAME="eyes.Blink.Clamped" NUMBLENDVERTS="10" MORPHID="8">
             <BLENDVERTEX VERTEXID="0">
                 <POSITION>7.69704 -121.396 862.701</POSITION>
                 <NORMAL>0.475756 -0.861712 -0.176376</NORMAL>
@@ -3992,31 +3996,6 @@ xml_that_crashes_due_to_missing_header_attributes = """<HEADER />
         <PARENTID>0</PARENTID>
     </BONE>
 </SKELETON>"""
-
-mesh_with_empty_morph = """<HEADER VERSION="910" MAGIC="XMF" />
-<MESH NUMSUBMESH="1">
-    <SUBMESH NUMVERTICES="1" NUMFACES="1" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="2" NUMTEXCOORDS="1" MATERIAL="1">
-        <VERTEX NUMINFLUENCES="3" ID="0">
-            <POS>5759.05 -1176.88 -0.00023478</POS>
-            <NORM>1.27676e-008 2.40249e-008 -1</NORM>
-            <COLOR>0 0 0</COLOR>
-            <TEXCOORD>0 0</TEXCOORD>
-            <INFLUENCE ID="0">0.2</INFLUENCE>
-            <INFLUENCE ID="1">0.3</INFLUENCE>
-            <INFLUENCE ID="2">0.5</INFLUENCE>
-        </VERTEX>
-        <MORPH NAME="used" NUMBLENDVERTS="1" MORPHID="0">
-            <BLENDVERTEX VERTEXID="0">
-                <POSITION>7.69704 -121.396 862.701</POSITION>
-                <NORMAL>0.475756 -0.861712 -0.176376</NORMAL>
-                <TEXCOORD>0.508674 0.275276</TEXCOORD>
-            </BLENDVERTEX>
-        </MORPH>
-        <MORPH NAME="empty" NUMBLENDVERTS="0" MORPHID="1">
-        </MORPH>
-        <FACE VERTEXID="0 0 0" />
-    </SUBMESH>
-</MESH>"""
 
 if __name__ == "__main__":
     imvu.test.main()
