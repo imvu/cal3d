@@ -579,7 +579,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
     // get the vertex, face, physical property and spring vector
     const cal3d::SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
     const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
-    const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
+    const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getFaces();
 
     // write the number of vertices, faces, level-of-details and springs
     CalPlatform::writeInteger(os, vectorVertex.size());
@@ -1157,7 +1157,7 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
         }
 
         submesh.SetAttribute("NUMVERTICES", pCoreSubmesh->getVertexCount());
-        submesh.SetAttribute("NUMFACES", pCoreSubmesh->faces.size());
+        submesh.SetAttribute("NUMFACES", pCoreSubmesh->getFaces().size());
         submesh.SetAttribute("MATERIAL", pCoreSubmesh->coreMaterialThreadId);
         submesh.SetAttribute("NUMLODSTEPS", 0);
         submesh.SetAttribute("NUMSPRINGS", 0);
@@ -1167,7 +1167,7 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
         const cal3d::SSEArray<CalCoreSubmesh::Vertex>& vectorVertex = pCoreSubmesh->getVectorVertex();
         const std::vector<CalColor32>& vertexColors = pCoreSubmesh->getVertexColors();
 
-        const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->faces;
+        const std::vector<CalCoreSubmesh::Face>& vectorFace = pCoreSubmesh->getFaces();
 
         const CalCoreSubmesh::Influence* currentInfluence = cal3d::pointerFromVector(pCoreSubmesh->getInfluences());
         for (int vertexId = 0; vertexId < (int)vectorVertex.size(); ++vertexId) {

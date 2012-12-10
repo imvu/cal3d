@@ -1049,12 +1049,9 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
         face = morph;
         // load all faces
-        int faceId;
-        for (faceId = 0; faceId < faceCount; ++faceId) {
-            CalCoreSubmesh::Face Face;
-
+        for (int faceId = 0; faceId < faceCount; ++faceId) {
 #if CAL3D_VALIDATE_XML_TAGS
-            if (!face || cal3d_stricmp(face->Value(), "FACE") != 0) {
+            if (cal3d_stricmp(face->Value(), "FACE") != 0) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
@@ -1072,11 +1069,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     return null;
                 }
             }
-            Face.vertexId[0] = tmp[0];
-            Face.vertexId[1] = tmp[1];
-            Face.vertexId[2] = tmp[2];
-
-            pCoreSubmesh->faces[faceId] = Face;
+            pCoreSubmesh->addFace(CalCoreSubmesh::Face(tmp[0], tmp[1], tmp[2]));
 
             face = face->NextSiblingElement();
         }

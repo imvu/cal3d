@@ -295,8 +295,8 @@ TEST(make_cube) {
     CHECK_EQUAL(CalVector(1,0,1), (vertices[23].position.asCalVector()));
     CHECK_EQUAL(CalVector(0,0,1), (vertices[0].normal.asCalVector()));
     CHECK_EQUAL(CalVector(0,-1,0), (vertices[23].normal.asCalVector()));
-    CHECK_EQUAL(submeshPtr->faces[0], CalCoreSubmesh::Face(0,1,2));
-    CHECK_EQUAL(submeshPtr->faces[11], CalCoreSubmesh::Face(20, 23, 21));
+    CHECK_EQUAL(submeshPtr->getFaces()[0], CalCoreSubmesh::Face(0,1,2));
+    CHECK_EQUAL(submeshPtr->getFaces()[11], CalCoreSubmesh::Face(20, 23, 21));
 }
 
 
@@ -435,4 +435,15 @@ TEST(applyCoordinateTransform_mesh) {
         CHECK_EQUAL(morphTargetVertexOffset_Pos, (testVos.position.asCalVector()));
         CHECK_EQUAL(morphTargetVertexOffset_Normal, (testVos.normal.asCalVector()));
     }
+}
+
+TEST(minimumVertexBufferSize_starts_at_0) {
+    CalCoreSubmesh csm(1, false, 1);
+    CHECK_EQUAL(0u, csm.getMinimumVertexBufferSize());
+}
+
+TEST(minimumVertexBufferSize_emcompasses_face_range) {
+    CalCoreSubmesh csm(1, false, 1);
+    csm.addFace(CalCoreSubmesh::Face(1, 3, 2));
+    CHECK_EQUAL(4u, csm.getMinimumVertexBufferSize());
 }

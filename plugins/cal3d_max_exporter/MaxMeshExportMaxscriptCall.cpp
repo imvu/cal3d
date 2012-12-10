@@ -245,7 +245,8 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 				face.vertexId[2] = vectorFace[faceId].vertexLodId[2];
 
 				// set face in the core submesh instance
-				pCoreSubmesh->faces[vectorFace[faceId].lodId] = face;
+                                // TODO: lod is broken
+				// pCoreSubmesh->faces[vectorFace[faceId].lodId] = face;
 			}
 
 			coreMesh.submeshes.push_back(pCoreSubmesh);

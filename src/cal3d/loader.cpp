@@ -960,8 +960,6 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
     }
 
     for (int faceId = 0; faceId < faceCount; ++faceId) {
-        CalCoreSubmesh::Face face;
-
         int tmp[3];
         dataSrc.readInteger(tmp[0]);
         dataSrc.readInteger(tmp[1]);
@@ -971,12 +969,8 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
             return CalCoreSubmeshPtr();
         }
-        face.vertexId[0] = tmp[0];
-        face.vertexId[1] = tmp[1];
-        face.vertexId[2] = tmp[2];
 
-        // set face in the core submesh instance
-        pCoreSubmesh->faces[faceId] = face;
+        pCoreSubmesh->addFace(CalCoreSubmesh::Face(tmp[0], tmp[1], tmp[2]));
     }
 
     return pCoreSubmesh;

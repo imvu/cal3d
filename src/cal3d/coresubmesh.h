@@ -142,7 +142,14 @@ public:
     size_t sizeInBytes() const;
 
     int coreMaterialThreadId;
-    std::vector<Face> faces;
+
+    const std::vector<Face>& getFaces() const {
+        return m_faces;
+    }
+    size_t getMinimumVertexBufferSize() const {
+        return m_minimumVertexBufferSize;
+    }
+    void addFace(const Face&);
 
     bool hasTextureCoordinates() const {
         return !m_textureCoordinates.empty();
@@ -207,6 +214,9 @@ private:
 
     std::vector<Influence> m_influences;
     CalAABox m_boundingVolume;
+
+    std::vector<Face> m_faces;
+    size_t m_minimumVertexBufferSize;
 };
 CAL3D_PTR(CalCoreSubmesh);
 

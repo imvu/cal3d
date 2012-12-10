@@ -21,7 +21,7 @@ TEST(can_replace_base_mesh_with_morph_target) {
 
     CalCoreMesh mesh;
     CalCoreSubmeshPtr submesh(new CalCoreSubmesh(1, false, 1));
-    submesh->faces.push_back(face);
+    submesh->addFace(face);
     submesh->addVertex(vertex, CalColor32(), influences);
 
     VertexOffset aVO;

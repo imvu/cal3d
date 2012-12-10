@@ -307,41 +307,18 @@ def makeTriangularStripSubmesh():
     makeVertex(bigMesh, upperRow=True, infs=[(3, 1.0)], xPos=4.0)
     makeVertex(bigMesh, upperRow=False, infs=[(3, 1.0)], xPos=4.0)
     triangles = bigMesh.triangles
-    tIdx = 0
-    t = cal3d.Triangle(0, 1, 3)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(0, 3, 2)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(2, 3, 5)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(2, 5, 4)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(4, 5, 7)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(4, 7, 6)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(6, 7, 9)
-    triangles[tIdx] = t
-
-    tIdx += 1
-    t = cal3d.Triangle(6, 9, 8)
-    triangles[tIdx] = t
+    bigMesh.addTriangle(cal3d.Triangle(0, 1, 3))
+    bigMesh.addTriangle(cal3d.Triangle(0, 3, 2))
+    bigMesh.addTriangle(cal3d.Triangle(2, 3, 5))
+    bigMesh.addTriangle(cal3d.Triangle(2, 5, 4))
+    bigMesh.addTriangle(cal3d.Triangle(4, 5, 7))
+    bigMesh.addTriangle(cal3d.Triangle(4, 7, 6))
+    bigMesh.addTriangle(cal3d.Triangle(6, 7, 9))
+    bigMesh.addTriangle(cal3d.Triangle(6, 9, 8))
 
     vIdx = 0
     for v in bigMesh.vertices:
         tcoord = cal3d.TextureCoordinate(v.position.x/4.0, -v.position.y)
         bigMesh.setTextureCoordinate(vIdx, tcoord)
-    pass
+
     return bigMesh
