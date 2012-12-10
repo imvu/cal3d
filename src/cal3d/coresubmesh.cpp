@@ -53,7 +53,7 @@ size_t CalCoreSubmesh::sizeInBytes() const {
 
 void CalCoreSubmesh::addFace(const CalCoreSubmesh::Face& face) {
     for (int i = 0; i < 3; ++i) {
-        m_minimumVertexBufferSize = std::max(m_minimumVertexBufferSize, 1u + face.vertexId[i]);
+        m_minimumVertexBufferSize = std::max(m_minimumVertexBufferSize, size_t(1 + face.vertexId[i]));
     }
     m_faces.push_back(face);
 }
