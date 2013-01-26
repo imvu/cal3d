@@ -433,10 +433,19 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("position", &PythonVertexOffset::position)
         .def_readwrite("normal", &PythonVertexOffset::normal)
         ;
+
+    enum_<CalMorphTargetType>("MorphTargetType")
+        .value("Exclusive", CalMorphTargetTypeExclusive)
+        .value("Average", CalMorphTargetTypeAverage)
+        .value("Additive", CalMorphTargetTypeAdditive)
+        .value("Clamped", CalMorphTargetTypeClamped)
+        .export_values()
+        ;
     
     class_<CalCoreMorphTarget, CalCoreMorphTargetPtr, boost::noncopyable>("CoreMorphTarget", no_init)
         .def("__init__", make_constructor(&makeMorphTarget))
         .def_readonly("name", &CalCoreMorphTarget::name)
+        .def_readonly("morphTargetType", &CalCoreMorphTarget::morphTargetType)
         .add_property("blendVertices", &getVertexOffsets)
         ;
     
