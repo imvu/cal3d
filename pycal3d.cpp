@@ -455,7 +455,9 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def(init<int, int, int>())
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
         .add_property("triangles", make_function(&CalCoreSubmesh::getFaces, return_value_policy<return_by_value>()))
+        .add_property("triangleCount", &CalCoreSubmesh::getFaceCount)
         .add_property("vertices", &getVertices)
+        .add_property("vertexCount", &CalCoreSubmesh::getVertexCount)
         .add_property("colors", make_function(&CalCoreSubmesh::getVertexColors, return_value_policy<return_by_value>()))
         .add_property("texcoords", make_function(&CalCoreSubmesh::getTextureCoordinates, return_value_policy<return_by_value>()))
         .add_property("influences", make_function(&CalCoreSubmesh::getInfluences, return_value_policy<return_by_value>()))
@@ -465,7 +467,9 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("addTriangle", &CalCoreSubmesh::addFace)
 
         .def("setTextureCoordinate", &CalCoreSubmesh::setTextureCoordinate)
+        .def("hasTextureCoordinates", &CalCoreSubmesh::hasTextureCoordinates)
         .def("hasTextureCoordinatesOutside0_1", &CalCoreSubmesh::hasTextureCoordinatesOutside0_1)
+        .def("sortTris", &CalCoreSubmesh::sortTris)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");

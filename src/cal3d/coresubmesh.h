@@ -143,9 +143,14 @@ public:
 
     int coreMaterialThreadId;
 
-    const std::vector<Face>& getFaces() const {
+    const VectorFace& getFaces() const {
         return m_faces;
     }
+
+    size_t getFaceCount() const {
+        return m_faces.size();
+    }
+
     size_t getMinimumVertexBufferSize() const {
         return m_minimumVertexBufferSize;
     }
@@ -171,7 +176,7 @@ public:
         return m_vertices.size();
     }
 
-    void addVertex(const Vertex& vertex, CalColor32 vertexColor, const std::vector<Influence>& influences);
+    void addVertex(const Vertex& vertex, CalColor32 vertexColor, const InfluenceVector& influences);
     void setTextureCoordinate(int vertexId, const TextureCoordinate& textureCoordinate);
 
     void addMorphTarget(const CalCoreMorphTargetPtr& morphTarget);
@@ -197,6 +202,8 @@ public:
         return m_boundingVolume;
     }
 
+    void sortTris(CalCoreSubmesh&);
+
 private:
     unsigned m_currentVertexId;
 
@@ -212,11 +219,28 @@ private:
     bool m_isStatic;
     InfluenceSet m_staticInfluenceSet;
 
-    std::vector<Influence> m_influences;
+    InfluenceVector m_influences;
     CalAABox m_boundingVolume;
 
-    std::vector<Face> m_faces;
+    VectorFace m_faces;
     size_t m_minimumVertexBufferSize;
+
+    struct FaceSortRef {
+        float fscore;
+        unsigned short face;
+    };
+
+    struct FaceSort {
+        unsigned short ix[3];       //  the face
+        unsigned short nfront;      //  how many faces I am in front of
+        FaceSortRef *infront;       //  refs to faces I am in front of, with scores
+        CalVector fnorm;            //  the face normal
+        float fdist;                //  the face distance from origin in the direction of the normal
+        float score;                //  the current cost of this face (sum of other faces behind)
+        float area;
+    };
+
+    void addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVertexOffset, float normalMul);
 };
 CAL3D_PTR(CalCoreSubmesh);
 

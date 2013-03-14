@@ -18,6 +18,9 @@
 #include "cal3d/vector4.h"
 #include "cal3d/transform.h"
 
+#include <iostream>
+#include <cstring>
+
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
     : coreMaterialThreadId(0)
     , m_currentVertexId(0)
@@ -481,3 +484,179 @@ CalCoreSubmeshPtr MakeCube() {
     cube->addFace(f11);
     return cube;
 }
+
+#define PRINT_MOD 200
+#define PRINT_STATUS 0
+
+void CalCoreSubmesh::addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVertexOffset, float normalMul) {
+    size_t c = 0;
+    size_t i = 0;
+    for (size_t v = 0; v < getVertexCount(); v++) {
+        const Vertex& oldVert = m_vertices[v];
+        Vertex newVert;
+        newVert.position = oldVert.position;
+        newVert.normal = oldVert.normal;
+        newVert.normal *= normalMul;
+
+        InfluenceVector newInfs;
+        while (!m_influences[i].lastInfluenceForThisVertex) {
+            Influence inf(m_influences[i].boneId, m_influences[i].weight, false);
+            newInfs.push_back(inf);
+            i++;
+        }
+
+        Influence infLast(m_influences[i].boneId, m_influences[i].weight, true);
+        newInfs.push_back(infLast);
+        i++;
+
+        submeshTo.addVertex(newVert, getVertexColors()[c], newInfs);
+        if (getTextureCoordinates().size() > 0) {
+            submeshTo.setTextureCoordinate(submeshToVertexOffset + c, getTextureCoordinates()[c]);
+        }
+        c++;
+    }
+}
+
+// http://www.mindcontrol.org/~hplus/graphics/sort-alpha.html
+void CalCoreSubmesh::sortTris(CalCoreSubmesh& submeshTo) {
+    size_t numVertices = getVertexCount();
+    size_t numFaces = m_faces.size();
+
+#if PRINT_STATUS > 0
+    std::cout << "\n\nCalCoreSubmesh::sortTris\n" <<
+            "Input submesh numVertices: " <<  numVertices <<
+            ", numFaces: " << numFaces << "\n" <<
+            "Output submesh numVertices: " <<  submeshTo.getVertexCount() <<
+            ", numFaces: " << submeshTo.getFaces().size() << "\n";
+#endif
+
+    addVertices(submeshTo, 0, 1.f);
+    addVertices(submeshTo, numVertices, -1.f);
+    for (size_t mt = 0; mt < getMorphTargets().size(); ++mt) {
+        submeshTo.addMorphTarget(getMorphTargets()[mt]);
+    }
+    submeshTo.coreMaterialThreadId = coreMaterialThreadId;
+
+    FaceSort *faces = new FaceSort[numFaces * 2];
+    memset(faces, 0, sizeof(FaceSort)*(numFaces * 2));
+    FaceSortRef *frefs = new FaceSortRef[numFaces * 2 * numFaces * 2];
+    memset(frefs, 0, sizeof(FaceSortRef) * numFaces * 2 * numFaces * 2);
+    size_t frtop = 0;
+
+    for (size_t f = 0; f < numFaces; ++f) {
+        faces[f].ix[0] = m_faces[f].vertexId[0];
+        faces[f].ix[1] = m_faces[f].vertexId[1];
+        faces[f].ix[2] = m_faces[f].vertexId[2];
+
+        faces[f].nfront = 0;
+        faces[f].infront = 0;
+
+        CalVector a = m_vertices[m_faces[f].vertexId[0]].position.asCalVector();
+        CalVector b = m_vertices[m_faces[f].vertexId[1]].position.asCalVector();
+        CalVector c = m_vertices[m_faces[f].vertexId[2]].position.asCalVector();
+        b = b - a;
+        c = c - a;
+        a = cross(b, c);
+
+        faces[f].area = a.length() * 0.5f;
+        a.normalize();
+        faces[f].fnorm = a;
+
+        a = m_vertices[m_faces[f].vertexId[0]].position.asCalVector();
+        faces[f].fdist = dot(a, faces[f].fnorm);
+        //  delay score calculation
+        faces[f].score = 0;
+    }
+
+    memcpy(faces + numFaces, faces, sizeof(FaceSort) * numFaces);
+    for (size_t f = numFaces; f < numFaces * 2; ++f) {
+        unsigned short s = faces[f].ix[0];
+        faces[f].ix[0] = (unsigned short)(faces[f].ix[1] + numVertices);
+        faces[f].ix[1] = (unsigned short)(s + numVertices);
+        faces[f].ix[2] = (unsigned short)(faces[f].ix[2] + numVertices);
+        faces[f].nfront = 0;
+        faces[f].infront = 0;
+        faces[f].fnorm *= -1;
+        faces[f].fdist *= -1;
+        faces[f].score = 0;
+    }
+
+    unsigned totalSearch = 0;
+    for (size_t g = 0; g < numFaces * 2; ++g) {
+        assert(faces[g].ix[0] != faces[g].ix[1]);
+        faces[g].infront = frefs + frtop;
+
+        for (size_t f = 0; f < numFaces * 2; ++f) {
+            if (f == g) {
+              continue;
+            }
+
+            int vfront = 0, gfront = 0;
+            for (int i = 0; i < 3; ++i) {
+                CalVector v = submeshTo.getVectorVertex()[faces[g].ix[i]].position.asCalVector();
+                float d = dot(v, faces[f].fnorm) - faces[f].fdist;
+                if (d < -1e-4) {
+                  vfront++;
+                }
+
+                v = submeshTo.getVectorVertex()[faces[f].ix[i]].position.asCalVector();
+                d = dot(v, faces[g].fnorm) - faces[g].fdist;
+                if (d < 1e-4) {
+                  gfront++;
+                }
+
+                totalSearch++;
+            }
+
+            if (vfront && (gfront < 3)) {
+              FaceSortRef &fr = faces[g].infront[faces[g].nfront];
+              fr.face = (unsigned short)f;
+              fr.fscore = (float)(std::max(faces[f].area, faces[g].area) * (1 + dot(faces[f].fnorm, faces[g].fnorm)) * 0.5 * vfront / 3);
+              faces[g].nfront++;
+              faces[f].score += fr.fscore;
+              ++frtop;
+            }
+        }
+
+
+#if PRINT_STATUS > 0
+      if (!(g % PRINT_MOD)) {
+          std::cout << "Face " << g << ", num searches so far: " << totalSearch << " (" << (totalSearch / 1000000) << "M)" << "\n";
+      }
+#endif
+
+    }
+
+    Face newFace;
+    for (size_t i = 0; i < numFaces * 2; ++i) {
+        float lowest = faces[i].score;
+        size_t lowestIx = i;
+        for (size_t f = 0; f < numFaces * 2; ++f) {
+            if (faces[f].score < lowest) {
+                lowest = faces[f].score;
+                lowestIx = f;
+            }
+        }
+        assert(lowest < 1e20f);
+        assert(faces[lowestIx].ix[0] != faces[lowestIx].ix[1]);
+        assert(faces[lowestIx].score == lowest);
+
+        newFace.vertexId[0] = faces[lowestIx].ix[0];
+        newFace.vertexId[1] = faces[lowestIx].ix[1];
+        newFace.vertexId[2] = faces[lowestIx].ix[2];
+        submeshTo.addFace(newFace);
+
+        faces[lowestIx].score = 1e20f;
+        for (size_t q = 0; q < faces[lowestIx].nfront; ++q) {
+          faces[faces[lowestIx].infront[q].face].score -= faces[lowestIx].infront[q].fscore;
+        }
+
+#if PRINT_STATUS > 0
+        if (!(i % PRINT_MOD) && (i > 0)) {
+            std::cout << "Generated " << i << " faces.\n";
+        }
+#endif
+
+    }
+}
+
