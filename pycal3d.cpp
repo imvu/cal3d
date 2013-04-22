@@ -470,6 +470,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("hasTextureCoordinates", &CalCoreSubmesh::hasTextureCoordinates)
         .def("hasTextureCoordinatesOutside0_1", &CalCoreSubmesh::hasTextureCoordinatesOutside0_1)
         .def("sortTris", &CalCoreSubmesh::sortTris)
+        .def("isStatic", &CalCoreSubmesh::isStatic)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");
