@@ -533,7 +533,16 @@ void CalCoreSubmesh::sortTris(CalCoreSubmesh& submeshTo) {
     addVertices(submeshTo, 0, 1.f);
     addVertices(submeshTo, numVertices, -1.f);
     for (size_t mt = 0; mt < getMorphTargets().size(); ++mt) {
-        submeshTo.addMorphTarget(getMorphTargets()[mt]);
+        const CalCoreMorphTargetPtr& mtPtr = getMorphTargets()[mt];
+        CalCoreMorphTarget::VertexOffsetArray voDup;
+        for (CalCoreMorphTarget::VertexOffsetArray::const_iterator voi = mtPtr->vertexOffsets.begin(); voi != mtPtr->vertexOffsets.end(); ++voi) {
+            voDup.push_back(VertexOffset(voi->vertexId, voi->position, voi->normal));
+        }
+        for (CalCoreMorphTarget::VertexOffsetArray::const_iterator voi = mtPtr->vertexOffsets.begin(); voi != mtPtr->vertexOffsets.end(); ++voi) {
+            voDup.push_back(VertexOffset(voi->vertexId + numVertices, voi->position, voi->normal));
+        }
+        CalCoreMorphTargetPtr mtPtrDup(new CalCoreMorphTarget(mtPtr->name, numVertices * 2, voDup));
+        submeshTo.addMorphTarget(mtPtrDup);
     }
     submeshTo.coreMaterialThreadId = coreMaterialThreadId;
 

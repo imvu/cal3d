@@ -79,3 +79,7 @@ void CalCoreMorphTarget::applyCoordinateTransform(CalQuaternion& xfm) {
     }
 }
 
+void CalCoreMorphTarget::addVertexOffset(const size_t vertexId, const CalCoreSubmesh::Vertex& v) {
+    VertexOffsetArray& mv = const_cast<VertexOffsetArray&>(vertexOffsets);
+    mv.push_back(VertexOffset(vertexId, v.position, v.normal));
+}

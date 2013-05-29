@@ -262,6 +262,10 @@ list getVertexOffsets(const CalCoreMorphTarget& target) {
     return pVerts;
 }
 
+void addVertexOffset(CalCoreMorphTarget& target, int vertexId, const PythonVertex& vertex) {
+    return target.addVertexOffset(vertexId, vertex.asVertex());
+}
+
 template<typename T>
 static void exportVector(const char* name) {
     class_<std::vector<T>>(name)
@@ -447,6 +451,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readonly("name", &CalCoreMorphTarget::name)
         .def_readonly("morphTargetType", &CalCoreMorphTarget::morphTargetType)
         .add_property("blendVertices", &getVertexOffsets)
+        .def("addVertexOffset", &addVertexOffset)
         ;
     
     exportVector<CalCoreMorphTargetPtr>("MorphTargetVector");
