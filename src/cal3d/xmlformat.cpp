@@ -25,20 +25,25 @@
 
 
 static inline void ReadPair(char const* buffer, float* f1, float* f2) {
-    std::stringstream str(buffer);
-    str >> *f1 >> *f2;
+    float a = 0.0f;
+    float b = 0.0f;
+    sscanf(buffer, " %f %f", &a, &b);
+    *f1 = a;
+    *f2 = b;
 }
 
 static inline void ReadPair(char const* buffer, int* f1, int* f2) {
-    std::stringstream str(buffer);
-    str >> *f1 >> *f2;
+    int a = 0;
+    int b = 0;
+    sscanf(buffer, " %d %d", &a, &b);
+    *f1 = a;
+    *f2 = b;
 }
 
 // atof does wacky things in VC++ 2010 CRT in Serbia...
 static inline float imvu_atof(const char* p) {
-    std::stringstream str(p);
-    float f;
-    str >> f;
+    float f = 0.0f;
+    sscanf(p, " %f", &f);
     return f;
 }
 
@@ -129,9 +134,13 @@ static inline bool TexCoordFromXml(
 
 
 static inline void ReadTripleFloat(char const* buffer, float* f1, float* f2, float* f3) {
-    std::stringstream str;
-    str << buffer;
-    str >> *f1 >> *f2 >> *f3;
+    float a = 0.0f;
+    float b = 0.0f;
+    float c = 0.0f;
+    sscanf(buffer, " %f %f %f", &a, &b, &c);
+    *f1 = a;
+    *f2 = b;
+    *f3 = c;
 }
 
 static inline bool CalVectorFromXml(
@@ -240,9 +249,15 @@ static inline bool CalVectorFromXml(
 
 
 static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float* f3, float* f4) {
-    std::stringstream str;
-    str << buffer;
-    str >> *f1 >> *f2 >> *f3 >> *f4;
+    float a = 0.0f;
+    float b = 0.0f;
+    float c = 0.0f;
+    float d = 0.0f;
+    sscanf(buffer, " %f %f %f %f", &a, &b, &c, &d);
+    *f1 = a;
+    *f2 = b;
+    *f3 = c;
+    *f4 = d;
 }
 
 CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(std::vector<char>& dataSrc) {
