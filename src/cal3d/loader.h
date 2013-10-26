@@ -34,10 +34,10 @@ class CalQuaternion;
 class CalBufferSource;
 
 namespace rapidxml {
-    template<typename T = char>
+    template<typename T>
     class xml_document;
 
-    template<typename T = char>
+    template<typename T>
     class xml_node;
 }
 
@@ -81,13 +81,13 @@ private:
     static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(TiXmlDocument& doc);
 
     static CalCoreMeshPtr loadXmlCoreMesh(std::vector<char>&);
-    static CalCoreMeshPtr loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc);
+    static CalCoreMeshPtr loadXmlCoreMeshDoc(const rapidxml::xml_document<char>& doc);
 
     static CalCoreMaterialPtr loadXmlCoreMaterial(std::vector<char>&);
     static CalCoreMaterialPtr loadXmlCoreMaterialDoc(TiXmlDocument& doc);
 
     static bool isHeaderWellFormed(const TiXmlElement* header);
-    static bool isHeaderWellFormed(const rapidxml::xml_node<>* node);
+    static bool isHeaderWellFormed(const rapidxml::xml_node<char>* node);
 
     static CalCoreBonePtr loadCoreBones(CalBufferSource& dataSrc, int version);
     static CalCoreKeyframePtr loadCoreKeyframe(CalBufferSource& dataSrc,
