@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <vector>
 #include <list>
 #include <map>
 #include <set>
