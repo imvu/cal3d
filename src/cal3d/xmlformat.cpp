@@ -172,12 +172,12 @@ static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float
     str >> *f1 >> *f2 >> *f3 >> *f4;
 }
 
-CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(const char* dataSrc) {
+CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(std::vector<char>& dataSrc) {
     const CalCoreSkeletonPtr null;
 
     TiXmlDocument doc;
 
-    doc.Parse(dataSrc);
+    doc.Parse(cal3d::pointerFromVector(dataSrc));
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
@@ -186,13 +186,13 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(const char* dataSrc) {
     return loadXmlCoreSkeletonDoc(doc);
 }
 
-CalCoreMeshPtr CalLoader::loadXmlCoreMesh(const char* dataSrc) {
+CalCoreMeshPtr CalLoader::loadXmlCoreMesh(std::vector<char>& dataSrc) {
     const CalCoreMeshPtr null;
 
     TiXmlDocument doc;
     doc.Clear();
     
-    doc.Parse(dataSrc);
+    doc.Parse(cal3d::pointerFromVector(dataSrc));
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
@@ -201,12 +201,12 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMesh(const char* dataSrc) {
     return loadXmlCoreMeshDoc(doc);
 }
 
-CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(const char* dataSrc) {
+CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(std::vector<char>& dataSrc) {
     const CalCoreMaterialPtr null;
 
     TiXmlDocument doc;
     
-    doc.Parse(dataSrc);
+    doc.Parse(cal3d::pointerFromVector(dataSrc));
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
@@ -215,11 +215,11 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(const char* dataSrc) {
     return loadXmlCoreMaterialDoc(doc);
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc) {
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(std::vector<char>& dataSrc) {
     TiXmlDocument doc;
     doc.Clear();
 
-    doc.Parse(dataSrc);
+    doc.Parse(cal3d::pointerFromVector(dataSrc));
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return CalCoreAnimationPtr();
@@ -229,11 +229,11 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(const char* dataSrc) {
 }
 
 
-CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(const char* dataSrc) {
+CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(std::vector<char>& dataSrc) {
     TiXmlDocument doc;
     doc.Clear();
 
-    doc.Parse(dataSrc);
+    doc.Parse(cal3d::pointerFromVector(dataSrc));
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return CalCoreMorphAnimationPtr();

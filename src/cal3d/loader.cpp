@@ -14,6 +14,7 @@
 
 #include <boost/optional.hpp>
 #include <stdexcept>
+#include "cal3d/memory.h"
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
 #include "cal3d/vector.h"
@@ -118,15 +119,17 @@ template<typename RV>
 RV tryBothLoaders(
     CalBufferSource& inputSource,
     RV(*binaryLoader)(CalBufferSource&),
-    RV(*xmlLoader)(const char*)
+    RV(*xmlLoader)(std::vector<char>&)
 ) {
     try {
         if (RV anim = binaryLoader(inputSource)) {
             return anim;
         }
-        // make a copy to null-terminate :(
-        std::string data((const char*)inputSource.data(), inputSource.size());
-        return xmlLoader(data.c_str());
+        // make a copy to null-terminate and allow the xml parser to modify memory in-place
+        std::vector<char> data(inputSource.size() + 1);
+        memcpy(cal3d::pointerFromVector(data), inputSource.data(), inputSource.size());
+        data[inputSource.size()] = 0;
+        return xmlLoader(data);
     } catch (const CalError&) {
         return RV();
     }
