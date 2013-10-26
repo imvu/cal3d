@@ -46,6 +46,15 @@ static inline float imvu_atof(const char* p) {
 #define CAL3D_VALIDATE_XML_TAGS ( 1 )
 
 
+static bool has_name(TiXmlNode* node, const char* name) {
+    return 0 == cal3d_stricmp(node->Value(), name);
+}
+
+static bool has_name(rapidxml::xml_node<>* node, const char* name) {
+    return 0 == cal3d_stricmp(node->name(), name);
+}
+
+
 template<class T>
 static inline bool _ValidateTag(
     T* element,
@@ -777,14 +786,6 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& 
 *         \li a pointer to the core mesh
 *         \li \b 0 if an error happened
 *****************************************************************************/
-
-static bool has_name(TiXmlNode* node, const char* name) {
-    return 0 == cal3d_stricmp(node->Value(), name);
-}
-
-static bool has_name(rapidxml::xml_node<>* node, const char* name) {
-    return 0 == cal3d_stricmp(node->name(), name);
-}
 
 static bool has_attribute_value(rapidxml::xml_node<>* node, const char* name, const char* value) {
     auto attribute = node->first_attribute(name, 0, false);
