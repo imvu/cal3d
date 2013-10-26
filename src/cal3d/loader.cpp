@@ -14,6 +14,7 @@
 
 #include <boost/optional.hpp>
 #include <stdexcept>
+#include <rapidxml.hpp>
 #include "cal3d/memory.h"
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
@@ -113,6 +114,10 @@ TranslationWritten(CalCoreKeyframe* lastCoreKeyframe, bool translationRequired, 
 
 bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
     return header->Attribute("MAGIC") && header->Attribute("VERSION");
+}
+
+bool CalLoader::isHeaderWellFormed(const rapidxml::xml_node<>* node) {
+    return node->first_attribute("magic", 0, false) && node->first_attribute("version", 0, false);
 }
 
 template<typename RV>

@@ -1,6 +1,7 @@
 #include <boost/optional.hpp>
 #include <sstream>
 #include <stdexcept>
+#include <rapidxml.hpp>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
 #include "cal3d/vector.h"
@@ -60,7 +61,7 @@ static inline bool _ValidateTag(
         ok = false;
     }
 
-    if (ok && requiredTag && cal3d_stricmp(element->Value(), requiredTag) != 0) {
+    if (ok && requiredTag && !has_name(element, requiredTag)) {
         ok = false;
     }
 
@@ -99,6 +100,23 @@ static inline bool TexCoordFromXml(
     return true;
 }
 
+static inline bool TexCoordFromXml(
+    rapidxml::xml_node<>* texcoord,
+    char const* tag,
+    CalCoreSubmesh::TextureCoordinate* texCoord,
+    const CalCoreMeshPtr& pCoreMesh,
+    const CalCoreSubmeshPtr& pCoreSubmesh
+) {
+    if (!ValidateTag(texcoord, tag, pCoreMesh, pCoreSubmesh)) {
+        return false;
+    }
+    if (!texcoord->value()) {
+        return false;
+    } else {
+        ReadPair(texcoord->value(), &texCoord->u, &texCoord->v);
+        return true;
+    }
+}
 
 
 static inline void ReadTripleFloat(char const* buffer, float* f1, float* f2, float* f3) {
@@ -107,7 +125,23 @@ static inline void ReadTripleFloat(char const* buffer, float* f1, float* f2, flo
     str >> *f1 >> *f2 >> *f3;
 }
 
-
+static inline bool CalVectorFromXml(
+    rapidxml::xml_node<>* pos,
+    char const* tag,
+    CalVector* calVec,
+    const CalCoreMeshPtr& pCoreMesh,
+    const CalCoreSubmeshPtr& pCoreSubmesh
+) {
+    if (!ValidateTag(pos, tag, pCoreMesh, pCoreSubmesh)) {
+        return false;
+    }
+    if (pos->value()) {
+        ReadTripleFloat(pos->value(), &calVec->x, &calVec->y, &calVec->z);
+        return true;
+    } else {
+        return false;
+    }
+}
 
 static inline bool CalVectorFromXml(
     TiXmlElement* pos,
@@ -131,6 +165,21 @@ static inline bool CalVectorFromXml(
     return true;
 }
 
+static inline bool CalVectorFromXml(
+    rapidxml::xml_node<>* pos,
+    char const* tag,
+    CalVector4* calVec,
+    const CalCoreMeshPtr& pCoreMesh,
+    const CalCoreSubmeshPtr& pCoreSubmesh
+) {
+    CalVector v;
+    if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
+        *calVec = CalVector4(v);
+        return true;
+    } else {
+        return false;
+    }
+}
 
 static inline bool CalVectorFromXml(
     TiXmlElement* pos,
@@ -148,6 +197,21 @@ static inline bool CalVectorFromXml(
     }
 }
 
+static inline bool CalVectorFromXml(
+    rapidxml::xml_node<>* pos,
+    char const* tag,
+    CalPoint4* calVec,
+    const CalCoreMeshPtr& pCoreMesh,
+    const CalCoreSubmeshPtr& pCoreSubmesh
+) {
+    CalVector v;
+    if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
+        *calVec = CalPoint4(v);
+        return true;
+    } else {
+        return false;
+    }
+}
 
 static inline bool CalVectorFromXml(
     TiXmlElement* pos,
@@ -187,18 +251,15 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(std::vector<char>& dataSrc) {
 }
 
 CalCoreMeshPtr CalLoader::loadXmlCoreMesh(std::vector<char>& dataSrc) {
-    const CalCoreMeshPtr null;
-
-    TiXmlDocument doc;
-    doc.Clear();
-    
-    doc.Parse(cal3d::pointerFromVector(dataSrc));
-    if (doc.Error()) {
+    rapidxml::xml_document<> document;
+    try {
+        document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(cal3d::pointerFromVector(dataSrc));
+    } catch (const rapidxml::parse_error&) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return null;
+        return CalCoreMeshPtr();
     }
 
-    return loadXmlCoreMeshDoc(doc);
+    return loadXmlCoreMeshDoc(document);
 }
 
 CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(std::vector<char>& dataSrc) {
@@ -717,15 +778,47 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& 
 *         \li \b 0 if an error happened
 *****************************************************************************/
 
-CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
+static bool has_name(TiXmlNode* node, const char* name) {
+    return 0 == cal3d_stricmp(node->Value(), name);
+}
+
+static bool has_name(rapidxml::xml_node<>* node, const char* name) {
+    return 0 == cal3d_stricmp(node->name(), name);
+}
+
+static bool has_attribute_value(rapidxml::xml_node<>* node, const char* name, const char* value) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return false;
+    }
+    return 0 == cal3d_stricmp(attribute->value(), value);
+}
+
+static int get_int_attribute(rapidxml::xml_node<>* node, const char* name) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return 0;
+    }
+    return atoi(attribute->value());
+}
+
+static const char* get_string_attribute(rapidxml::xml_node<>* node, const char* name) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return "";
+    }
+    return attribute->value() ? attribute->value() : "";
+}
+
+CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc) {
+    typedef rapidxml::xml_node<> xml_node;
+
     const CalCoreMeshPtr null;
 
     std::string strFilename = "";
 
-    TiXmlNode* node;
-
-    TiXmlElement* header = doc.FirstChildElement();
-    if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
+    xml_node* header = doc.first_node();
+    if (!header || !has_name(header, "header")) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
@@ -735,12 +828,12 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
         return null;
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::MESH_XMLFILE_EXTENSION) != 0) {
+    if (!has_attribute_value(header, "magic", cal3d::MESH_XMLFILE_EXTENSION)) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
-    int version = atoi(header->Attribute("VERSION"));
+    int version = get_int_attribute(header, "version");
     if (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
         return null;
@@ -748,51 +841,37 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
     bool hasVertexColors = (version >= cal3d::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
 
-    TiXmlElement* mesh = header->NextSiblingElement();
-    if (!mesh || cal3d_stricmp(mesh->Value(), "MESH") != 0) {
+    xml_node* mesh = header->next_sibling();
+    if (!mesh || !has_name(mesh, "mesh")) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
         return null;
     }
 
     //  get the number of submeshes
-    int submeshCount = atoi(mesh->Attribute("NUMSUBMESH"));
+    int submeshCount = get_int_attribute(mesh, "numsubmesh");
 
-    // allocate a new core mesh instance
     CalCoreMeshPtr pCoreMesh(new CalCoreMesh);
 
-    TiXmlElement* submesh = mesh->FirstChildElement();
+    xml_node* submesh = mesh->first_node();
 
     // load all core submeshes
-    int submeshId;
-    for (submeshId = 0; submeshId < submeshCount; ++submeshId) {
-        if (!submesh || cal3d_stricmp(submesh->Value(), "SUBMESH") != 0) {
+    for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
+        if (!submesh || !has_name(submesh, "submesh")) {
             CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
             return null;
         }
 
-        // get the material thread id of the submesh
-        int coreMaterialThreadId = atoi(submesh->Attribute("MATERIAL"));
-
-        // get the number of vertices, faces, level-of-details and springs
-        int vertexCount = atoi(submesh->Attribute("NUMVERTICES"));
-
-        int faceCount = atoi(submesh->Attribute("NUMFACES"));
-
-        int springCount = atoi(submesh->Attribute("NUMSPRINGS"));
-
-        int textureCoordinateCount = atoi(submesh->Attribute("NUMTEXCOORDS"));
-
-        char const* numMorphStr = submesh->Attribute("NUMMORPHS");
-        int morphCount = 0;
-        if (numMorphStr) {
-            morphCount = atoi(numMorphStr);
-        }
+        int coreMaterialThreadId = get_int_attribute(submesh, "MATERIAL");
+        int vertexCount = get_int_attribute(submesh, "numvertices");
+        int faceCount = get_int_attribute(submesh, "NUMFACES");
+        int springCount = get_int_attribute(submesh, "NUMSPRINGS");
+        int textureCoordinateCount = get_int_attribute(submesh, "NUMTEXCOORDS");
+        int morphCount = get_int_attribute(submesh, "nummorphs");
 
         CalCoreSubmeshPtr pCoreSubmesh(new CalCoreSubmesh(vertexCount, textureCoordinateCount ? true : false, faceCount));
-
         pCoreSubmesh->coreMaterialThreadId = coreMaterialThreadId;
 
-        TiXmlElement* vertex = submesh->FirstChildElement();
+        xml_node* vertex = submesh->first_node();
 
         for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
             if (!ValidateTag(vertex, "VERTEX", pCoreMesh, pCoreSubmesh)) {
@@ -801,40 +880,22 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             CalCoreSubmesh::Vertex Vertex;
             CalColor32 vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
 
-            TiXmlElement* pos = vertex->FirstChildElement();
+            xml_node* pos = vertex->first_node();
             if (!ValidateTag(pos, "POS", pCoreMesh, pCoreSubmesh)) {
                 return null;
             }
-            node = pos->FirstChild();
-            if (!ValidateTag(node, NULL, pCoreMesh, pCoreSubmesh)) {
-                return null;
-            }
-            TiXmlText* posdata = node->ToText();
-            if (!ValidateTag(posdata, NULL, pCoreMesh, pCoreSubmesh)) {
-                return null;
-            }
-            ReadTripleFloat(posdata->Value(), &Vertex.position.x, &Vertex.position.y, &Vertex.position.z);
+            ReadTripleFloat(pos->value(), &Vertex.position.x, &Vertex.position.y, &Vertex.position.z);
 
-            TiXmlElement* norm = pos->NextSiblingElement();
+            xml_node* norm = pos->next_sibling();
             if (!ValidateTag(norm, "NORM", pCoreMesh, pCoreSubmesh)) {
                 return null;
             }
-            node = norm->FirstChild();
-            if (!node) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
-            }
-            TiXmlText* normdata = node->ToText();
-            if (!normdata) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
-            }
 
-            ReadTripleFloat(normdata->Value(),  &Vertex.normal.x, &Vertex.normal.y, &Vertex.normal.z);
+            ReadTripleFloat(norm->value(),  &Vertex.normal.x, &Vertex.normal.y, &Vertex.normal.z);
 
-            TiXmlElement* vertColor = norm->NextSiblingElement();
-            TiXmlElement* collapse = 0;
-            if (!vertColor || cal3d_stricmp(vertColor->Value(), "COLOR") != 0) {
+            xml_node* vertColor = norm->next_sibling();
+            xml_node* collapse = 0;
+            if (!vertColor || !has_name(vertColor, "color")) {
                 if (hasVertexColors) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
@@ -842,58 +903,37 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                     collapse = vertColor;
                 }
             } else {
-                node = vertColor->FirstChild();
-                if (!node) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
-                TiXmlText* vcdata = node->ToText();
-                if (!vcdata) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
                 CalVector vc(1.0f, 1.0f, 1.0f);
-                ReadTripleFloat(vcdata->Value(), &vc.x, &vc.y, &vc.z);
+                ReadTripleFloat(vertColor->value(), &vc.x, &vc.y, &vc.z);
                 vertexColor = CalMakeColor(vc);
 
-                collapse = vertColor->NextSiblingElement();
+                collapse = vertColor->next_sibling();
             }
             if (!collapse) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
-            if (cal3d_stricmp(collapse->Value(), "COLLAPSEID") == 0) {
-                node = collapse->FirstChild();
-                if (!node) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
-                TiXmlText* collapseid = node->ToText();
+            if (has_name(collapse, "COLLAPSEID")) {
+                const char* collapseid = collapse->value();
                 if (!collapseid) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
                 }
-                TiXmlElement* collapseCount = collapse->NextSiblingElement();
-                if (!collapseCount || cal3d_stricmp(collapseCount->Value(), "COLLAPSECOUNT") != 0) {
+                xml_node* collapseCount = collapse->next_sibling();
+                if (!collapseCount || !has_name(collapseCount, "COLLAPSECOUNT")) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
                 }
 
-                node = collapseCount->FirstChild();
-                if (!node) {
+                const char* collapseCountData = collapseCount->value();
+                if (!collapseCountData) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
                 }
-                TiXmlText* collapseCountdata = node->ToText();
-                if (!collapseCountdata) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
-                collapse = collapseCount->NextSiblingElement();
+                collapse = collapseCount->next_sibling();
             }
 
-
-            TiXmlElement* texcoord = collapse;
+            xml_node* texcoord = collapse;
 
             // load all texture coordinates of the vertex
             int textureCoordinateId;
@@ -901,34 +941,23 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                 CalCoreSubmesh::TextureCoordinate textureCoordinate;
                 // load data of the influence
 #if CAL3D_VALIDATE_XML_TAGS
-                if (!texcoord || cal3d_stricmp(texcoord->Value(), "TEXCOORD") != 0) {
+                if (!texcoord || !has_name(texcoord, "TEXCOORD")) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
                 }
 #endif
-                node = texcoord->FirstChild();
-                if (!node) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
-                TiXmlText* texcoorddata = node->ToText();
-                if (!texcoorddata) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
 
-                ReadPair(texcoorddata->Value(), &textureCoordinate.u, &textureCoordinate.v);
+                ReadPair(texcoord->value(), &textureCoordinate.u, &textureCoordinate.v);
 
                 // set texture coordinate in the core submesh instance
                 if (textureCoordinateId == 0) {
                     pCoreSubmesh->setTextureCoordinate(vertexId, textureCoordinate);
                 }
-                texcoord = texcoord->NextSiblingElement();
+                texcoord = texcoord->next_sibling();
             }
 
             // get the number of influences
-            int influenceCount = atoi(vertex->Attribute("NUMINFLUENCES"));
-
+            int influenceCount = get_int_attribute(vertex, "NUMINFLUENCES");
             if (influenceCount < 0) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
@@ -936,67 +965,56 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
             std::vector<CalCoreSubmesh::Influence> influences(influenceCount);
 
-            TiXmlElement* influence = texcoord;
+            xml_node* influence = texcoord;
 
             // load all influences of the vertex
             int influenceId;
             for (influenceId = 0; influenceId < influenceCount; ++influenceId) {
 #if CAL3D_VALIDATE_XML_TAGS
-                if (!influence || cal3d_stricmp(influence->Value(), "INFLUENCE") != 0) {
+                if (!influence || !has_name(influence, "INFLUENCE")) {
                     CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                     return null;
                 }
 #endif
-                node = influence->FirstChild();
-                if (!node) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
-                TiXmlText* influencedata = node->ToText();
-                if (!influencedata) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
-                }
 
-                influences[influenceId].boneId = atoi(influence->Attribute("ID"));
-                influences[influenceId].weight = imvu_atof(influencedata->Value());
+                influences[influenceId].boneId = get_int_attribute(influence, "ID");
+                influences[influenceId].weight = imvu_atof(influence->value());
 
-                influence = influence->NextSiblingElement();
+                influence = influence->next_sibling();
             }
 
             pCoreSubmesh->addVertex(Vertex, vertexColor, influences);
-            vertex = vertex->NextSiblingElement();
+            vertex = vertex->next_sibling();
         }
 
-        TiXmlElement* spring = vertex;
+        xml_node* spring = vertex;
 
-        // load all springs
         for (int springId = 0; springId < springCount; ++springId) {
-            if (!spring || cal3d_stricmp(spring->Value(), "SPRING") != 0) {
+            if (!spring || !has_name(spring, "SPRING")) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
-            spring = spring->NextSiblingElement();
+            spring = spring->next_sibling();
         }
 
-        TiXmlElement* face = spring;
+        xml_node* face = spring;
 
-        TiXmlElement* morph = face;
+        xml_node* morph = face;
         for (int morphId = 0; morphId < morphCount; morphId++) {
-            if (cal3d_stricmp(morph->Value(), "MORPH") != 0) {
+            if (!has_name(morph, "MORPH")) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
 
             CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
 
-            TiXmlElement* blendVert = morph->FirstChildElement();
+            xml_node* blendVert = morph->first_node();
             for (int blendVertI = 0; blendVertI < vertexCount; blendVertI++) {
                 VertexOffset Vertex;
 
                 bool copyOrig = true;
-                if (blendVert && !cal3d_stricmp(blendVert->Value(), "BLENDVERTEX")) {
-                    int vertId = atoi(blendVert->Attribute("VERTEXID"));
+                if (blendVert && has_name(blendVert, "BLENDVERTEX")) {
+                    int vertId = get_int_attribute(blendVert, "VERTEXID");
 
                     if (vertId == blendVertI) {
                         copyOrig = false;
@@ -1008,17 +1026,17 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                         return null;
                     }
 
-                    TiXmlElement* pos = blendVert->FirstChildElement();
+                    xml_node* pos = blendVert->first_node();
                     if (!CalVectorFromXml(pos, "POSITION", &Vertex.position, pCoreMesh, pCoreSubmesh)) {
                         return null;
                     }
 
-                    TiXmlElement* norm = pos->NextSiblingElement();
+                    xml_node* norm = pos->next_sibling();
                     if (!CalVectorFromXml(norm, "NORMAL", &Vertex.normal, pCoreMesh, pCoreSubmesh)) {
                         return null;
                     }
 
-                    TiXmlElement* texcoord = norm->NextSiblingElement();
+                    xml_node* texcoord = norm->next_sibling();
                     int textureCoordinateId;
                     for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
                         CalCoreSubmesh::TextureCoordinate textureCoordinate;
@@ -1032,26 +1050,35 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
                         ) {
                             return null;
                         }
-                        texcoord = texcoord->NextSiblingElement();
+                        texcoord = texcoord->next_sibling();
                     }
-                    blendVert = blendVert->NextSiblingElement();
+                    blendVert = blendVert->next_sibling();
                     Vertex.vertexId = blendVertI;
                     Vertex.position -= pCoreSubmesh->getVectorVertex()[blendVertI].position;
                     Vertex.normal -= pCoreSubmesh->getVectorVertex()[blendVertI].normal;
                     vertexOffsets.push_back(Vertex);
                 }
             }
-            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(morph->Attribute("NAME"), vertexCount, vertexOffsets));
+
+            auto nameAttribute = morph->first_attribute("name", 0, false);
+            const char* name;
+            if (!nameAttribute) {
+                name = "";
+            } else {
+                name = nameAttribute->value();
+            }
+
+            CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget(name, vertexCount, vertexOffsets));
             pCoreSubmesh->addMorphTarget(morphTarget);
 
-            morph = morph->NextSiblingElement();
+            morph = morph->next_sibling();
         }
 
         face = morph;
         // load all faces
         for (int faceId = 0; faceId < faceCount; ++faceId) {
 #if CAL3D_VALIDATE_XML_TAGS
-            if (cal3d_stricmp(face->Value(), "FACE") != 0) {
+            if (!has_name(face, "FACE")) {
                 CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
                 return null;
             }
@@ -1060,7 +1087,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
 
             // load data of the face
             std::stringstream str;
-            str << face->Attribute("VERTEXID");
+            str << get_string_attribute(face, "VERTEXID");
             str >> tmp[0] >> tmp [1] >> tmp[2];
 
             if (sizeof(CalIndex) == 2) {
@@ -1071,18 +1098,14 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(TiXmlDocument& doc) {
             }
             pCoreSubmesh->addFace(CalCoreSubmesh::Face(tmp[0], tmp[1], tmp[2]));
 
-            face = face->NextSiblingElement();
+            face = face->next_sibling();
         }
-        submesh = submesh->NextSiblingElement();
+        submesh = submesh->next_sibling();
 
         // add the core submesh to the core mesh instance
         pCoreMesh->submeshes.push_back(pCoreSubmesh);
-
     }
 
-
-    // explicitly close the file
-    doc.Clear();
     return pCoreMesh;
 }
 

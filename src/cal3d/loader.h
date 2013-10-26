@@ -33,6 +33,14 @@ class CalVector;
 class CalQuaternion;
 class CalBufferSource;
 
+namespace rapidxml {
+    template<typename T = char>
+    class xml_document;
+
+    template<typename T = char>
+    class xml_node;
+}
+
 bool CAL3D_API CalVectorFromDataSrc(CalBufferSource& dataSrc, CalVector* calVec);
 
 class CAL3D_API CalLoader {
@@ -73,12 +81,13 @@ private:
     static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(TiXmlDocument& doc);
 
     static CalCoreMeshPtr loadXmlCoreMesh(std::vector<char>&);
-    static CalCoreMeshPtr loadXmlCoreMeshDoc(TiXmlDocument& doc);
+    static CalCoreMeshPtr loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc);
 
     static CalCoreMaterialPtr loadXmlCoreMaterial(std::vector<char>&);
     static CalCoreMaterialPtr loadXmlCoreMaterialDoc(TiXmlDocument& doc);
 
     static bool isHeaderWellFormed(const TiXmlElement* header);
+    static bool isHeaderWellFormed(const rapidxml::xml_node<>* node);
 
     static CalCoreBonePtr loadCoreBones(CalBufferSource& dataSrc, int version);
     static CalCoreKeyframePtr loadCoreKeyframe(CalBufferSource& dataSrc,
