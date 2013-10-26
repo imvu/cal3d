@@ -41,7 +41,7 @@ sources = Split('''
 
 sources = ['src/cal3d/' + s for s in sources]
 
-shared_lib_env = env.Clone(tools=['boost'])
+shared_lib_env = env.Clone(tools=['boost', 'rapidxml'])
 shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
     CPPPATH=['../src'])
