@@ -23,6 +23,15 @@
 #include "cal3d/xmlformat.h"
 #include "cal3d/calxmlbindings.h"
 
+struct InvalidFileFormat {
+    InvalidFileFormat() {
+        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
+    }
+
+    operator CalCoreSkeletonPtr() const { return CalCoreSkeletonPtr(); }
+    operator CalCoreMeshPtr() const { return CalCoreMeshPtr(); }
+    operator CalCoreMorphAnimationPtr() const { return CalCoreMorphAnimationPtr(); }
+};
 
 static inline void ReadPair(char const* buffer, float* f1, float* f2) {
     float a = 0.0f;
@@ -59,6 +68,44 @@ static bool has_name(rapidxml::xml_node<>* node, const char* name) {
     return 0 == cal3d_stricmp(node->name(), name);
 }
 
+static bool has_attribute_value(rapidxml::xml_node<>* node, const char* name, const char* value) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return false;
+    }
+    return 0 == cal3d_stricmp(attribute->value(), value);
+}
+
+static bool has_attribute(rapidxml::xml_node<>* node, const char* name) {
+    auto attribute = node->first_attribute(name, 0, false);
+    return !!attribute;
+}
+
+static int get_int_attribute(rapidxml::xml_node<>* node, const char* name) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return 0;
+    }
+    return atoi(attribute->value());
+}
+
+static const char* get_string_attribute(rapidxml::xml_node<>* node, const char* name) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return "";
+    }
+    return attribute->value() ? attribute->value() : "";
+}
+
+static int get_int_value(rapidxml::xml_node<>* node) {
+    const char* v = node->value();
+    return v ? atoi(v) : 0;
+}
+
+static const char* get_string_value(rapidxml::xml_node<>* node) {
+    const char* v = node->value();
+    return v ? v : "";
+}
 
 template<class T>
 static inline bool _ValidateTag(
@@ -261,17 +308,14 @@ static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float
 }
 
 CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(std::vector<char>& dataSrc) {
-    const CalCoreSkeletonPtr null;
-
-    TiXmlDocument doc;
-
-    doc.Parse(cal3d::pointerFromVector(dataSrc));
-    if (doc.Error()) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return null;
+    rapidxml::xml_document<> document;
+    try {
+        document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(cal3d::pointerFromVector(dataSrc));
+    } catch (const rapidxml::parse_error&) {
+        return InvalidFileFormat();
     }
 
-    return loadXmlCoreSkeletonDoc(doc);
+    return loadXmlCoreSkeletonDoc(document);
 }
 
 CalCoreMeshPtr CalLoader::loadXmlCoreMesh(std::vector<char>& dataSrc) {
@@ -279,8 +323,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMesh(std::vector<char>& dataSrc) {
     try {
         document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(cal3d::pointerFromVector(dataSrc));
     } catch (const rapidxml::parse_error&) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return CalCoreMeshPtr();
+        return InvalidFileFormat();
     }
 
     return loadXmlCoreMeshDoc(document);
@@ -313,57 +356,47 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(std::vector<char>& dataSrc) 
     return loadXmlCoreAnimationDoc(doc);
 }
 
-
 CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(std::vector<char>& dataSrc) {
     TiXmlDocument doc;
     doc.Clear();
 
     doc.Parse(cal3d::pointerFromVector(dataSrc));
     if (doc.Error()) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return CalCoreMorphAnimationPtr();
+        return InvalidFileFormat();
     }
 
     return loadXmlCoreMorphAnimationDoc(doc);
 }
 
-CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
-    const CalCoreSkeletonPtr null;
-    std::stringstream str;
+CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_document<>& doc) {
+    typedef rapidxml::xml_node<> TiXmlNode;
+    typedef rapidxml::xml_node<> TiXmlElement;
 
-    std::string strFilename = "";
-
-    TiXmlNode* node;
-    TiXmlElement* header = doc.FirstChildElement();
-    if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+    TiXmlElement* header = doc.first_node();
+    if (!header || !has_name(header, "header")) {
+        return InvalidFileFormat();
     }
 
     if (!isHeaderWellFormed(header)) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::SKELETON_XMLFILE_EXTENSION) != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+    if (!has_attribute_value(header, "magic", cal3d::SKELETON_XMLFILE_EXTENSION)) {
+        return InvalidFileFormat();
     }
 
-    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
-        CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return null;
+    if (get_int_attribute(header, "version") < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
+        return InvalidFileFormat();
     }
 
-    TiXmlElement* skeleton = header->NextSiblingElement();
-    if (!skeleton || cal3d_stricmp(skeleton->Value(), "SKELETON") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+    TiXmlElement* skeleton = header->next_sibling();
+    if (!skeleton || !has_name(skeleton, "skeleton")) {
+        return InvalidFileFormat();
     }
 
     boost::optional<CalVector> sceneAmbientColor;
 
-    char const* attrStr = skeleton->Attribute("SCENEAMBIENTCOLOR");
+    char const* attrStr = get_string_attribute(skeleton, "SCENEAMBIENTCOLOR");
     if (attrStr) {
         CalVector sceneColor;
         ReadTripleFloat(attrStr, &sceneColor.x, &sceneColor.y, &sceneColor.z);
@@ -372,145 +405,74 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
 
     std::vector<CalCoreBonePtr> bones;
 
-    for (TiXmlElement* bone = skeleton->FirstChildElement(); bone; bone = bone->NextSiblingElement()) {
-        if (cal3d_stricmp(bone->Value(), "BONE") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+    for (TiXmlElement* bone = skeleton->first_node(); bone; bone = bone->next_sibling()) {
+        if (!has_name(bone, "BONE")) {
+            return InvalidFileFormat();
         }
 
-        std::string strName = bone->Attribute("NAME");
+        // safe because rapidxml keeps string pointers alive as long as the source text is alive
+        const char* strName = get_string_attribute(bone, "NAME");
 
         CalLightType lightType = LIGHT_TYPE_NONE;
         CalVector lightColor;
 
-        char const* attrStr = bone->Attribute("LIGHTTYPE");
-        if (attrStr) {
-            lightType = (CalLightType)atoi(attrStr);
+        if (has_attribute(bone, "LIGHTTYPE")) {
+            lightType = (CalLightType)get_int_attribute(bone, "LIGHTTYPE");
         }
 
-        attrStr = bone->Attribute("LIGHTCOLOR");
+        const char* attrStr = get_string_attribute(bone, "LIGHTCOLOR");
         if (attrStr) {
             ReadTripleFloat(attrStr, &lightColor.x, &lightColor.y, &lightColor.z);
         }
-
-
+        
         // get the translation of the bone
 
-        TiXmlElement* translation = bone->FirstChildElement();
-        if (!translation || cal3d_stricmp(translation->Value(), "TRANSLATION") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+        TiXmlElement* translation = bone->first_node();
+        if (!translation || !has_name(translation, "TRANSLATION")) {
+            return InvalidFileFormat();
         }
 
         float tx, ty, tz;
-
-        node = translation->FirstChild();
-        if (!node) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        TiXmlText* translationdata = node->ToText();
-        if (!translationdata) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        str.clear();
-        str << translationdata->Value();
-        str >> tx >> ty >> tz;
+        ReadTripleFloat(get_string_value(translation), &tx, &ty, &tz);
 
         // get the rotation of the bone
 
-        TiXmlElement* rotation = translation->NextSiblingElement();
-        if (!rotation || cal3d_stricmp(rotation->Value(), "ROTATION") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+        TiXmlElement* rotation = translation->next_sibling();
+        if (!rotation || !has_name(rotation, "ROTATION")) {
+            return InvalidFileFormat();
         }
 
         float rx, ry, rz, rw;
-
-        node = rotation->FirstChild();
-        if (!node) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        TiXmlText* rotationdata = node->ToText();
-        if (!rotationdata) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        str.clear();
-        str << rotationdata->Value();
-        str >> rx >> ry >> rz >> rw;
+        ReadQuadFloat(get_string_value(rotation), &rx, &ry, &rz, &rw);
 
         // get the bone space translation of the bone
 
-
-        TiXmlElement* translationBoneSpace = rotation->NextSiblingElement();
-        if (!translationBoneSpace || cal3d_stricmp(translationBoneSpace->Value(), "LOCALTRANSLATION") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+        TiXmlElement* translationBoneSpace = rotation->next_sibling();
+        if (!translationBoneSpace || !has_name(translationBoneSpace, "LOCALTRANSLATION")) {
+            return InvalidFileFormat();
         }
 
         float txBoneSpace, tyBoneSpace, tzBoneSpace;
-
-        node = translationBoneSpace->FirstChild();
-        if (!node) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        TiXmlText* translationBoneSpacedata = node->ToText();
-        if (!translationBoneSpacedata) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        str.clear();
-        str << translationBoneSpacedata->Value();
-        str >> txBoneSpace >> tyBoneSpace >> tzBoneSpace;
+        ReadTripleFloat(get_string_value(translationBoneSpace), &txBoneSpace, &tyBoneSpace, &tzBoneSpace);
 
         // get the bone space rotation of the bone
 
-        TiXmlElement* rotationBoneSpace = translationBoneSpace->NextSiblingElement();
-        if (!rotationBoneSpace || cal3d_stricmp(rotationBoneSpace->Value(), "LOCALROTATION") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+        TiXmlElement* rotationBoneSpace = translationBoneSpace->next_sibling();
+        if (!rotationBoneSpace || !has_name(rotationBoneSpace, "LOCALROTATION")) {
+            return InvalidFileFormat();
         }
 
         float rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace;
-
-        node = rotationBoneSpace->FirstChild();
-        if (!node) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        TiXmlText* rotationBoneSpacedata = node->ToText();
-        if (!rotationBoneSpacedata) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        str.clear();
-        str << rotationBoneSpacedata->Value();
-        str >> rxBoneSpace >> ryBoneSpace >> rzBoneSpace >> rwBoneSpace;
+        ReadQuadFloat(get_string_value(rotationBoneSpace), &rxBoneSpace, &ryBoneSpace, &rzBoneSpace, &rwBoneSpace);
 
         // get the parent bone id
 
-        TiXmlElement* parent = rotationBoneSpace->NextSiblingElement();
-        if (!parent || cal3d_stricmp(parent->Value(), "PARENTID") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+        TiXmlElement* parent = rotationBoneSpace->next_sibling();
+        if (!parent || !has_name(parent, "PARENTID")) {
+            return InvalidFileFormat();
         }
 
-
-        node = parent->FirstChild();
-        if (!node) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        TiXmlText* parentid = node->ToText();
-        if (!parentid) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
-        }
-        int parentId = atoi(parentid->Value());
+        int parentId = get_int_value(parent);
 
         CalCoreBonePtr pCoreBone(new CalCoreBone(strName, parentId));
 
@@ -526,21 +488,9 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(TiXmlDocument& doc) {
         pCoreBone->lightColor = lightColor;
 
         TiXmlElement* child;
-        for (child = parent->NextSiblingElement(); child; child = child->NextSiblingElement()) {
-            if (cal3d_stricmp(child->Value(), "CHILDID") != 0) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
-            }
-
-            TiXmlNode* node = child->FirstChild();
-            if (!node) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
-            }
-            TiXmlText* childid = node->ToText();
-            if (!childid) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+        for (child = parent->next_sibling(); child; child = child->next_sibling()) {
+            if (!has_name(child, "CHILDID")) {
+                return InvalidFileFormat();
             }
         }
 
@@ -790,77 +740,34 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& 
     return pCoreMorphAnimation;
 }
 
-/*****************************************************************************/
-/** Loads a core mesh instance from a Xml file.
-*
-* This function loads a core mesh instance from a Xml file.
-*
-* @param strFilename The name of the file to load the core mesh instance from.
-*
-* @return One of the following values:
-*         \li a pointer to the core mesh
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-static bool has_attribute_value(rapidxml::xml_node<>* node, const char* name, const char* value) {
-    auto attribute = node->first_attribute(name, 0, false);
-    if (!attribute) {
-        return false;
-    }
-    return 0 == cal3d_stricmp(attribute->value(), value);
-}
-
-static int get_int_attribute(rapidxml::xml_node<>* node, const char* name) {
-    auto attribute = node->first_attribute(name, 0, false);
-    if (!attribute) {
-        return 0;
-    }
-    return atoi(attribute->value());
-}
-
-static const char* get_string_attribute(rapidxml::xml_node<>* node, const char* name) {
-    auto attribute = node->first_attribute(name, 0, false);
-    if (!attribute) {
-        return "";
-    }
-    return attribute->value() ? attribute->value() : "";
-}
-
 CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc) {
     typedef rapidxml::xml_node<> xml_node;
 
     const CalCoreMeshPtr null;
 
-    std::string strFilename = "";
-
     xml_node* header = doc.first_node();
     if (!header || !has_name(header, "header")) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (!isHeaderWellFormed(header)) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (!has_attribute_value(header, "magic", cal3d::MESH_XMLFILE_EXTENSION)) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     int version = get_int_attribute(header, "version");
     if (version < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
-        CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     bool hasVertexColors = (version >= cal3d::FIRST_FILE_VERSION_WITH_VERTEX_COLORS);
 
     xml_node* mesh = header->next_sibling();
     if (!mesh || !has_name(mesh, "mesh")) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     //  get the number of submeshes
@@ -873,8 +780,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
     // load all core submeshes
     for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
         if (!submesh || !has_name(submesh, "submesh")) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+            return InvalidFileFormat();
         }
 
         int coreMaterialThreadId = get_int_attribute(submesh, "MATERIAL");
@@ -891,20 +797,20 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 
         for (int vertexId = 0; vertexId < vertexCount; ++vertexId) {
             if (!ValidateTag(vertex, "VERTEX", pCoreMesh, pCoreSubmesh)) {
-                return null;
+                return InvalidFileFormat();
             }
             CalCoreSubmesh::Vertex Vertex;
             CalColor32 vertexColor = CalMakeColor(CalVector(1.0f, 1.0f, 1.0f));
 
             xml_node* pos = vertex->first_node();
             if (!ValidateTag(pos, "POS", pCoreMesh, pCoreSubmesh)) {
-                return null;
+                return InvalidFileFormat();
             }
             ReadTripleFloat(pos->value(), &Vertex.position.x, &Vertex.position.y, &Vertex.position.z);
 
             xml_node* norm = pos->next_sibling();
             if (!ValidateTag(norm, "NORM", pCoreMesh, pCoreSubmesh)) {
-                return null;
+                return InvalidFileFormat();
             }
 
             ReadTripleFloat(norm->value(),  &Vertex.normal.x, &Vertex.normal.y, &Vertex.normal.z);
@@ -913,8 +819,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             xml_node* collapse = 0;
             if (!vertColor || !has_name(vertColor, "color")) {
                 if (hasVertexColors) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 } else {
                     collapse = vertColor;
                 }
@@ -926,25 +831,21 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
                 collapse = vertColor->next_sibling();
             }
             if (!collapse) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
             if (has_name(collapse, "COLLAPSEID")) {
                 const char* collapseid = collapse->value();
                 if (!collapseid) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
                 xml_node* collapseCount = collapse->next_sibling();
                 if (!collapseCount || !has_name(collapseCount, "COLLAPSECOUNT")) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
 
                 const char* collapseCountData = collapseCount->value();
                 if (!collapseCountData) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
                 collapse = collapseCount->next_sibling();
             }
@@ -952,14 +853,12 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             xml_node* texcoord = collapse;
 
             // load all texture coordinates of the vertex
-            int textureCoordinateId;
-            for (textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
+            for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
                 CalCoreSubmesh::TextureCoordinate textureCoordinate;
                 // load data of the influence
 #if CAL3D_VALIDATE_XML_TAGS
                 if (!texcoord || !has_name(texcoord, "TEXCOORD")) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
 #endif
 
@@ -975,8 +874,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             // get the number of influences
             int influenceCount = get_int_attribute(vertex, "NUMINFLUENCES");
             if (influenceCount < 0) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
 
             std::vector<CalCoreSubmesh::Influence> influences(influenceCount);
@@ -988,8 +886,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             for (influenceId = 0; influenceId < influenceCount; ++influenceId) {
 #if CAL3D_VALIDATE_XML_TAGS
                 if (!influence || !has_name(influence, "INFLUENCE")) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
 #endif
 
@@ -1007,8 +904,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 
         for (int springId = 0; springId < springCount; ++springId) {
             if (!spring || !has_name(spring, "SPRING")) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
             spring = spring->next_sibling();
         }
@@ -1018,8 +914,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
         xml_node* morph = face;
         for (int morphId = 0; morphId < morphCount; morphId++) {
             if (!has_name(morph, "MORPH")) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
 
             CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
@@ -1095,8 +990,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
         for (int faceId = 0; faceId < faceCount; ++faceId) {
 #if CAL3D_VALIDATE_XML_TAGS
             if (!has_name(face, "FACE")) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
 #endif
             int tmp[3];
@@ -1108,8 +1002,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 
             if (sizeof(CalIndex) == 2) {
                 if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
             }
             pCoreSubmesh->addFace(CalCoreSubmesh::Face(tmp[0], tmp[1], tmp[2]));
