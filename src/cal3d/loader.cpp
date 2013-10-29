@@ -120,21 +120,40 @@ bool CalLoader::isHeaderWellFormed(const rapidxml::xml_node<>* node) {
     return node->first_attribute("magic", 0, false) && node->first_attribute("version", 0, false);
 }
 
+template<typename T>
+struct ScopedArray {
+    explicit ScopedArray(size_t size)
+        : ptr(new T[size])
+    {}
+
+    ~ScopedArray() {
+        delete[] ptr;
+    }
+
+    T* ptr;
+
+private:
+    ScopedArray();
+    ScopedArray(const ScopedArray&);
+    ScopedArray& operator=(const ScopedArray&);
+};
+
+
 template<typename RV>
 RV tryBothLoaders(
     CalBufferSource& inputSource,
     RV(*binaryLoader)(CalBufferSource&),
-    RV(*xmlLoader)(std::vector<char>&)
+    RV(*xmlLoader)(char*)
 ) {
     try {
         if (RV anim = binaryLoader(inputSource)) {
             return anim;
         }
         // make a copy to null-terminate and allow the xml parser to modify memory in-place
-        std::vector<char> data(inputSource.size() + 1);
-        memcpy(cal3d::pointerFromVector(data), inputSource.data(), inputSource.size());
-        data[inputSource.size()] = 0;
-        return xmlLoader(data);
+        ScopedArray<char> data(inputSource.size() + 1);
+        memcpy(data.ptr, inputSource.data(), inputSource.size());
+        data.ptr[inputSource.size()] = 0;
+        return xmlLoader(data.ptr);
     } catch (const CalError&) {
         return RV();
     }

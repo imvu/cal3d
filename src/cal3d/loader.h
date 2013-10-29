@@ -71,19 +71,19 @@ private:
     static CalCoreMeshPtr loadBinaryCoreMesh(CalBufferSource& inputSrc);
     static CalCoreSkeletonPtr loadBinaryCoreSkeleton(CalBufferSource& inputSrc);
 
-    static CalCoreAnimationPtr loadXmlCoreAnimation(std::vector<char>&);
+    static CalCoreAnimationPtr loadXmlCoreAnimation(char*);
     static CalCoreAnimationPtr loadXmlCoreAnimationDoc(TiXmlDocument& doc);
 
-    static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimation(std::vector<char>&);
+    static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimation(char*);
     static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimationDoc(TiXmlDocument& doc);
 
-    static CalCoreSkeletonPtr loadXmlCoreSkeleton(std::vector<char>&);
+    static CalCoreSkeletonPtr loadXmlCoreSkeleton(char*);
     static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(const rapidxml::xml_document<char>& doc);
 
-    static CalCoreMeshPtr loadXmlCoreMesh(std::vector<char>&);
+    static CalCoreMeshPtr loadXmlCoreMesh(char*);
     static CalCoreMeshPtr loadXmlCoreMeshDoc(const rapidxml::xml_document<char>& doc);
 
-    static CalCoreMaterialPtr loadXmlCoreMaterial(std::vector<char>&);
+    static CalCoreMaterialPtr loadXmlCoreMaterial(char*);
     static CalCoreMaterialPtr loadXmlCoreMaterialDoc(TiXmlDocument& doc);
 
     static bool isHeaderWellFormed(const TiXmlElement* header);

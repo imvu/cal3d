@@ -190,6 +190,16 @@ static inline void ReadTripleFloat(char const* buffer, float* f1, float* f2, flo
     *f3 = c;
 }
 
+static inline void ReadTripleInt(char const* buffer, int* f1, int* f2, int* f3) {
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    sscanf(buffer, " %d %d %d", &a, &b, &c);
+    *f1 = a;
+    *f2 = b;
+    *f3 = c;
+}
+
 static inline bool CalVectorFromXml(
     rapidxml::xml_node<>* pos,
     char const* tag,
@@ -307,10 +317,10 @@ static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float
     *f4 = d;
 }
 
-CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(std::vector<char>& dataSrc) {
+CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(char* dataSrc) {
     rapidxml::xml_document<> document;
     try {
-        document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(cal3d::pointerFromVector(dataSrc));
+        document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(dataSrc);
     } catch (const rapidxml::parse_error&) {
         return InvalidFileFormat();
     }
@@ -318,10 +328,10 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(std::vector<char>& dataSrc) {
     return loadXmlCoreSkeletonDoc(document);
 }
 
-CalCoreMeshPtr CalLoader::loadXmlCoreMesh(std::vector<char>& dataSrc) {
+CalCoreMeshPtr CalLoader::loadXmlCoreMesh(char* dataSrc) {
     rapidxml::xml_document<> document;
     try {
-        document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(cal3d::pointerFromVector(dataSrc));
+        document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(dataSrc);
     } catch (const rapidxml::parse_error&) {
         return InvalidFileFormat();
     }
@@ -329,12 +339,12 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMesh(std::vector<char>& dataSrc) {
     return loadXmlCoreMeshDoc(document);
 }
 
-CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(std::vector<char>& dataSrc) {
+CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(char* dataSrc) {
     const CalCoreMaterialPtr null;
 
     TiXmlDocument doc;
     
-    doc.Parse(cal3d::pointerFromVector(dataSrc));
+    doc.Parse(dataSrc);
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return null;
@@ -343,11 +353,11 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(std::vector<char>& dataSrc) {
     return loadXmlCoreMaterialDoc(doc);
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(std::vector<char>& dataSrc) {
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
     TiXmlDocument doc;
     doc.Clear();
 
-    doc.Parse(cal3d::pointerFromVector(dataSrc));
+    doc.Parse(dataSrc);
     if (doc.Error()) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
         return CalCoreAnimationPtr();
@@ -356,11 +366,11 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(std::vector<char>& dataSrc) 
     return loadXmlCoreAnimationDoc(doc);
 }
 
-CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(std::vector<char>& dataSrc) {
+CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
     TiXmlDocument doc;
     doc.Clear();
 
-    doc.Parse(cal3d::pointerFromVector(dataSrc));
+    doc.Parse(dataSrc);
     if (doc.Error()) {
         return InvalidFileFormat();
     }
@@ -994,11 +1004,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             }
 #endif
             int tmp[3];
-
-            // load data of the face
-            std::stringstream str;
-            str << get_string_attribute(face, "VERTEXID");
-            str >> tmp[0] >> tmp [1] >> tmp[2];
+            ReadTripleInt(get_string_attribute(face, "VERTEXID"), tmp, tmp + 1, tmp + 2);
 
             if (sizeof(CalIndex) == 2) {
                 if (tmp[0] > 65535 || tmp[1] > 65535 || tmp[2] > 65535) {
