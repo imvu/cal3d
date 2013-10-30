@@ -1,6 +1,4 @@
 #include <boost/optional.hpp>
-#include <sstream>
-#include <stdexcept>
 #include <rapidxml.hpp>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
@@ -29,7 +27,9 @@ struct InvalidFileFormat {
     }
 
     operator CalCoreSkeletonPtr() const { return CalCoreSkeletonPtr(); }
+    operator CalCoreMaterialPtr() const { return CalCoreMaterialPtr(); }
     operator CalCoreMeshPtr() const { return CalCoreMeshPtr(); }
+    operator CalCoreAnimationPtr() const { return CalCoreAnimationPtr(); }
     operator CalCoreMorphAnimationPtr() const { return CalCoreMorphAnimationPtr(); }
 };
 
@@ -200,6 +200,18 @@ static inline void ReadTripleInt(char const* buffer, int* f1, int* f2, int* f3) 
     *f3 = c;
 }
 
+static inline void ReadQuadInt(char const* buffer, int* f1, int* f2, int* f3, int* f4) {
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    int d = 0;
+    sscanf(buffer, " %d %d %d", &a, &b, &c, &d);
+    *f1 = a;
+    *f2 = b;
+    *f3 = c;
+    *f4 = d;
+}
+
 static inline bool CalVectorFromXml(
     rapidxml::xml_node<>* pos,
     char const* tag,
@@ -340,14 +352,11 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMesh(char* dataSrc) {
 }
 
 CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(char* dataSrc) {
-    const CalCoreMaterialPtr null;
-
     TiXmlDocument doc;
     
     doc.Parse(dataSrc);
     if (doc.Error()) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return null;
+        return InvalidFileFormat();
     }
 
     return loadXmlCoreMaterialDoc(doc);
@@ -355,7 +364,6 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(char* dataSrc) {
 
 CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
     TiXmlDocument doc;
-    doc.Clear();
 
     doc.Parse(dataSrc);
     if (doc.Error()) {
@@ -368,7 +376,6 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
 
 CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
     TiXmlDocument doc;
-    doc.Clear();
 
     doc.Parse(dataSrc);
     if (doc.Error()) {
@@ -515,39 +522,28 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
 }
 
 CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
-    const CalCoreAnimationPtr null;
-    std::stringstream str;
-
-    const std::string strFilename = "";
     TiXmlNode* node;
 
     TiXmlElement* header = doc.FirstChildElement();
     if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
-        str.clear();
-        str << "Header element is " << (header ? header->Value() : "<unknown>");
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, str.str());
-        return null;
+        return InvalidFileFormat();
     }
 
     if (!isHeaderWellFormed(header)) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::ANIMATION_XMLFILE_EXTENSION) != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
-        CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     TiXmlElement* animation = header->NextSiblingElement();
     if (!animation || cal3d_stricmp(animation->Value(), "ANIMATION") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     float duration = imvu_atof(animation->Attribute("DURATION"));
@@ -557,8 +553,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
 
     // check for a valid duration
     if (duration <= 0.0f) {
-        CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     pCoreAnimation->duration = duration;
@@ -568,8 +563,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         track = track->NextSiblingElement()
     ) {
         if (!track || cal3d_stricmp(track->Value(), "TRACK") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+            return InvalidFileFormat();
         }
 
         int coreBoneId = atoi(track->Attribute("BONEID"));
@@ -606,8 +600,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         int keyframeCount = atoi(track->Attribute("NUMKEYFRAMES"));
 
         if (keyframeCount <= 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+            return InvalidFileFormat();
         }
 
         // load all core keyframes
@@ -620,8 +613,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         ) {
             // load the core keyframe
             if (!keyframe || cal3d_stricmp(keyframe->Value(), "KEYFRAME") != 0) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
 
             float time = imvu_atof(keyframe->Attribute("TIME"));
@@ -642,41 +634,35 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
             }
 
             if (!translation) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
             if (cal3d_stricmp(translation->Value(), "TRANSLATION") == 0) {
                 node = translation->FirstChild();
                 if (!node) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
 
                 TiXmlText* translationdata = node->ToText();
                 if (!translationdata) {
-                    CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                    return null;
+                    return InvalidFileFormat();
                 }
                 ReadTripleFloat(translationdata->Value(), &t.x, &t.y, &t.z);
                 rotation = rotation->NextSiblingElement();
             }
 
             if (!rotation || cal3d_stricmp(rotation->Value(), "ROTATION") != 0) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
 
             float rx, ry, rz, rw;
 
             node = rotation->FirstChild();
             if (!node) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
             TiXmlText* rotationdata = node->ToText();
             if (!rotationdata) {
-                CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-                return null;
+                return InvalidFileFormat();
             }
             ReadQuadFloat(rotationdata->Value(), &rx, &ry, &rz, &rw);
 
@@ -692,36 +678,25 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         pCoreAnimation->tracks.push_back(*pCoreTrack);
     }
 
-    // explicitly close the file
-    doc.Clear();
-
     return pCoreAnimation;
 }
 
 CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& doc) {
-    const CalCoreMorphAnimationPtr null;
-
-    std::string strFilename = "";
-
     TiXmlElement* header = doc.FirstChildElement();
     if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (!isHeaderWellFormed(header)) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION) != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
-        CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     // allocate a new core animatedMorph instance
@@ -729,31 +704,23 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& 
 
     TiXmlElement* animatedMorph = header->NextSiblingElement();
     if (!animatedMorph || cal3d_stricmp(animatedMorph->Value(), "ANIMATION") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (!BindFromXml(*animatedMorph, pCoreMorphAnimation.get())) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     // check for a valid duration
     if (pCoreMorphAnimation->duration <= 0.0f) {
-        CalError::setLastError(CalError::INVALID_ANIMATION_DURATION, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
-
-    // explicitly close the file
-    doc.Clear();
 
     return pCoreMorphAnimation;
 }
 
 CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc) {
     typedef rapidxml::xml_node<> xml_node;
-
-    const CalCoreMeshPtr null;
 
     xml_node* header = doc.first_node();
     if (!header || !has_name(header, "header")) {
@@ -944,17 +911,17 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 
                 if (!copyOrig) {
                     if (!ValidateTag(blendVert, "BLENDVERTEX", pCoreMesh, pCoreSubmesh)) {
-                        return null;
+                        return InvalidFileFormat();
                     }
 
                     xml_node* pos = blendVert->first_node();
                     if (!CalVectorFromXml(pos, "POSITION", &Vertex.position, pCoreMesh, pCoreSubmesh)) {
-                        return null;
+                        return InvalidFileFormat();
                     }
 
                     xml_node* norm = pos->next_sibling();
                     if (!CalVectorFromXml(norm, "NORMAL", &Vertex.normal, pCoreMesh, pCoreSubmesh)) {
-                        return null;
+                        return InvalidFileFormat();
                     }
 
                     xml_node* texcoord = norm->next_sibling();
@@ -969,7 +936,7 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
                                 pCoreMesh,
                                 pCoreSubmesh)
                         ) {
-                            return null;
+                            return InvalidFileFormat();
                         }
                         texcoord = texcoord->next_sibling();
                     }
@@ -1025,55 +992,29 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 }
 
 
-/*****************************************************************************/
-/** Loads a core material instance from a XML file.
-*
-* This function loads a core material instance from a XML file.
-*
-* @param strFilename The name of the file to load the core material instance
-*                    from.
-*
-* @return One of the following values:
-*         \li a pointer to the core material
-*         \li \b 0 if an error happened
-*****************************************************************************/
-
-
 CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
-    const CalCoreMaterialPtr null;
-
-    std::stringstream str;
-
-    const std::string strFilename = "";
     TiXmlNode* node;
 
     TiXmlElement* header = doc.FirstChildElement();
     if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
-        str.clear();
-        str << "Header element is " << (header ? header->Value() : "<unknown>");
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, str.str());
-        return null;
+        return InvalidFileFormat();
     }
 
     if (!isHeaderWellFormed(header)) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::MATERIAL_XMLFILE_EXTENSION) != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
-        CalError::setLastError(CalError::INCOMPATIBLE_FILE_VERSION, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     TiXmlElement* material = header->NextSiblingElement();
     if (!material || cal3d_stricmp(material->Value(), "MATERIAL") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
 
@@ -1081,84 +1022,66 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
 
     TiXmlElement* ambient = material->FirstChildElement();
     if (!ambient || cal3d_stricmp(ambient->Value(), "AMBIENT") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     node = ambient->FirstChild();
     if (!node) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
     TiXmlText* ambientdata = node->ToText();
     if (!ambientdata) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     int r, g, b, a;
-
-    str << ambientdata->Value();
-    str >> r >> g >> b >> a;
+    ReadQuadInt(ambientdata->Value(), &r, &g, &b, &a);
 
     TiXmlElement* diffuse = ambient->NextSiblingElement();
     if (!diffuse || cal3d_stricmp(diffuse->Value(), "DIFFUSE") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     node = diffuse->FirstChild();
     if (!node) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
     TiXmlText* diffusedata = node->ToText();
     if (!diffusedata) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
-    str.clear();
-    str << diffusedata->Value();
-    str >> r >> g >> b >> a;
-
+    
+    ReadQuadInt(diffusedata->Value(), &r, &g, &b, &a);
 
     TiXmlElement* specular = diffuse->NextSiblingElement();
     if (!specular || cal3d_stricmp(specular->Value(), "SPECULAR") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     node = specular->FirstChild();
     if (!node) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
     TiXmlText* speculardata = node->ToText();
     if (!speculardata) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
-    str.clear();
-    str << speculardata->Value();
-    str >> r >> g >> b >> a;
 
+    ReadQuadInt(speculardata->Value(), &r, &g, &b, &a);
 
     TiXmlElement* shininess = specular->NextSiblingElement();
     if (!shininess || cal3d_stricmp(shininess->Value(), "SHININESS") != 0) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
 
     float fshininess;
     node = shininess->FirstChild();
     if (!node) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
     TiXmlText* shininessdata = node->ToText();
     if (!shininessdata) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-        return null;
+        return InvalidFileFormat();
     }
     fshininess = imvu_atof(shininessdata->Value());
 
@@ -1169,21 +1092,18 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
 
     for (map = shininess->NextSiblingElement(); map; map = map->NextSiblingElement()) {
         if (!map || cal3d_stricmp(map->Value(), "MAP") != 0) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+            return InvalidFileFormat();
         }
 
 
         node = map->FirstChild();
         if (!node) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+            return InvalidFileFormat();
         }
 
         TiXmlText* mapfile = node->ToText();
         if (!mapfile) {
-            CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__, strFilename);
-            return null;
+            return InvalidFileFormat();
         }
 
         MatFileName.push_back(mapfile->Value());
@@ -1204,8 +1124,6 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
         // set map in the core material instance
         pCoreMaterial->maps.push_back(Map);
     }
-
-    doc.Clear();
 
     return pCoreMaterial;
 }
