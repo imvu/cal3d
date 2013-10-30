@@ -18,17 +18,6 @@
 #include "cal3d/tinybind.h"
 #include "calxmlbindings.h"
 
-TiXmlBinding<CalHeader> const*
-GetTiXmlBinding(CalHeader const&,  IdentityBase) {
-    static MemberTiXmlBinding<CalHeader> binding;
-    if (binding.empty()) {
-        binding.AddMember("VERSION", MemberAttribute(&CalHeader::version));
-        binding.AddMember("MAGIC", MemberAttribute(&CalHeader::magic));
-    }
-    return &binding;
-}
-
-
 TiXmlBinding<CalCoreMorphAnimation> const*
 GetTiXmlBinding(CalCoreMorphAnimation const&,  IdentityBase) {
     static MemberTiXmlBinding<CalCoreMorphAnimation> binding;
