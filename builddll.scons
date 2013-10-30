@@ -9,7 +9,6 @@ sources = Split('''
     bone.cpp
     bonetransform.cpp
     buffersource.cpp
-    calxmlbindings.cpp
     coreanimation.cpp
     corebone.cpp
     coremesh.cpp
@@ -30,7 +29,6 @@ sources = Split('''
     saver.cpp
     skeleton.cpp
     submesh.cpp
-    tinybind.cpp
     tinyxml.cpp
     tinyxmlerror.cpp
     tinyxmlparser.cpp

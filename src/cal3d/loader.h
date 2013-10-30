@@ -74,7 +74,7 @@ private:
     static CalCoreAnimationPtr loadXmlCoreAnimationDoc(TiXmlDocument& doc);
 
     static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimation(char*);
-    static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimationDoc(TiXmlDocument& doc);
+    static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimationDoc(const rapidxml::xml_document<char>& doc);
 
     static CalCoreSkeletonPtr loadXmlCoreSkeleton(char*);
     static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(const rapidxml::xml_document<char>& doc);

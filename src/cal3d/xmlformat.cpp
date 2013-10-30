@@ -19,7 +19,6 @@
 #include "cal3d/tinyxml.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
-#include "cal3d/calxmlbindings.h"
 
 struct InvalidFileFormat {
     InvalidFileFormat() {
@@ -89,6 +88,14 @@ static int get_int_attribute(rapidxml::xml_node<>* node, const char* name) {
     return atoi(attribute->value());
 }
 
+static float get_float_attribute(rapidxml::xml_node<>* node, const char* name) {
+    auto attribute = node->first_attribute(name, 0, false);
+    if (!attribute) {
+        return 0.0f;
+    }
+    return imvu_atof(attribute->value());
+}
+
 static const char* get_string_attribute(rapidxml::xml_node<>* node, const char* name) {
     auto attribute = node->first_attribute(name, 0, false);
     if (!attribute) {
@@ -100,6 +107,11 @@ static const char* get_string_attribute(rapidxml::xml_node<>* node, const char* 
 static int get_int_value(rapidxml::xml_node<>* node) {
     const char* v = node->value();
     return v ? atoi(v) : 0;
+}
+
+static float get_float_value(rapidxml::xml_node<>* node) {
+    const char* v = node->value();
+    return v ? imvu_atof(v) : 0;
 }
 
 static const char* get_string_value(rapidxml::xml_node<>* node) {
@@ -376,10 +388,11 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
 }
 
 CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
-    TiXmlDocument doc;
+    rapidxml::xml_document<> doc;
 
-    doc.Parse(dataSrc);
-    if (doc.Error()) {
+    try {
+        doc.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(dataSrc);
+    } catch (const rapidxml::parse_error&) {
         return InvalidFileFormat();
     }
 
@@ -682,9 +695,12 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
     return pCoreAnimation;
 }
 
-CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& doc) {
-    TiXmlElement* header = doc.FirstChildElement();
-    if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
+CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(const rapidxml::xml_document<>& doc) {
+    typedef rapidxml::xml_node<> TiXmlNode;
+    typedef rapidxml::xml_node<> TiXmlElement;
+
+    TiXmlElement* header = doc.first_node();
+    if (!header || !has_name(header, "HEADER")) {
         return InvalidFileFormat();
     }
 
@@ -692,32 +708,56 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimationDoc(TiXmlDocument& 
         return InvalidFileFormat();
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION) != 0) {
+    if (!has_attribute_value(header, "MAGIC", cal3d::ANIMATEDMORPH_XMLFILE_EXTENSION)) {
         return InvalidFileFormat();
     }
 
-    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (get_int_attribute(header, "VERSION") < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         return InvalidFileFormat();
     }
 
     // allocate a new core animatedMorph instance
-    CalCoreMorphAnimationPtr pCoreMorphAnimation(new CalCoreMorphAnimation);
+    CalCoreMorphAnimationPtr coreMorphAnimation(new CalCoreMorphAnimation);
 
-    TiXmlElement* animatedMorph = header->NextSiblingElement();
-    if (!animatedMorph || cal3d_stricmp(animatedMorph->Value(), "ANIMATION") != 0) {
+    TiXmlElement* animatedMorph = header->next_sibling();
+    if (!animatedMorph || !has_name(animatedMorph, "ANIMATION")) {
         return InvalidFileFormat();
     }
 
-    if (!BindFromXml(*animatedMorph, pCoreMorphAnimation.get())) {
+    coreMorphAnimation->duration = get_float_attribute(animatedMorph, "DURATION");
+    if (coreMorphAnimation->duration <= 0.0f) {
         return InvalidFileFormat();
     }
 
-    // check for a valid duration
-    if (pCoreMorphAnimation->duration <= 0.0f) {
-        return InvalidFileFormat();
+    for (TiXmlElement* track = animatedMorph->first_node(); track; track = track->next_sibling()) {
+       if (!has_name(track, "TRACK")) {
+           return InvalidFileFormat();
+       }
+
+        CalCoreMorphTrack t;
+        t.morphName = get_string_attribute(track, "MORPHNAME");
+        for (TiXmlElement* keyframe = track->first_node(); keyframe; keyframe = keyframe->next_sibling()) {
+            if (!has_name(keyframe, "KEYFRAME")) {
+                return InvalidFileFormat();
+            }
+
+            CalCoreMorphKeyframe kf;
+            kf.time = get_float_attribute(keyframe, "TIME");
+            
+            if (TiXmlElement* child = keyframe->first_node()) {
+                if (!has_name(child, "WEIGHT")) {
+                    return InvalidFileFormat();
+                }
+                kf.weight = get_float_value(child);
+            } else {
+                return InvalidFileFormat();
+            }
+            t.keyframes.push_back(kf);
+        }
+        coreMorphAnimation->tracks.push_back(t);
     }
 
-    return pCoreMorphAnimation;
+    return coreMorphAnimation;
 }
 
 CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc) {

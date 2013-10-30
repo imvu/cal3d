@@ -32,7 +32,6 @@
 #include "cal3d/coremorphtarget.h"
 #include "cal3d/corematerial.h"
 
-#include "cal3d/calxmlbindings.h"
 #include "cal3d/xmlformat.h"
 
 template<typename T>

@@ -35,7 +35,6 @@
 #include "cal3d/tinyxml.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
-#include "cal3d/calxmlbindings.h"
 
 // Quat format:
 //
