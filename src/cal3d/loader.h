@@ -13,7 +13,6 @@
 #include <boost/shared_ptr.hpp>
 #include <math.h>
 #include <string>
-#include <iosfwd>
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
 #include "cal3d/tinyxml.h"
@@ -84,7 +83,7 @@ private:
     static CalCoreMeshPtr loadXmlCoreMeshDoc(const rapidxml::xml_document<char>& doc);
 
     static CalCoreMaterialPtr loadXmlCoreMaterial(char*);
-    static CalCoreMaterialPtr loadXmlCoreMaterialDoc(TiXmlDocument& doc);
+    static CalCoreMaterialPtr loadXmlCoreMaterialDoc(const rapidxml::xml_document<char>& doc);
 
     static bool isHeaderWellFormed(const TiXmlElement* header);
     static bool isHeaderWellFormed(const rapidxml::xml_node<char>* node);

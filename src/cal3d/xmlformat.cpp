@@ -352,10 +352,11 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMesh(char* dataSrc) {
 }
 
 CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(char* dataSrc) {
-    TiXmlDocument doc;
-    
-    doc.Parse(dataSrc);
-    if (doc.Error()) {
+    rapidxml::xml_document<> doc;
+
+    try {
+        doc.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(dataSrc);
+    } catch (const rapidxml::parse_error&) {
         return InvalidFileFormat();
     }
 
@@ -992,11 +993,12 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 }
 
 
-CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
-    TiXmlNode* node;
+CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(const rapidxml::xml_document<>& doc) {
+    typedef rapidxml::xml_node<> TiXmlNode;
+    typedef rapidxml::xml_node<> TiXmlElement;
 
-    TiXmlElement* header = doc.FirstChildElement();
-    if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
+    TiXmlElement* header = doc.first_node();
+    if (!header || !has_name(header, "HEADER")) {
         return InvalidFileFormat();
     }
 
@@ -1004,113 +1006,61 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
         return InvalidFileFormat();
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::MATERIAL_XMLFILE_EXTENSION) != 0) {
+    if (!has_attribute_value(header, "MAGIC", cal3d::MATERIAL_XMLFILE_EXTENSION)) {
         return InvalidFileFormat();
     }
 
-    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (get_int_attribute(header, "VERSION") < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         return InvalidFileFormat();
     }
 
-    TiXmlElement* material = header->NextSiblingElement();
-    if (!material || cal3d_stricmp(material->Value(), "MATERIAL") != 0) {
+    TiXmlElement* material = header->next_sibling();
+    if (!material || !has_name(material, "MATERIAL")) {
         return InvalidFileFormat();
     }
-
 
     CalCoreMaterialPtr pCoreMaterial(new CalCoreMaterial);
 
-    TiXmlElement* ambient = material->FirstChildElement();
-    if (!ambient || cal3d_stricmp(ambient->Value(), "AMBIENT") != 0) {
+    TiXmlElement* ambient = material->first_node();
+    if (!ambient || !has_name(ambient, "AMBIENT")) {
         return InvalidFileFormat();
     }
 
-    node = ambient->FirstChild();
-    if (!node) {
-        return InvalidFileFormat();
-    }
-    TiXmlText* ambientdata = node->ToText();
-    if (!ambientdata) {
+    int r, g, b, a; // never used
+    ReadQuadInt(get_string_value(ambient), &r, &g, &b, &a);
+
+    TiXmlElement* diffuse = ambient->next_sibling();
+    if (!diffuse || !has_name(diffuse, "DIFFUSE")) {
         return InvalidFileFormat();
     }
 
-    int r, g, b, a;
-    ReadQuadInt(ambientdata->Value(), &r, &g, &b, &a);
+    ReadQuadInt(get_string_value(diffuse), &r, &g, &b, &a);
 
-    TiXmlElement* diffuse = ambient->NextSiblingElement();
-    if (!diffuse || cal3d_stricmp(diffuse->Value(), "DIFFUSE") != 0) {
-        return InvalidFileFormat();
-    }
-
-    node = diffuse->FirstChild();
-    if (!node) {
-        return InvalidFileFormat();
-    }
-    TiXmlText* diffusedata = node->ToText();
-    if (!diffusedata) {
-        return InvalidFileFormat();
-    }
-    
-    ReadQuadInt(diffusedata->Value(), &r, &g, &b, &a);
-
-    TiXmlElement* specular = diffuse->NextSiblingElement();
-    if (!specular || cal3d_stricmp(specular->Value(), "SPECULAR") != 0) {
+    TiXmlElement* specular = diffuse->next_sibling();
+    if (!specular || !has_name(specular, "SPECULAR")) {
         return InvalidFileFormat();
     }
 
-    node = specular->FirstChild();
-    if (!node) {
-        return InvalidFileFormat();
-    }
-    TiXmlText* speculardata = node->ToText();
-    if (!speculardata) {
-        return InvalidFileFormat();
-    }
+    ReadQuadInt(get_string_value(specular), &r, &g, &b, &a);
 
-    ReadQuadInt(speculardata->Value(), &r, &g, &b, &a);
-
-    TiXmlElement* shininess = specular->NextSiblingElement();
-    if (!shininess || cal3d_stricmp(shininess->Value(), "SHININESS") != 0) {
+    TiXmlElement* shininess = specular->next_sibling();
+    if (!shininess || !has_name(shininess, "SHININESS")) {
         return InvalidFileFormat();
     }
-
-    float fshininess;
-    node = shininess->FirstChild();
-    if (!node) {
-        return InvalidFileFormat();
-    }
-    TiXmlText* shininessdata = node->ToText();
-    if (!shininessdata) {
-        return InvalidFileFormat();
-    }
-    fshininess = imvu_atof(shininessdata->Value());
 
     std::vector<std::string> MatFileName;
     std::vector<std::string> MatTypes;
 
-    TiXmlElement* map;
-
-    for (map = shininess->NextSiblingElement(); map; map = map->NextSiblingElement()) {
-        if (!map || cal3d_stricmp(map->Value(), "MAP") != 0) {
+    for (TiXmlElement* map = shininess->next_sibling(); map; map = map->next_sibling()) {
+        if (!map || !has_name(map, "MAP")) {
             return InvalidFileFormat();
         }
+        
+        MatFileName.push_back(get_string_value(map));
 
-
-        node = map->FirstChild();
-        if (!node) {
-            return InvalidFileFormat();
-        }
-
-        TiXmlText* mapfile = node->ToText();
-        if (!mapfile) {
-            return InvalidFileFormat();
-        }
-
-        MatFileName.push_back(mapfile->Value());
         std::string mapType = "Diffuse Color";
-
-        if (map->Attribute("TYPE")) {
-            mapType = map->Attribute("TYPE");
+        if (auto attr = map->first_attribute("TYPE", 0, false)) {
+            mapType = get_string_attribute(map, "TYPE");
         }
         MatTypes.push_back(mapType);
     }
@@ -1121,7 +1071,6 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterialDoc(TiXmlDocument& doc) {
         Map.filename = MatFileName[mapId];
         Map.type = MatTypes[mapId];
 
-        // set map in the core material instance
         pCoreMaterial->maps.push_back(Map);
     }
 
