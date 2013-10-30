@@ -205,7 +205,7 @@ static inline void ReadQuadInt(char const* buffer, int* f1, int* f2, int* f3, in
     int b = 0;
     int c = 0;
     int d = 0;
-    sscanf(buffer, " %d %d %d", &a, &b, &c, &d);
+    sscanf(buffer, " %d %d %d %d", &a, &b, &c, &d);
     *f1 = a;
     *f2 = b;
     *f3 = c;
