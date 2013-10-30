@@ -15,7 +15,6 @@
 #include <string>
 #include "cal3d/global.h"
 #include "cal3d/datasource.h"
-#include "cal3d/tinyxml.h"
 
 CAL3D_PTR(CalCoreSkeleton);
 CAL3D_PTR(CalCoreBone);
@@ -71,7 +70,7 @@ private:
     static CalCoreSkeletonPtr loadBinaryCoreSkeleton(CalBufferSource& inputSrc);
 
     static CalCoreAnimationPtr loadXmlCoreAnimation(char*);
-    static CalCoreAnimationPtr loadXmlCoreAnimationDoc(TiXmlDocument& doc);
+    static CalCoreAnimationPtr loadXmlCoreAnimationDoc(const rapidxml::xml_document<char>& doc);
 
     static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimation(char*);
     static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimationDoc(const rapidxml::xml_document<char>& doc);
@@ -85,7 +84,6 @@ private:
     static CalCoreMaterialPtr loadXmlCoreMaterial(char*);
     static CalCoreMaterialPtr loadXmlCoreMaterialDoc(const rapidxml::xml_document<char>& doc);
 
-    static bool isHeaderWellFormed(const TiXmlElement* header);
     static bool isHeaderWellFormed(const rapidxml::xml_node<char>* node);
 
     static CalCoreBonePtr loadCoreBones(CalBufferSource& dataSrc, int version);

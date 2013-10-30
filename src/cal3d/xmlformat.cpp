@@ -16,7 +16,6 @@
 #include "cal3d/coresubmesh.h"
 #include "cal3d/coremorphtarget.h"
 #include "cal3d/corematerial.h"
-#include "cal3d/tinyxml.h"
 #include "cal3d/buffersource.h"
 #include "cal3d/xmlformat.h"
 
@@ -53,14 +52,6 @@ static inline float imvu_atof(const char* p) {
     float f = 0.0f;
     sscanf(p, " %f", &f);
     return f;
-}
-
-
-#define CAL3D_VALIDATE_XML_TAGS ( 1 )
-
-
-static bool has_name(TiXmlNode* node, const char* name) {
-    return 0 == cal3d_stricmp(node->Value(), name);
 }
 
 static bool has_name(rapidxml::xml_node<>* node, const char* name) {
@@ -129,7 +120,6 @@ static inline bool _ValidateTag(
     int line
 ) {
     bool ok = true;
-#if CAL3D_VALIDATE_XML_TAGS
     if (!element) {
         ok = false;
     }
@@ -141,37 +131,11 @@ static inline bool _ValidateTag(
     if (! ok) {
         CalError::setLastError(CalError::INVALID_FILE_FORMAT, file, line);
     }
-#endif
 
     return ok;
 }
 
 #define ValidateTag(a,b,c,d) _ValidateTag(a,b,c,d,__FILE__,__LINE__)
-
-
-static inline bool TexCoordFromXml(
-    TiXmlElement* texcoord,
-    char const* tag,
-    CalCoreSubmesh::TextureCoordinate* texCoord,
-    const CalCoreMeshPtr& pCoreMesh,
-    const CalCoreSubmeshPtr& pCoreSubmesh
-) {
-    if (!ValidateTag(texcoord, tag, pCoreMesh, pCoreSubmesh)) {
-        return false;
-    }
-    TiXmlNode* node = texcoord->FirstChild();
-    if (!ValidateTag(node, NULL, pCoreMesh, pCoreSubmesh)) {
-        return false;
-    }
-    TiXmlText* texcoorddata = node->ToText();
-    if (!ValidateTag(texcoorddata , NULL, pCoreMesh, pCoreSubmesh)) {
-        return false;
-    }
-
-    ReadPair(texcoorddata->Value(), &texCoord->u, &texCoord->v);
-
-    return true;
-}
 
 static inline bool TexCoordFromXml(
     rapidxml::xml_node<>* texcoord,
@@ -243,45 +207,7 @@ static inline bool CalVectorFromXml(
 }
 
 static inline bool CalVectorFromXml(
-    TiXmlElement* pos,
-    char const* tag,
-    CalVector* calVec,
-    const CalCoreMeshPtr& pCoreMesh,
-    const CalCoreSubmeshPtr& pCoreSubmesh
-) {
-    if (!ValidateTag(pos, tag, pCoreMesh, pCoreSubmesh)) {
-        return false;
-    }
-    TiXmlNode* node = pos->FirstChild();
-    if (!ValidateTag(node, NULL, pCoreMesh, pCoreSubmesh)) {
-        return false;
-    }
-    TiXmlText* posdata = node->ToText();
-    if (!ValidateTag(posdata, NULL, pCoreMesh, pCoreSubmesh)) {
-        return false;
-    }
-    ReadTripleFloat(posdata->Value(), &calVec->x, &calVec->y, &calVec->z);
-    return true;
-}
-
-static inline bool CalVectorFromXml(
     rapidxml::xml_node<>* pos,
-    char const* tag,
-    CalVector4* calVec,
-    const CalCoreMeshPtr& pCoreMesh,
-    const CalCoreSubmeshPtr& pCoreSubmesh
-) {
-    CalVector v;
-    if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
-        *calVec = CalVector4(v);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-static inline bool CalVectorFromXml(
-    TiXmlElement* pos,
     char const* tag,
     CalVector4* calVec,
     const CalCoreMeshPtr& pCoreMesh,
@@ -311,23 +237,6 @@ static inline bool CalVectorFromXml(
         return false;
     }
 }
-
-static inline bool CalVectorFromXml(
-    TiXmlElement* pos,
-    char const* tag,
-    CalPoint4* calVec,
-    const CalCoreMeshPtr& pCoreMesh,
-    const CalCoreSubmeshPtr& pCoreSubmesh
-) {
-    CalVector v;
-    if (CalVectorFromXml(pos, tag, &v, pCoreMesh, pCoreSubmesh)) {
-        *calVec = CalPoint4(v);
-        return true;
-    } else {
-        return false;
-    }
-}
-
 
 static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float* f3, float* f4) {
     float a = 0.0f;
@@ -376,12 +285,14 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(char* dataSrc) {
 }
 
 CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
-    TiXmlDocument doc;
+    rapidxml::xml_document<> doc;
 
-    doc.Parse(dataSrc);
-    if (doc.Error()) {
-        CalError::setLastError(CalError::INVALID_FILE_FORMAT, __FILE__, __LINE__);
-        return CalCoreAnimationPtr();
+    try {
+        doc.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(dataSrc);
+    } catch (const rapidxml::parse_error&) {
+        //int distance = e.where() - dataSrc;
+        //std::string s = e.what();
+        return InvalidFileFormat();
     }
 
     return loadXmlCoreAnimationDoc(doc);
@@ -535,11 +446,12 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
     return pCoreSkeleton;
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
-    TiXmlNode* node;
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(const rapidxml::xml_document<>& doc) {
+    typedef rapidxml::xml_node<> TiXmlNode;
+    typedef rapidxml::xml_node<> TiXmlElement;
 
-    TiXmlElement* header = doc.FirstChildElement();
-    if (!header || cal3d_stricmp(header->Value(), "HEADER") != 0) {
+    TiXmlElement* header = doc.first_node();
+    if (!header || !has_name(header, "HEADER")) {
         return InvalidFileFormat();
     }
 
@@ -547,58 +459,55 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         return InvalidFileFormat();
     }
 
-    if (cal3d_stricmp(header->Attribute("MAGIC"), cal3d::ANIMATION_XMLFILE_EXTENSION) != 0) {
+    if (!has_attribute_value(header, "MAGIC", cal3d::ANIMATION_XMLFILE_EXTENSION)) {
         return InvalidFileFormat();
     }
 
-    if (atoi(header->Attribute("VERSION")) < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
+    if (get_int_attribute(header, "VERSION") < cal3d::EARLIEST_COMPATIBLE_FILE_VERSION) {
         return InvalidFileFormat();
     }
 
-    TiXmlElement* animation = header->NextSiblingElement();
-    if (!animation || cal3d_stricmp(animation->Value(), "ANIMATION") != 0) {
+    TiXmlElement* animation = header->next_sibling();
+    if (!animation || !has_name(animation, "ANIMATION")) {
         return InvalidFileFormat();
     }
 
-    float duration = imvu_atof(animation->Attribute("DURATION"));
-
-    // allocate a new core animation instance
-    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
-
-    // check for a valid duration
+    float duration = get_float_attribute(animation, "DURATION");
     if (duration <= 0.0f) {
         return InvalidFileFormat();
     }
 
+    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
     pCoreAnimation->duration = duration;
+
     for (
-        TiXmlElement* track = animation->FirstChildElement();
+        TiXmlElement* track = animation->first_node();
         track;
-        track = track->NextSiblingElement()
+        track = track->next_sibling()
     ) {
-        if (!track || cal3d_stricmp(track->Value(), "TRACK") != 0) {
+        if (!has_name(track, "TRACK")) {
             return InvalidFileFormat();
         }
 
-        int coreBoneId = atoi(track->Attribute("BONEID"));
+        int coreBoneId = get_int_attribute(track, "BONEID");
 
         CalCoreTrack::KeyframeList keyframes;
 
-        const char* trstr = track->Attribute("TRANSLATIONREQUIRED");
+        const char* trstr = get_string_attribute(track, "TRANSLATIONREQUIRED");
         bool translationRequired = true; // Default value if flag is not supplied (for backwards compatibility).
-        if (trstr) {
+        if (trstr && *trstr) {
             translationRequired = atoi(trstr) ? true : false;
         }
 
-        const char* trstr2 = track->Attribute("HIGHRANGEREQUIRED");
+        const char* trstr2 = get_string_attribute(track, "HIGHRANGEREQUIRED");
         bool highRangeRequired = true; // Default value if flag is not supplied (for backwards compatibility).
-        if (trstr2) {
+        if (trstr2 && *trstr2) {
             highRangeRequired = atoi(trstr2) ? true : false;
         }
 
-        const char* trstr3 = track->Attribute("TRANSLATIONISDYNAMIC");
+        const char* trstr3 = get_string_attribute(track, "TRANSLATIONISDYNAMIC");
         bool translationIsDynamic = true; // Default value if flag is not supplied (for backwards compatibility).
-        if (trstr3) {
+        if (trstr3 && *trstr3) {
             translationIsDynamic = atoi(trstr3) ? true : false;
         }
 
@@ -611,32 +520,29 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
         // whether translation is required, and we will update the translationRequired flag.
 
         // read the number of keyframes
-        int keyframeCount = atoi(track->Attribute("NUMKEYFRAMES"));
-
+        int keyframeCount = get_int_attribute(track, "NUMKEYFRAMES");
         if (keyframeCount <= 0) {
             return InvalidFileFormat();
         }
 
-        // load all core keyframes
         bool hasLastKeyframe = false;
         CalCoreKeyframe prevCoreKeyframe;
         for (
-            TiXmlElement* keyframe = track->FirstChildElement();
+            TiXmlElement* keyframe = track->first_node();
             keyframe;
-            keyframe = keyframe->NextSiblingElement()
+            keyframe = keyframe->next_sibling()
         ) {
-            // load the core keyframe
-            if (!keyframe || cal3d_stricmp(keyframe->Value(), "KEYFRAME") != 0) {
+            if (!has_name(keyframe, "KEYFRAME")) {
                 return InvalidFileFormat();
             }
 
-            float time = imvu_atof(keyframe->Attribute("TIME"));
+            float time = get_float_attribute(keyframe, "TIME");
 
             // Translation component in the XML is now optional.
             // I first fill the translation with zero.
             // Then if I have a skeleton, I fill it with the values from the skeleton.
             // Then if I have an XML translation entry, I fill it with the value from that entry.
-            TiXmlElement* translation = keyframe->FirstChildElement();
+            TiXmlElement* translation = keyframe->first_node();
             TiXmlElement* rotation = translation;
             CalVector t = InvalidTranslation;
 
@@ -650,35 +556,17 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(TiXmlDocument& doc) {
             if (!translation) {
                 return InvalidFileFormat();
             }
-            if (cal3d_stricmp(translation->Value(), "TRANSLATION") == 0) {
-                node = translation->FirstChild();
-                if (!node) {
-                    return InvalidFileFormat();
-                }
-
-                TiXmlText* translationdata = node->ToText();
-                if (!translationdata) {
-                    return InvalidFileFormat();
-                }
-                ReadTripleFloat(translationdata->Value(), &t.x, &t.y, &t.z);
-                rotation = rotation->NextSiblingElement();
+            if (has_name(translation, "TRANSLATION")) {
+                ReadTripleFloat(get_string_value(translation), &t.x, &t.y, &t.z);
+                rotation = rotation->next_sibling();
             }
 
-            if (!rotation || cal3d_stricmp(rotation->Value(), "ROTATION") != 0) {
+            if (!rotation || !has_name(rotation, "ROTATION")) {
                 return InvalidFileFormat();
             }
 
             float rx, ry, rz, rw;
-
-            node = rotation->FirstChild();
-            if (!node) {
-                return InvalidFileFormat();
-            }
-            TiXmlText* rotationdata = node->ToText();
-            if (!rotationdata) {
-                return InvalidFileFormat();
-            }
-            ReadQuadFloat(rotationdata->Value(), &rx, &ry, &rz, &rw);
+            ReadQuadFloat(get_string_value(rotation), &rx, &ry, &rz, &rw);
 
             CalCoreKeyframe pCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw));
             hasLastKeyframe = true;
@@ -874,11 +762,9 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             for (int textureCoordinateId = 0; textureCoordinateId < textureCoordinateCount; ++textureCoordinateId) {
                 CalCoreSubmesh::TextureCoordinate textureCoordinate;
                 // load data of the influence
-#if CAL3D_VALIDATE_XML_TAGS
                 if (!texcoord || !has_name(texcoord, "TEXCOORD")) {
                     return InvalidFileFormat();
                 }
-#endif
 
                 ReadPair(texcoord->value(), &textureCoordinate.u, &textureCoordinate.v);
 
@@ -902,11 +788,9 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
             // load all influences of the vertex
             int influenceId;
             for (influenceId = 0; influenceId < influenceCount; ++influenceId) {
-#if CAL3D_VALIDATE_XML_TAGS
                 if (!influence || !has_name(influence, "INFLUENCE")) {
                     return InvalidFileFormat();
                 }
-#endif
 
                 influences[influenceId].boneId = get_int_attribute(influence, "ID");
                 influences[influenceId].weight = imvu_atof(influence->value());
@@ -1006,11 +890,9 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
         face = morph;
         // load all faces
         for (int faceId = 0; faceId < faceCount; ++faceId) {
-#if CAL3D_VALIDATE_XML_TAGS
             if (!has_name(face, "FACE")) {
                 return InvalidFileFormat();
             }
-#endif
             int tmp[3];
             ReadTripleInt(get_string_attribute(face, "VERTEXID"), tmp, tmp + 1, tmp + 2);
 

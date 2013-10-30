@@ -111,10 +111,6 @@ TranslationWritten(CalCoreKeyframe* lastCoreKeyframe, bool translationRequired, 
 }
 
 
-bool CalLoader::isHeaderWellFormed(const TiXmlElement* header) {
-    return header->Attribute("MAGIC") && header->Attribute("VERSION");
-}
-
 bool CalLoader::isHeaderWellFormed(const rapidxml::xml_node<>* node) {
     return node->first_attribute("magic", 0, false) && node->first_attribute("version", 0, false);
 }
