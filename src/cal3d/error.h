@@ -13,8 +13,13 @@
 #include <string>
 #include "cal3d/global.h"
 
+#ifdef _MSC_VER
+#define IMVU_THREAD_LOCAL __declspec(thread)
+#else
+#define IMVU_THREAD_LOCAL __thread
+#endif
+
 class CAL3D_API CalError {
-// misc
 public:
     enum Code {
         OK = 0,
@@ -41,15 +46,6 @@ public:
         MAX_ERROR_CODE
     };
 
-// member variables
-protected:
-    static Code m_lastErrorCode;
-    static std::string m_strLastErrorFile;
-    static int m_lastErrorLine;
-    static std::string m_strLastErrorText;
-
-// member functions
-public:
     static Code getLastErrorCode();
     static char const* getLastErrorDescription();
     static char const* getLastErrorFile();
@@ -59,6 +55,9 @@ public:
     static const std::string& getLastErrorFileInternal();
     static const std::string& getLastErrorTextInternal();
     static int getLastErrorLine();
-    static void printLastError();
     static void setLastError(Code code, const std::string& strFile, int line, const std::string& strText = "");
+
+private:
+    struct ErrorState;
+    static ErrorState& getErrorState();
 };

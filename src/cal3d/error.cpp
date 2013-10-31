@@ -8,49 +8,31 @@
 // your option) any later version.                                            //
 //****************************************************************************//
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-//****************************************************************************//
-// Includes                                                                   //
-//****************************************************************************//
-
 #include "cal3d/error.h"
 
-//****************************************************************************//
-// Static member variables initialization                                     //
-//****************************************************************************//
+struct CalError::ErrorState {
+    ErrorState()
+        : lastErrorCode(CalError::OK)
+        , lastErrorLine(-1)
+    {}
 
-CalError::Code CalError::m_lastErrorCode = CalError::OK;
-std::string CalError::m_strLastErrorFile;
-int CalError::m_lastErrorLine = -1;
-std::string CalError::m_strLastErrorText;
+    Code lastErrorCode;
+    std::string strLastErrorFile;
+    int lastErrorLine;
+    std::string strLastErrorText;
+};
 
-/*****************************************************************************/
-/** Returns the code of the last error.
-  *
-  * This function returns the code of the last error that occured inside the
-  * library.
-  *
-  * @return The code of the last error.
-  *****************************************************************************/
-
-CalError::Code CalError::getLastErrorCode() {
-    return m_lastErrorCode;
+CalError::ErrorState& CalError::getErrorState() {
+    static ErrorState es;
+    return es;
 }
 
-/*****************************************************************************/
-/** Returns a description of the last error.
-  *
-  * This function returns a short description of the last error that occured
-  * inside the library.
-  *
-  * @return The description of the last error.
-  *****************************************************************************/
+CalError::Code CalError::getLastErrorCode() {
+    return getErrorState().lastErrorCode;
+}
 
 const char* CalError::getLastErrorDescriptionInternal() {
-    switch (m_lastErrorCode) {
+    switch (getLastErrorCode()) {
         case OK:
             return "No error found";
             break;
@@ -121,41 +103,16 @@ const char* CalError::getLastErrorDescriptionInternal() {
     return "Unknown error";
 }
 
-/*****************************************************************************/
-/** Returns the name of the file where the last error occured.
-  *
-  * This function returns the name of the file where the last error occured.
-  *
-  * @return The name of the file where the last error occured.
-  *****************************************************************************/
-
 const std::string& CalError::getLastErrorFileInternal() {
-    return m_strLastErrorFile;
+    return getErrorState().strLastErrorFile;
 }
-
-/*****************************************************************************/
-/** Returns the line number where the last error occured.
-  *
-  * This function returns the line number where the last error occured.
-  *
-  * @return The line number where the last error occured.
-  *****************************************************************************/
 
 int CalError::getLastErrorLine() {
-    return m_lastErrorLine;
+    return getErrorState().lastErrorLine;
 }
 
-/*****************************************************************************/
-/** Returns the supplementary text of the last error.
-  *
-  * This function returns the suppementary text of the last error occured
-  * inside the library.
-  *
-  * @return The supplementary text of the last error.
-  *****************************************************************************/
-
 const std::string& CalError::getLastErrorTextInternal() {
-    return m_strLastErrorText;
+    return getErrorState().strLastErrorText;
 }
 
 char const* CalError::getLastErrorDescription() {
@@ -170,48 +127,15 @@ char const* CalError::getLastErrorText() {
     return getLastErrorTextInternal().c_str();
 }
 
-
-/*****************************************************************************/
-/** Dumps all information about the last error to the standard output.
-  *
-  * This function dumps all the information about the last error that occured
-  * inside the library to the standard output.
-  *****************************************************************************/
-
-void CalError::printLastError() {
-#if 0
-    std::cout << "cal3d : " << getLastErrorDescription();
-
-    // only print supplementary information if there is some
-    if (m_strLastErrorText.size() > 0) {
-        std::cout << " '" << m_strLastErrorText << "'";
-    }
-
-    std::cout << " in " << m_strLastErrorFile << "(" << m_lastErrorLine << ")" << std::endl;
-#endif
-}
-
-/*****************************************************************************/
-/** Sets all the information about the last error.
-  *
-  * This function sets all the information about the last error that occured
-  * inside the library.
-  *
-  * @param code The code of the last error.
-  * @param strFile The file where the last error occured.
-  * @param line The line number where the last error occured.
-  * @param strText The supplementary text of the last error.
-  *****************************************************************************/
-
 void CalError::setLastError(Code code, const std::string& strFile, int line, const std::string& strText) {
     if (code >= MAX_ERROR_CODE) {
         code = INTERNAL;
     }
 
-    m_lastErrorCode = code;
-    m_strLastErrorFile = strFile.c_str();
-    m_lastErrorLine = line;
-    m_strLastErrorText = strText.c_str();
-}
+    ErrorState& es = getErrorState();
 
-//****************************************************************************//
+    es.lastErrorCode = code;
+    es.strLastErrorFile = strFile.c_str();
+    es.lastErrorLine = line;
+    es.strLastErrorText = strText.c_str();
+}
