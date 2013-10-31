@@ -23,6 +23,18 @@ using namespace cal3d;
 
 typedef boost::shared_ptr<Buffer> BufferPtr;
 
+struct ScopedGILRelease {
+    inline ScopedGILRelease() {
+        m_thread_state = PyEval_SaveThread();
+    }
+    inline ~ScopedGILRelease() {
+        PyEval_RestoreThread(m_thread_state);
+        m_thread_state = NULL;
+    }
+private:
+    PyThreadState* m_thread_state;
+};
+
 CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
     return CalLoader::loadCoreAnimation(cbs);
@@ -52,6 +64,7 @@ bool saveCoreMaterial(const CalCoreMaterialPtr& material, const std::string& pat
 
 CalCoreMeshPtr loadCoreMeshFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
+    ScopedGILRelease _;
     return CalLoader::loadCoreMesh(cbs);
 }
 
