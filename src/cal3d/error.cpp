@@ -36,6 +36,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID) {
     if (reason == DLL_THREAD_DETACH) {
         delete reinterpret_cast<CalError::ErrorState*>(TlsGetValue(s_errorStateKey));
     }
+    return TRUE;
 }
 
 CalError::ErrorState& CalError::getErrorState() {
