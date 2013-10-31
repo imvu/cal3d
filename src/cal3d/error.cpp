@@ -10,7 +10,9 @@
 
 #include "cal3d/error.h"
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+#include <windows.h>
+#else
 #include <pthread.h>
 #endif
 
@@ -28,14 +30,21 @@ struct CalError::ErrorState {
 
 #ifdef _MSC_VER
 
-static __declspec(thread) CalError::ErrorState* s_errorState;
+static DWORD s_errorStateKey = TlsAlloc();
+
+BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID) {
+    if (reason == DLL_THREAD_DETACH) {
+        delete reinterpret_cast<CalError::ErrorState*>(TlsGetValue(s_errorStateKey));
+    }
+}
 
 CalError::ErrorState& CalError::getErrorState() {
-    if (!s_errorState) {
-        // leak per-thread :/
-        s_errorState = new ErrorState;
+    void* state = TlsGetValue(s_errorStateKey);
+    if (!state) {
+        state = new ErrorState;
+        TlsSetValue(s_errorStateKey, state);
     }
-    return *s_errorState;
+    return *reinterpret_cast<ErrorState*>(state);
 }
 
 #else
