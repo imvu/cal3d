@@ -28,10 +28,14 @@ struct CalError::ErrorState {
 
 #ifdef _MSC_VER
 
-static __declspec(thread) ErrorState s_errorState;
+static __declspec(thread) CalError::ErrorState* s_errorState;
 
 CalError::ErrorState& CalError::getErrorState() {
-    return s_errorState;
+    if (!s_errorState) {
+        // leak per-thread :/
+        s_errorState = new ErrorState;
+    }
+    return *s_errorState;
 }
 
 #else
