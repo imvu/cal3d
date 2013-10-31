@@ -74,6 +74,7 @@ class Test(imvu.test.TestCase):
         meshfile = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'product8981737', 'MieuxPB_Seamless_Bottom.xmf')
         mesh = cal3d.loadCoreMeshFromBuffer(file(meshfile, 'rb').read())
         self.assertTrue(mesh)
+        self.assertEqual(2, len(mesh.submeshes))
 
     def test_binary_morph_loader_reads_weights(self):
         anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')

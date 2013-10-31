@@ -676,17 +676,11 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
         return InvalidFileFormat();
     }
 
-    //  get the number of submeshes
-    int submeshCount = get_int_attribute(mesh, "numsubmesh");
-
     CalCoreMeshPtr pCoreMesh(new CalCoreMesh);
 
-    xml_node* submesh = mesh->first_node();
-
-    // load all core submeshes
-    for (int submeshId = 0; submeshId < submeshCount; ++submeshId) {
-        if (!submesh || !has_name(submesh, "submesh")) {
-            return InvalidFileFormat();
+    for (xml_node* submesh = mesh->first_node(); submesh; submesh = submesh->next_sibling()) {
+        if (!has_name(submesh, "submesh")) {
+            continue;
         }
 
         int coreMaterialThreadId = get_int_attribute(submesh, "MATERIAL");
@@ -905,7 +899,6 @@ CalCoreMeshPtr CalLoader::loadXmlCoreMeshDoc(const rapidxml::xml_document<>& doc
 
             face = face->next_sibling();
         }
-        submesh = submesh->next_sibling();
 
         // add the core submesh to the core mesh instance
         pCoreMesh->submeshes.push_back(pCoreSubmesh);
