@@ -70,6 +70,11 @@ class Test(imvu.test.TestCase):
         morph = cal3d.loadCoreMorphAnimationFromBuffer(file(anim, 'rb').read())
         self.assertGbHello2(morph)
 
+    def test_xml_mesh_loader_supports_pants_with_unquoted_attributes(self):
+        meshfile = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'product8981737', 'MieuxPB_Seamless_Bottom.xmf')
+        mesh = cal3d.loadCoreMeshFromBuffer(file(meshfile, 'rb').read())
+        self.assertTrue(mesh)
+
     def test_binary_morph_loader_reads_weights(self):
         anim = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'gbhello2.XPF')
         morph = cal3d.loadCoreMorphAnimationFromBuffer(file(anim, 'rb').read())
