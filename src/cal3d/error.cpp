@@ -10,6 +10,10 @@
 
 #include "cal3d/error.h"
 
+#ifndef _MSC_VER
+#include <pthread.h>
+#endif
+
 struct CalError::ErrorState {
     ErrorState()
         : lastErrorCode(CalError::OK)
@@ -22,10 +26,33 @@ struct CalError::ErrorState {
     std::string strLastErrorText;
 };
 
+#ifdef _MSC_VER
+
+static __declspec(thread) ErrorState s_errorState;
+
 CalError::ErrorState& CalError::getErrorState() {
-    static ErrorState es;
-    return es;
+    return s_errorState;
 }
+
+#else
+
+static void destroyErrorState(void* state) {
+    delete reinterpret_cast<CalError::ErrorState*>(state);
+}
+
+static pthread_key_t s_errorStateKey;
+static int s_errorStateKeyResult = pthread_key_create(&s_errorStateKey, &destroyErrorState);
+
+CalError::ErrorState& CalError::getErrorState() {
+    void* state = pthread_getspecific(s_errorStateKey);
+    if (!state) {
+        state = new ErrorState;
+        pthread_setspecific(s_errorStateKey, state);
+    }
+    return *reinterpret_cast<ErrorState*>(state);
+}
+
+#endif
 
 CalError::Code CalError::getLastErrorCode() {
     return getErrorState().lastErrorCode;

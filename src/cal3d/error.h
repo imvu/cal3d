@@ -21,6 +21,8 @@
 
 class CAL3D_API CalError {
 public:
+    struct ErrorState;
+
     enum Code {
         OK = 0,
         INTERNAL,
@@ -58,6 +60,5 @@ public:
     static void setLastError(Code code, const std::string& strFile, int line, const std::string& strText = "");
 
 private:
-    struct ErrorState;
     static ErrorState& getErrorState();
 };
