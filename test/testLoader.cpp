@@ -71,7 +71,7 @@ TEST(position_from_mesh_is_correct) {
     CalCoreMeshPtr goodMesh(CalLoader::loadCoreMesh(cbs));
     CalCoreSubmeshPtr subMesh(goodMesh->submeshes[0]);
 
-    CHECK_EQUAL(CalVector4(5759.05, -1176.88, -0.00023478, 1), subMesh->getVectorVertex()[0].position);
+    CHECK_EQUAL(CalVector4(5759.05f, -1176.88f, -0.00023478f, 1), subMesh->getVectorVertex()[0].position);
 
     setlocale(LC_ALL, old);
 }
