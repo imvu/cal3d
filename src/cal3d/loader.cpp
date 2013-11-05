@@ -133,6 +133,27 @@ private:
     ScopedArray& operator=(const ScopedArray&);
 };
 
+struct ForceCLocale {
+    ForceCLocale() {
+#ifdef _WIN32
+        previousThreadState = _configthreadlocale(_ENABLE_PER_THREAD_LOCALE);
+#endif
+        previousLocale = setlocale(LC_ALL, "C");
+    }
+
+    ~ForceCLocale() {
+        setlocale(LC_ALL, previousLocale);
+#ifdef _WIN32
+        _configthreadlocale(previousThreadState);
+#endif
+    }
+
+private:
+#ifdef _WIN32
+    int previousThreadState;
+#endif
+    const char* previousLocale;
+};
 
 template<typename RV>
 RV tryBothLoaders(
@@ -148,6 +169,8 @@ RV tryBothLoaders(
         ScopedArray<char> data(inputSource.size() + 1);
         memcpy(data.ptr, inputSource.data(), inputSource.size());
         data.ptr[inputSource.size()] = 0;
+
+        ForceCLocale fcl;
         return xmlLoader(data.ptr);
     } catch (const CalError&) {
         return RV();

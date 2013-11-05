@@ -63,6 +63,19 @@ CalBufferSource fromString(const unsigned char(&p)[Length]) {
     return CalBufferSource(p, Length);
 }
 
+TEST(position_from_mesh_is_correct) {
+    char* old = setlocale(LC_ALL, "");
+    CHECK(old);
+
+    CalBufferSource cbs(fromString(goodMeshData));
+    CalCoreMeshPtr goodMesh(CalLoader::loadCoreMesh(cbs));
+    CalCoreSubmeshPtr subMesh(goodMesh->submeshes[0]);
+
+    CHECK_EQUAL(CalVector4(5759.05, -1176.88, -0.00023478, 1), subMesh->getVectorVertex()[0].position);
+
+    setlocale(LC_ALL, old);
+}
+
 TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
     CalBufferSource cbs(fromString(goodMeshData));
     CalCoreMeshPtr goodMesh(CalLoader::loadCoreMesh(cbs));
