@@ -392,6 +392,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("scale", &CalCoreSkeleton::scale)
         .def("applyZupToYup", &CalCoreSkeleton::applyZupToYup)
         .def("applyCoordinateTransform", &CalCoreSkeleton::applyCoordinateTransform)
+        .def("rotate", &CalCoreSkeleton::rotate)
         .add_property("sceneAmbientColor", &getCoreSkeletonSceneAmbientColor, &setCoreSkeletonSceneAmbientColor)
         .add_property("bones", make_function(&CalCoreSkeleton::getCoreBones, return_value_policy<return_by_value>()))
         ;
