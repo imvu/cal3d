@@ -184,17 +184,3 @@ std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const
     }
     cal3d::applyCoordinateTransform(inverseOriginalRootTransform, xfm);
  }
-
- void CalCoreSkeleton::rotateTranslate(cal3d::RotateTranslate& rt) {
-    for (size_t i = 0; i < m_coreBones.size(); ++i) {
-        if (m_coreBones[i]->parentId == -1) {
-            m_coreBones[i]->rotateTranslate(rt);
-        }
-    }
-    inverseOriginalRootTransform = invert(rt) * inverseOriginalRootTransform;
- }
-
-void CalCoreSkeleton::rotate(CalQuaternion &rot) {
-    cal3d::RotateTranslate rt(rot, CalVector(0, 0, 0));
-    rotateTranslate(rt);
-}
