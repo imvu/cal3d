@@ -41,6 +41,7 @@ public:
     void scale(float factor);
     void applyZupToYup();
     void applyCoordinateTransform(CalQuaternion &xfm);
+    void rotateTranslate(cal3d::RotateTranslate &rt);
 
     bool hasLightingData() const {
         return lightType != LIGHT_TYPE_NONE;

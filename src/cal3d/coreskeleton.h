@@ -39,6 +39,8 @@ public:
 
     void applyZupToYup();
     void applyCoordinateTransform(CalQuaternion& xfm);
+    void rotateTranslate(cal3d::RotateTranslate &rt);
+    void rotate(CalQuaternion& rot);
 
     std::vector<unsigned> boneIdTranslation; // mapping from exported-to-file ID to the in-memory index
 
