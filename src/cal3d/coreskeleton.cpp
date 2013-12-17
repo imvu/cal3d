@@ -191,7 +191,6 @@ std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const
             m_coreBones[i]->rotateTranslate(rt);
         }
     }
-    inverseOriginalRootTransform = invert(rt) * inverseOriginalRootTransform;
  }
 
 void CalCoreSkeleton::rotate(CalQuaternion &rot) {
