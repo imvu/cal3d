@@ -40,7 +40,6 @@ public:
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion &xfm);
     void rotateTranslate(cal3d::RotateTranslate &rt);
 
     bool hasLightingData() const {

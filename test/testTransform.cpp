@@ -56,7 +56,7 @@ TEST(applyZupToYup_transform) {
 //    CalQuaternion ZUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
 //    cal3d::RotateTranslate rt(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(2.0f, 3.0f, 5.0f));
 //
-//    cal3d::applyCoordinateTransform(rt, ZUpToYUp);
+//    cal3d::applyZupToYup(rt);
 //
 //    CHECK_CALVECTOR_CLOSE(rt.translation, CalVector(2.0f, 5.0f, -3.0f), 0.000001f);
 //    CHECK_CALQUATERNION_CLOSE(rt.rotation, CalQuaternion(0.0f, 0.70710678f, 0.0f, 0.70710678f), 0.000001f);

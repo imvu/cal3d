@@ -36,12 +36,6 @@ void CalCoreBone::applyZupToYup() {
     cal3d::applyZupToYup(inverseBindPoseTransform);
 }
 
-void CalCoreBone::applyCoordinateTransform(CalQuaternion &xfm) {
-    cal3d::applyCoordinateTransform(relativeTransform, xfm);
-    cal3d::applyCoordinateTransform(inverseBindPoseTransform, xfm);
-}
-
 void CalCoreBone::rotateTranslate(cal3d::RotateTranslate &rt) {
     relativeTransform = relativeTransform * rt;
-    inverseBindPoseTransform = invert(rt) * inverseBindPoseTransform;
 }

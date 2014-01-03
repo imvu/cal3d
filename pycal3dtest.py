@@ -346,52 +346,6 @@ class Test(imvu.test.TestCase):
         self.assertEqual(v3.y, 17)
         self.assertEqual(v3.z, 18)
 
-    def test_apply_coordinate_transform_to_skeleton(self):
-        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
-        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
-        skeleton = cal3d.loadCoreSkeletonFromBuffer(skeleton2)
-        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-        skeleton.applyCoordinateTransform(xfm)
-        q0 = skeleton.bones[0].inverseBindPoseTransform.rotation
-        if q0.w < 0:
-            q0.x = -q0.x
-            q0.y = -q0.y
-            q0.z = -q0.z
-            q0.w = -q0.w
-        self.assertAlmostEqual(q0.x, 0, places=4)
-        self.assertAlmostEqual(q0.y, 0, places=4)
-        self.assertAlmostEqual(q0.z, .70710678, places=4)
-        self.assertAlmostEqual(q0.w, .70710678, places=4)
-
-    def test_apply_coordinate_transform_to_mesh(self):
-        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
-        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
-        mesh = cal3d.loadCoreMeshFromBuffer(mesh2)
-        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-        mesh.applyCoordinateTransform(xfm)
-        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.x, -1.0, places=4)
-        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.y, 0.0, places=4)
-        self.assertAlmostEqual(mesh.submeshes[0].vertices[0].position.z, 0.0, places=4)
-
-    def test_apply_coordinate_transform_to_animation(self):
-        # These are 3ds max "left-handed" quaternions, meaning w (the real -- or rotation -- component, and the final
-        # element in the constructor, is the additive inverse of what would be expected in a conventional quaternion
-        animation = cal3d.loadCoreAnimationFromBuffer(animation3)
-        xfm = cal3d.Quaternion(0, .70710678, 0, .70710678)
-        animation.applyCoordinateTransform(xfm)
-        track = animation.tracks[0]
-        keyFrame = track.keyframes[0]
-        q0 = keyFrame.transform.rotation
-        if q0.w < 0:
-            q0.x = -q0.x
-            q0.y = -q0.y
-            q0.z = -q0.z
-            q0.w = -q0.w
-        self.assertAlmostEqual(q0.w, 0.70710678, places=4)
-        self.assertAlmostEqual(q0.x, -0.70710678, places=4)
-        self.assertAlmostEqual(q0.y, 0.0, places=4)
-        self.assertAlmostEqual(q0.z, 0.0, places=4)
-
     def test_empty_morph_is_removed(self):
         mesh = cal3d.loadCoreMeshFromBuffer(mesh_with_empty_morph)
         self.assertEqual(len(mesh.submeshes[0].subMorphTargets), 1)

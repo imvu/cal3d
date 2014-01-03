@@ -27,13 +27,5 @@ namespace cal3d {
         std::swap(point4.y, point4.z);
         point4.z = -point4.z;
     }
-
-    void applyCoordinateTransform(CalVector4 &vec4, CalQuaternion &xfm) {
-        vec4 = xfm * vec4;
-    }
-
-    void applyCoordinateTransform(CalPoint4 &point4, CalQuaternion &xfm) {
-        point4 = xfm * point4;
-    }
 }
 

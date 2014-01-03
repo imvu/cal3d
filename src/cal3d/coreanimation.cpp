@@ -81,9 +81,3 @@ void CalCoreAnimation::applyZupToYup() {
         i->applyZupToYup();
     }
 }
-
-void CalCoreAnimation::applyCoordinateTransform(CalQuaternion& xfm) {
-    for (auto i = tracks.begin(); i != tracks.end(); ++i) {
-        i->applyCoordinateTransform(xfm);
-    }
-}

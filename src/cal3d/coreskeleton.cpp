@@ -178,13 +178,6 @@ std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const
     cal3d::applyZupToYup(inverseOriginalRootTransform);
  }
 
-  void CalCoreSkeleton::applyCoordinateTransform(CalQuaternion& xfm) {
-    for (size_t i = 0; i < m_coreBones.size(); ++i) {
-        m_coreBones[i]->applyCoordinateTransform(xfm);
-    }
-    cal3d::applyCoordinateTransform(inverseOriginalRootTransform, xfm);
- }
-
  void CalCoreSkeleton::rotateTranslate(cal3d::RotateTranslate& rt) {
     for (size_t i = 0; i < m_coreBones.size(); ++i) {
         if (m_coreBones[i]->parentId == -1) {

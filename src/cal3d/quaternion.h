@@ -206,16 +206,4 @@ namespace cal3d {
         q.z = temp;
         q.z = -q.z;
     }
-
-    inline void applyCoordinateTransform(CalQuaternion &q, CalQuaternion &xfm) {
-        CalVector qVector(q.x, q.y, q.z);
-        CalVector result = xfm * qVector;
-        q.x = result.x;
-        q.y = result.y;
-        q.z = result.z;
-    }
-
-    inline void applyCoordinateTransform(CalVector &v, CalQuaternion &xfm) {
-        v = xfm * v;
-    }
 }

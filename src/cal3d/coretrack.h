@@ -40,7 +40,6 @@ public:
         const CalCoreBone& bone,
         const cal3d::RotateTranslate& adjustedRootTransform);
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
 
     cal3d::RotateTranslate getCurrentTransform(float time) const;
 

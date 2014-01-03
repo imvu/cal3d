@@ -265,6 +265,4 @@ class CalQuaternion;
 namespace cal3d {
     void CAL3D_API applyZupToYup(CalVector4 &vec4);
     void CAL3D_API applyZupToYup(CalPoint4 &point4);
-    void CAL3D_API applyCoordinateTransform(CalVector4 &vec4, CalQuaternion &xfm);
-    void CAL3D_API applyCoordinateTransform(CalPoint4 &point4, CalQuaternion &xfm);
 }

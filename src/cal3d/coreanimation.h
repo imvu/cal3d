@@ -28,7 +28,6 @@ public:
 
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
     void scale(float factor);
 
     float duration;

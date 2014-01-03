@@ -160,18 +160,6 @@ void CalCoreSubmesh::applyZupToYup() {
     }
 }
 
-void CalCoreSubmesh::applyCoordinateTransform(CalQuaternion& xfm) {
-    for (size_t vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
-        cal3d::applyCoordinateTransform((m_vertices[vertexId].position), xfm);
-        cal3d::applyCoordinateTransform((m_vertices[vertexId].normal), xfm);
-    }
-    cal3d::applyCoordinateTransform(m_boundingVolume.min, xfm);
-    cal3d::applyCoordinateTransform(m_boundingVolume.max, xfm);
-    for (MorphTargetArray::iterator i = m_morphTargets.begin(); i != m_morphTargets.end(); ++i) {
-        (*i)->applyCoordinateTransform(xfm);
-    }
-}
-
 void CalCoreSubmesh::fixup(const CalCoreSkeletonPtr& skeleton) {
     for (size_t i = 0; i < m_influences.size(); ++i) {
         Influence& inf = m_influences[i];

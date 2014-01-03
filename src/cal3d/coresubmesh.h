@@ -189,7 +189,6 @@ public:
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
 
     bool isStatic() const;
     BoneTransform getStaticTransform(const BoneTransform* bones) const;

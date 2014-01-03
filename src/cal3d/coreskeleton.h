@@ -38,7 +38,6 @@ public:
     }
 
     void applyZupToYup();
-    void applyCoordinateTransform(CalQuaternion& xfm);
     void rotateTranslate(cal3d::RotateTranslate &rt);
     void rotate(CalQuaternion& rot);
 

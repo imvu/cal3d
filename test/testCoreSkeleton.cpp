@@ -377,18 +377,18 @@ TEST_F(SkeletonFixture, applyCoordinateTransform_skeleton) {
     cal3d::RotateTranslate b1InverseBindPoseTransformExpected = b1->inverseBindPoseTransform;
     cal3d::RotateTranslate b2InverseBindPoseTransformExpected = b2->inverseBindPoseTransform;
 
-    cal3d::applyCoordinateTransform(b0RelativeTransformExpected, zUpToYUp);
-    cal3d::applyCoordinateTransform(b1RelativeTransformExpected, zUpToYUp);
-    cal3d::applyCoordinateTransform(b2RelativeTransformExpected, zUpToYUp);
+    cal3d::applyZupToYup(b0RelativeTransformExpected);
+    cal3d::applyZupToYup(b1RelativeTransformExpected);
+    cal3d::applyZupToYup(b2RelativeTransformExpected);
 
-    cal3d::applyCoordinateTransform(b0InverseBindPoseTransformExpected, zUpToYUp);
-    cal3d::applyCoordinateTransform(b1InverseBindPoseTransformExpected, zUpToYUp);
-    cal3d::applyCoordinateTransform(b2InverseBindPoseTransformExpected, zUpToYUp);
+    cal3d::applyZupToYup(b0InverseBindPoseTransformExpected);
+    cal3d::applyZupToYup(b1InverseBindPoseTransformExpected);
+    cal3d::applyZupToYup(b2InverseBindPoseTransformExpected);
 
     cal3d::RotateTranslate rt = skeleton->getAdjustedRootTransform(0);
-    cal3d::applyCoordinateTransform(rt, zUpToYUp);
+    cal3d::applyZupToYup(rt);
 
-    skeleton->applyCoordinateTransform(zUpToYUp);
+    skeleton->applyZupToYup();
 
     CHECK_EQUAL(b0RelativeTransformExpected.translation, b0->relativeTransform.translation);
     CHECK_EQUAL(b0RelativeTransformExpected.rotation, b0->relativeTransform.rotation);

@@ -174,6 +174,33 @@ skeletonTestData = \
     </BONE>
 </SKELETON>"""
 
+skeletonWithNoCameraTestData = \
+"""<HEADER VERSION=\"910\" MAGIC="XSF" />
+    <SKELETON SCENEAMBIENTCOLOR="1 1 1" NUMBONES="2">
+    <BONE NAME="FooRoot" NUMCHILDS="1" ID="0">
+        <TRANSLATION>0 0 -30</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 0 30</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>-1</PARENTID>
+        <CHILDID>1</CHILDID>
+    </BONE>
+    <BONE NAME="FooChild" NUMCHILDS="0" ID="1">
+        <TRANSLATION>0 -10 500</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 10 -470</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>0</PARENTID>
+    </BONE>
+    <BONE NAME="FooAdjustedRoot" NUMCHILDS="0" ID="2">
+        <TRANSLATION>0 -10 500</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 10 -470</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>-1</PARENTID>
+    </BONE>
+</SKELETON>"""
+
 skeletonAnimationTestData = \
 """
 <HEADER VERSION="910" MAGIC="XAF" />
@@ -210,7 +237,6 @@ skeletonAnimationTestData = \
     </TRACK>
 </ANIMATION>
 """
-
 
 attachmentSkeletonTestData = \
 """<HEADER VERSION=\"910\" MAGIC="XSF" />

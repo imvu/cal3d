@@ -401,17 +401,17 @@ TEST(applyCoordinateTransform_mesh) {
     CalAABox bbox = submeshPtr->getBoundingVolume();
 
     //do the ZupToYup
-    cm.applyCoordinateTransform(zUpToYUp);
+    cm.applyZupToYup();
 
     //
-    cal3d::applyCoordinateTransform(firstVertexPos, zUpToYUp);
-    cal3d::applyCoordinateTransform(lastVertexPos, zUpToYUp);
-    cal3d::applyCoordinateTransform(firstVertexNormal, zUpToYUp);
-    cal3d::applyCoordinateTransform(lastVertexNormal, zUpToYUp);
-    cal3d::applyCoordinateTransform(morphTargetVertexOffset_Pos, zUpToYUp);
-    cal3d::applyCoordinateTransform(morphTargetVertexOffset_Normal, zUpToYUp);
-    cal3d::applyCoordinateTransform(bbox.max, zUpToYUp);
-    cal3d::applyCoordinateTransform(bbox.min, zUpToYUp);
+    cal3d::applyZupToYup(firstVertexPos);
+    cal3d::applyZupToYup(lastVertexPos);
+    cal3d::applyZupToYup(firstVertexNormal);
+    cal3d::applyZupToYup(lastVertexNormal);
+    cal3d::applyZupToYup(morphTargetVertexOffset_Pos);
+    cal3d::applyZupToYup(morphTargetVertexOffset_Normal);
+    cal3d::applyZupToYup(bbox.max);
+    cal3d::applyZupToYup(bbox.min);
 
     {
         const CalCoreSubmeshPtr testSubmeshPtr = cm.submeshes[0];

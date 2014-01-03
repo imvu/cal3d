@@ -41,7 +41,7 @@ TEST(morph_target_applyCoordinateTransform) {
     vertexOffsets.push_back(mv);
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, vertexOffsets));
 
-    morphTarget->applyCoordinateTransform(zUpToYUp);
+    morphTarget->applyZupToYup();
 
     const CalCoreMorphTarget::VertexOffsetArray& voses = morphTarget->vertexOffsets;
     const VertexOffset& vos = voses[0];
@@ -49,8 +49,8 @@ TEST(morph_target_applyCoordinateTransform) {
     CalVector expectingMvPos = mv.position.asCalVector();
     CalVector expectingMvNormal = mv.normal.asCalVector();
 
-    cal3d::applyCoordinateTransform(expectingMvPos, zUpToYUp);
-    cal3d::applyCoordinateTransform(expectingMvNormal, zUpToYUp);
+    cal3d::applyZupToYup(expectingMvPos);
+    cal3d::applyZupToYup(expectingMvNormal);
 
     CHECK_EQUAL(vos.vertexId, static_cast<size_t>(0));
     CHECK_EQUAL(expectingMvPos, (vos.position.asCalVector()));
