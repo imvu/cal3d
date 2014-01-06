@@ -63,11 +63,11 @@ void CalCoreMorphTarget::scale(float factor) {
 }
 
 
-void CalCoreMorphTarget::applyZupToYup() {
+void CalCoreMorphTarget::applyZUpToYUp() {
     VertexOffsetArray& mv = const_cast<VertexOffsetArray&>(vertexOffsets);
     for (VertexOffsetArray::iterator i = mv.begin(); i != mv.end(); ++i) {
-        cal3d::applyZupToYup(i->position);
-        cal3d::applyZupToYup(i->normal);
+        cal3d::applyZUpToYUp(i->position);
+        cal3d::applyZUpToYUp(i->normal);
     }
 }
 

@@ -145,18 +145,18 @@ void CalCoreSubmesh::scale(float factor) {
 }
 
 
-void CalCoreSubmesh::applyZupToYup() {
+void CalCoreSubmesh::applyZUpToYUp() {
 
     for (size_t vertexId = 0; vertexId < m_vertices.size(); vertexId++) {
-        cal3d::applyZupToYup( (m_vertices[vertexId].position) );
-        cal3d::applyZupToYup( (m_vertices[vertexId].normal) );
+        cal3d::applyZUpToYUp( (m_vertices[vertexId].position) );
+        cal3d::applyZUpToYUp( (m_vertices[vertexId].normal) );
     }
 
-    cal3d::applyZupToYup( m_boundingVolume.min );
-    cal3d::applyZupToYup( m_boundingVolume.max );
+    cal3d::applyZUpToYUp( m_boundingVolume.min );
+    cal3d::applyZUpToYUp( m_boundingVolume.max );
 
     for (MorphTargetArray::iterator i = m_morphTargets.begin(); i != m_morphTargets.end(); ++i) {
-        (*i)->applyZupToYup();
+        (*i)->applyZUpToYUp();
     }
 }
 

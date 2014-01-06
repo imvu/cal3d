@@ -76,8 +76,8 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton) {
     swap(tracks, output);
 }
 
-void CalCoreAnimation::applyZupToYup() {
+void CalCoreAnimation::applyZUpToYUp() {
     for (auto i = tracks.begin(); i != tracks.end(); ++i) {
-        i->applyZupToYup();
+        i->applyZUpToYUp();
     }
 }

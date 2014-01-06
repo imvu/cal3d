@@ -45,7 +45,7 @@ public:
     size_t size() const;
 
     void scale(float factor);
-    void applyZupToYup();
+    void applyZUpToYUp();
     void addVertexOffset(const size_t vertexId, const CalCoreSubmesh::Vertex& v);
 };
 CAL3D_PTR(CalCoreMorphTarget);

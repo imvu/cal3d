@@ -200,7 +200,7 @@ inline CalQuaternion slerp(float d, const CalQuaternion& left, const CalQuaterni
 #define CHECK_CALQUATERNION_CLOSE(q1, q2, tolerance)    CHECK_CALVECTOR4_CLOSE(q1.asCalVector4(), q2.asCalVector4(), tolerance)
 
 namespace cal3d {
-    inline void applyZupToYup(CalQuaternion &q) {
+    inline void applyZUpToYUp(CalQuaternion &q) {
         float temp = q.y;
         q.y = q.z;
         q.z = temp;

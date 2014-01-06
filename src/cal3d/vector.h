@@ -159,7 +159,7 @@ inline CalVector lerp(float f, CalVector left, CalVector right) {
 }
 
 namespace cal3d {    
-    inline void applyZupToYup(CalVector &v) {
+    inline void applyZUpToYUp(CalVector &v) {
         float temp = v.y;
         v.y = v.z;
         v.z = temp;

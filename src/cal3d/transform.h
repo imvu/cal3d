@@ -77,9 +77,9 @@ namespace cal3d {
             lerp(factor, left.translation, right.translation));
     }
 
-    inline void applyZupToYup(RotateTranslate &transform) {
-        cal3d::applyZupToYup(transform.translation);
-        cal3d::applyZupToYup(transform.rotation);
+    inline void applyZUpToYUp(RotateTranslate &transform) {
+        cal3d::applyZUpToYUp(transform.translation);
+        cal3d::applyZUpToYUp(transform.rotation);
     }
 
     struct Transform {

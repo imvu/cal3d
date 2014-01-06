@@ -37,7 +37,7 @@ public:
         return coreBones;
     }
 
-    void applyZupToYup();
+    void applyZUpToYUp();
     void rotateTranslate(cal3d::RotateTranslate &rt);
     void rotate(CalQuaternion& rot);
 

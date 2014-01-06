@@ -55,7 +55,7 @@ TEST(Point4_default) {
     CHECK_EQUAL(1.0, CalPoint4().w);
 }
 
-TEST(applyZupToYup) {
+TEST(applyZUpToYUp) {
     CalPoint4 point4(0.0f, 1.0f, 2.0f, 3.0f);
     CalVector4 vec4(0.0f, 1.0f, 2.0f, 3.0f);
     CalVector vec(0.0f, 1.0f, 2.0f);
@@ -64,10 +64,10 @@ TEST(applyZupToYup) {
     CalVector4 vec4_x(0.0f, 2.0f, -1.0f, 3.0f);
     CalQuaternion quat_x(0.0f, 2.0f, -1.0f, 3.0f);    
     CalVector vec_x(0.0f, 2.0f, -1.0f);
-    cal3d::applyZupToYup(point4);
-    cal3d::applyZupToYup(vec4);
-    cal3d::applyZupToYup(vec);
-    cal3d::applyZupToYup(quat);
+    cal3d::applyZUpToYUp(point4);
+    cal3d::applyZUpToYUp(vec4);
+    cal3d::applyZUpToYUp(vec);
+    cal3d::applyZUpToYUp(quat);
     CHECK_EQUAL((point4_x.asCalVector()), (point4.asCalVector()));    
     CHECK_EQUAL((vec4_x.asCalVector()), (vec4.asCalVector()));
     CHECK_EQUAL((point4_x.asCalVector()), (point4.asCalVector()));

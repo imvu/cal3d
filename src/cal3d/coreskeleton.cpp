@@ -171,11 +171,11 @@ std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const
     return rv;
 }
 
- void CalCoreSkeleton::applyZupToYup() {
+ void CalCoreSkeleton::applyZUpToYUp() {
     for (size_t i = 0; i < m_coreBones.size(); ++i) {
-        m_coreBones[i]->applyZupToYup();
+        m_coreBones[i]->applyZUpToYUp();
     }
-    cal3d::applyZupToYup(inverseOriginalRootTransform);
+    cal3d::applyZUpToYUp(inverseOriginalRootTransform);
  }
 
  void CalCoreSkeleton::rotateTranslate(cal3d::RotateTranslate& rt) {

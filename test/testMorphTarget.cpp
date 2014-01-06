@@ -3,7 +3,7 @@
 #include <cal3d/coremorphtarget.h>
 #include <cal3d/streamops.h>
 
-TEST(morph_target_applyZupToYup) {
+TEST(morph_target_applyZUpToYUp) {
     CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
     VertexOffset mv;
     mv.vertexId = 0;
@@ -12,7 +12,7 @@ TEST(morph_target_applyZupToYup) {
     vertexOffsets.push_back(mv);
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, vertexOffsets));
 
-    morphTarget->applyZupToYup();
+    morphTarget->applyZUpToYUp();
     
     const CalCoreMorphTarget::VertexOffsetArray& voses = morphTarget->vertexOffsets;
     const VertexOffset& vos = voses[0];
@@ -20,8 +20,8 @@ TEST(morph_target_applyZupToYup) {
     CalVector expectingMvPos = mv.position.asCalVector();
     CalVector expectingMvNormal = mv.normal.asCalVector();
 
-    cal3d::applyZupToYup(expectingMvPos);
-    cal3d::applyZupToYup(expectingMvNormal);
+    cal3d::applyZUpToYUp(expectingMvPos);
+    cal3d::applyZUpToYUp(expectingMvNormal);
     
     CHECK_EQUAL(vos.vertexId, static_cast<size_t>(0));
     CHECK_EQUAL(expectingMvPos, (vos.position.asCalVector()));
@@ -41,7 +41,7 @@ TEST(morph_target_applyCoordinateTransform) {
     vertexOffsets.push_back(mv);
     CalCoreMorphTargetPtr morphTarget(new CalCoreMorphTarget("m", 1, vertexOffsets));
 
-    morphTarget->applyZupToYup();
+    morphTarget->applyZUpToYUp();
 
     const CalCoreMorphTarget::VertexOffsetArray& voses = morphTarget->vertexOffsets;
     const VertexOffset& vos = voses[0];
@@ -49,8 +49,8 @@ TEST(morph_target_applyCoordinateTransform) {
     CalVector expectingMvPos = mv.position.asCalVector();
     CalVector expectingMvNormal = mv.normal.asCalVector();
 
-    cal3d::applyZupToYup(expectingMvPos);
-    cal3d::applyZupToYup(expectingMvNormal);
+    cal3d::applyZUpToYUp(expectingMvPos);
+    cal3d::applyZUpToYUp(expectingMvNormal);
 
     CHECK_EQUAL(vos.vertexId, static_cast<size_t>(0));
     CHECK_EQUAL(expectingMvPos, (vos.position.asCalVector()));

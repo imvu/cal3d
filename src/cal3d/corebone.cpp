@@ -31,9 +31,9 @@ void CalCoreBone::scale(float factor) {
     inverseBindPoseTransform.translation *= factor;
 }
 
-void CalCoreBone::applyZupToYup() {
-    cal3d::applyZupToYup(relativeTransform);
-    cal3d::applyZupToYup(inverseBindPoseTransform);
+void CalCoreBone::applyZUpToYUp() {
+    cal3d::applyZUpToYUp(relativeTransform);
+    cal3d::applyZUpToYUp(inverseBindPoseTransform);
 }
 
 void CalCoreBone::rotateTranslate(cal3d::RotateTranslate &rt) {

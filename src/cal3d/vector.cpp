@@ -18,12 +18,12 @@
 #include "cal3d/transform.h"
 
 namespace cal3d {
-    void applyZupToYup(CalVector4 &vec4) {    
+    void applyZUpToYUp(CalVector4 &vec4) {
         std::swap(vec4.y, vec4.z);
         vec4.z = -vec4.z;
     }
 
-    void applyZupToYup(CalPoint4 &point4) {    
+    void applyZUpToYUp(CalPoint4 &point4) {
         std::swap(point4.y, point4.z);
         point4.z = -point4.z;
     }

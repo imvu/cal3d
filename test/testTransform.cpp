@@ -37,17 +37,17 @@ TEST(non_uniform_scale_before_and_after_transform) {
     CHECK_EQUAL(CalVector(-1, 6, 18), (scale * transform) * CalVector(1, 2, 3));
 }
 
-TEST(applyZupToYup_transform) {
+TEST(applyZUpToYUp_transform) {
     CalQuaternion quat;
     CalVector axis(1,1,1);
     axis.normalize();
     quat.setAxisAngle(axis, DegreesToRadians(30));
     CalVector trans(1.0f, 2.0f, 3.0f);
     cal3d::RotateTranslate rotTrans(quat, trans);
-    cal3d::applyZupToYup(rotTrans);
+    cal3d::applyZUpToYUp(rotTrans);
 
-    cal3d::applyZupToYup(quat);
-    cal3d::applyZupToYup(trans);
+    cal3d::applyZUpToYUp(quat);
+    cal3d::applyZUpToYUp(trans);
     CHECK_EQUAL(trans, rotTrans.translation);
     CHECK_EQUAL(quat, rotTrans.rotation);
 }
@@ -56,7 +56,7 @@ TEST(applyZupToYup_transform) {
 //    CalQuaternion ZUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
 //    cal3d::RotateTranslate rt(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(2.0f, 3.0f, 5.0f));
 //
-//    cal3d::applyZupToYup(rt);
+//    cal3d::applyZUpToYUp(rt);
 //
 //    CHECK_CALVECTOR_CLOSE(rt.translation, CalVector(2.0f, 5.0f, -3.0f), 0.000001f);
 //    CHECK_CALQUATERNION_CLOSE(rt.rotation, CalQuaternion(0.0f, 0.70710678f, 0.0f, 0.70710678f), 0.000001f);

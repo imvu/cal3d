@@ -300,7 +300,7 @@ TEST(make_cube) {
 }
 
 
-TEST(applyZupToYup_mesh) {
+TEST(applyZUpToYUp_mesh) {
     //make a cube submesh
     CalCoreSubmeshPtr submeshPtr = MakeCube();    
     //put some morph target data into it
@@ -330,18 +330,16 @@ TEST(applyZupToYup_mesh) {
     CalVector morphTargetVertexOffset_Normal = mv.normal.asCalVector();
     CalAABox bbox = submeshPtr->getBoundingVolume();
 
-    //do the ZupToYup
-    cm.applyZupToYup();
+    cm.applyZUpToYUp();
 
-    //
-    cal3d::applyZupToYup(firstVertexPos);
-    cal3d::applyZupToYup(lastVertexPos);
-    cal3d::applyZupToYup(firstVertexNormal);
-    cal3d::applyZupToYup(lastVertexNormal);
-    cal3d::applyZupToYup(morphTargetVertexOffset_Pos);
-    cal3d::applyZupToYup(morphTargetVertexOffset_Normal);
-    cal3d::applyZupToYup(bbox.max);
-    cal3d::applyZupToYup(bbox.min);
+    cal3d::applyZUpToYUp(firstVertexPos);
+    cal3d::applyZUpToYUp(lastVertexPos);
+    cal3d::applyZUpToYUp(firstVertexNormal);
+    cal3d::applyZUpToYUp(lastVertexNormal);
+    cal3d::applyZUpToYUp(morphTargetVertexOffset_Pos);
+    cal3d::applyZUpToYUp(morphTargetVertexOffset_Normal);
+    cal3d::applyZUpToYUp(bbox.max);
+    cal3d::applyZUpToYUp(bbox.min);
 
     {
         const CalCoreSubmeshPtr testSubmeshPtr = cm.submeshes[0];
@@ -400,18 +398,17 @@ TEST(applyCoordinateTransform_mesh) {
     CalVector morphTargetVertexOffset_Normal = mv.normal.asCalVector();
     CalAABox bbox = submeshPtr->getBoundingVolume();
 
-    //do the ZupToYup
-    cm.applyZupToYup();
+    cm.applyZUpToYUp();
 
     //
-    cal3d::applyZupToYup(firstVertexPos);
-    cal3d::applyZupToYup(lastVertexPos);
-    cal3d::applyZupToYup(firstVertexNormal);
-    cal3d::applyZupToYup(lastVertexNormal);
-    cal3d::applyZupToYup(morphTargetVertexOffset_Pos);
-    cal3d::applyZupToYup(morphTargetVertexOffset_Normal);
-    cal3d::applyZupToYup(bbox.max);
-    cal3d::applyZupToYup(bbox.min);
+    cal3d::applyZUpToYUp(firstVertexPos);
+    cal3d::applyZUpToYUp(lastVertexPos);
+    cal3d::applyZUpToYUp(firstVertexNormal);
+    cal3d::applyZUpToYUp(lastVertexNormal);
+    cal3d::applyZUpToYUp(morphTargetVertexOffset_Pos);
+    cal3d::applyZUpToYUp(morphTargetVertexOffset_Normal);
+    cal3d::applyZUpToYUp(bbox.max);
+    cal3d::applyZUpToYUp(bbox.min);
 
     {
         const CalCoreSubmeshPtr testSubmeshPtr = cm.submeshes[0];
