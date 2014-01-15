@@ -383,6 +383,17 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readonly("name", &CalCoreBone::name)
         .def_readwrite("relativeTransform", &CalCoreBone::relativeTransform)
         .def_readwrite("inverseBindPoseTransform", &CalCoreBone::inverseBindPoseTransform)
+        .def_readonly("lightColor", &CalCoreBone::lightColor)
+        .def_readonly("lightType", &CalCoreBone::lightType)
+        ;
+
+    enum_<CalLightType>("LightType")
+        .value("None", LIGHT_TYPE_NONE)
+        .value("Omni", LIGHT_TYPE_OMNI)
+        .value("Directional", LIGHT_TYPE_DIRECTIONAL)
+        .value("Target", LIGHT_TYPE_TARGET)
+        .value("Ambient", LIGHT_TYPE_AMBIENT)
+        .export_values()
         ;
 
     exportVector<CalCoreBonePtr>("BoneVector");
@@ -458,7 +469,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .value("Clamped", CalMorphTargetTypeClamped)
         .export_values()
         ;
-    
+
     class_<CalCoreMorphTarget, CalCoreMorphTargetPtr, boost::noncopyable>("CoreMorphTarget", no_init)
         .def("__init__", make_constructor(&makeMorphTarget))
         .def_readonly("name", &CalCoreMorphTarget::name)
