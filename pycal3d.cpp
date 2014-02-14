@@ -371,9 +371,11 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
 
     class_<cal3d::RotateTranslate>("Transform")
+        .def(init<CalQuaternion, CalVector>())
         .def("__repr__", &RotateTranslateRepr)
         .def_readwrite("translation", &cal3d::RotateTranslate::translation)
         .def_readwrite("rotation", &cal3d::RotateTranslate::rotation)
+        .def(self * self)
         ;
 
     class_<CalCoreBone, CalCoreBonePtr >("CoreBone",
