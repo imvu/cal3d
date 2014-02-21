@@ -95,7 +95,7 @@ meshDataPrefix =\
     "<HEADER MAGIC=\"XMF\" VERSION=\"919\" />"\
     "<MESH NUMSUBMESH=\"1\">"
 
-submeshTemplate =\
+submeshTemplate01 =\
     "   <SUBMESH NUMVERTICES=\"3\" NUMFACES=\"1\" NUMLODSTEPS=\"0\" NUMSPRINGS=\"0\" NUMMORPHS=\"1\" NUMTEXCOORDS=\"1\" MATERIAL=\"%d\">"\
     "       <VERTEX NUMINFLUENCES=\"1\" ID=\"0\">"\
     "           <POS>5759.05 -1176.88 -0.00023478</POS>"\
@@ -129,16 +129,45 @@ submeshTemplate =\
     "       <FACE VERTEXID=\"0 1 2\" />"\
     "    </SUBMESH>"
 
+submeshTemplate02 =\
+    "   <SUBMESH NUMVERTICES=\"3\" NUMFACES=\"1\" NUMLODSTEPS=\"0\" NUMSPRINGS=\"0\" NUMMORPHS=\"0\" NUMTEXCOORDS=\"1\" MATERIAL=\"0\">"\
+    "       <VERTEX NUMINFLUENCES=\"1\" ID=\"0\">"\
+    "           <POS>5759.05 -1176.88 -0.00023478</POS>"\
+    "           <NORM>1.27676e-008 2.40249e-008 -1</NORM>"\
+    "           <COLOR>0 0 0</COLOR>"\
+    "           <TEXCOORD>0.99311 0.00973237</TEXCOORD>"\
+    "           <INFLUENCE ID=\"3\">1</INFLUENCE>"\
+    "       </VERTEX>"\
+    "       <VERTEX NUMINFLUENCES=\"2\" ID=\"1\">"\
+    "           <POS>-5759.05 -1176.88 -0.000413365</POS>"\
+    "           <NORM>1.55047e-008 -2.86491e-008 -1</NORM>"\
+    "           <COLOR>0 0 0</COLOR>"\
+    "           <TEXCOORD>0.99311 0.982444</TEXCOORD>"\
+    "           <INFLUENCE ID=\"9\">0.5</INFLUENCE>"\
+    "           <INFLUENCE ID=\"10\">0.5</INFLUENCE>"\
+    "       </VERTEX>"\
+    "       <VERTEX NUMINFLUENCES=\"1\" ID=\"2\">"\
+    "           <POS>-5759.05 -3274.86 -0.000507484</POS>"\
+    "           <NORM>1.11221e-008 6.89228e-008 -1</NORM>"\
+    "           <COLOR>0 0 0</COLOR>"\
+    "           <TEXCOORD>0.79062 0.982444</TEXCOORD>"\
+    "           <INFLUENCE ID=\"5\">1</INFLUENCE>"\
+    "       </VERTEX>"\
+    "       <FACE VERTEXID=\"0 1 2\" />"\
+    "    </SUBMESH>"
+
 meshDataSuffix =\
     "</MESH>"
 
 def makeMeshTestData(materialIds):
     meshData = meshDataPrefix
     for materialId in materialIds:
-        meshData += submeshTemplate % (materialId,)
+        meshData += submeshTemplate01 % (materialId,)
     meshData += meshDataSuffix
     return meshData
 
+def makeMeshTestDataForDualUseBones():
+    return meshDataPrefix + submeshTemplate02 + meshDataSuffix
 
 skeletonTestData = \
 """<HEADER VERSION=\"910\" MAGIC="XSF" />
@@ -201,6 +230,20 @@ skeletonTestData = \
         <PARENTID>0</PARENTID>
     </BONE>
     <BONE NAME="furniture.Ceiling.01" NUMCHILDS="0" ID="1">
+        <TRANSLATION>0 -10 300</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 10 -300</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>0</PARENTID>
+    </BONE>
+    <BONE NAME="furniture.Floor.01" NUMCHILDS="0" ID="1">
+        <TRANSLATION>0 -10 300</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 10 -300</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>0</PARENTID>
+    </BONE>
+    <BONE NAME="Seat01.Standing" NUMCHILDS="0" ID="1">
         <TRANSLATION>0 -10 300</TRANSLATION>
         <ROTATION>0 0 0 1</ROTATION>
         <LOCALTRANSLATION>0 10 -300</LOCALTRANSLATION>
