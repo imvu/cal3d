@@ -81,3 +81,14 @@ void CalCoreAnimation::applyZUpToYUp() {
         i->applyZUpToYUp();
     }
 }
+
+void CalCoreAnimation::rotateTranslate(cal3d::RotateTranslate &rt) {
+    for (auto i = tracks.begin(); i != tracks.end(); ++i) {
+        i->rotateTranslate(rt);
+    }
+}
+
+void CalCoreAnimation::rotate(CalQuaternion &rot) {
+    cal3d::RotateTranslate rt(rot, CalVector(0, 0, 0));
+    rotateTranslate(rt);
+}

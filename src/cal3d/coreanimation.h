@@ -28,6 +28,8 @@ public:
 
     void fixup(const CalCoreSkeletonPtr& skeleton);
     void applyZUpToYUp();
+    void rotateTranslate(cal3d::RotateTranslate &rt);
+    void rotate(CalQuaternion& rot);
     void scale(float factor);
 
     float duration;

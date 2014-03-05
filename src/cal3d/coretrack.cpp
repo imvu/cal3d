@@ -329,3 +329,9 @@ void CalCoreTrack::applyZUpToYUp() {
         cal3d::applyZUpToYUp(i->transform);
     }
 }
+
+void CalCoreTrack::rotateTranslate(cal3d::RotateTranslate &rt) {
+    for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
+        i->transform = i->transform * rt;
+    }
+}
