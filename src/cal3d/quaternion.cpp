@@ -17,9 +17,11 @@
 
 CalQuaternion::CalQuaternion(CalMatrix m) {
     float t, s;
-    t = 1.0f + m.cx.x + m.cy.y + m.cz.z;
+    // Computing the trace without extra 1.0f for additional stability:
+    // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/ethan.htm
+    t = m.cx.x + m.cy.y + m.cz.z;
     if (t > 0.00000001f) {
-        s = 2.0f * sqrt(t);
+        s = 2.0f * sqrt(t + 1.0f);
         x = (m.cz.y - m.cy.z) / s;
         y = (m.cx.z - m.cz.x) / s;
         z = (m.cy.x - m.cx.y) / s;

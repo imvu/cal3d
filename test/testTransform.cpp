@@ -37,6 +37,19 @@ TEST(non_uniform_scale_before_and_after_transform) {
     CHECK_EQUAL(CalVector(-1, 6, 18), (scale * transform) * CalVector(1, 2, 3));
 }
 
+TEST(can_convert_close_to_180_rotation_matrix_to_quaternion) {
+    // An earlier version of our matrix-to-quaternion conversion routine was
+    // numerically instable in this case (similar to the routine on Flipcode).
+    CalVector x(0.993884f, 0, 0.110431f);
+    CalVector y(0, -1, 0);
+    CalVector z(0.110431f, 0, -0.993884f);
+    CalMatrix m(x, y, z);
+
+    CalQuaternion q(m);
+    float mag = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
+    CHECK_CLOSE(1.0f, mag, 0.001f);
+}
+
 TEST(applyZUpToYUp_transform) {
     CalQuaternion quat;
     CalVector axis(1,1,1);
