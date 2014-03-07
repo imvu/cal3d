@@ -385,8 +385,8 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readonly("name", &CalCoreBone::name)
         .def_readwrite("relativeTransform", &CalCoreBone::relativeTransform)
         .def_readwrite("inverseBindPoseTransform", &CalCoreBone::inverseBindPoseTransform)
-        .def_readonly("lightColor", &CalCoreBone::lightColor)
-        .def_readonly("lightType", &CalCoreBone::lightType)
+        .def_readwrite("lightColor", &CalCoreBone::lightColor)
+        .def_readwrite("lightType", &CalCoreBone::lightType)
         ;
 
     enum_<CalLightType>("LightType")
