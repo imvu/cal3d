@@ -16,12 +16,15 @@
 #include "MaxMorphAnimationExportDesc.h"
 #include "MaxMorphAnimationExport.h"
 
-#include "Maxscrpt\Maxscrpt.h"
+#if MAX_VERSION_MAJOR < 14
+//  these come from stdafx.h anyway
+#include "maxscrpt/maxscrpt.h"
 #include "maxscrpt\Strings.h"
 #include "maxscrpt\arrays.h"
 #include "maxscrpt\numbers.h"
 #include "maxscrpt\maxobj.h"
 #include "maxscrpt\definsfn.h"
+#endif
 
 
 //----------------------------------------------------------------------------//
@@ -108,8 +111,10 @@ def_visible_primitive( ExportCalAnimMorph,	"ExportCalAnimMorph" );
 Value* ExportCalAnimMorph_cf(Value** arg_list, int count)
 {	
 	int i								;
-	char*	Filefullpathfilename		;
-	char*	Skeletonfullpathfilename	;
+	char const*	Filefullpathfilename	;
+	TCHAR const* wFilefullpathfilename	;
+	char const*	Skeletonfullpathfilename;
+	TCHAR const* wSkeletonfullpathfilename;
 	Array*	BonesArray					;
 	int		StartFrame					;
 	int		EndFrame					;
@@ -117,18 +122,21 @@ Value* ExportCalAnimMorph_cf(Value** arg_list, int count)
 	int		FrameRate					;
 
 	check_arg_count(ExportCalAnimMorph, 7, count);
-	type_check(arg_list[0], String	, "[The first argument of ExportCalAnim should be a string that is a full path name of the file to export]");
-	type_check(arg_list[1], String	, "[The 2nd argument of ExportCalAnim should be a string that is the fullpath name of the skeleton file]");
-	type_check(arg_list[2], Array	, "[The 3rd argument of ExportCalAnim should be an array of nodes to get anim from]");
-	type_check(arg_list[3], Integer	, "[The 4th argument of ExportCalAnim should be an integer that is the start frame number]");
-	type_check(arg_list[4], Integer	, "[The 5th argument of ExportCalAnim should be an integer that is the end frame number]");
-	type_check(arg_list[5], Integer , "[The 6th argument of ExportCalAnim should be an integer that is the frame offset]");
-	type_check(arg_list[6], Integer , "[The 7th argument of ExportCalAnim should be an integer that is the framerate]");
+	type_check(arg_list[0], String	, _T("[The first argument of ExportCalAnim should be a string that is a full path name of the file to export]"));
+	type_check(arg_list[1], String	, _T("[The 2nd argument of ExportCalAnim should be a string that is the fullpath name of the skeleton file]"));
+	type_check(arg_list[2], Array	, _T("[The 3rd argument of ExportCalAnim should be an array of nodes to get anim from]"));
+	type_check(arg_list[3], Integer	, _T("[The 4th argument of ExportCalAnim should be an integer that is the start frame number]"));
+	type_check(arg_list[4], Integer	, _T("[The 5th argument of ExportCalAnim should be an integer that is the end frame number]"));
+	type_check(arg_list[5], Integer , _T("[The 6th argument of ExportCalAnim should be an integer that is the frame offset]"));
+	type_check(arg_list[6], Integer , _T("[The 7th argument of ExportCalAnim should be an integer that is the framerate]"));
 	
 	try
 	{
-		Filefullpathfilename		= arg_list[0]->to_string();
-		Skeletonfullpathfilename	= arg_list[1]->to_string();
+		wFilefullpathfilename		= arg_list[0]->to_string();
+        std::string wffpfn(wFilefullpathfilename, wFilefullpathfilename + _tcslen(wFilefullpathfilename));
+        Filefullpathfilename = wffpfn.c_str();
+		wSkeletonfullpathfilename	= arg_list[1]->to_string();
+        std::string wsfpfn(wSkeletonfullpathfilename, wSkeletonfullpathfilename + _tcslen(wSkeletonfullpathfilename));
 		BonesArray					= static_cast<Array*>(arg_list[2]);
 		StartFrame					= arg_list[3]->to_int();
 		EndFrame					= arg_list[4]->to_int();
@@ -173,7 +181,7 @@ Value* ExportCalAnimMorph_cf(Value** arg_list, int count)
 		
 		AnimExportParams param(Skeletonfullpathfilename, tabnode, StartFrame, EndFrame, FrameOffset, FrameRate);
 
-		if (CMaxMorphAnimationExport::ExportMorphAnimationFromMaxscriptCall(Filefullpathfilename, &param))
+		if (CMaxMorphAnimationExport::ExportMorphAnimationFromMaxscriptCall(wFilefullpathfilename, &param))
 			return new Integer(0);
 		
 		return new Integer(-1);

@@ -21,6 +21,12 @@
 
 #include "wm3.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -50,7 +56,9 @@ bool CMaxMesh::AddBoneInfluence(CSkeletonCandidate *pSkeletonCandidate, CVertexC
 {
 	// get the bone id of the bone from the skeleton candidate
 	int boneId;
-	boneId = pSkeletonCandidate->GetBoneId(pNode->GetName());
+    TCHAR const *tname = pNode->GetName();
+    std::string sname(tname, tname + _tcslen(tname));
+	boneId = pSkeletonCandidate->GetBoneId(sname.c_str());
 	if(boneId == -1) return false;
 
 	// add the influence to the vertex candidate
@@ -207,11 +215,11 @@ Modifier *CMaxMesh::FindMorpherModifier(INode *pINode)
       char buf[512];
       sprintf(buf, "node %s modifier %d class %d:%d/0x%x:0x%x\n",
         pINode->GetName(), stackId, id.PartA(), id.PartB(), id.PartA(), id.PartB());
-      ::OutputDebugString(buf);
+      ::OutputDebugStringA(buf);
 			// check if we found the physique modifier
 			if(pModifier->ClassID() == MR3_CLASS_ID)
       {
-        ::OutputDebugString("that was it! the morpher I was looking for!\n");
+        ::OutputDebugStringA("that was it! the morpher I was looking for!\n");
         return pModifier;
       }
 		}
@@ -393,8 +401,8 @@ int CMaxMesh::GetSubmeshMaterialThreadId(int submeshId)
 	pStdMat = m_vectorStdMat[submeshId];
 
 	// get name of the material
-	std::string strName;
-	strName = pStdMat->GetName();
+    std::tstring tname(pStdMat->GetName());
+	std::string strName(tname.begin(), tname.end());
 
 	// get positions of the material thread id
 	std::string::size_type openPos;
@@ -842,7 +850,8 @@ CMaxMesh::frameForChannel( int i, float timeIn )
   MorphR3 * morpherModifier = (MorphR3*)FindMorpherModifier(m_pINode);
   morphChannel const & chanI = morpherModifier->chanBank[i];
   CBaseMesh::MorphKeyFrame frame;
-  frame.name = chanI.mName.data();
+  std::tstring cmdname(chanI.mName.data());
+  frame.name = std::string(cmdname.begin(), cmdname.end());
   frame.time = timeIn;
   Interval valid=FOREVER;
   chanI.cblock->GetValue(0, time, frame.weight, valid);

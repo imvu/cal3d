@@ -17,6 +17,12 @@
 #include "Exporter.h"
 #include "SkeletonCandidate.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Message mapping                                                            //
 //----------------------------------------------------------------------------//
@@ -56,17 +62,18 @@ BOOL CSkeletonFilePage::BeginPage()
 {
 	HKEY hk; 
 	DWORD dwtype;
-	LONG lret=RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Cal3D\\Exporter",NULL,KEY_READ|KEY_WRITE|KEY_SET_VALUE,&hk);
+	LONG lret=RegOpenKeyExA(HKEY_CURRENT_USER,"Software\\Cal3D\\Exporter",NULL,KEY_READ|KEY_WRITE|KEY_SET_VALUE,&hk);
 	if(lret==ERROR_SUCCESS && NULL!=hk)
 	{
 		unsigned char pbuf[256];
         DWORD dwlen=sizeof(pbuf);
 
 		const char* valname="skeleton";
-        lret=RegQueryValueEx(hk,valname,NULL,&dwtype,pbuf,&dwlen);
+        lret=RegQueryValueExA(hk,valname,NULL,&dwtype,pbuf,&dwlen);
 		if(lret==ERROR_SUCCESS)
 		{
-			m_lruCombo.SetWindowText((char*)pbuf);			
+            std::tstring ts((char *)pbuf, (char *)pbuf + strlen((char *)pbuf));
+			m_lruCombo.SetWindowText(ts.c_str());			
 		}		
 		RegCloseKey(hk);
 	}
@@ -101,14 +108,16 @@ LRESULT CSkeletonFilePage::EndPage()
 	if(strFilename.IsEmpty())
 	{
 		theExporter.SetLastError("No file selected.", __FILE__, __LINE__);
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		::MessageBoxA(0, "Skeleton File Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return -1;
 	}
 
 	// create the skeleton candidate from the skeleton file
-	if(!m_pSkeletonCandidate->CreateFromSkeletonFile((LPCTSTR)strFilename))
+    std::tstring ts((TCHAR const *)strFilename);
+    std::string s(ts.begin(), ts.end());
+    if(!m_pSkeletonCandidate->CreateFromSkeletonFile(s))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		::MessageBoxA(0, "Skeleton Import Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return -1;
 	}
 
@@ -137,10 +146,10 @@ void CSkeletonFilePage::OnBrowse()
 
 	CFileDialog dlg(
       TRUE,
-      "csf",
+      _T("csf"),
       strFilename,
       OFN_FILEMUSTEXIST | OFN_HIDEREADONLY,
-      "Cal3D Skeleton Files (*.csf;*.xsf)|*.csf;*.xsf|All Files (*.*)|*.*||",
+      _T("Cal3D Skeleton Files (*.csf;*.xsf)|*.csf;*.xsf|All Files (*.*)|*.*||"),
       this);
 	if(dlg.DoModal() != IDOK) return;
 
@@ -149,10 +158,10 @@ void CSkeletonFilePage::OnBrowse()
 	m_lruCombo.SetWindowText(strFilename);
 	
 	HKEY hk;
-	LONG lret=RegCreateKey(HKEY_CURRENT_USER, "Software\\Cal3D\\Exporter", &hk);
+	LONG lret=RegCreateKeyA(HKEY_CURRENT_USER, "Software\\Cal3D\\Exporter", &hk);
 	if(lret==ERROR_SUCCESS && NULL!=hk)
 	{
-		lret=RegSetValueEx(hk,"skeleton",NULL,REG_SZ,(unsigned char *)strFilename.GetBuffer(1) ,strFilename.GetLength());
+		lret=RegSetValueExA(hk,"skeleton",NULL,REG_SZ,(unsigned char *)strFilename.GetBuffer(1) ,strFilename.GetLength());
 		RegCloseKey(hk);
 	}
 
@@ -252,7 +261,7 @@ void CSkeletonFilePage::SetStep(int index, int total)
 	m_stepIndex = index;
 	m_stepTotal = total;
 
-	m_strStep.Format("Step %d of %d", m_stepIndex, m_stepTotal);
+	m_strStep.Format(_T("Step %d of %d"), m_stepIndex, m_stepTotal);
 }
 
 //----------------------------------------------------------------------------//

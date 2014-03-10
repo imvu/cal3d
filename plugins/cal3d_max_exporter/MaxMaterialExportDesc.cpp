@@ -16,12 +16,15 @@
 #include "MaxMaterialExportDesc.h"
 #include "MaxMaterialExport.h"
 
-#include "Maxscrpt\Maxscrpt.h"
+#if MAX_VERSION_MAJOR < 14
+//  these come from stdafx.h anyway
+#include "maxscrpt/maxscrpt.h"
 #include "maxscrpt\Strings.h"
 #include "maxscrpt\arrays.h"
 #include "maxscrpt\numbers.h"
-#include "maxscrpt\MaxMats.h"
+#include "maxscrpt\maxobj.h"
 #include "maxscrpt\definsfn.h"
+#endif
 
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
@@ -103,18 +106,18 @@ char * CMaxMaterialExportDesc::GetRsrcString(long n)
 def_visible_primitive( ExportCalMat,	"ExportCalMat" );
 Value* ExportCalMat_cf(Value** arg_list, int count)
 {	
-	char* fullpathfilename;
+	TCHAR const* fullpathfilename;
 
 	check_arg_count(ExportCalMat, 2, count);
-	type_check(arg_list[0], String, "[The first argument of ExportCalMat should be a string]");
-	type_check(arg_list[1], MAXMaterial , "[The 2nd argument of ExportCalMat should be a standard material]");
+	type_check(arg_list[0], String, _T("[The first argument of ExportCalMat should be a string]"));
+	type_check(arg_list[1], MAXMaterial , _T("[The 2nd argument of ExportCalMat should be a standard material]"));
 	
 	try
 	{
 		fullpathfilename		= arg_list[0]->to_string();
 		StdMat* stdmat;
 
-		if (! strcmp(fullpathfilename,"")) return new Integer(1);
+		if (!fullpathfilename[0]) return new Integer(1);
 
 		//Get material
 		Value* val;
@@ -134,7 +137,8 @@ Value* ExportCalMat_cf(Value** arg_list, int count)
 			return new Integer(3);
 		}
 
-		if ( CMaxMaterialExport::ExportMaterialFromMaxscriptCall(fullpathfilename, stdmat) )
+        std::string fpfn(fullpathfilename, fullpathfilename+_tcslen(fullpathfilename));
+		if ( CMaxMaterialExport::ExportMaterialFromMaxscriptCall(fpfn.c_str(), stdmat) )
 			return new Integer(0);
 		
 		return new Integer(-1);

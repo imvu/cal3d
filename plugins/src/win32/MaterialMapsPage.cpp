@@ -19,6 +19,12 @@
 #include "MaterialLibraryCandidate.h"
 #include "MaterialCandidate.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Message mapping                                                            //
 //----------------------------------------------------------------------------//
@@ -65,7 +71,7 @@ BOOL CMaterialMapsPage::BeginPage()
 	if(pMaterialCandidate == 0)
 	{
 		theExporter.SetLastError("No material selected!", __FILE__, __LINE__);
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		::MessageBoxA(0, "Material Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return FALSE;
 	}
 
@@ -76,9 +82,10 @@ BOOL CMaterialMapsPage::BeginPage()
 	for(size_t mapId = 0; mapId < vectorMap.size(); mapId++)
 	{
 		CString strMap;
-		strMap.Format("Layer #%d", mapId);
+		strMap.Format(_T("Layer #%d"), mapId);
 		int hItem = m_mapsCtrl.InsertItem(mapId, strMap);
-		m_mapsCtrl.SetItemText(hItem, 1, vectorMap[mapId].strFilename.c_str());
+        std::tstring ts(vectorMap[mapId].strFilename.begin(), vectorMap[mapId].strFilename.end());
+		m_mapsCtrl.SetItemText(hItem, 1, ts.c_str());
 	}
 
 	return TRUE;
@@ -133,9 +140,9 @@ BOOL CMaterialMapsPage::OnInitDialog()
 	m_descriptionStatic.SetWindowText(str);
 
 	// initialize the columns of the maps control
-	m_mapsCtrl.InsertColumn(0, "Map");
+	m_mapsCtrl.InsertColumn(0, _T("Map"));
 	m_mapsCtrl.SetColumnWidth(0, 60);
-	m_mapsCtrl.InsertColumn(1, "Filename");
+	m_mapsCtrl.InsertColumn(1, _T("Filename"));
 	m_mapsCtrl.SetColumnWidth(1, 400);
 
   m_mapsCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT);
@@ -158,7 +165,7 @@ void CMaterialMapsPage::OnMapDoubleClick(NMHDR* pNMHDR, LRESULT* pResult)
 
     // set the name in the material map dialog
     CString str;
-    str.Format("Layer #%d", selectedItem);
+    str.Format(_T("Layer #%d"), selectedItem);
     dlg.SetName(str);
 
 	  // get the selected material candidate
@@ -175,7 +182,8 @@ void CMaterialMapsPage::OnMapDoubleClick(NMHDR* pNMHDR, LRESULT* pResult)
     if(dlg.DoModal() == IDOK)
     {
       // store new filename from the material map dialog
-      vectorMap[selectedItem].strFilename = dlg.GetFilename();
+      std::tstring ts(dlg.GetFilename());
+      vectorMap[selectedItem].strFilename = std::string(ts.begin(), ts.end());
 
       // update the material map list
    		m_mapsCtrl.SetItemText(selectedItem, 1, dlg.GetFilename());
@@ -261,7 +269,7 @@ void CMaterialMapsPage::SetStep(int index, int total)
 	m_stepIndex = index;
 	m_stepTotal = total;
 
-	m_strStep.Format("Step %d of %d", m_stepIndex, m_stepTotal);
+	m_strStep.Format(_T("Step %d of %d"), m_stepIndex, m_stepTotal);
 }
 
 //----------------------------------------------------------------------------//

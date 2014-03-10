@@ -17,6 +17,13 @@
 #include "Exporter.h"
 #include "MaxInterface.h"
 
+
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -55,21 +62,23 @@ int CMaxMeshExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, 
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(ei, i))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the mesh
-	if(!theExporter.ExportMesh(name))
+    std::tstring tname(name);
+    std::string cname(tname.begin(), tname.end());
+	if(!theExporter.ExportMesh(cname.c_str()))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Mesh Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
@@ -151,21 +160,23 @@ int CMaxMeshExport::ExportMeshFromMaxscriptCall(const TCHAR *name, const MeshMax
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(NULL, GetCOREInterface()))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the mesh
-	if(!theExporter.ExportMeshFromMaxscriptCall(name, (void*)&_param))
+    std::tstring ts(name);
+    std::string cs(ts.begin(), ts.end());
+	if(!theExporter.ExportMeshFromMaxscriptCall(cs.c_str(), (void*)&_param))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Mesh Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 

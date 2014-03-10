@@ -16,12 +16,15 @@
 #include "MaxAnimationExportDesc.h"
 #include "MaxAnimationExport.h"
 
-#include "Maxscrpt\Maxscrpt.h"
+#if MAX_VERSION_MAJOR < 14
+//  these come from stdafx.h anyway
+#include "maxscrpt/maxscrpt.h"
 #include "maxscrpt\Strings.h"
 #include "maxscrpt\arrays.h"
 #include "maxscrpt\numbers.h"
 #include "maxscrpt\maxobj.h"
 #include "maxscrpt\definsfn.h"
+#endif
 
 
 //----------------------------------------------------------------------------//
@@ -100,6 +103,34 @@ char * CMaxAnimationExportDesc::GetRsrcString(long n)
 }
 
 
+class t2c_ctx {
+public:
+    char *ret[1024];
+    int n;
+    t2c_ctx() { n = 0; }
+    ~t2c_ctx() {
+        for (int i = 0; i != n; ++i) {
+            delete[] ret[i];
+        }
+    }
+    char const *operator()(TCHAR const *i) {
+        if (n == sizeof(ret)/sizeof(ret[0])) {
+            ::OutputDebugStringA("Out of string slots in t2c_ctx\r\n");
+            throw new std::runtime_error("Out of string slots in t2c_ctx");
+        }
+        TCHAR const *e = i;
+        while (*e) ++e;
+        char *r = new char[e-i+1];
+        char *d = r;
+        while (i < e) {
+            *d++ = (char)*i++;
+        }
+        *d = 0;
+        ret[n++] = r;
+        return r;
+    }
+};
+
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -107,9 +138,10 @@ char * CMaxAnimationExportDesc::GetRsrcString(long n)
 def_visible_primitive( ExportCalAnim,	"ExportCalAnim" );
 Value* ExportCalAnim_cf(Value** arg_list, int count)
 {	
+    t2c_ctx ctx;
 	int i								;
-	char*	Filefullpathfilename		;
-	char*	Skeletonfullpathfilename	;
+	TCHAR const *	Filefullpathfilename	;
+	char const*	Skeletonfullpathfilename;
 	Array*	BonesArray					;
 	int		StartFrame					;
 	int		EndFrame					;
@@ -117,25 +149,25 @@ Value* ExportCalAnim_cf(Value** arg_list, int count)
 	int		FrameRate					;
 
 	check_arg_count(ExportCalAnim, 7, count);
-	type_check(arg_list[0], String	, "[The first argument of ExportCalAnim should be a string that is a full path name of the file to export]");
-	type_check(arg_list[1], String	, "[The 2nd argument of ExportCalAnim should be a string that is the fullpath name of the skeleton file]");
-	type_check(arg_list[2], Array	, "[The 3rd argument of ExportCalAnim should be an array of nodes to get anim from]");
-	type_check(arg_list[3], Integer	, "[The 4th argument of ExportCalAnim should be an integer that is the start frame number]");
-	type_check(arg_list[4], Integer	, "[The 5th argument of ExportCalAnim should be an integer that is the end frame number]");
-	type_check(arg_list[5], Integer , "[The 6th argument of ExportCalAnim should be an integer that is the frame offset]");
-	type_check(arg_list[6], Integer , "[The 7th argument of ExportCalAnim should be an integer that is the framerate]");
+	type_check(arg_list[0], String	, _T("[The first argument of ExportCalAnim should be a string that is a full path name of the file to export]"));
+	type_check(arg_list[1], String	, _T("[The 2nd argument of ExportCalAnim should be a string that is the fullpath name of the skeleton file]"));
+	type_check(arg_list[2], Array	, _T("[The 3rd argument of ExportCalAnim should be an array of nodes to get anim from]"));
+	type_check(arg_list[3], Integer	, _T("[The 4th argument of ExportCalAnim should be an integer that is the start frame number]"));
+	type_check(arg_list[4], Integer	, _T("[The 5th argument of ExportCalAnim should be an integer that is the end frame number]"));
+	type_check(arg_list[5], Integer , _T("[The 6th argument of ExportCalAnim should be an integer that is the frame offset]"));
+	type_check(arg_list[6], Integer , _T("[The 7th argument of ExportCalAnim should be an integer that is the framerate]"));
 	
 	try
 	{
 		Filefullpathfilename		= arg_list[0]->to_string();
-		Skeletonfullpathfilename	= arg_list[1]->to_string();
+		Skeletonfullpathfilename	= ctx(arg_list[1]->to_string());
 		BonesArray					= static_cast<Array*>(arg_list[2]);
 		StartFrame					= arg_list[3]->to_int();
 		EndFrame					= arg_list[4]->to_int();
 		FrameOffset					= arg_list[5]->to_int();
 		FrameRate					= arg_list[6]->to_int();
 
-		if (! strcmp(Filefullpathfilename,""))return new Integer(1);
+		if (!Filefullpathfilename[0])return new Integer(1);
 		if (! strcmp(Skeletonfullpathfilename,"")) return new Integer(2);
 
 		//Does skeleton file exist ?

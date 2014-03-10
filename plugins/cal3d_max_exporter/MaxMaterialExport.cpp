@@ -17,6 +17,12 @@
 #include "Exporter.h"
 #include "MaxInterface.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -55,21 +61,23 @@ int CMaxMaterialExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface 
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(ei, i))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the materials
-	if(!theExporter.ExportMaterial(name))
+    std::tstring tname(name);
+    std::string cname(tname.begin(), tname.end());
+	if(!theExporter.ExportMaterial(cname.c_str()))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Material Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
@@ -136,21 +144,21 @@ bool CMaxMaterialExport::ExportMaterialFromMaxscriptCall(const char* fullpathfil
 	//Set the tab of materials into our Max interface
 	if(! maxInterface.Create(NULL, GetCOREInterface(), _stdmatfrommaxscript))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the materials
 	if(!theExporter.ExportMaterialFromMaxscriptCall(fullpathfilename))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Material Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 

@@ -16,11 +16,15 @@
 #include "MaxMeshExportDesc.h"
 #include "MaxMeshExport.h"
 
-#include "Maxscrpt\Maxscrpt.h"
+#if MAX_VERSION_MAJOR < 14
+//  these come from stdafx.h anyway
+#include "maxscrpt/maxscrpt.h"
 #include "maxscrpt\Strings.h"
+#include "maxscrpt\arrays.h"
 #include "maxscrpt\numbers.h"
-#include "maxscrpt\Maxobj.h"
+#include "maxscrpt\maxobj.h"
 #include "maxscrpt\definsfn.h"
+#endif
 
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
@@ -105,8 +109,8 @@ char * CMaxMeshExportDesc::GetRsrcString(long n)
 def_visible_primitive( ExportCalMesh,	"ExportCalMesh" );
 Value* ExportCalMesh_cf(Value** arg_list, int count)
 {	
-	char*	Filefullpathfilename		;
-	char*	Skeletonfullpathfilename	;
+	TCHAR const*	Filefullpathfilename	;
+	TCHAR const*	Skeletonfullpathfilename;
 	int		MaxNumOfBones				;
 	float	WeightThreshold				;
 	int		bUseLODCreation				;
@@ -114,13 +118,13 @@ Value* ExportCalMesh_cf(Value** arg_list, int count)
 	INode*	MeshNode					;
 
 	check_arg_count(ExportCalMesh, 7, count);
-	type_check(arg_list[0], String		, "[The first argument of ExportCalMesh should be a string that is a full path name of the file to export]");
-	type_check(arg_list[1], String		, "[The 2nd argument of ExportCalMesh should be a string that is the fullpath name of the skeleton file]");
-	type_check(arg_list[2], MAXNode		, "[The 3rd argument of ExportCalMesh should be an mesh node that is the mesh to be exported]");
-	type_check(arg_list[3], Integer		, "[The 3rd argument of ExportCalMesh should be an integer that is the maximum number of bones per vertex]");
-	type_check(arg_list[4], Float		, "[The 4th argument of ExportCalMesh should be a float that is the weight threshold]");
-	type_check(arg_list[5], Boolean		, "[The 5th argument of ExportCalMesh should be a boolean that is true if you want LOD creation]");
-	type_check(arg_list[6], Boolean		, "[The 6th argument of ExportCalMesh should be a boolean that is true if you want to use spring system]");
+	type_check(arg_list[0], String		, _T("[The first argument of ExportCalMesh should be a string that is a full path name of the file to export]"));
+	type_check(arg_list[1], String		, _T("[The 2nd argument of ExportCalMesh should be a string that is the fullpath name of the skeleton file]"));
+	type_check(arg_list[2], MAXNode		, _T("[The 3rd argument of ExportCalMesh should be an mesh node that is the mesh to be exported]"));
+	type_check(arg_list[3], Integer		, _T("[The 3rd argument of ExportCalMesh should be an integer that is the maximum number of bones per vertex]"));
+	type_check(arg_list[4], Float		, _T("[The 4th argument of ExportCalMesh should be a float that is the weight threshold]"));
+	type_check(arg_list[5], Boolean		, _T("[The 5th argument of ExportCalMesh should be a boolean that is true if you want LOD creation]"));
+	type_check(arg_list[6], Boolean		, _T("[The 6th argument of ExportCalMesh should be a boolean that is true if you want to use spring system]"));
 	
 	try
 	{
@@ -132,12 +136,13 @@ Value* ExportCalMesh_cf(Value** arg_list, int count)
 		bUseLODCreation				= arg_list[5]->to_bool();
 		bUseSpringsystem			= arg_list[6]->to_bool();
 
-		if (! strcmp(Filefullpathfilename,"")) return new Integer(1);
-		if (! strcmp(Skeletonfullpathfilename,"")) return new Integer(2);
+		if (!Filefullpathfilename[0]) return new Integer(1);
+		if (!Skeletonfullpathfilename[0]) return new Integer(2);
 
 		//Does skeleton file exist ? 
 		FILE* _stream;
-		_stream = fopen(Skeletonfullpathfilename,"r");
+        std::string ss(Skeletonfullpathfilename, Skeletonfullpathfilename+_tcslen(Skeletonfullpathfilename));
+		_stream = fopen(ss.c_str(),"r");
 		if (! _stream)return new Integer(3); //Error code number 3
 		fclose(_stream);
 
@@ -152,7 +157,7 @@ Value* ExportCalMesh_cf(Value** arg_list, int count)
 		if (! obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) return new Integer (7); //Not a Mesh
 				
 		//Create the parameter structure to be sent to the function ExportMeshFromMaxscriptCall
-		MeshMaxscriptExportParams	param ( MeshNode, Skeletonfullpathfilename,	MaxNumOfBones, WeightThreshold,bUseLODCreation,bUseSpringsystem);
+		MeshMaxscriptExportParams	param ( MeshNode, ss.c_str(),	MaxNumOfBones, WeightThreshold,bUseLODCreation,bUseSpringsystem);
 
 		if ( CMaxMeshExport::ExportMeshFromMaxscriptCall(Filefullpathfilename, param) )
 			return new Integer(0);

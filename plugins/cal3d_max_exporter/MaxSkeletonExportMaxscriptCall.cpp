@@ -85,7 +85,7 @@ bool CExporter::ExportSkeletonFromMaxscriptCall(const std::string& strFilename, 
 	if (bShowUI)
 	{
 		// show export wizard sheet
-		CSkeletonExportSheet sheet(m_pInterface, "Cal3D Skeleton Export", m_pInterface->GetMainWnd());
+		CSkeletonExportSheet sheet(m_pInterface, _T("Cal3D Skeleton Export"), m_pInterface->GetMainWnd());
 		sheet.SetSkeletonCandidate(&skeletonCandidate);
 		sheet.SetWizardMode();
 		if(sheet.DoModal() != ID_WIZFINISH) return true;

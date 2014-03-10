@@ -69,7 +69,7 @@ CExporter::~CExporter()
 
 bool CExporter::Create(CBaseInterface *pInterface)
 {
-  ::OutputDebugString("CExporter::Create()\n");
+  ::OutputDebugString(_T("CExporter::Create()\n"));
 	// check if a valid interface is set
 	if(pInterface == 0)
 	{
@@ -286,7 +286,7 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
 
     CBaseMesh * pMesh = morphAnimationCandidate.meshAtTime(-1);
 	if( !pMesh ) {
-            ::OutputDebugString("No mesh found.\n");
+            ::OutputDebugString(_T("No mesh found.\n"));
             return false;
 	}
     int numMC = pMesh->numMorphChannels();
@@ -316,7 +316,7 @@ bool CExporter::ExportMorphAnimation(const std::string& strFilename)
         {
           std::stringstream ss;
           ss << "Writing " << (endFrame + wrapFrame) << " frames of animation." << std::endl;
-          ::OutputDebugString(ss.str().c_str());
+          ::OutputDebugStringA(ss.str().c_str());
         }
         for(frame = 0,  outputFrame = 0; frame <= (endFrame + wrapFrame); frame++)
 	{
@@ -402,7 +402,7 @@ bool CExporter::ExportMaterial(const std::string& strFilename)
 	if(!materialLibraryCandidate.CreateFromInterface()) return false;
 
 	// show export wizard sheet
-	CMaterialExportSheet sheet("Cal3D Material Export", m_pInterface->GetMainWnd());
+	CMaterialExportSheet sheet(_T("Cal3D Material Export"), m_pInterface->GetMainWnd());
 	sheet.SetMaterialLibraryCandidate(&materialLibraryCandidate);
 	sheet.SetWizardMode();
 	if(sheet.DoModal() != ID_WIZFINISH) return true;
@@ -467,7 +467,7 @@ bool CExporter::ExportMesh(const std::string& strFilename)
 	CSkeletonCandidate skeletonCandidate;
 
 	// show export wizard sheet
-	CMeshExportSheet sheet("Cal3D Mesh Export", m_pInterface->GetMainWnd());
+	CMeshExportSheet sheet(_T("Cal3D Mesh Export"), m_pInterface->GetMainWnd());
 	sheet.SetSkeletonCandidate(&skeletonCandidate);
 	sheet.SetMeshCandidate(&meshCandidate);
 	sheet.SetWizardMode();
@@ -657,7 +657,7 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
 	if(!skeletonCandidate.CreateFromInterface()) return false;
 
 	// show export wizard sheet
-	CSkeletonExportSheet sheet(m_pInterface, "Cal3D Skeleton Export", m_pInterface->GetMainWnd());
+	CSkeletonExportSheet sheet(m_pInterface, _T("Cal3D Skeleton Export"), m_pInterface->GetMainWnd());
 	sheet.SetSkeletonCandidate(&skeletonCandidate);
 	sheet.SetWizardMode();
 	if(sheet.DoModal() != ID_WIZFINISH) return true;
@@ -738,10 +738,10 @@ bool CExporter::ExportSkeleton(const std::string& strFilename)
     }
 
 	HKEY hk;
-	LONG lret=RegCreateKey(HKEY_CURRENT_USER, "Software\\Cal3D\\Exporter", &hk);
+	LONG lret=RegCreateKey(HKEY_CURRENT_USER, _T("Software\\Cal3D\\Exporter"), &hk);
 	if(lret==ERROR_SUCCESS && NULL!=hk)
 	{
-		lret=RegSetValueEx(hk,"skeleton",NULL,REG_SZ,(unsigned char *)strFilename.c_str() ,strFilename.length());
+		lret=RegSetValueExA(hk,"skeleton",NULL,REG_SZ,(unsigned char *)strFilename.c_str() ,strFilename.length());
 		RegCloseKey(hk);
 	}
 
@@ -778,7 +778,7 @@ void CExporter::SetLastError(const std::string& strText, const std::string& strF
 
 	m_strLastError = strstrError.str();
   std::string s(m_strLastError);
-  ::OutputDebugString(s.c_str());
+  ::OutputDebugStringA(s.c_str());
 }
 
 //----------------------------------------------------------------------------//
@@ -802,7 +802,7 @@ void CExporter::SetLastErrorFromCal(const std::string& strFilename, int line)
 
 	m_strLastError = strstrError.str();
   std::string s(m_strLastError);
-  ::OutputDebugString(s.c_str());
+  ::OutputDebugStringA(s.c_str());
 }
 
 //----------------------------------------------------------------------------//

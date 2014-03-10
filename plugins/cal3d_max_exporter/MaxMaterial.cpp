@@ -17,6 +17,12 @@
 #include "MaxMaterial.h"
 #include "BaseInterface.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -137,8 +143,9 @@ std::string CMaxMaterial::GetMapFilename(int mapId)
 				if(pTexMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
 				{
 					// get the full filepath
-					std::string strFilename;
-					strFilename = ((BitmapTex *)pTexMap)->GetMapName();
+					std::tstring strFilename_;
+					strFilename_ = ((BitmapTex *)pTexMap)->GetMapName();
+                    std::string strFilename(strFilename_.begin(), strFilename_.end());
 
 					// extract the filename
 					std::string::size_type pos;
@@ -184,8 +191,9 @@ std::string CMaxMaterial::GetMapType(int mapId)
 				if(pTexMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
 				{
 					// get the full filepath
-					std::string mt = m_pIStdMat->GetSubTexmapSlotName(materialMapId);
-          return mt;
+					std::tstring mt = m_pIStdMat->GetSubTexmapSlotName(materialMapId);
+                    std::string cmt(mt.begin(), mt.end());
+          return cmt;
 				}
 				else return "<none>";
 			}
@@ -205,8 +213,9 @@ std::string CMaxMaterial::GetName()
 	// check if the internal material is valid
 	if(m_pIStdMat == 0) return "<void>";
 
-	const char* name = m_pIStdMat->GetName();
-	return name;
+	std::tstring ts(m_pIStdMat->GetName());
+    std::string cs(ts.begin(), ts.end());
+	return cs;
 }
 
 //----------------------------------------------------------------------------//

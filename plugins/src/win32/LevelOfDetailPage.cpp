@@ -87,7 +87,7 @@ LRESULT CLevelOfDetailPage::EndPage()
 		// create the LOD data
 		if(!m_pMeshCandidate->CalculateLOD())
 		{
-			AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+			::MessageBoxA(0, "LOD Calculation Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 			return -1;
 		}
 	}
@@ -96,7 +96,7 @@ LRESULT CLevelOfDetailPage::EndPage()
 		// disable the LOD data
 		if(!m_pMeshCandidate->DisableLOD())
 		{
-			AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+			::MessageBoxA(0, "LOD Disabling Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 			return -1;
 		}
 	}
@@ -207,7 +207,7 @@ void CLevelOfDetailPage::SetStep(int index, int total)
 	m_stepIndex = index;
 	m_stepTotal = total;
 
-	m_strStep.Format("Step %d of %d", m_stepIndex, m_stepTotal);
+	m_strStep.Format(_T("Step %d of %d"), m_stepIndex, m_stepTotal);
 }
 
 //----------------------------------------------------------------------------//

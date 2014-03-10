@@ -18,6 +18,12 @@
 #include "MaterialLibraryCandidate.h"
 #include "MaterialCandidate.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Message mapping                                                            //
 //----------------------------------------------------------------------------//
@@ -67,7 +73,9 @@ BOOL CMaterialSelectionPage::BeginPage()
 		{
 			// insert material candidate into the list control
 			int candidateIndex;
-			candidateIndex = m_materialCtrl.AddString(vectorMaterialCandidate[materialCandidateId]->GetName().c_str());
+            std::string s(vectorMaterialCandidate[materialCandidateId]->GetName());
+            std::tstring ts(s.begin(), s.end());
+			candidateIndex = m_materialCtrl.AddString(ts.c_str());
 			m_materialCtrl.SetItemDataPtr(candidateIndex, vectorMaterialCandidate[materialCandidateId]);
 		}
 	}
@@ -102,7 +110,7 @@ LRESULT CMaterialSelectionPage::EndPage()
 	if(candidateIndex == LB_ERR)
 	{
 		theExporter.SetLastError("No material selected.", __FILE__, __LINE__);
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		::MessageBoxA(0, "Material Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return -1;
 	}
 
@@ -112,7 +120,7 @@ LRESULT CMaterialSelectionPage::EndPage()
 	if(pMaterialCandidate == (CMaterialCandidate *)-1)
 	{
 		theExporter.SetLastError("Invalid material selected.", __FILE__, __LINE__);
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		::MessageBoxA(0, "Material Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return -1;
 	}
 
@@ -225,7 +233,7 @@ void CMaterialSelectionPage::SetStep(int index, int total)
 	m_stepIndex = index;
 	m_stepTotal = total;
 
-	m_strStep.Format("Step %d of %d", m_stepIndex, m_stepTotal);
+	m_strStep.Format(_T("Step %d of %d"), m_stepIndex, m_stepTotal);
 }
 
 //----------------------------------------------------------------------------//

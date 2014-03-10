@@ -17,6 +17,14 @@
 #include "MaxNode.h"
 #include "BaseInterface.h"
 
+#include <string>
+
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -116,7 +124,8 @@ std::string CMaxNode::GetName()
 	// check if the internal node is valid
 	if(m_pINode == 0) return "<void>";
 
-	return m_pINode->GetName();
+    std::tstring ts(m_pINode->GetName());
+	return std::string(ts.begin(), ts.end());
 }
 
 //----------------------------------------------------------------------------//

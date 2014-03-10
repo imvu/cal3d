@@ -77,8 +77,13 @@ if 'exp' not in env.get('MSVS_VERSION', '').lower():
       csInclude = '#/Ext/3dsmax' + maxVersion + '/maxsdk/cssdk/include'
     else:
       csInclude = '#/Ext/3dsmax' + maxVersion + '/maxsdk/include/cs'
-
+    if int(maxVersion) >= 2013:
+      useUnicode = True
+    else:
+      useUnicode = False
+      
     exporter_env = env.Clone(tools=['cal3d', 'boost'])
+    exporter_env['CCFLAGS'].remove('/Zc:wchar_t-')
     exporter_env.Append(
         CPPPATH=['../plugins/cal3d_max_exporter',
                  '#/Source/cal3d/plugins/src',
@@ -87,6 +92,7 @@ if 'exp' not in env.get('MSVS_VERSION', '').lower():
                  csInclude,
                  ],
         CPPDEFINES=['_AFXDLL'],
+        CPPFLAGS=['/Zc:wchar_t','/wd4239','/wd4238','/wd4245'],
         LIBPATH=['#/Ext/3dsmax' + maxVersion + '/maxsdk/lib'],
         LIBS=['core',
               'geom',
@@ -95,10 +101,15 @@ if 'exp' not in env.get('MSVS_VERSION', '').lower():
               'maxutil', 
               'maxscrpt', 
               'paramblk2'])
-
     exporter_env['CPPDEFINES'].remove(('NOMINMAX',))
-    exporter_env['CPPDEFINES'].remove(('UNICODE',))
-    exporter_env['CPPDEFINES'].remove(('_UNICODE',))
+    if not useUnicode:
+      exporter_env['CPPDEFINES'].remove(('UNICODE',))
+      exporter_env['CPPDEFINES'].remove(('_UNICODE',))
+      exporter_env.Append(
+        CPPDEFINES=['_MBCS'])
+    else:
+      exporter_env.Append(
+        CPPDEFINES=['UNICODE','_UNICODE'])
     exporter_env['WARNINGS_AS_ERRORS'] = False
 
     PCH_OBJ = imvu_enable_pch(exporter_env, 'plugins/src/PCH.cpp', 'PCH.h')

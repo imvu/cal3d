@@ -20,6 +20,12 @@
 #include "MaxMaterial.h"
 #include "MaxNullView.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -422,7 +428,8 @@ CBaseNode *CMaxInterface::GetNode(const std::string& strName)
 	}
 
 	// create the max node
-	if(!pNode->Create(m_pInterface->GetINodeByName(strName.c_str())))
+    std::tstring ts(strName.begin(), strName.end());
+	if(!pNode->Create(m_pInterface->GetINodeByName(ts.c_str())))
 	{
 		delete pNode;
 		return 0;
@@ -924,7 +931,12 @@ void CMaxInterface::SetProgressInfo(int percentage)
 
 void CMaxInterface::StartProgressInfo(const std::string& strText)
 {
+#if defined(_UNICODE)
+    std::wstring ws(strText.begin(), strText.end());
+	m_pInterface->ProgressStart(ws.c_str(), true, ProgressFunction, 0);
+#else
 	m_pInterface->ProgressStart(const_cast<char *>(strText.c_str()), true, ProgressFunction, 0);
+#endif
 }
 
 //----------------------------------------------------------------------------//

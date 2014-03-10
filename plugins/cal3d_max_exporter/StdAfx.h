@@ -38,7 +38,20 @@
 #include <afxcmn.h>
 
 #include "max.h"
+#if MAX_VERSION_MAJOR >= 14
+#include "maxscript/maxscript.h"
+#include "maxscript\foundation\numbers.h"
+#include "maxscript\maxwrapper\mxsobjects.h"
+#include "maxscript\maxwrapper\mxsmaterial.h"
+#else
 #include "maxscrpt/maxscrpt.h"
+#include "maxscrpt/Strings.h"
+#include "maxscrpt/arrays.h"
+#include "maxscrpt/numbers.h"
+#include "maxscrpt/maxobj.h"
+#include "maxscrpt/definsfn.h"
+#include "maxscrpt/maxmats.h"
+#endif
 #include "bipexp.h"
 #include "phyexp.h"
 #include "decomp.h"

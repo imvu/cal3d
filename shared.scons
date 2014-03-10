@@ -13,14 +13,20 @@ if not skipdebug:
     SConscript('builddll.scons', variant_dir='Debug', duplicate=0)
 
     if sys.platform == 'win32':
-        env['IMVU_BUILDDIR_NAME'] = 'Debug2011'
-        SConscript('build.scons', variant_dir='Debug2011', duplicate=0)
-
         env['IMVU_BUILDDIR_NAME'] = 'Debug7'
         SConscript('build.scons', variant_dir='Debug7', duplicate=0)
 
         env['IMVU_BUILDDIR_NAME'] = 'Debug2010'
         SConscript('build.scons', variant_dir='Debug2010', duplicate=0)
+        
+        env['IMVU_BUILDDIR_NAME'] = 'Debug2011'
+        SConscript('build.scons', variant_dir='Debug2011', duplicate=0)
+
+        env['IMVU_BUILDDIR_NAME'] = 'Debug2012'
+        SConscript('build.scons', variant_dir='Debug2012', duplicate=0)
+
+        env['IMVU_BUILDDIR_NAME'] = 'Debug2013'
+        SConscript('build.scons', variant_dir='Debug2013', duplicate=0)
 
 if not skiprelease:
     env = baseEnv.Clone(tools=[Release])
@@ -35,3 +41,9 @@ if not skiprelease:
 
         env['IMVU_BUILDDIR_NAME'] = 'Release2011'
         SConscript('build.scons', variant_dir='Release2011', duplicate=0)
+
+        env['IMVU_BUILDDIR_NAME'] = 'Release2012'
+        SConscript('build.scons', variant_dir='Release2012', duplicate=0)
+
+        env['IMVU_BUILDDIR_NAME'] = 'Release2013'
+        SConscript('build.scons', variant_dir='Release2013', duplicate=0)

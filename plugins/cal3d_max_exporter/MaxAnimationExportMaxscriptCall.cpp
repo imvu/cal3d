@@ -56,6 +56,13 @@
 #include "MaxAnimationExport.h"
 
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
+
 bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename, void* _AnimExportParams)
 {
 	if (!_AnimExportParams)
@@ -90,7 +97,7 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 		// create the skeleton candidate from the skeleton file
 		if(! skeletonCandidate.CreateFromSkeletonFile(param->m_skeletonfilepath))
 		{
-			AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+			MessageBoxA(0, "Skeleton Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 			return false;
 		}	
 
@@ -113,8 +120,9 @@ bool CExporter::ExportAnimationFromMaxscriptCall(const std::string& strFilename,
 			int j;
 			for (j=0;j<NumElemInTabMaxscript;j++)
 			{
-				std::string bcname		= bonecandidate->GetNode()->GetName();
-				std::string	bonename	= param->m_tabbones[j]->GetName();
+				std::string bcname_		= bonecandidate->GetNode()->GetName();
+                std::tstring bcname(bcname_.begin(), bcname_.end());
+				std::tstring	bonename	= param->m_tabbones[j]->GetName();
 
 				if (bcname == bonename)
 				{

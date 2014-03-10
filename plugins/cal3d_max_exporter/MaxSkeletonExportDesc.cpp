@@ -16,12 +16,24 @@
 #include "MaxSkeletonExportDesc.h"
 #include "MaxSkeletonExport.h"
 
-#include "Maxscrpt\Maxscrpt.h"
+#if MAX_VERSION_MAJOR < 14
+//  these come from stdafx.h anyway
+#include "maxscrpt/maxscrpt.h"
 #include "maxscrpt\Strings.h"
 #include "maxscrpt\arrays.h"
 #include "maxscrpt\numbers.h"
 #include "maxscrpt\maxobj.h"
 #include "maxscrpt\definsfn.h"
+#endif
+
+#include <string>
+
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
@@ -106,14 +118,14 @@ Value* ExportCalSkel_cf(Value** arg_list, int count)
 {	
 	int			i;
 	INodeTab	tabnode;
-	char*		fullpathfilename;
+	std::tstring fullpathfilename;
 	int			ArraySize		;
 	bool		bShowUI			;
 
 	check_arg_count(ExportCalSkel, 3, count);
-	type_check(arg_list[0], String, "[The first argument of ExportCalSkel should be a string that is a full path name of the file to export]");
-	type_check(arg_list[1], Array , "[The 2nd argument of ExportCalSkel should be an array of nodes]");
-	type_check(arg_list[2], Boolean,"[The 3rd argument of ExportCalSkel should be a boolean that tells if you want to use the UI or not to select nodes of skeleton]");
+	type_check(arg_list[0], String, _T("[The first argument of ExportCalSkel should be a string that is a full path name of the file to export]"));
+	type_check(arg_list[1], Array , _T("[The 2nd argument of ExportCalSkel should be an array of nodes]"));
+	type_check(arg_list[2], Boolean,_T("[The 3rd argument of ExportCalSkel should be a boolean that tells if you want to use the UI or not to select nodes of skeleton]"));
 	
 	try
 	{
@@ -125,7 +137,7 @@ Value* ExportCalSkel_cf(Value** arg_list, int count)
 
 		bShowUI				= !!(arg_list[2]->to_bool());
 
-		if (! strcmp(fullpathfilename,"")) return new Integer (1);
+		if (fullpathfilename.length() == 0) return new Integer (1);
 		if (! ArraySize)		return new Integer (2);
  
 		for (i=0;i<ArraySize;i++)
@@ -140,7 +152,7 @@ Value* ExportCalSkel_cf(Value** arg_list, int count)
 		}
 
 		//Call the exporter from Maxscript
-		if (CMaxSkeletonExport::ExportSkeletonFromMaxscriptCall(fullpathfilename,tabnode, bShowUI) )
+		if (CMaxSkeletonExport::ExportSkeletonFromMaxscriptCall(fullpathfilename.c_str(), tabnode, bShowUI) )
 			return new Integer (0);
 
 		return new Integer (-1);

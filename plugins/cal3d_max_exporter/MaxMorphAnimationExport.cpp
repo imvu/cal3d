@@ -17,6 +17,7 @@
 #include "Exporter.h"
 #include "MaxInterface.h"
 
+
 //----------------------------------------------------------------------------//
 // Constructors                                                               //
 //----------------------------------------------------------------------------//
@@ -49,7 +50,7 @@ const TCHAR *CMaxMorphAnimationExport::CopyrightMessage()
 
 int CMaxMorphAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
-  ::OutputDebugString("CMaxMorphAnimationExport::DoExport()\n");
+  ::OutputDebugString(_T("CMaxMorphAnimationExport::DoExport()\n"));
 
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
@@ -57,29 +58,30 @@ int CMaxMorphAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Inte
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(ei, i))
 	{
-    ::OutputDebugString("maxInterface.Create() failed\n");
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+    ::OutputDebugString(_T("maxInterface.Create() failed\n"));
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-    ::OutputDebugString("theExporter.Create() failed\n");
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+    ::OutputDebugString(_T("theExporter.Create() failed\n"));
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the morphAnimation
-  ::OutputDebugString("Attempting export...\n");
-	if(!theExporter.ExportMorphAnimation(name))
+  ::OutputDebugString(_T("Attempting export...\n"));
+    std::string cname(name, name+_tcslen(name));
+	if(!theExporter.ExportMorphAnimation(cname.c_str()))
 	{
-    ::OutputDebugString("theExporter.ExportMorphAnimation() failed\n");
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+    ::OutputDebugString(_T("theExporter.ExportMorphAnimation() failed\n"));
+		MessageBoxA(0, "Morph Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
-  ::OutputDebugString("Morph export success!\n");
+  ::OutputDebugString(_T("Morph export success!\n"));
 	return 1;
 }
 
@@ -140,21 +142,22 @@ bool CMaxMorphAnimationExport::ExportMorphAnimationFromMaxscriptCall(const TCHAR
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(NULL, GetCOREInterface()))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the morphAnimation
-	if(! theExporter.ExportMorphAnimationFromMaxscriptCall(name, (void*)_animexportparams))
+    std::string cname(name, name+_tcslen(name));
+	if(! theExporter.ExportMorphAnimationFromMaxscriptCall(cname.c_str(), (void*)_animexportparams))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Morph Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 

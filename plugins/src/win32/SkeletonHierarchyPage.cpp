@@ -20,6 +20,12 @@
 #include "BaseNode.h"
 #include "../../cal3d_max_exporter/resource.h"
 
+#if defined(_UNICODE)
+#define tstring wstring
+#else
+#define tstring string
+#endif
+
 //----------------------------------------------------------------------------//
 // Message mapping                                                            //
 //----------------------------------------------------------------------------//
@@ -173,15 +179,17 @@ void CSkeletonHierarchyPage::InsertBoneCandidate(int boneCandidateId, HTREEITEM 
 
 	// insert bone candidate into the tree control
 	HTREEITEM hItem;
+    std::string cs(pBoneCandidate->GetNode()->GetName());
+    std::tstring ts(cs.begin(), cs.end());
 	hItem = m_hierarchyCtrl.InsertItem(
           TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM | TVIF_STATE,
-	  pBoneCandidate->GetNode()->GetName().c_str(),
+	  ts.c_str(),
 	  pBoneCandidate->GetNode()->GetType(),
           pBoneCandidate->GetNode()->GetType(),
-	  TVIS_EXPANDED | INDEXTOSTATEIMAGEMASK(pBoneCandidate->IsSelected() ? 2 : 1),
+        TVIS_EXPANDED | INDEXTOSTATEIMAGEMASK(pBoneCandidate->IsSelected() ? 2 : 1),
           TVIS_EXPANDED | TVIS_STATEIMAGEMASK,
-	  pBoneCandidate->GetId(),
-	  hParentItem,
+        pBoneCandidate->GetId(),
+        hParentItem,
           TVI_LAST);
 
 	// get child id list of bone candidate
@@ -360,7 +368,7 @@ void CSkeletonHierarchyPage::SetStep(int index, int total)
 	m_stepIndex = index;
 	m_stepTotal = total;
 
-	m_strStep.Format("Step %d of %d", index, total);
+	m_strStep.Format(_T("Step %d of %d"), index, total);
 }
 
 //----------------------------------------------------------------------------//
@@ -391,7 +399,9 @@ void CSkeletonHierarchyPage::OnCheckSelected()
 
     // Check item if it is in the selected set.
     CString label(m_hierarchyCtrl.GetItemText(item));
-    bool checked = (selected.count(std::string(label)) > 0);
+    std::tstring ts(label);
+    std::string s(ts.begin(), ts.end());
+    bool checked = (selected.count(s) > 0);
     m_hierarchyCtrl.SetItemState(item, INDEXTOSTATEIMAGEMASK(checked ? 2 : 1), TVIS_STATEIMAGEMASK);
 
     // Push children onto stack.

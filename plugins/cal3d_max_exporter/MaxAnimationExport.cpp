@@ -47,6 +47,17 @@ const TCHAR *CMaxAnimationExport::CopyrightMessage()
 	return _T("Copyright (c) 2010 IMVU Inc; Copyright (C) 2001 Bruno 'Beosil' Heidelberger");
 }
 
+static char const *t2c(TCHAR const *tch)
+{
+    static char ret[1024];
+    char *r = ret;
+    do {
+        *r++ = *tch++;
+    }
+    while (tch[-1]);
+    return ret;
+}
+
 int CMaxAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -55,21 +66,21 @@ int CMaxAnimationExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(ei, i))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the animation
-	if(!theExporter.ExportAnimation(name))
+	if(!theExporter.ExportAnimation(t2c(name)))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Animation Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
@@ -133,21 +144,21 @@ bool CMaxAnimationExport::ExportAnimationFromMaxscriptCall(const TCHAR *name, An
 	CMaxInterface maxInterface;
 	if(!maxInterface.Create(NULL, GetCOREInterface()))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Max Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// create an exporter instance
 	if(!theExporter.Create(&maxInterface))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Exporter Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 
 	// export the animation
-	if(! theExporter.ExportAnimationFromMaxscriptCall(name, (void*)_animexportparams))
+	if(! theExporter.ExportAnimationFromMaxscriptCall(t2c(name), (void*)_animexportparams))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxA(0, "Animation Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return 0;
 	}
 

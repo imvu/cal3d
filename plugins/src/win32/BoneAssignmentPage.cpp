@@ -85,15 +85,15 @@ LRESULT CBoneAssignmentPage::EndPage()
 	CString strValue;
 
 	m_maxBoneCountEdit.GetWindowText(strValue);
-	m_maxBoneCount = atoi(strValue);
+	m_maxBoneCount = _ttoi(strValue);
 
 	m_weightThresholdEdit.GetWindowText(strValue);
-	m_weightThreshold = float(atof(strValue));
+	m_weightThreshold = float(_ttof(strValue));
 
 	// create the mesh candidate
 	if(!m_pMeshCandidate->Create(m_pSkeletonCandidate, m_maxBoneCount, m_weightThreshold))
 	{
-		AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+		::MessageBoxA(0, "Bone Assignment Mesh Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 		return -1;
 	}
 
@@ -145,10 +145,10 @@ BOOL CBoneAssignmentPage::OnInitDialog()
 	// set the time values
 	CString strValue;
 
-	strValue.Format("%d", m_maxBoneCount);
+	strValue.Format(_T("%d"), m_maxBoneCount);
 	m_maxBoneCountEdit.SetWindowText(strValue);
 
-	strValue.Format("%f", m_weightThreshold);
+	strValue.Format(_T("%f"), m_weightThreshold);
 	m_weightThresholdEdit.SetWindowText(strValue);
 
 	return TRUE;
@@ -239,7 +239,7 @@ void CBoneAssignmentPage::SetStep(int index, int total)
 	m_stepIndex = index;
 	m_stepTotal = total;
 
-	m_strStep.Format("Step %d of %d", m_stepIndex, m_stepTotal);
+	m_strStep.Format(_T("Step %d of %d"), m_stepIndex, m_stepTotal);
 }
 
 //----------------------------------------------------------------------------//

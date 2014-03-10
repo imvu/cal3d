@@ -98,7 +98,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 		// create the skeleton candidate from the skeleton file
 		if(! skeletonCandidate.CreateFromSkeletonFile(_param->m_SkeletonFilename))
 		{
-			AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+			MessageBoxA(0, "Skeleton Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 			return false;
 		}
 
@@ -110,7 +110,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 
 		if(! meshCandidate.Create( maxnode, &skeletonCandidate, _param->m_MaxNumBonesPerVertex, _param->m_WeightThreshold))
 		{
-			AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+			MessageBoxA(0, "Mesh Export Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 			return false;
 		}
 
@@ -120,7 +120,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			// create the LOD data
 			if(! meshCandidate.CalculateLOD())
 			{
-				AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+				MessageBoxA(0, "LOD Calcuation Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 				return false;
 			}
 		}
@@ -129,7 +129,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			// disable the LOD data
 			if(! meshCandidate.DisableLOD())
 			{
-				AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+				MessageBoxA(0, "LOD Disabling Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 				return false;
 			}
 		}
@@ -140,7 +140,7 @@ bool CExporter::ExportMeshFromMaxscriptCall(const std::string& strFilename, void
 			// create the spring system data
 			if(! meshCandidate.CalculateSpringSystem())
 			{
-				AfxMessageBox(theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
+				MessageBoxA(0, "Spring System Error", theExporter.GetLastError().c_str(), MB_OK | MB_ICONEXCLAMATION);
 				return false;
 			}
 		}

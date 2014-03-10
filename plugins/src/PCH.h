@@ -13,7 +13,11 @@
 #include <afxcmn.h>
 
 #include "max.h"
+#if MAX_VERSION_MAJOR >= 14
+#include "maxscript/maxscript.h"
+#else
 #include "maxscrpt/maxscrpt.h"
+#endif
 #include "bipexp.h"
 #include "phyexp.h"
 #include "decomp.h"
