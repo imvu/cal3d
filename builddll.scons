@@ -40,11 +40,15 @@ sources = Split('''
 sources = ['src/cal3d/' + s for s in sources]
 
 shared_lib_env = env.Clone(tools=['boost', 'rapidxml'])
-shared_lib_env['CCFLAGS'].remove('/Zc:wchar_t-')
+if '/Zc:wchar_t-' in shared_lib_env['CCFLAGS']:
+    shared_lib_env['CCFLAGS'].remove('/Zc:wchar_t-')
 shared_lib_env.Append(
     CPPDEFINES=['CAL3D_EXPORTS'],
-    CPPPATH=['../src'],
-    CPPFLAGS=['/Zc:wchar_t','/wd4239','/wd4238','/wd4245'])
+    CPPPATH=['../src'])
+# Really, should test for "is compiler MSVC?"
+if sys.platform == 'win32':
+    shared_lib_env.Append(
+        CPPFLAGS=['/Zc:wchar_t','/wd4239','/wd4238','/wd4245'])
 PCH_OBJ = imvu_enable_pch(shared_lib_env, 'src/cal3d/PCH.cpp', 'PCH.h')
 
 imvu_shared_library(
