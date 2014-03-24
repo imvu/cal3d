@@ -45,7 +45,7 @@ void CalCoreAnimation::scale(float factor) {
     std::for_each(tracks.begin(), tracks.end(), std::bind2nd(std::mem_fun_ref(&CalCoreTrack::scale), factor));
 }
 
-void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton) {
+void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton,cal3d::RotateTranslate rt) {
     const auto& coreBones = skeleton->coreBones;
 
     TrackList output;
@@ -65,6 +65,7 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton) {
         const auto& coreBone = *coreBones[i->coreBoneId];
         if (coreBone.parentId == -1) {
             i->zeroTransforms();
+            i->rotateTranslate(rt);
         } else {
             i->fixup(
                 coreBone,
