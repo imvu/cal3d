@@ -1,6 +1,6 @@
 
 from imvu import libzero
-from imvu.avatarwindow import ModelTextureData
+from imvu import avatarwindow
 
 import cal3d
 
@@ -86,7 +86,14 @@ class materialTestData:
     def defineTextureColor(self, name, r, g, b, size=libzero.Vec2i(1, 1)):
         rgb = chr(r) + chr(g) + chr(b)
         s = size.x * size.y * rgb
-        self.stringToTextureMap[name] = ModelTextureData(name, s, size.x, size.y, size.x, size.y, False)
+        self.stringToTextureMap[name] = avatarwindow.ModelTextureData(
+            avatarwindow.AssetSource("", name),
+            s,
+            size.x,
+            size.y,
+            size.x,
+            size.y,
+            False)
 
     def getTextureData(self, name):
         return self.stringToTextureMap[name]
