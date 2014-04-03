@@ -158,13 +158,4 @@ inline CalVector lerp(float f, CalVector left, CalVector right) {
     return (1 - f) * left + f * right;
 }
 
-namespace cal3d {    
-    inline void applyZUpToYUp(CalVector &v) {
-        float temp = v.y;
-        v.y = v.z;
-        v.z = temp;
-        v.z = -v.z;
-    }
-}
-
 #define CHECK_CALVECTOR_CLOSE(v1, v2, tolerance)   CHECK_CLOSE(0.0f, ((v1)-(v2)).length(), tolerance)

@@ -27,7 +27,6 @@ public:
     const CalCoreTrack* getCoreTrack(unsigned coreBoneId) const;
 
     void fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTranslate rt=cal3d::RotateTranslate());
-    void applyZUpToYUp();
     void rotateTranslate(cal3d::RotateTranslate &rt);
     void rotate(CalQuaternion& rot);
     void scale(float factor);

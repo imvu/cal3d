@@ -49,28 +49,3 @@ TEST(can_convert_close_to_180_rotation_matrix_to_quaternion) {
     float mag = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
     CHECK_CLOSE(1.0f, mag, 0.001f);
 }
-
-TEST(applyZUpToYUp_transform) {
-    CalQuaternion quat;
-    CalVector axis(1,1,1);
-    axis.normalize();
-    quat.setAxisAngle(axis, DegreesToRadians(30));
-    CalVector trans(1.0f, 2.0f, 3.0f);
-    cal3d::RotateTranslate rotTrans(quat, trans);
-    cal3d::applyZUpToYUp(rotTrans);
-
-    cal3d::applyZUpToYUp(quat);
-    cal3d::applyZUpToYUp(trans);
-    CHECK_EQUAL(trans, rotTrans.translation);
-    CHECK_EQUAL(quat, rotTrans.rotation);
-}
-
-//TEST(applyCoordinateTransform_transform) {
-//    CalQuaternion ZUpToYUp(-0.70710678f, 0.0f, 0.0f, 0.70710678f);
-//    cal3d::RotateTranslate rt(CalQuaternion(0.0f, 0.0f, 0.70710678f, 0.70710678f), CalVector(2.0f, 3.0f, 5.0f));
-//
-//    cal3d::applyZUpToYUp(rt);
-//
-//    CHECK_CALVECTOR_CLOSE(rt.translation, CalVector(2.0f, 5.0f, -3.0f), 0.000001f);
-//    CHECK_CALQUATERNION_CLOSE(rt.rotation, CalQuaternion(0.0f, 0.70710678f, 0.0f, 0.70710678f), 0.000001f);
-//}

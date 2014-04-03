@@ -77,12 +77,6 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton,cal3d::RotateTra
     swap(tracks, output);
 }
 
-void CalCoreAnimation::applyZUpToYUp() {
-    for (auto i = tracks.begin(); i != tracks.end(); ++i) {
-        i->applyZUpToYUp();
-    }
-}
-
 void CalCoreAnimation::rotateTranslate(cal3d::RotateTranslate &rt) {
     for (auto i = tracks.begin(); i != tracks.end(); ++i) {
         i->rotateTranslate(rt);

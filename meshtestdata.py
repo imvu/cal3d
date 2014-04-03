@@ -257,6 +257,13 @@ skeletonTestData = \
         <LOCALROTATION>0 0 0 1</LOCALROTATION>
         <PARENTID>0</PARENTID>
     </BONE>
+    <BONE NAME="Seat02.Bench" NUMCHILDS="0" ID="1">
+        <TRANSLATION>0 -10 300</TRANSLATION>
+        <ROTATION>0 0 0 1</ROTATION>
+        <LOCALTRANSLATION>0 10 -300</LOCALTRANSLATION>
+        <LOCALROTATION>0 0 0 1</LOCALROTATION>
+        <PARENTID>0</PARENTID>
+    </BONE>
 </SKELETON>"""
 
 skeletonWithNoCameraTestData = \
@@ -318,6 +325,16 @@ skeletonAnimationTestData = \
         <KEYFRAME TIME="1">
             <TRANSLATION>40 50 60</TRANSLATION>
             <ROTATION>-0.0611443 -0.627387 0.771113 0.0896201</ROTATION>
+        </KEYFRAME>
+    </TRACK>
+    <TRACK NUMKEYFRAMES="2" BONEID="11">
+        <KEYFRAME TIME="0">
+            <TRANSLATION>40 50 60</TRANSLATION>
+            <ROTATION>0.0 0.0 0.0 1.0</ROTATION>
+        </KEYFRAME>
+        <KEYFRAME TIME="1">
+            <TRANSLATION>40 50 60</TRANSLATION>
+            <ROTATION>0.0 0.0 0.0 1.0</ROTATION>
         </KEYFRAME>
     </TRACK>
 </ANIMATION>

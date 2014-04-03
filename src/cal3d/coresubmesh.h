@@ -188,7 +188,6 @@ public:
 
     void scale(float factor);
     void fixup(const CalCoreSkeletonPtr& skeleton);
-    void applyZUpToYUp();
 
     bool isStatic() const;
     BoneTransform getStaticTransform(const BoneTransform* bones) const;

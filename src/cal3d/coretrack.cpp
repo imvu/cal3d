@@ -324,12 +324,6 @@ CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float tim
         CalCoreKeyframe(time, CalVector(), CalQuaternion()));
 }
 
-void CalCoreTrack::applyZUpToYUp() {
-    for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
-        cal3d::applyZUpToYUp(i->transform);
-    }
-}
-
 void CalCoreTrack::rotateTranslate(cal3d::RotateTranslate &rt) {
     for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
         i->transform = i->transform * rt;

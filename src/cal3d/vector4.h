@@ -262,7 +262,3 @@ struct CalPoint4 : CalBase4 {
 #define CHECK_CALPOINT4_CLOSE(p1, p2, tolerance)    CHECK_CALVECTOR4_CLOSE(p1.asCalVector4(), p2.asCalVector4(), tolerance)
 
 class CalQuaternion;
-namespace cal3d {
-    void CAL3D_API applyZUpToYUp(CalVector4 &vec4);
-    void CAL3D_API applyZUpToYUp(CalPoint4 &point4);
-}

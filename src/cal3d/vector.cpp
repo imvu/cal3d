@@ -16,16 +16,3 @@
 #include "cal3d/vector4.h"
 #include "cal3d/quaternion.h"
 #include "cal3d/transform.h"
-
-namespace cal3d {
-    void applyZUpToYUp(CalVector4 &vec4) {
-        std::swap(vec4.y, vec4.z);
-        vec4.z = -vec4.z;
-    }
-
-    void applyZUpToYUp(CalPoint4 &point4) {
-        std::swap(point4.y, point4.z);
-        point4.z = -point4.z;
-    }
-}
-
