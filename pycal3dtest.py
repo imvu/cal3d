@@ -9,7 +9,7 @@ import cal3d
 class Test(imvu.test.TestCase):
     def setUp(self):
         self.cal3d_ = pycal3d.Cal3d()
-        
+
     def testSkel(self):
         self.hereAndBackAgain(origData=skeleton1, calCoreType="CoreSkeleton")
 
@@ -18,7 +18,6 @@ class Test(imvu.test.TestCase):
 
     def testAnimatedMorph(self):
         self.hereAndBackAgain(origData=animmorph1, calCoreType="CoreMorphAnimation")
-        
 
     def assertEqual(self, a, b):
         f = open(os.path.join(tempfile.gettempdir(), "dataA"), "w")
@@ -28,7 +27,7 @@ class Test(imvu.test.TestCase):
         f.write(str(b))
         f.close()
         imvu.test.TestCase.assertEqual(self, a,b)
-       
+
     def hereAndBackAgain(self, origData, calCoreType):
         data = self.cal3d_.convertToBinary(calCoreType=calCoreType, data=origData)
         assert len(data) < len(origData)
@@ -40,14 +39,14 @@ class Test(imvu.test.TestCase):
         data4 = re.sub("\s+", "", data3)
         self.assertEqual(len(data3), len(data4))
         self.assertEqual(data3, data4)
-        
+
         data2 = self.cal3d_.convertToBinary(calCoreType=calCoreType, data=data)
         self.assertEqual(repr(data), repr(data2))
         self.assertEqual(len(data), len(data2))
 
     def testMesh(self):
         self.hereAndBackAgain(origData=mesh1, calCoreType="CoreMesh")
-        
+
     def testXmlExtension(self):
         path = "/foo/bar/baz/test.xsf"
         self.assertEqual(self.cal3d_.cal3dTypeForPath(path), "CoreSkeleton")
@@ -58,7 +57,7 @@ class Test(imvu.test.TestCase):
         test_mesh = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'fuzhuangdian.xmf')
         data = file(test_mesh, 'rb').read()
         self.hereAndBackAgain(data, 'CoreMesh')
-            
+
     def test_morph_loader_does_not_crash(self):
         anim1 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'AnimationCEO3K.xaf')
         anim2 = os.path.join(imvu.fs.getSourceDirectory(), 'TestData', 'SkeletalAnimation.xaf')
@@ -98,7 +97,7 @@ class Test(imvu.test.TestCase):
 
         track = morph.tracks[0]
         self.assertEqual('mouthopen.exclusive', track.name)
-        
+
         self.assertEqual(0, track.keyframes[0].time)
         self.assertEqual(0, track.keyframes[0].weight)
 
@@ -116,14 +115,14 @@ class Test(imvu.test.TestCase):
         self.assertEqual(0.59440302848815918, leftArmUp.keyframes[1].weight)
 
         # test_empty_tracks_can_load:
-        
+
         lastTrack = morph.tracks[-1]
 
         self.assertEqual("eyeseyes.exclusive", lastTrack.name)
         self.assertEqual([], [(k.time, k.weight) for k in lastTrack.keyframes])
 
         # test_removeZeroScaleTracks_does_what_it_says:
-        
+
         morph.removeZeroScaleTracks()
         self.assertEqual(1, len(morph.tracks))
 
@@ -460,10 +459,10 @@ mesh1 = """<HEADER VERSION="910" MAGIC="XMF" />
             <TEXCOORD>0.59854 0.97832</TEXCOORD>
             <INFLUENCE ID="22">1</INFLUENCE>
         </VERTEX>
-        
-        
-        
-        
+
+
+
+
         <MORPH NAME="eyes.Blink.Clamped" NUMBLENDVERTS="10" MORPHID="0">
             <BLENDVERTEX VERTEXID="0">
                 <POSITION>7.69704 -121.396 862.701</POSITION>
@@ -1225,7 +1224,7 @@ material1 = """<HEADER VERSION="910" MAGIC="XRF" />
     <SHININESS>0</SHININESS>
     <MAP TYPE="Diffuse Color">Female01_Anime01_hair_Marla_Brunette.tga</MAP>
     <MAP TYPE="Opacity">Female01_Anime01_hair_Marla_Brunette_whatever.tga</MAP>
-  
+
 </MATERIAL>"""
 
 animmorph1 = """<HEADER VERSION="910" MAGIC="XPF" />
