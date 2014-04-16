@@ -16,6 +16,23 @@ inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Face& f)
     return os << '(' << f.vertexId[0] << ", " << f.vertexId[1] << ", " << f.vertexId[2] << ')';
 }
 
+TEST(duplicate_triangles) {
+    CalCoreSubmesh csm(3, 0, 1);
+    CalCoreSubmesh::Vertex vertex;
+    vertex.position = CalVector4(1, 1, 1, 0);
+    vertex.normal = CalVector4(-1, -1 -1, 0);
+    CalCoreSubmesh::InfluenceVector iv(1);
+    csm.addVertex(vertex, 0, iv);
+    csm.addVertex(vertex, 0, iv);
+    csm.addVertex(vertex, 0, iv);
+
+    csm.addFace(CalCoreSubmesh::Face(0, 1, 2));
+
+    csm.duplicateTriangles();
+    CHECK_EQUAL(2u, csm.getFaceCount());
+    CHECK_EQUAL(CalCoreSubmesh::Face(0, 2, 1), csm.getFaces()[1]);
+}
+
 TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_absolute_in_file) {
     CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex vertex;

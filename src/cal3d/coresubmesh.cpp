@@ -490,6 +490,21 @@ void CalCoreSubmesh::addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVe
     }
 }
 
+void CalCoreSubmesh::duplicateTriangles() {
+    size_t faceCount = m_faces.size();
+
+    std::vector<Face> newFaces;
+    newFaces.reserve(2 * faceCount);
+
+    for (size_t i = 0; i < faceCount; ++i) {
+        const auto& face = m_faces[i];
+        newFaces.push_back(face);
+        newFaces.push_back(Face(face.vertexId[0], face.vertexId[2], face.vertexId[1]));
+    }
+
+    std::swap(m_faces, newFaces);
+}
+
 // http://www.mindcontrol.org/~hplus/graphics/sort-alpha.html
 void CalCoreSubmesh::sortTris(CalCoreSubmesh& submeshTo) {
     size_t numVertices = getVertexCount();

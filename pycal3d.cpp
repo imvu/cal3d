@@ -499,6 +499,8 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("setTextureCoordinate", &CalCoreSubmesh::setTextureCoordinate)
         .def("hasTextureCoordinates", &CalCoreSubmesh::hasTextureCoordinates)
         .def("hasTextureCoordinatesOutside0_1", &CalCoreSubmesh::hasTextureCoordinatesOutside0_1)
+
+        .def("duplicateTriangles", &CalCoreSubmesh::duplicateTriangles)
         .def("sortTris", &CalCoreSubmesh::sortTris)
         .def("isStatic", &CalCoreSubmesh::isStatic)
         ;

@@ -199,6 +199,8 @@ public:
     CalAABox getBoundingVolume() const {
         return m_boundingVolume;
     }
+    
+    void duplicateTriangles();
 
     void sortTris(CalCoreSubmesh&);
 
