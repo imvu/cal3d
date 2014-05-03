@@ -159,7 +159,7 @@ dualUseBonesSubmesh = dedent("""\
         <FACE VERTEXID="0 1 2" />
     </SUBMESH>""")
 
-badInfluenceIndexSubmesh = dedent("""\
+badInfluenceIndexSubmeshTemplate = dedent("""\
     <SUBMESH NUMVERTICES="1" NUMFACES="0" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="0" MATERIAL="%d">
         <VERTEX NUMINFLUENCES="1" ID="0">
             <POS>-5759.05 -1176.88 -0.000413365</POS>
@@ -184,8 +184,8 @@ def makeMeshTestData(materialId):
 def makeMeshTestDataForDualUseBones():
     return _composeSubmeshesIntoMesh([dualUseBonesSubmesh])
 
-def makeMeshTestDataWithBadInfluenceIndices():
-    return _composeSubmeshesIntoMesh([badInfluenceIndexSubmesh])
+def makeMeshTestDataWithBadInfluenceIndices(materialId):
+    return _composeSubmeshesIntoMesh([badInfluenceIndexSubmeshTemplate % (materialId,)])
 
 skeletonTestData = dedent("""\
     <HEADER VERSION="910" MAGIC="XSF" />
