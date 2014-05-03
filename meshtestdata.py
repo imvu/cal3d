@@ -169,6 +169,31 @@ badInfluenceIndexSubmeshTemplate = dedent("""\
         </VERTEX>
     </SUBMESH>""")
 
+noTrianglesSubmesh = dedent("""\
+    <SUBMESH NUMVERTICES="3" NUMFACES="0" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="1" MATERIAL="0">
+        <VERTEX NUMINFLUENCES="1" ID="0">
+            <POS>5759.05 -1176.88 -0.00023478</POS>
+            <NORM>1.27676e-008 2.40249e-008 -1</NORM>
+            <COLOR>0 0 0</COLOR>
+            <TEXCOORD>0.99311 0.00973237</TEXCOORD>
+            <INFLUENCE ID="1">1</INFLUENCE>
+        </VERTEX>
+        <VERTEX NUMINFLUENCES="1" ID="1">
+            <POS>-5759.05 -1176.88 -0.000413365</POS>
+            <NORM>1.55047e-008 -2.86491e-008 -1</NORM>
+            <COLOR>0 0 0</COLOR>
+            <TEXCOORD>0.99311 0.982444</TEXCOORD>
+            <INFLUENCE ID="1">1</INFLUENCE>
+        </VERTEX>
+        <VERTEX NUMINFLUENCES="1" ID="2">
+            <POS>-5759.05 -3274.86 -0.000507484</POS>
+            <NORM>1.11221e-008 6.89228e-008 -1</NORM>
+            <COLOR>0 0 0</COLOR>
+            <TEXCOORD>0.79062 0.982444</TEXCOORD>
+            <INFLUENCE ID="1">1</INFLUENCE>
+        </VERTEX>
+    </SUBMESH>""")
+
 meshDataSuffix = "</MESH>"
 
 def _composeSubmeshesIntoMesh(submeshes):
@@ -186,6 +211,12 @@ def makeMeshTestDataForDualUseBones():
 
 def makeMeshTestDataWithBadInfluenceIndices(materialId):
     return _composeSubmeshesIntoMesh([badInfluenceIndexSubmeshTemplate % (materialId,)])
+
+def makeMeshTestDataForEmptyFirstMesh(materialId):
+    return _composeSubmeshesIntoMesh([
+        noTrianglesSubmesh,
+        submeshTemplate % (materialId,),
+    ])
 
 skeletonTestData = dedent("""\
     <HEADER VERSION="910" MAGIC="XSF" />
