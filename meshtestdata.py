@@ -94,11 +94,11 @@ class materialTestData:
     def getTextureData(self, name):
         return self.stringToTextureMap[name]
 
-meshDataPrefix = dedent("""\
+meshDataPrefixTemplate = dedent("""\
     <HEADER MAGIC="XMF" VERSION="919" />
-    <MESH NUMSUBMESH="1">""")
+    <MESH NUMSUBMESH="%(numSubmesh)d">""")
 
-submeshTemplate01 = dedent("""\
+submeshTemplate = dedent("""\
     <SUBMESH NUMVERTICES="3" NUMFACES="1" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="1" NUMTEXCOORDS="1" MATERIAL="%d">
         <VERTEX NUMINFLUENCES="1" ID="0">
             <POS>5759.05 -1176.88 -0.00023478</POS>
@@ -132,7 +132,7 @@ submeshTemplate01 = dedent("""\
         <FACE VERTEXID="0 1 2" />
     </SUBMESH>""")
 
-submeshTemplate02 = dedent("""\
+dualUseBonesSubmesh = dedent("""\
     <SUBMESH NUMVERTICES="3" NUMFACES="1" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="1" MATERIAL="0">
         <VERTEX NUMINFLUENCES="1" ID="0">
             <POS>5759.05 -1176.88 -0.00023478</POS>
@@ -159,30 +159,33 @@ submeshTemplate02 = dedent("""\
         <FACE VERTEXID="0 1 2" />
     </SUBMESH>""")
 
-submeshTemplate03 = dedent("""\
-    <SUBMESH NUMVERTICES=\"1\" NUMFACES=\"0\" NUMLODSTEPS=\"0\" NUMSPRINGS=\"0\" NUMMORPHS=\"0\" NUMTEXCOORDS=\"0\" MATERIAL=\"%d\">
-        <VERTEX NUMINFLUENCES=\"1\" ID=\"0\">
+badInfluenceIndexSubmesh = dedent("""\
+    <SUBMESH NUMVERTICES="1" NUMFACES="0" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="0" MATERIAL="%d">
+        <VERTEX NUMINFLUENCES="1" ID="0">
             <POS>-5759.05 -1176.88 -0.000413365</POS>
             <NORM>1.55047e-008 -2.86491e-008 -1</NORM>
             <COLOR>0 0 0</COLOR>
-            <INFLUENCE ID=\"5\">0.5</INFLUENCE>
+            <INFLUENCE ID="5">0.5</INFLUENCE>
         </VERTEX>
     </SUBMESH>""")
 
 meshDataSuffix = "</MESH>"
 
-def makeMeshTestData(materialIds):
-    meshData = meshDataPrefix
-    for materialId in materialIds:
-        meshData += submeshTemplate01 % (materialId,)
-    meshData += meshDataSuffix
-    return meshData
+def _composeSubmeshesIntoMesh(submeshes):
+    return (
+        meshDataPrefixTemplate % {'numSubmesh': len(submeshes)}
+        + ''.join(submeshes)
+        + meshDataSuffix
+    )
+
+def makeMeshTestData(materialId):
+    return _composeSubmeshesIntoMesh([submeshTemplate % (materialId,)])
 
 def makeMeshTestDataForDualUseBones():
-    return meshDataPrefix + submeshTemplate02 + meshDataSuffix
+    return _composeSubmeshesIntoMesh([dualUseBonesSubmesh])
 
 def makeMeshTestDataWithBadInfluenceIndices():
-    return meshDataPrefix + submeshTemplate03 + meshDataSuffix
+    return _composeSubmeshesIntoMesh([badInfluenceIndexSubmesh])
 
 skeletonTestData = dedent("""\
     <HEADER VERSION="910" MAGIC="XSF" />
