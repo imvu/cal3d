@@ -654,7 +654,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
 
         // write all influences of this vertex
         for (; currentInfluence != nextVertex; ++currentInfluence) {
-            CalPlatform::writeInteger(os, (int)currentInfluence->boneId);
+            CalPlatform::writeInteger(os, currentInfluence->boneId);
             CalPlatform::writeFloat(os, currentInfluence->weight);
 
             // check if an error happend
@@ -729,7 +729,7 @@ bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename,
     }
 
     // Write the coreBoneId.
-    if (!CalPlatform::writeInteger(file, (int)pCoreTrack->coreBoneId)) {
+    if (!CalPlatform::writeInteger(file, pCoreTrack->coreBoneId)) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, strFilename);
         return false;
     }
@@ -817,7 +817,6 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         TiXmlElement bone("BONE");
         bone.SetAttribute("ID", boneId);
         bone.SetAttribute("NAME", pCoreBone->name);
-        bone.SetAttribute("NUMCHILDS", pCoreSkeleton->getChildIds(pCoreBone).size());
         if (pCoreBone->hasLightingData()) {
             bone.SetAttribute("LIGHTTYPE", pCoreBone->lightType);
             str.str("");
@@ -952,7 +951,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
         const CalCoreTrack* pCoreTrack = &*iteratorCoreTrack;
 
         TiXmlElement track("TRACK");
-        track.SetAttribute("BONEID", (int)pCoreTrack->coreBoneId);
+        track.SetAttribute("BONEID", pCoreTrack->coreBoneId);
 
         // Always save out the TRANSLATIONREQUIRED flag in XML, and save the translations iff the flag is true.
         bool translationIsDynamic = pCoreTrack->translationIsDynamic;
@@ -1242,7 +1241,7 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
             for (; currentInfluence != nextVertex; ++currentInfluence) {
                 TiXmlElement influence("INFLUENCE");
 
-                influence.SetAttribute("ID", (int)currentInfluence->boneId);
+                influence.SetAttribute("ID", currentInfluence->boneId);
 
                 str.str("");
                 str << currentInfluence->weight;
@@ -1275,7 +1274,7 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
                 size_t blendId = bv.vertexId;
                 const CalCoreSubmesh::Vertex& Vertex = vectorVertex[blendId];
                 static float differenceTolerance = 1.0;
-                CalVector positionDiff = (bv.position-Vertex.position).asCalVector();
+                CalVector positionDiff = bv.position.asCalVector();
                 float positionDiffLength = positionDiff.length();
 
                 bool skip = positionDiffLength < differenceTolerance;
@@ -1292,8 +1291,8 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
                 str << positionDiffLength;
                 blendVert.SetAttribute("POSDIFF", str.str());
 
-                const CalVector4 p = /* Vertex.position + */ bv.position;
-                const CalVector4 n = /* Vertex.normal + */ bv.normal;
+                const CalVector4 p = Vertex.position + bv.position;
+                const CalVector4 n = Vertex.normal + bv.normal;
 
                 TiXmlElement pos("POSITION");
                 str.str("");
@@ -1312,8 +1311,7 @@ bool CalSaver::saveXmlCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
                 for (size_t tcI = 0; tcI < vectorvectorTextureCoordinate.size(); tcI++) {
                     TiXmlElement tcXml("TEXCOORD");
                     str.str("");
-                    const CalCoreSubmesh::TextureCoordinate& tc = vectorvectorTextureCoordinate[tcI][blendId];
-                    str << tc.u << " " << tc.v;
+                    str << 0.0f << " " << 0.0f;
                     TiXmlText tcdata(str.str());
                     tcXml.InsertEndChild(tcdata);
                     blendVert.InsertEndChild(tcXml);
