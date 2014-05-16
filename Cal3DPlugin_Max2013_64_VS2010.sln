@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cal3DPlugin_Max2013_64_VS2010", "Cal3DPlugin_Max2013_64_VS2010.vcxproj", "{B6F1A12E-701C-4958-A291-E8815FFE4781}"
+	ProjectSection(ProjectDependencies) = postProject
+		{43C77C5C-7216-4A67-8211-9F7797494487} = {43C77C5C-7216-4A67-8211-9F7797494487}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cal3DLib_Max2013_64_VS2010", "src\Cal3DLib_Max2013_64_VS2010.vcxproj", "{43C77C5C-7216-4A67-8211-9F7797494487}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6F1A12E-701C-4958-A291-E8815FFE4781}.Debug|x64.ActiveCfg = Debug|x64
+		{B6F1A12E-701C-4958-A291-E8815FFE4781}.Debug|x64.Build.0 = Debug|x64
+		{B6F1A12E-701C-4958-A291-E8815FFE4781}.Release|x64.ActiveCfg = Release|x64
+		{B6F1A12E-701C-4958-A291-E8815FFE4781}.Release|x64.Build.0 = Release|x64
+		{43C77C5C-7216-4A67-8211-9F7797494487}.Debug|x64.ActiveCfg = Debug|x64
+		{43C77C5C-7216-4A67-8211-9F7797494487}.Debug|x64.Build.0 = Debug|x64
+		{43C77C5C-7216-4A67-8211-9F7797494487}.Release|x64.ActiveCfg = Release|x64
+		{43C77C5C-7216-4A67-8211-9F7797494487}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

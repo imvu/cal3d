@@ -32,11 +32,11 @@
 
 CMaxInterface::CMaxInterface()
 {
-	m_pExpInterface = 0;
-	m_pInterface	= 0;
+    m_pExpInterface = 0;
+    m_pInterface    = 0;
 
-	m_TabNodeFromMaxScript.ZeroCount();
-	m_MatFromMaxScript = 0;
+    m_TabNodeFromMaxScript.ZeroCount();
+    m_MatFromMaxScript = 0;
 }
 
 
@@ -54,10 +54,10 @@ CMaxInterface::~CMaxInterface()
 //----------------------------------------------------------------------------//
 bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface)
 {
-	m_pExpInterface = pExpInterface;
-	m_pInterface = pInterface;
+    m_pExpInterface = pExpInterface;
+    m_pInterface = pInterface;
 
-	return true;
+    return true;
 }
 
 //----------------------------------------------------------------------------//
@@ -65,20 +65,20 @@ bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface)
 //----------------------------------------------------------------------------//
 bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface, INodeTab& _TabNodeFromMaxScript)
 {
-	int i = 0;
-	m_pExpInterface = pExpInterface;
-	m_pInterface	= pInterface;
+    int i = 0;
+    m_pExpInterface = pExpInterface;
+    m_pInterface    = pInterface;
 
-	const int tabsize = _TabNodeFromMaxScript.Count();
-	for (i=0;i<tabsize;i++)
-	{
-		INode* node = _TabNodeFromMaxScript[i];
-		if (!node)return false;
+    const int tabsize = _TabNodeFromMaxScript.Count();
+    for (i=0;i<tabsize;i++)
+    {
+        INode* node = _TabNodeFromMaxScript[i];
+        if (!node)return false;
 
-		m_TabNodeFromMaxScript.Append(1,&node);
-	}
+        m_TabNodeFromMaxScript.Append(1,&node);
+    }
 
-	return true;
+    return true;
 }
 
 //----------------------------------------------------------------------------//
@@ -86,14 +86,14 @@ bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface, I
 //----------------------------------------------------------------------------//
 bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface, StdMat* _MatFromMaxScript)
 {
-	m_pExpInterface = pExpInterface;
-	m_pInterface	= pInterface;
-	
-	if (! _MatFromMaxScript)return false;
+    m_pExpInterface = pExpInterface;
+    m_pInterface    = pInterface;
+    
+    if (! _MatFromMaxScript)return false;
 
-	m_MatFromMaxScript = _MatFromMaxScript;
+    m_MatFromMaxScript = _MatFromMaxScript;
 
-	return true;
+    return true;
 }
 
 //----------------------------------------------------------------------------//
@@ -102,7 +102,7 @@ bool CMaxInterface::Create(ExpInterface *pExpInterface, Interface *pInterface, S
 
 int CMaxInterface::GetCurrentFrame()
 {
-	return m_pInterface->GetTime() / GetTicksPerFrame();
+    return m_pInterface->GetTime() / GetTicksPerFrame();
 }
 
 //----------------------------------------------------------------------------//
@@ -111,7 +111,7 @@ int CMaxInterface::GetCurrentFrame()
 
 float CMaxInterface::GetCurrentTime()
 {
-	return TicksToSec(m_pInterface->GetTime());
+    return TicksToSec(m_pInterface->GetTime());
 }
 
 //----------------------------------------------------------------------------//
@@ -120,7 +120,7 @@ float CMaxInterface::GetCurrentTime()
 
 int CMaxInterface::GetEndFrame()
 {
-	return m_pInterface->GetAnimRange().End() / GetTicksPerFrame();
+    return m_pInterface->GetAnimRange().End() / GetTicksPerFrame();
 }
 
 //----------------------------------------------------------------------------//
@@ -129,7 +129,7 @@ int CMaxInterface::GetEndFrame()
 
 int CMaxInterface::GetFps()
 {
-	return GetFrameRate();
+    return GetFrameRate();
 }
 
 //----------------------------------------------------------------------------//
@@ -138,7 +138,7 @@ int CMaxInterface::GetFps()
 
 CWnd *CMaxInterface::GetMainWnd()
 {
-	return CWnd::FromHandle(m_pInterface->GetMAXHWnd());
+    return CWnd::FromHandle(m_pInterface->GetMAXHWnd());
 }
 
 //----------------------------------------------------------------------------//
@@ -147,127 +147,127 @@ CWnd *CMaxInterface::GetMainWnd()
 
 CBaseMaterial *CMaxInterface::GetSubMaterial(int materialId, Mtl *pMtl,int & materialCount)
 {
-	
-	// check if we have a standard material
-	if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
-	{
-		// check if we reached the wanted material
-		if(materialId == materialCount)
-		{
-			// allocate a new max material instance
-			CMaxMaterial *pMaxMaterial;
-			pMaxMaterial = new CMaxMaterial();
-			if(pMaxMaterial == 0)
-			{
-				theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				return 0;
-			}
-			
-			// create the max material
-			if(!pMaxMaterial->Create((StdMat *)pMtl))
-			{
-				delete pMaxMaterial;
-				return 0;
-			}
-			
-			return pMaxMaterial;
-		}
-		
-		materialCount++;
-	}
+    
+    // check if we have a standard material
+    if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
+    {
+        // check if we reached the wanted material
+        if(materialId == materialCount)
+        {
+            // allocate a new max material instance
+            CMaxMaterial *pMaxMaterial;
+            pMaxMaterial = new CMaxMaterial();
+            if(pMaxMaterial == 0)
+            {
+                theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+                return 0;
+            }
+            
+            // create the max material
+            if(!pMaxMaterial->Create((StdMat *)pMtl))
+            {
+                delete pMaxMaterial;
+                return 0;
+            }
+            
+            return pMaxMaterial;
+        }
+        
+        materialCount++;
+    }
 
-	if (pMtl->IsMultiMtl())
-	{
-		int subMatId;
-		for(subMatId = 0; subMatId < pMtl->NumSubMtls();subMatId++)
-		{
-			CBaseMaterial *pMaxMaterial = GetSubMaterial(materialId, pMtl->GetSubMtl(subMatId),materialCount);
-			if(pMaxMaterial != NULL)
-				return pMaxMaterial;			
-		}
-	}
-	return NULL;
-	
+    if (pMtl->IsMultiMtl())
+    {
+        int subMatId;
+        for(subMatId = 0; subMatId < pMtl->NumSubMtls();subMatId++)
+        {
+            CBaseMaterial *pMaxMaterial = GetSubMaterial(materialId, pMtl->GetSubMtl(subMatId),materialCount);
+            if(pMaxMaterial != NULL)
+                return pMaxMaterial;            
+        }
+    }
+    return NULL;
+    
 }
 
 CBaseMaterial *CMaxInterface::GetMaterial(int materialId)
 {
-	int materialCount;
-	materialCount = 0;
+    int materialCount;
+    materialCount = 0;
 
-	int materialBaseId;
+    int materialBaseId;
 
 /*//////////////////////////////////////////////////////////////////////////////
 // The following code includes all materials found in the material library.   //                                                               //
 ////////////////////////////////////////////////////////////////////////////////
 
-	// get the material library
-	MtlBaseLib& mtlBaseLib = m_pInterface->GetMaterialLibrary();
+    // get the material library
+    MtlBaseLib& mtlBaseLib = m_pInterface->GetMaterialLibrary();
 
-	// loop through all material bases
-	for(materialBaseId = 0; materialBaseId < mtlBaseLib.Count(); materialBaseId++)
-	{
-		// check if it is a material
-		if(mtlBaseLib[materialBaseId]->SuperClassID()==MATERIAL_CLASS_ID)
-		{
-			// get the material
-			Mtl *pMtl;
-			pMtl = (Mtl *)mtlBaseLib[materialBaseId];
+    // loop through all material bases
+    for(materialBaseId = 0; materialBaseId < mtlBaseLib.Count(); materialBaseId++)
+    {
+        // check if it is a material
+        if(mtlBaseLib[materialBaseId]->SuperClassID()==MATERIAL_CLASS_ID)
+        {
+            // get the material
+            Mtl *pMtl;
+            pMtl = (Mtl *)mtlBaseLib[materialBaseId];
 
-			// check if we have a standard material
-			if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
-			{
-				// check if we reached the wanted material
-				if(materialId == materialCount)
-				{
-					// allocate a new max material instance
-					CMaxMaterial *pMaxMaterial;
-					pMaxMaterial = new CMaxMaterial();
-					if(pMaxMaterial == 0)
-					{
-						theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-						return 0;
-					}
+            // check if we have a standard material
+            if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
+            {
+                // check if we reached the wanted material
+                if(materialId == materialCount)
+                {
+                    // allocate a new max material instance
+                    CMaxMaterial *pMaxMaterial;
+                    pMaxMaterial = new CMaxMaterial();
+                    if(pMaxMaterial == 0)
+                    {
+                        theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+                        return 0;
+                    }
 
-					// create the max material
-					if(!pMaxMaterial->Create((StdMat *)pMtl))
-					{
-						delete pMaxMaterial;
-						return 0;
-					}
+                    // create the max material
+                    if(!pMaxMaterial->Create((StdMat *)pMtl))
+                    {
+                        delete pMaxMaterial;
+                        return 0;
+                    }
 
-					return pMaxMaterial;
-				}
+                    return pMaxMaterial;
+                }
 
-				materialCount++;
-			}
-		}
-	}
+                materialCount++;
+            }
+        }
+    }
 
 //////////////////////////////////////////////////////////////////////////////*/
 
-	// get the material bases from the material editor slots
-	for(materialBaseId = 0; materialBaseId < 24; materialBaseId++)
-	{
-		// get material base
-		MtlBase *pMtlBase;
-		pMtlBase = m_pInterface->GetMtlSlot(materialBaseId);
+    // get the material bases from the material editor slots
+    for(materialBaseId = 0; materialBaseId < 24; materialBaseId++)
+    {
+        // get material base
+        MtlBase *pMtlBase;
+        pMtlBase = m_pInterface->GetMtlSlot(materialBaseId);
 
-		// check if it is a material
-		if(pMtlBase->SuperClassID()==MATERIAL_CLASS_ID)
-		{
-			// get the material
-			Mtl *pMtl;
-			pMtl = (Mtl *)pMtlBase;
+        // check if it is a material
+        if(pMtlBase->SuperClassID()==MATERIAL_CLASS_ID)
+        {
+            // get the material
+            Mtl *pMtl;
+            pMtl = (Mtl *)pMtlBase;
 
-			CBaseMaterial *pMaxMaterial = GetSubMaterial( materialId, pMtl, materialCount);
-			if(pMaxMaterial != NULL)
-				return pMaxMaterial;			
-		}
-	}
+            CBaseMaterial *pMaxMaterial = GetSubMaterial( materialId, pMtl, materialCount);
+            if(pMaxMaterial != NULL)
+                return pMaxMaterial;            
+        }
+    }
 
-	theExporter.SetLastError("Invalid handle.", __FILE__, __LINE__);
-	return 0;
+    theExporter.SetLastError("Invalid handle.", __FILE__, __LINE__);
+    return 0;
 }
 
 //----------------------------------------------------------------------------//
@@ -275,73 +275,73 @@ CBaseMaterial *CMaxInterface::GetMaterial(int materialId)
 //----------------------------------------------------------------------------//
 int CMaxInterface::GetSubMaterialCount(Mtl *pMtl)
 {
-	int materialCount=0;
+    int materialCount=0;
 
-	if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) 
-		return 1;
+    if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) 
+        return 1;
 
-	if (pMtl->IsMultiMtl())
-	{
-		int subMatId;
-		for(subMatId = 0; subMatId < pMtl->NumSubMtls();subMatId++)
-		{
-			materialCount+=GetSubMaterialCount(pMtl->GetSubMtl(subMatId));
-		}
-	}
-	return materialCount;
+    if (pMtl->IsMultiMtl())
+    {
+        int subMatId;
+        for(subMatId = 0; subMatId < pMtl->NumSubMtls();subMatId++)
+        {
+            materialCount+=GetSubMaterialCount(pMtl->GetSubMtl(subMatId));
+        }
+    }
+    return materialCount;
 }
 
 int CMaxInterface::GetMaterialCount()
 {
-	int materialCount;
-	materialCount = 0;
+    int materialCount;
+    materialCount = 0;
 
-	int materialBaseId;
+    int materialBaseId;
 
 /*//////////////////////////////////////////////////////////////////////////////
 // The following code includes all materials found in the material library.   //                                                               //
 ////////////////////////////////////////////////////////////////////////////////
 
-	// get the material library
-	MtlBaseLib& mtlBaseLib = m_pInterface->GetMaterialLibrary();
+    // get the material library
+    MtlBaseLib& mtlBaseLib = m_pInterface->GetMaterialLibrary();
 
-	// loop through all material bases in the material library
-	for(materialBaseId = 0; materialBaseId < mtlBaseLib.Count(); materialBaseId++)
-	{
-		// check if it is a material
-		if(mtlBaseLib[materialBaseId]->SuperClassID()==MATERIAL_CLASS_ID)
-		{
-			// get the material
-			Mtl *pMtl;
-			pMtl = (Mtl *)mtlBaseLib[materialBaseId];
+    // loop through all material bases in the material library
+    for(materialBaseId = 0; materialBaseId < mtlBaseLib.Count(); materialBaseId++)
+    {
+        // check if it is a material
+        if(mtlBaseLib[materialBaseId]->SuperClassID()==MATERIAL_CLASS_ID)
+        {
+            // get the material
+            Mtl *pMtl;
+            pMtl = (Mtl *)mtlBaseLib[materialBaseId];
 
-			// check if we have a standard material
-			if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) materialCount++;
-		}
-	}
+            // check if we have a standard material
+            if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) materialCount++;
+        }
+    }
 
 //////////////////////////////////////////////////////////////////////////////*/
 
-	// get the material bases from the material editor slots
-	for(materialBaseId = 0; materialBaseId < 24; materialBaseId++)
-	{
-		// get material base
-		MtlBase *pMtlBase;
-		pMtlBase = m_pInterface->GetMtlSlot(materialBaseId);
+    // get the material bases from the material editor slots
+    for(materialBaseId = 0; materialBaseId < 24; materialBaseId++)
+    {
+        // get material base
+        MtlBase *pMtlBase;
+        pMtlBase = m_pInterface->GetMtlSlot(materialBaseId);
 
-		// check if it is a material
-		if(pMtlBase->SuperClassID()==MATERIAL_CLASS_ID)
-		{
-			// get the material
-			Mtl *pMtl;
-			pMtl = (Mtl *)pMtlBase;
+        // check if it is a material
+        if(pMtlBase->SuperClassID()==MATERIAL_CLASS_ID)
+        {
+            // get the material
+            Mtl *pMtl;
+            pMtl = (Mtl *)pMtlBase;
 
-			materialCount+=GetSubMaterialCount(pMtl);
+            materialCount+=GetSubMaterialCount(pMtl);
 
-		}
-	}
+        }
+    }
 
-	return materialCount;
+    return materialCount;
 }
 
 //----------------------------------------------------------------------------//
@@ -350,66 +350,66 @@ int CMaxInterface::GetMaterialCount()
 
 CBaseMesh *CMaxInterface::GetMesh(CBaseNode *pNode, float time )
 {
-	// check for invalid nodes
-	if(pNode == 0)
-	{
-		theExporter.SetLastError("Invalid handle.", __FILE__, __LINE__);
-		return 0;
-	}
-	
-	// downcast the node to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // check for invalid nodes
+    if(pNode == 0)
+    {
+        theExporter.SetLastError("Invalid handle.", __FILE__, __LINE__);
+        return 0;
+    }
+    
+    // downcast the node to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// get the current time
+    // get the current time
         if( time == -1 ) {
           time = m_pInterface->GetTime();
         }
 
-	// get max mesh instance
-	ObjectState os;
-	os = pMaxNode->GetINode()->EvalWorldState(time);
+    // get max mesh instance
+    ObjectState os;
+    os = pMaxNode->GetINode()->EvalWorldState(time);
 
-	TriObject *pTriObject = NULL;
+    TriObject *pTriObject = NULL;
 
-	if(!os.obj->CanConvertToType(triObjectClassID))
-	{
-		theExporter.SetLastError("Invalid Mesh Object.", __FILE__, __LINE__);
-		return 0;		
-	}
-	
-	pTriObject=(TriObject*)os.obj->ConvertToType(time, triObjectClassID);
-	if(pTriObject==NULL)
-	{
-		theExporter.SetLastError("Invalid Mesh Object.", __FILE__, __LINE__);
-		return 0;
-	}
+    if(!os.obj->CanConvertToType(triObjectClassID))
+    {
+        theExporter.SetLastError("Invalid Mesh Object.", __FILE__, __LINE__);
+        return 0;        
+    }
+    
+    pTriObject=(TriObject*)os.obj->ConvertToType(time, triObjectClassID);
+    if(pTriObject==NULL)
+    {
+        theExporter.SetLastError("Invalid Mesh Object.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	Mesh *pMesh = &pTriObject->mesh;
-	
-	BOOL bDelete= false;
+    Mesh *pMesh = &pTriObject->mesh;
+    
+    BOOL bDelete= false;
 
-	if(os.obj != pTriObject)
-		bDelete = true;
+    if(os.obj != pTriObject)
+        bDelete = true;
 
-	// allocate a new max mesh instance
-	CMaxMesh *pMaxMesh;
-	pMaxMesh = new CMaxMesh();
-	if(pMaxMesh == 0)
-	{
-		theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-		return 0;
-	}
+    // allocate a new max mesh instance
+    CMaxMesh *pMaxMesh;
+    pMaxMesh = new CMaxMesh();
+    if(pMaxMesh == 0)
+    {
+        theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	// create the max mesh
-	if(!pMaxMesh->Create(pMaxNode->GetINode(), pMesh, (bDelete == TRUE)))
-	{
-		if(bDelete) delete pMesh;
-		delete pMaxMesh;
-		return 0;
-	}
+    // create the max mesh
+    if(!pMaxMesh->Create(pMaxNode->GetINode(), pMesh, (bDelete == TRUE)))
+    {
+        if(bDelete) delete pMesh;
+        delete pMaxMesh;
+        return 0;
+    }
 
-	return pMaxMesh;
+    return pMaxMesh;
 }
 
 //----------------------------------------------------------------------------//
@@ -418,24 +418,24 @@ CBaseMesh *CMaxInterface::GetMesh(CBaseNode *pNode, float time )
 
 CBaseNode *CMaxInterface::GetNode(const std::string& strName)
 {
-	// allocate a new max node instance
-	CMaxNode *pNode;
-	pNode = new CMaxNode();
-	if(pNode == 0)
-	{
-		theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-		return 0;
-	}
+    // allocate a new max node instance
+    CMaxNode *pNode;
+    pNode = new CMaxNode();
+    if(pNode == 0)
+    {
+        theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	// create the max node
+    // create the max node
     std::tstring ts(strName.begin(), strName.end());
-	if(!pNode->Create(m_pInterface->GetINodeByName(ts.c_str())))
-	{
-		delete pNode;
-		return 0;
-	}
+    if(!pNode->Create(m_pInterface->GetINodeByName(ts.c_str())))
+    {
+        delete pNode;
+        return 0;
+    }
 
-	return pNode;
+    return pNode;
 }
 
 //----------------------------------------------------------------------------//
@@ -444,47 +444,47 @@ CBaseNode *CMaxInterface::GetNode(const std::string& strName)
 
 Matrix3 CMaxInterface::GetNodeTM(CMaxNode *pNode, float time)
 {
-	// initialize matrix with the identity
-	Matrix3 tm, tmParent;
-	tm.IdentityMatrix();
+    // initialize matrix with the identity
+    Matrix3 tm, tmParent;
+    tm.IdentityMatrix();
 
-	// only do this for valid nodes
-	if(pNode != 0)
-	{
-		bool isMirrored = false;
-		// get the node transformation
-		tm = pNode->GetINode()->GetNodeTM(SecToTicks(time));
-		
-		if(!pNode->GetINode()->IsRootNode())
-		{
-			tmParent = pNode->GetINode()->GetParentTM(SecToTicks(time));
-			
-			
-			// check if the matrix is right handed
-			
-			if(DotProd( CrossProd( tmParent.GetRow(0).Normalize(), 
-				tmParent.GetRow(1).Normalize() ).Normalize(), 
-				tmParent.GetRow(2).Normalize() ) < 0)
-			{
-				isMirrored = true;
-			}
-		}
+    // only do this for valid nodes
+    if(pNode != 0)
+    {
+        bool isMirrored = false;
+        // get the node transformation
+        tm = pNode->GetINode()->GetNodeTM(SecToTicks(time));
+        
+        if(!pNode->GetINode()->IsRootNode())
+        {
+            tmParent = pNode->GetINode()->GetParentTM(SecToTicks(time));
+            
+            
+            // check if the matrix is right handed
+            
+            if(DotProd( CrossProd( tmParent.GetRow(0).Normalize(), 
+                tmParent.GetRow(1).Normalize() ).Normalize(), 
+                tmParent.GetRow(2).Normalize() ) < 0)
+            {
+                isMirrored = true;
+            }
+        }
 
-		// make the transformation uniform
-		tm.NoScale();
-		
-		AffineParts parts;
-		decomp_affine(tm, &parts);
-		parts.q.MakeMatrix(tm);
+        // make the transformation uniform
+        tm.NoScale();
+        
+        AffineParts parts;
+        decomp_affine(tm, &parts);
+        parts.q.MakeMatrix(tm);
 
-		if(!isMirrored)
-			tm.SetRow(3, parts.t);
-		else
-			tm.SetRow(3, -parts.t);
-		
-	}
+        if(!isMirrored)
+            tm.SetRow(3, parts.t);
+        else
+            tm.SetRow(3, -parts.t);
+        
+    }
 
-	return tm;
+    return tm;
 }
 
 //----------------------------------------------------------------------------//
@@ -493,14 +493,14 @@ Matrix3 CMaxInterface::GetNodeTM(CMaxNode *pNode, float time)
 
 int CMaxInterface::GetSelectedNodeCount()
 {
-	// get the number of selected nodes
-	int nodeCount;
-	nodeCount = m_pInterface->GetSelNodeCount();
+    // get the number of selected nodes
+    int nodeCount;
+    nodeCount = m_pInterface->GetSelNodeCount();
 
-	// if nothing is selected, there is always the scene root node
-	if(nodeCount == 0) return 1;
+    // if nothing is selected, there is always the scene root node
+    if(nodeCount == 0) return 1;
 
-	return nodeCount;
+    return nodeCount;
 }
 
 //----------------------------------------------------------------------------//
@@ -509,62 +509,62 @@ int CMaxInterface::GetSelectedNodeCount()
 
 CBaseNode *CMaxInterface::GetSelectedNode(int nodeId)
 {
-	// get the number of selected nodes
-	int nodeCount = m_pInterface->GetSelNodeCount();
+    // get the number of selected nodes
+    int nodeCount = m_pInterface->GetSelNodeCount();
 
-	// if nothing is selected, we go with the scene root node
-	if(nodeCount == 0)
-	{
-		// check if the given node id is valid
-		if(nodeId == 0)
-		{
-			// allocate a new max node instance
-			CMaxNode *pNode;
-			pNode = new CMaxNode();
-			if(pNode == 0)
-			{
-				theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				return 0;
-			}
+    // if nothing is selected, we go with the scene root node
+    if(nodeCount == 0)
+    {
+        // check if the given node id is valid
+        if(nodeId == 0)
+        {
+            // allocate a new max node instance
+            CMaxNode *pNode;
+            pNode = new CMaxNode();
+            if(pNode == 0)
+            {
+                theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+                return 0;
+            }
 
-			// create the max node
-			if(!pNode->Create(m_pInterface->GetRootNode()))
-			{
-				delete pNode;
-				return 0;
-			}
+            // create the max node
+            if(!pNode->Create(m_pInterface->GetRootNode()))
+            {
+                delete pNode;
+                return 0;
+            }
 
-			return pNode;
-		}
+            return pNode;
+        }
 
-		// invalid node id requested!
-		return 0;
-	}
+        // invalid node id requested!
+        return 0;
+    }
 
-	// check if the given node id is valid
-	if((nodeId < 0) || (nodeId >= m_pInterface->GetSelNodeCount()))
-	{
-		theExporter.SetLastError("Invalid handle.", __FILE__, __LINE__);
-		return 0;
-	}
+    // check if the given node id is valid
+    if((nodeId < 0) || (nodeId >= m_pInterface->GetSelNodeCount()))
+    {
+        theExporter.SetLastError("Invalid handle.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	// allocate a new max node instance
-	CMaxNode *pNode;
-	pNode = new CMaxNode();
-	if(pNode == 0)
-	{
-		theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-		return 0;
-	}
+    // allocate a new max node instance
+    CMaxNode *pNode;
+    pNode = new CMaxNode();
+    if(pNode == 0)
+    {
+        theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	// create the max node
-	if(!pNode->Create(m_pInterface->GetSelNode(nodeId)))
-	{
-		delete pNode;
-		return 0;
-	}
+    // create the max node
+    if(!pNode->Create(m_pInterface->GetSelNode(nodeId)))
+    {
+        delete pNode;
+        return 0;
+    }
 
-	return pNode;
+    return pNode;
 }
 
 //----------------------------------------------------------------------------//
@@ -572,99 +572,99 @@ CBaseNode *CMaxInterface::GetSelectedNode(int nodeId)
 //----------------------------------------------------------------------------//
 CBaseNode *CMaxInterface::GetNodeFromMaxscriptArray(int nodeId)
 {
-	// Get the number of nodes in array
-	int nodeCount;
-	nodeCount = m_TabNodeFromMaxScript.Count();
+    // Get the number of nodes in array
+    int nodeCount;
+    nodeCount = m_TabNodeFromMaxScript.Count();
 
-	// if nothing is selected, we go with the scene root node
-	if(nodeCount == 0)
-	{
-		// check if the given node id is valid
-		if(nodeId == 0)
-		{
-			// allocate a new max node instance
-			CMaxNode *pNode;
-			pNode = new CMaxNode();
-			if(pNode == 0)
-			{
-				theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				return 0;
-			}
+    // if nothing is selected, we go with the scene root node
+    if(nodeCount == 0)
+    {
+        // check if the given node id is valid
+        if(nodeId == 0)
+        {
+            // allocate a new max node instance
+            CMaxNode *pNode;
+            pNode = new CMaxNode();
+            if(pNode == 0)
+            {
+                theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+                return 0;
+            }
 
-			// create the max node
-			if(!pNode->Create(m_pInterface->GetRootNode()))
-			{
-				delete pNode;
-				return 0;
-			}
+            // create the max node
+            if(!pNode->Create(m_pInterface->GetRootNode()))
+            {
+                delete pNode;
+                return 0;
+            }
 
-			return pNode;
-		}
+            return pNode;
+        }
 
-		// invalid node id requested!
-		return 0;
-	}
+        // invalid node id requested!
+        return 0;
+    }
 
-	// check if the given node id is valid
-	if((nodeId < 0) || (nodeId >= nodeCount))
-	{
-		theExporter.SetLastError("Invalid index.", __FILE__, __LINE__);
-		return 0;
-	}
+    // check if the given node id is valid
+    if((nodeId < 0) || (nodeId >= nodeCount))
+    {
+        theExporter.SetLastError("Invalid index.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	// allocate a new max node instance
-	CMaxNode *pNode;
-	pNode = new CMaxNode();
-	if(pNode == 0)
-	{
-		theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-		return 0;
-	}
+    // allocate a new max node instance
+    CMaxNode *pNode;
+    pNode = new CMaxNode();
+    if(pNode == 0)
+    {
+        theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+        return 0;
+    }
 
-	// create the max node from index in array
-	if(!pNode->Create( m_TabNodeFromMaxScript[nodeId] ))
-	{
-		delete pNode;
-		return 0;
-	}
+    // create the max node from index in array
+    if(!pNode->Create( m_TabNodeFromMaxScript[nodeId] ))
+    {
+        delete pNode;
+        return 0;
+    }
 
-	return pNode;
+    return pNode;
 }
 
 CBaseMaterial* CMaxInterface::GetBaseMatFromMaxscript()
 {
-	// check if it is a material
-	if(m_MatFromMaxScript->SuperClassID()==MATERIAL_CLASS_ID)
-	{
-		// get the material
-		Mtl *pMtl;
-		pMtl = (Mtl *)m_MatFromMaxScript;
+    // check if it is a material
+    if(m_MatFromMaxScript->SuperClassID()==MATERIAL_CLASS_ID)
+    {
+        // get the material
+        Mtl *pMtl;
+        pMtl = (Mtl *)m_MatFromMaxScript;
 
-		// check if we have a standard material
-		if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
-		{
-			// allocate a new max material instance
-			CMaxMaterial *pMaxMaterial;
-			pMaxMaterial = new CMaxMaterial();
-			if(pMaxMaterial == 0)
-			{
-				theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
-				return 0;
-			}
+        // check if we have a standard material
+        if(pMtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0))
+        {
+            // allocate a new max material instance
+            CMaxMaterial *pMaxMaterial;
+            pMaxMaterial = new CMaxMaterial();
+            if(pMaxMaterial == 0)
+            {
+                theExporter.SetLastError("Memory allocation failed.", __FILE__, __LINE__);
+                return 0;
+            }
 
-			// create the max material
-			if(! pMaxMaterial->Create((StdMat *)pMtl))
-			{
-				delete pMaxMaterial;
-				return 0;
-			}
+            // create the max material
+            if(! pMaxMaterial->Create((StdMat *)pMtl))
+            {
+                delete pMaxMaterial;
+                return 0;
+            }
 
-			return pMaxMaterial;
-		}
-	}
+            return pMaxMaterial;
+        }
+    }
 
-	theExporter.SetLastError("Invalid material index.", __FILE__, __LINE__);
-	return 0;
+    theExporter.SetLastError("Invalid material index.", __FILE__, __LINE__);
+    return 0;
 }
 
 //----------------------------------------------------------------------------//
@@ -673,7 +673,7 @@ CBaseMaterial* CMaxInterface::GetBaseMatFromMaxscript()
 
 int CMaxInterface::GetStartFrame()
 {
-	return m_pInterface->GetAnimRange().Start() / GetTicksPerFrame();
+    return m_pInterface->GetAnimRange().Start() / GetTicksPerFrame();
 }
 
 //----------------------------------------------------------------------------//
@@ -682,46 +682,46 @@ int CMaxInterface::GetStartFrame()
 
 void CMaxInterface::GetTranslationAndRotation(CBaseNode *pNode, CBaseNode *pParentNode, float time, CalVector& translation, CalQuaternion& rotation)
 {
-	// check for invalid nodes
-	if(pNode == 0) return;
+    // check for invalid nodes
+    if(pNode == 0) return;
 
   // the initial node pose (time == -1.0) is at (time == 0.0) for 3ds max
   if(time < 0.0f) time = 0.0f;
 
-	// downcast the node to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // downcast the node to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// downcast the parent node to a max node
-	CMaxNode *pMaxParentNode;
-	if(pParentNode == 0)
-	{
-		pMaxParentNode = 0;
-	}
-	else
-	{
-		pMaxParentNode = dynamic_cast<CMaxNode *>(pParentNode);
-	}
+    // downcast the parent node to a max node
+    CMaxNode *pMaxParentNode;
+    if(pParentNode == 0)
+    {
+        pMaxParentNode = 0;
+    }
+    else
+    {
+        pMaxParentNode = dynamic_cast<CMaxNode *>(pParentNode);
+    }
 
-	// calculate the relative transformation
-	Matrix3 tm;
-	tm = GetNodeTM(pMaxNode, time) * Inverse(GetNodeTM(pMaxParentNode, time));
+    // calculate the relative transformation
+    Matrix3 tm;
+    tm = GetNodeTM(pMaxNode, time) * Inverse(GetNodeTM(pMaxParentNode, time));
 
-	// calculate the translation component
-	Point3 p;
-	p = tm.GetTrans();
+    // calculate the translation component
+    Point3 p;
+    p = tm.GetTrans();
 
-	translation.x = p[0];
-	translation.y = p[1];
-	translation.z = p[2];
+    translation.x = p[0];
+    translation.y = p[1];
+    translation.z = p[2];
 
-	// calculate the rotation component
-	Quat q(tm);
+    // calculate the rotation component
+    Quat q(tm);
 
-	rotation.x = q[0];
-	rotation.y = q[1];
-	rotation.z = q[2];
-	rotation.w = q[3];
+    rotation.x = q[0];
+    rotation.y = q[1];
+    rotation.z = q[2];
+    rotation.w = q[3];
 }
 
 //----------------------------------------------------------------------------//
@@ -730,35 +730,35 @@ void CMaxInterface::GetTranslationAndRotation(CBaseNode *pNode, CBaseNode *pPare
 
 void CMaxInterface::GetTranslationAndRotationBoneSpace(CBaseNode *pNode, float time, CalVector& translation, CalQuaternion& rotation)
 {
-	// check for invalid nodes
-	if(pNode == 0) return;
+    // check for invalid nodes
+    if(pNode == 0) return;
 
   // the initial node pose (time == -1.0) is at (time == 0.0) for 3ds max
   if(time < 0.0f) time = 0.0f;
 
-	// downcast the node to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // downcast the node to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// calculate the inverse transformation
-	Matrix3 tm;
-	tm = Inverse(GetNodeTM(pMaxNode, time));
+    // calculate the inverse transformation
+    Matrix3 tm;
+    tm = Inverse(GetNodeTM(pMaxNode, time));
 
-	// calculate the translation component
-	Point3 p;
-	p = tm.GetTrans();
+    // calculate the translation component
+    Point3 p;
+    p = tm.GetTrans();
 
-	translation.x = p[0];
-	translation.y = p[1];
-	translation.z = p[2];
+    translation.x = p[0];
+    translation.y = p[1];
+    translation.z = p[2];
 
-	// calculate the rotation component
-	Quat q(tm);
+    // calculate the rotation component
+    Quat q(tm);
 
-	rotation.x = q[0];
-	rotation.y = q[1];
-	rotation.z = q[2];
-	rotation.w = q[3];
+    rotation.x = q[0];
+    rotation.y = q[1];
+    rotation.z = q[2];
+    rotation.w = q[3];
 }
 
 //----------------------------------------------------------------------------//
@@ -767,23 +767,23 @@ void CMaxInterface::GetTranslationAndRotationBoneSpace(CBaseNode *pNode, float t
 
 bool CMaxInterface::IsBipedBone(INode *pNode)
 {
-	// check for invalid nodes
-	if(pNode == 0) return false;
+    // check for invalid nodes
+    if(pNode == 0) return false;
 
-	// check for root node
-	if(pNode->IsRootNode()) return false;
+    // check for root node
+    if(pNode->IsRootNode()) return false;
 
-	// check for bone node
-	ObjectState os;
-	os = pNode->EvalWorldState(0);
-	if(os.obj->ClassID() == Class_ID(DUMMY_CLASS_ID, 0)) return false;
+    // check for bone node
+    ObjectState os;
+    os = pNode->EvalWorldState(0);
+    if(os.obj->ClassID() == Class_ID(DUMMY_CLASS_ID, 0)) return false;
 
-	// check for biped node
-	Control *pControl;
-	pControl = pNode->GetTMController();
-	if((pControl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) || (pControl->ClassID() == BIPBODY_CONTROL_CLASS_ID)) return true;
+    // check for biped node
+    Control *pControl;
+    pControl = pNode->GetTMController();
+    if((pControl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) || (pControl->ClassID() == BIPBODY_CONTROL_CLASS_ID)) return true;
 
-	return false;
+    return false;
 }
 
 //----------------------------------------------------------------------------//
@@ -792,37 +792,37 @@ bool CMaxInterface::IsBipedBone(INode *pNode)
 
 bool CMaxInterface::IsBone(CBaseNode *pNode)
 {
-	// check for invalid nodes
-	if(pNode == 0) return false;
+    // check for invalid nodes
+    if(pNode == 0) return false;
 
-	// downcast to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // downcast to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// get internal max node
-	INode *pINode;
-	pINode = pMaxNode->GetINode();
+    // get internal max node
+    INode *pINode;
+    pINode = pMaxNode->GetINode();
 
-	// check for root node
-	if(pINode->IsRootNode()) return false;
+    // check for root node
+    if(pINode->IsRootNode()) return false;
 
-	// check for bone node
-	ObjectState os;
-	os = pINode->EvalWorldState(0);
-	if(os.obj->ClassID() == Class_ID(BONE_CLASS_ID, 0)) return true;
+    // check for bone node
+    ObjectState os;
+    os = pINode->EvalWorldState(0);
+    if(os.obj->ClassID() == Class_ID(BONE_CLASS_ID, 0)) return true;
 
 #if MAX_RELEASE >= 4000
-	if(os.obj->ClassID() == BONE_OBJ_CLASSID) return true;
+    if(os.obj->ClassID() == BONE_OBJ_CLASSID) return true;
 #endif
 
   if(os.obj->ClassID() == Class_ID(DUMMY_CLASS_ID, 0)) return false;
 
-	// check for biped node
-	Control *pControl;
-	pControl = pINode->GetTMController();
-	if((pControl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) || (pControl->ClassID() == BIPBODY_CONTROL_CLASS_ID)) return true;
+    // check for biped node
+    Control *pControl;
+    pControl = pINode->GetTMController();
+    if((pControl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) || (pControl->ClassID() == BIPBODY_CONTROL_CLASS_ID)) return true;
 
-	return false;
+    return false;
 }
 
 //----------------------------------------------------------------------------//
@@ -831,52 +831,52 @@ bool CMaxInterface::IsBone(CBaseNode *pNode)
 
 bool CMaxInterface::IsDummy(CBaseNode *pNode)
 {
-	// check for invalid nodes
-	if(pNode == 0) return false;
+    // check for invalid nodes
+    if(pNode == 0) return false;
 
-	// downcast to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // downcast to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// get internal max node
-	INode *pINode;
-	pINode = pMaxNode->GetINode();
+    // get internal max node
+    INode *pINode;
+    pINode = pMaxNode->GetINode();
 
-	// check for root node
-	if(pINode->IsRootNode()) return false;
+    // check for root node
+    if(pINode->IsRootNode()) return false;
 
-	// check for dummy node
-	ObjectState os;
-	os = pINode->EvalWorldState(0);
-	if(os.obj->ClassID() == Class_ID(DUMMY_CLASS_ID, 0)) return true;
+    // check for dummy node
+    ObjectState os;
+    os = pINode->EvalWorldState(0);
+    if(os.obj->ClassID() == Class_ID(DUMMY_CLASS_ID, 0)) return true;
 
-	return false;
+    return false;
 }
 
 bool
 CMaxInterface::IsLight(CBaseNode *pNode)
 {
-	// check for invalid nodes
-	if(pNode == 0) return false;
+    // check for invalid nodes
+    if(pNode == 0) return false;
 
-	// downcast to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // downcast to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// get internal max node
-	INode *pINode;
-	pINode = pMaxNode->GetINode();
+    // get internal max node
+    INode *pINode;
+    pINode = pMaxNode->GetINode();
 
-	// check for root node
-	if(pINode->IsRootNode()) return false;
+    // check for root node
+    if(pINode->IsRootNode()) return false;
 
-	// check for light node
-	ObjectState os;
-	os = pINode->EvalWorldState(0);
-	if(os.obj->ClassID() == Class_ID(LIGHT_CLASS_ID, 0)) return true;
-	if(os.obj->SuperClassID() == LIGHT_CLASS_ID) return true;
+    // check for light node
+    ObjectState os;
+    os = pINode->EvalWorldState(0);
+    if(os.obj->ClassID() == Class_ID(LIGHT_CLASS_ID, 0)) return true;
+    if(os.obj->SuperClassID() == LIGHT_CLASS_ID) return true;
 
-	return false;
+    return false;
 }
 
 //----------------------------------------------------------------------------//
@@ -885,26 +885,26 @@ CMaxInterface::IsLight(CBaseNode *pNode)
 
 bool CMaxInterface::IsMesh(CBaseNode *pNode)
 {
-	// check for invalid nodes
-	if(pNode == 0) return false;
+    // check for invalid nodes
+    if(pNode == 0) return false;
 
-	// downcast to a max node
-	CMaxNode *pMaxNode;
-	pMaxNode = dynamic_cast<CMaxNode *>(pNode);
+    // downcast to a max node
+    CMaxNode *pMaxNode;
+    pMaxNode = dynamic_cast<CMaxNode *>(pNode);
 
-	// get internal max node
-	INode *pINode;
-	pINode = pMaxNode->GetINode();
+    // get internal max node
+    INode *pINode;
+    pINode = pMaxNode->GetINode();
 
-	// check for root node
-	if(pINode->IsRootNode()) return false;
+    // check for root node
+    if(pINode->IsRootNode()) return false;
 
-	// check for mesh node
-	ObjectState os;
-	os = pINode->EvalWorldState(0);
-	if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID) return true;
+    // check for mesh node
+    ObjectState os;
+    os = pINode->EvalWorldState(0);
+    if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID) return true;
 
-	return false;
+    return false;
 }
 
 //----------------------------------------------------------------------------//
@@ -913,7 +913,7 @@ bool CMaxInterface::IsMesh(CBaseNode *pNode)
 
 DWORD WINAPI CMaxInterface::ProgressFunction(LPVOID arg)
 {
-	return 0;
+    return 0;
 }
 
 //----------------------------------------------------------------------------//
@@ -922,7 +922,7 @@ DWORD WINAPI CMaxInterface::ProgressFunction(LPVOID arg)
 
 void CMaxInterface::SetProgressInfo(int percentage)
 {
-	m_pInterface->ProgressUpdate(percentage);
+    m_pInterface->ProgressUpdate(percentage);
 }
 
 //----------------------------------------------------------------------------//
@@ -933,9 +933,9 @@ void CMaxInterface::StartProgressInfo(const std::string& strText)
 {
 #if defined(_UNICODE)
     std::wstring ws(strText.begin(), strText.end());
-	m_pInterface->ProgressStart(ws.c_str(), true, ProgressFunction, 0);
+    m_pInterface->ProgressStart(ws.c_str(), true, ProgressFunction, 0);
 #else
-	m_pInterface->ProgressStart(const_cast<char *>(strText.c_str()), true, ProgressFunction, 0);
+    m_pInterface->ProgressStart(const_cast<char *>(strText.c_str()), true, ProgressFunction, 0);
 #endif
 }
 
@@ -945,7 +945,7 @@ void CMaxInterface::StartProgressInfo(const std::string& strText)
 
 void CMaxInterface::StopProgressInfo()
 {
-	m_pInterface->ProgressEnd();
+    m_pInterface->ProgressEnd();
 }
 
 //----------------------------------------------------------------------------//
@@ -953,7 +953,7 @@ void CMaxInterface::StopProgressInfo()
 //----------------------------------------------------------------------------//
 int  CMaxInterface::GetNumNodesInTabNodeFromMaxscript(void)
 {
-	return m_TabNodeFromMaxScript.Count();
+    return m_TabNodeFromMaxScript.Count();
 }
 
 //----------------------------------------------------------------------------//
@@ -961,10 +961,10 @@ int  CMaxInterface::GetNumNodesInTabNodeFromMaxscript(void)
 //----------------------------------------------------------------------------//
 INode* CMaxInterface::GetNodeInTabNodeFromMaxscript(int idx)
 {
-	const int num = m_TabNodeFromMaxScript.Count();
-	if (idx <0 || idx >= num) return NULL;
-	
-	return m_TabNodeFromMaxScript[idx];
+    const int num = m_TabNodeFromMaxScript.Count();
+    if (idx <0 || idx >= num) return NULL;
+    
+    return m_TabNodeFromMaxScript[idx];
 }
 
 //----------------------------------------------------------------------------//
@@ -972,7 +972,7 @@ INode* CMaxInterface::GetNodeInTabNodeFromMaxscript(int idx)
 //----------------------------------------------------------------------------//
 StdMat* CMaxInterface::GetStdMatFromMaxscript()
 {
-	return m_MatFromMaxScript;
+    return m_MatFromMaxScript;
 }
 
 void
