@@ -531,7 +531,6 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<CalCoreAnimation, CalCoreAnimationPtr>("CoreAnimation")
         .def("scale", &CalCoreAnimation::scale)
         .def("fixup", &CalCoreAnimation::fixup)
-        .def("rotate", &CalCoreAnimation::rotate)
         .def_readwrite("duration", &CalCoreAnimation::duration)
         .def_readwrite("tracks", &CalCoreAnimation::tracks)
         ;

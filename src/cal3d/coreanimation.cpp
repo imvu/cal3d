@@ -73,17 +73,5 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton,cal3d::RotateTra
         }
         output.push_back(*i);
     }
-
     swap(tracks, output);
-}
-
-void CalCoreAnimation::rotateTranslate(cal3d::RotateTranslate &rt) {
-    for (auto i = tracks.begin(); i != tracks.end(); ++i) {
-        i->rotateTranslate(rt);
-    }
-}
-
-void CalCoreAnimation::rotate(CalQuaternion &rot) {
-    cal3d::RotateTranslate rt(rot, CalVector(0, 0, 0));
-    rotateTranslate(rt);
 }
