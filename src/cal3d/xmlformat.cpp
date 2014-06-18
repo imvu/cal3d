@@ -1,5 +1,6 @@
 #include <boost/optional.hpp>
 #include <rapidxml.hpp>
+#include <float.h>
 #include "cal3d/loader.h"
 #include "cal3d/error.h"
 #include "cal3d/vector.h"
@@ -84,7 +85,15 @@ static float get_float_attribute(rapidxml::xml_node<>* node, const char* name) {
     if (!attribute) {
         return 0.0f;
     }
-    return imvu_atof(attribute->value());
+
+    int isfinite = 0;
+    float val = imvu_atof(attribute->value());
+    #if defined(IMVU_WINDOWS)
+        isfinite = _finite(val);
+    #else
+        isfinite = isfinite(val);
+    #endif
+    return isfinite ? val : 0.0f;
 }
 
 static const char* get_string_attribute(rapidxml::xml_node<>* node, const char* name) {
