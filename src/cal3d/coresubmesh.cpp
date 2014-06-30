@@ -65,6 +65,17 @@ void CalCoreSubmesh::setTextureCoordinate(int vertexId, const TextureCoordinate&
     m_textureCoordinates[vertexId] = textureCoordinate;
 }
 
+bool CalCoreSubmesh::validateSubmesh() const {
+    size_t vertexCount = m_vertices.size(); 
+    size_t numFaces = m_faces.size();
+    for (size_t f = 0; f < numFaces; ++f) {
+        if (m_faces[f].vertexId[0] >= vertexCount || m_faces[f].vertexId[1] >= vertexCount || m_faces[f].vertexId[2] >= vertexCount) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool CalCoreSubmesh::hasTextureCoordinatesOutside0_1() const {
     for (auto i = m_textureCoordinates.begin(); i != m_textureCoordinates.end(); ++i) {
         if (

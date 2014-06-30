@@ -159,6 +159,7 @@ public:
     bool hasTextureCoordinates() const {
         return !m_textureCoordinates.empty();
     }
+    bool validateSubmesh() const;
     bool hasTextureCoordinatesOutside0_1() const;
     const VectorTextureCoordinate& getTextureCoordinates() const {
         return m_textureCoordinates;

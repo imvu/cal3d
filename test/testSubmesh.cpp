@@ -316,6 +316,60 @@ TEST(make_cube) {
     CHECK_EQUAL(submeshPtr->getFaces()[11], CalCoreSubmesh::Face(20, 23, 21));
 }
 
+TEST(make_cube_validate_submesh) {
+    CalCoreSubmeshPtr submeshPtr = MakeCube();
+    CHECK_EQUAL(submeshPtr->validateSubmesh(), true);
+}
+
+TEST(validate_submesh_is_failed) {
+    CalCoreSubmeshPtr cube(new CalCoreSubmesh(4, true, 2));
+    
+    const CalColor32 black = 0;
+
+        
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+
+    int curVertexId=0;
+    CalCoreSubmesh::TextureCoordinate texCoord;
+    CalCoreSubmesh::Vertex vertex;
+    //triangle face f0, f1 vertices
+    //v0
+    curVertexId = 0;
+    vertex.position = CalPoint4(0, 0, 1); 
+    vertex.normal = CalVector4(0, 0, 1); 
+    cube->addVertex(vertex, black, inf);    
+    texCoord.u = 0.0f;
+    texCoord.v = 0.0f;
+    cube->setTextureCoordinate(curVertexId, texCoord);
+    //v1
+    ++curVertexId;
+    vertex.position = CalPoint4(1,1,1);
+    cube->addVertex(vertex, black, inf);    
+    texCoord.u = 1.0f;
+    texCoord.v = 1.0f;    
+    cube->setTextureCoordinate(curVertexId,  texCoord);
+    //v2
+    ++curVertexId;
+    vertex.position = CalPoint4(0,1,1);
+    cube->addVertex(vertex, black, inf);   
+    texCoord.u = 0.0f;
+    texCoord.v = 1.0f;
+    cube->setTextureCoordinate(curVertexId,  texCoord);
+    //v3
+    ++curVertexId;
+    vertex.position = CalPoint4(1,0,1);
+    cube->addVertex(vertex, black, inf);
+    texCoord.u = 1.0f;
+    texCoord.v = 0.0f;
+    cube->setTextureCoordinate(curVertexId,  texCoord);
+
+    cube->addFace(CalCoreSubmesh::Face(0, 1, 5));
+    cube->addFace(CalCoreSubmesh::Face(0, 3, 1));
+    CHECK_EQUAL(cube->validateSubmesh(), false);
+}
+
 TEST(minimumVertexBufferSize_starts_at_0) {
     CalCoreSubmesh csm(1, false, 1);
     CHECK_EQUAL(0u, csm.getMinimumVertexBufferSize());
