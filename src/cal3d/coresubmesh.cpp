@@ -25,6 +25,7 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int 
     : coreMaterialThreadId(0)
     , m_currentVertexId(0)
     , m_vertices(vertexCount)
+    , m_influences_vector(vertexCount)
     , m_isStatic(false)
     , m_minimumVertexBufferSize(0)
 {
@@ -51,6 +52,7 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     r += ::sizeInBytes(m_faces);
     r += ::sizeInBytes(m_staticInfluenceSet);
     r += ::sizeInBytes(m_influences);
+    r += ::sizeInBytes(m_influences_vector);
     return r;
 }
 
@@ -137,6 +139,8 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
     inf[inf.size() - 1].lastInfluenceForThisVertex = 1;
 
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
+
+    m_influences_vector[vertexId].insert(m_influences_vector[vertexId].end(), inf.begin(), inf.end());
 }
 
 void CalCoreSubmesh::scale(float factor) {
@@ -666,5 +670,105 @@ void CalCoreSubmesh::sortTris(CalCoreSubmesh& submeshTo) {
 #endif
 
     }
+}
+
+
+CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc) {
+    typedef std::map<int, int> VertexMap;
+    VertexMap vertexMapper;
+    int vIdx = 0;
+    int numTris;
+    for (std::set<int>::iterator it = verticesSetThisSplit.begin(); it != verticesSetThisSplit.end(); ++it) {
+        vertexMapper[*it] = vIdx++;
+    }
+    numTris = trianglesThisSplit.size();
+    for (int x = 0; x < numTris; ++x) {
+        if (verticesSetThisSplit.find(trianglesThisSplit[x].vertexId[0]) == verticesSetThisSplit.end()
+            || verticesSetThisSplit.find(trianglesThisSplit[x].vertexId[1]) == verticesSetThisSplit.end()
+            || verticesSetThisSplit.find(trianglesThisSplit[x].vertexId[2]) == verticesSetThisSplit.end()) {
+            rc = SplitMeshBoneLimitVtxTrglMismatch;
+            return NULL;
+        }
+        trianglesThisSplit[x].vertexId[0] = vertexMapper[trianglesThisSplit[x].vertexId[0]];
+        trianglesThisSplit[x].vertexId[1] = vertexMapper[trianglesThisSplit[x].vertexId[1]];
+        trianglesThisSplit[x].vertexId[2] = vertexMapper[trianglesThisSplit[x].vertexId[2]];
+    }
+
+    CalCoreSubmesh* newSubmesh = new CalCoreSubmesh(verticesSetThisSplit.size(), m_textureCoordinates.size() > 0, numTris); 
+
+    vIdx = 0;
+    for (std::set<int>::iterator it = verticesSetThisSplit.begin(); it != verticesSetThisSplit.end(); ++it) {
+        int v = *it;
+        struct Vertex originalVertex = m_vertices[v];
+        newSubmesh->addVertex(originalVertex, m_vertexColors[v], m_influences_vector[v]);
+        newSubmesh->setTextureCoordinate(vIdx, m_textureCoordinates[v]);
+        ++vIdx;
+    }
+    for (int x = 0; x < numTris; ++x) {
+        newSubmesh->addFace(trianglesThisSplit[x]);
+    }
+    newSubmesh->coreMaterialThreadId = coreMaterialThreadId;
+    rc = SplitMeshBoneLimitOK;
+    return newSubmesh;
+}
+
+void CalCoreSubmesh::getBoneIndicesFromFace(std::set<int> &bSet, Face& t) {
+        for (int i = 0; i < 3; ++i) {
+            InfluenceVector& iv = m_influences_vector[t.vertexId[i]];
+            InfluenceVector::size_type iv_sz = iv.size();
+            for (InfluenceVector::size_type indx = 0; indx < iv_sz; ++indx) {
+                bSet.insert(iv[indx].boneId);
+            }
+        }
+}
+
+SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit) {
+    std::set<int> boneIndicesThisMesh_New, boneIndicesTemp;
+    std::set<int> boneIndicesThisMesh;
+    VerticesSet verticesForThisSplit;
+    std::vector<Face> trianglesForThisSplit;
+    SplitMeshBasedOnBoneLimitType rc;
+    CalCoreSubmesh *newSubmesh;
+
+    VectorFace::size_type sz = m_faces.size();
+    for (unsigned i = 0; i < sz; i++) {
+        Face& t = m_faces[i];
+        getBoneIndicesFromFace(boneIndicesTemp, t);
+        boneIndicesThisMesh_New.insert(boneIndicesTemp.begin(), boneIndicesTemp.end());
+
+        if (boneIndicesThisMesh_New.size() > (unsigned)boneLimit) {
+            newSubmesh = emitSubmesh(verticesForThisSplit, trianglesForThisSplit, rc);
+            if (rc != SplitMeshBoneLimitOK) {
+                return rc;
+            }
+            boneIndicesThisMesh_New.clear();
+            boneIndicesThisMesh_New.insert(boneIndicesTemp.begin(), boneIndicesTemp.end());
+            verticesForThisSplit.clear();
+            trianglesForThisSplit.clear();
+            CalCoreSubmeshPtr newSubmeshSP(newSubmesh);
+            newSubmeshes.push_back(newSubmeshSP);
+        }
+        verticesForThisSplit.insert(t.vertexId[0]);
+        verticesForThisSplit.insert(t.vertexId[1]);
+        verticesForThisSplit.insert(t.vertexId[2]);
+        trianglesForThisSplit.push_back(t);
+        boneIndicesTemp.clear();
+    }
+    if (!trianglesForThisSplit.empty()) {
+        if (verticesForThisSplit.empty()) {
+            return SplitMeshBoneLimitEmptyVertices;
+        }
+        newSubmesh = emitSubmesh(verticesForThisSplit, trianglesForThisSplit, rc);
+        if (rc != SplitMeshBoneLimitOK) {
+            return rc;
+        }
+        verticesForThisSplit.clear();
+        trianglesForThisSplit.clear();
+        boneIndicesThisMesh_New.clear();
+        CalCoreSubmeshPtr newSubmeshSP(newSubmesh);
+        newSubmeshes.push_back(newSubmeshSP);
+    }
+
+    return SplitMeshBoneLimitOK;
 }
 

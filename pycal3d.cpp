@@ -471,6 +471,13 @@ BOOST_PYTHON_MODULE(_cal3d)
         .export_values()
         ;
 
+    enum_<SplitMeshBasedOnBoneLimitType>("SplitMeshBoneLimitType")
+        .value("OK", SplitMeshBoneLimitOK)
+        .value("VertexTriangleMismatch", SplitMeshBoneLimitVtxTrglMismatch)
+        .value("EmptyVertices", SplitMeshBoneLimitEmptyVertices)
+        .export_values()
+        ;
+
     class_<CalCoreMorphTarget, CalCoreMorphTargetPtr, boost::noncopyable>("CoreMorphTarget", no_init)
         .def("__init__", make_constructor(&makeMorphTarget))
         .def_readonly("name", &CalCoreMorphTarget::name)
@@ -480,7 +487,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         ;
     
     exportVector<CalCoreMorphTargetPtr>("MorphTargetVector");
-    
+
     class_<CalCoreSubmesh, CalCoreSubmeshPtr, boost::noncopyable>("CoreSubmesh", no_init)
         .def(init<int, int, int>())
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
@@ -504,6 +511,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("duplicateTriangles", &CalCoreSubmesh::duplicateTriangles)
         .def("sortTris", &CalCoreSubmesh::sortTris)
         .def("isStatic", &CalCoreSubmesh::isStatic)
+        .def("splitMeshBasedOnBoneLimit", &CalCoreSubmesh::splitMeshBasedOnBoneLimit)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");

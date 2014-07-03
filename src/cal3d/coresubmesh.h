@@ -33,6 +33,12 @@ enum CalMorphTargetType {
     CalMorphTargetTypeExclusive
 };
 
+enum SplitMeshBasedOnBoneLimitType {
+    SplitMeshBoneLimitOK,
+    SplitMeshBoneLimitVtxTrglMismatch,
+    SplitMeshBoneLimitEmptyVertices
+};
+
 class CAL3D_API CalCoreSubmesh {
 public:
     // TODO: replace with Vec2f
@@ -132,10 +138,13 @@ public:
     };
 
     typedef std::vector<CalCoreMorphTargetPtr> MorphTargetArray;
+    typedef std::vector<boost::shared_ptr<CalCoreSubmesh>> CalCoreSubmeshPtrVector;
     typedef std::vector<Face> VectorFace;
     typedef std::vector<TextureCoordinate> VectorTextureCoordinate;
     typedef cal3d::SSEArray<Vertex> VectorVertex;
     typedef std::vector<Influence> InfluenceVector;
+    typedef std::vector<InfluenceVector> InfluenceVectorVector;
+    typedef std::set<int> VerticesSet;
 
     CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount);
 
@@ -205,6 +214,14 @@ public:
 
     void sortTris(CalCoreSubmesh&);
 
+    CalCoreSubmesh* emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc); 
+    
+    void getBoneIndicesFromFace(std::set<int> &bSet, Face& t);
+
+    /*The function is called by Source.imvu.assetserver.meshprocesstest.py for performance improvement*/
+    SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit);
+
+
 private:
     unsigned m_currentVertexId;
 
@@ -221,6 +238,7 @@ private:
     InfluenceSet m_staticInfluenceSet;
 
     InfluenceVector m_influences;
+    InfluenceVectorVector m_influences_vector;
     CalAABox m_boundingVolume;
 
     VectorFace m_faces;
