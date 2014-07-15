@@ -17,6 +17,7 @@
 #include "cal3d/coremorphtarget.h"
 #include "cal3d/vector4.h"
 #include "cal3d/transform.h"
+#include "cal3d/forsythtriangleorderoptimizer.h"
 
 #include <iostream>
 #include <cstring>
@@ -772,3 +773,17 @@ SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreS
     return SplitMeshBoneLimitOK;
 }
 
+void CalCoreSubmesh::optimizeVertexCache() {
+    if (m_faces.empty()) {
+        return;
+    }
+
+    std::vector<Face> newFaces(m_faces.size());
+
+    Forsyth::OptimizeFaces(
+        m_faces[0].vertexId,
+        3 * m_faces.size(),
+        m_vertices.size(), 
+        newFaces[0].vertexId,
+        32);
+}

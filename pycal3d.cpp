@@ -512,6 +512,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("sortTris", &CalCoreSubmesh::sortTris)
         .def("isStatic", &CalCoreSubmesh::isStatic)
         .def("splitMeshBasedOnBoneLimit", &CalCoreSubmesh::splitMeshBasedOnBoneLimit)
+        .def("optimizeVertexCache", &CalCoreSubmesh::optimizeVertexCache)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");

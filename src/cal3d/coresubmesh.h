@@ -211,16 +211,15 @@ public:
     }
     
     void duplicateTriangles();
-
     void sortTris(CalCoreSubmesh&);
 
-    CalCoreSubmesh* emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc); 
-    
+    CalCoreSubmesh* emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
     void getBoneIndicesFromFace(std::set<int> &bSet, Face& t);
 
     /*The function is called by Source.imvu.assetserver.meshprocesstest.py for performance improvement*/
     SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit);
 
+    void optimizeVertexCache();
 
 private:
     unsigned m_currentVertexId;

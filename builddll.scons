@@ -35,6 +35,7 @@ sources = Split('''
     transform.cpp
     vector.cpp
     xmlformat.cpp
+    forsythtriangleorderoptimizer.cpp
 ''')
 
 sources = ['src/cal3d/' + s for s in sources]
