@@ -380,3 +380,58 @@ TEST(minimumVertexBufferSize_emcompasses_face_range) {
     csm.addFace(CalCoreSubmesh::Face(1, 3, 2));
     CHECK_EQUAL(4u, csm.getMinimumVertexBufferSize());
 }
+
+CalCoreSubmesh::Vertex makeVertex(int id) {
+    CalCoreSubmesh::Vertex v;
+    v.position = CalPoint4(id, id, id);
+    v.normal = CalVector4(id, id, id);
+    return v;
+}
+
+TEST(renumber_renumberIndices_without_texcoords) {
+    CalCoreSubmesh csm(4, false, 2);
+    csm.addFace(CalCoreSubmesh::Face(3, 2, 1));
+    csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
+
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].weight = 1.0f;
+
+    inf[0].boneId = 0;
+    csm.addVertex(makeVertex(0), 0, inf);
+    inf[0].boneId = 1;
+    csm.addVertex(makeVertex(1), 1, inf);
+    inf[0].boneId = 2;
+    csm.addVertex(makeVertex(2), 2, inf);
+    inf[0].boneId = 3;
+    csm.addVertex(makeVertex(3), 3, inf);
+
+    csm.renumberIndices();
+
+    CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
+    CHECK_EQUAL(CalCoreSubmesh::Face(1, 3, 2), csm.getFaces()[1]);
+
+    CHECK_EQUAL(makeVertex(3), csm.getVectorVertex()[0]);
+    CHECK_EQUAL(makeVertex(2), csm.getVectorVertex()[1]);
+    CHECK_EQUAL(makeVertex(1), csm.getVectorVertex()[2]);
+    CHECK_EQUAL(makeVertex(0), csm.getVectorVertex()[3]);
+
+    CHECK_EQUAL(CalColor32(3), csm.getVertexColors()[0]);
+    CHECK_EQUAL(CalColor32(2), csm.getVertexColors()[1]);
+    CHECK_EQUAL(CalColor32(1), csm.getVertexColors()[2]);
+    CHECK_EQUAL(CalColor32(0), csm.getVertexColors()[3]);
+
+    CHECK_EQUAL(3u, csm.getInfluences()[0].boneId);
+    CHECK_EQUAL(2u, csm.getInfluences()[1].boneId);
+    CHECK_EQUAL(1u, csm.getInfluences()[2].boneId);
+    CHECK_EQUAL(0u, csm.getInfluences()[3].boneId);
+}
+
+TEST(renumber_vertices_with_texcoords) {
+    CalCoreSubmesh csm(6, true, 2);
+}
+
+TEST(renumber_morphs) {
+}
+
+TEST(ignore_unused_vertices) {
+}

@@ -124,6 +124,10 @@ public:
     struct Vertex {
         CalPoint4 position;
         CalVector4 normal;
+
+        bool operator==(const Vertex& rhs) const {
+            return position == rhs.position && normal == rhs.normal;
+        }
     }
     CAL3D_ALIGN_TAIL(16);
 
@@ -218,6 +222,7 @@ public:
     SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit);
 
     void optimizeVertexCache();
+    void renumberIndices();
 
 private:
     unsigned m_currentVertexId;
@@ -239,21 +244,6 @@ private:
 
     VectorFace m_faces;
     size_t m_minimumVertexBufferSize;
-
-    struct FaceSortRef {
-        float fscore;
-        unsigned short face;
-    };
-
-    struct FaceSort {
-        unsigned short ix[3];       //  the face
-        unsigned short nfront;      //  how many faces I am in front of
-        FaceSortRef *infront;       //  refs to faces I am in front of, with scores
-        CalVector fnorm;            //  the face normal
-        float fdist;                //  the face distance from origin in the direction of the normal
-        float score;                //  the current cost of this face (sum of other faces behind)
-        float area;
-    };
 
     void addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVertexOffset, float normalMul);
 };

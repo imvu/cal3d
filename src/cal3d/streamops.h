@@ -9,6 +9,7 @@
 #include <cal3d/coretrack.h>
 #include <cal3d/bonetransform.h>
 #include <cal3d/transform.h>
+#include <cal3d/coresubmesh.h>
 
 inline std::ostream& operator<<(std::ostream& os, const CalVector4& v) {
     return os << "CalVector4(" << v.x << "," << v.y << "," << v.z << "," << v.w << ")";
@@ -62,4 +63,8 @@ inline std::ostream& operator<<(std::ostream& os, const CalCoreAnimation& animat
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreTrack& track) {
     return os << "CalCoreTrack(" << track.coreBoneId << ", " << track.keyframes << ")";
+}
+
+inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Vertex& vertex) {
+    return os << "Vertex(" << vertex.position << ", " << vertex.normal << ")";
 }

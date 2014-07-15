@@ -517,6 +517,21 @@ void CalCoreSubmesh::duplicateTriangles() {
     std::swap(m_faces, newFaces);
 }
 
+struct FaceSortRef {
+    float fscore;
+    unsigned short face;
+};
+
+struct FaceSort {
+    unsigned short ix[3];       //  the face
+    unsigned short nfront;      //  how many faces I am in front of
+    FaceSortRef *infront;       //  refs to faces I am in front of, with scores
+    CalVector fnorm;            //  the face normal
+    float fdist;                //  the face distance from origin in the direction of the normal
+    float score;                //  the current cost of this face (sum of other faces behind)
+    float area;
+};
+
 // http://www.mindcontrol.org/~hplus/graphics/sort-alpha.html
 void CalCoreSubmesh::sortTris(CalCoreSubmesh& submeshTo) {
     size_t numVertices = getVertexCount();
@@ -684,6 +699,20 @@ static InfluenceVectorVector extractInfluenceVector(const CalCoreSubmesh::Influe
     }
     return result;
 }
+static CalCoreSubmesh::InfluenceVector generateInfluenceVector(const InfluenceVectorVector& iv) {
+    CalCoreSubmesh::InfluenceVector result;
+    for (auto influences = iv.begin(); influences != iv.end(); ++influences) {
+        for (size_t i = 0; i + 1 < influences->size(); ++i) {
+            auto j = (*influences)[i];
+            j.lastInfluenceForThisVertex = false;
+            result.push_back(j);
+        }
+        auto j = influences->back();
+        j.lastInfluenceForThisVertex = true;
+        result.push_back(j);
+    }
+    return result;
+}
 
 CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc) {
     auto influencesVector = extractInfluenceVector(m_influences);
@@ -711,7 +740,7 @@ CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, 
     CalCoreSubmesh* newSubmesh = new CalCoreSubmesh(verticesSetThisSplit.size(), m_textureCoordinates.size() > 0, numTris); 
 
     vIdx = 0;
-    for (std::set<int>::iterator it = verticesSetThisSplit.begin(); it != verticesSetThisSplit.end(); ++it) {
+    for (auto it = verticesSetThisSplit.begin(); it != verticesSetThisSplit.end(); ++it) {
         int v = *it;
         struct Vertex originalVertex = m_vertices[v];
         newSubmesh->addVertex(originalVertex, m_vertexColors[v], influencesVector[v]);
@@ -803,4 +832,64 @@ void CalCoreSubmesh::optimizeVertexCache() {
         32);
 
     m_faces.swap(newFaces);
+}
+
+void CalCoreSubmesh::renumberIndices() {
+    // just because operator[] is invalid on an empty vector. in C++11
+    // we could use .data().
+    if (m_faces.empty()) {
+        return;
+    }
+
+    std::vector<Face> newFaces(m_faces.size());
+    size_t indexCount = m_faces.size() * 3;
+
+    const CalIndex UNKNOWN = -1;
+
+    std::vector<CalIndex> mapping(indexCount, UNKNOWN); // old -> new
+    const CalIndex* oldIndices = m_faces[0].vertexId;
+    CalIndex* newIndices = newFaces[0].vertexId;
+    CalIndex output = 0;
+
+    for (size_t i = 0; i < indexCount; ++i) {
+        CalIndex oldIndex = oldIndices[i];
+        CalIndex newIndex = mapping[oldIndex];
+        if (newIndex == UNKNOWN) {
+            newIndex = output++;
+            mapping[oldIndex] = newIndex;
+        }
+        *newIndices++ = newIndex;
+    }
+
+    m_faces.swap(newFaces);
+
+    // now that the new indices are in place, reorder the vertices
+
+    auto oldInfluences = extractInfluenceVector(m_influences);
+    assert(m_vertices.size() == m_vertexColors.size());
+    assert(m_vertices.size() == oldInfluences.size());
+
+    VectorVertex newVertices(m_vertices.size());
+    std::vector<CalColor32> newColors(m_vertexColors.size());
+    InfluenceVectorVector newInfluences(m_vertices.size());
+
+    for (size_t oldIndex = 0; oldIndex < mapping.size(); ++oldIndex) {
+        CalIndex newIndex = mapping[oldIndex];
+        if (newIndex == UNKNOWN) {
+            continue;
+        }
+
+        newVertices[newIndex] = m_vertices[oldIndex];
+        newColors[newIndex] = m_vertexColors[oldIndex];
+        newInfluences[newIndex] = oldInfluences[oldIndex];
+    }
+
+    m_vertices.swap(newVertices);
+    m_vertexColors.swap(newColors);
+    m_influences = generateInfluenceVector(newInfluences);
+
+        //m_textureCoordinates
+
+        // morphs
+
 }

@@ -105,6 +105,12 @@ namespace cal3d {
         T* data() { return _data; }
         const T* data() const { return _data; }
 
+        void swap(SSEArray& that) {
+            std::swap(_data, that._data);
+            std::swap(_size, that._size);
+            std::swap(_capacity, that._capacity);
+        }
+
     private:
         T* _data;
         size_t _size;
