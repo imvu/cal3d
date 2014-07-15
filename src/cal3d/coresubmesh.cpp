@@ -26,7 +26,6 @@ CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int 
     : coreMaterialThreadId(0)
     , m_currentVertexId(0)
     , m_vertices(vertexCount)
-    , m_influences_vector(vertexCount)
     , m_isStatic(false)
     , m_minimumVertexBufferSize(0)
 {
@@ -53,7 +52,6 @@ size_t CalCoreSubmesh::sizeInBytes() const {
     r += ::sizeInBytes(m_faces);
     r += ::sizeInBytes(m_staticInfluenceSet);
     r += ::sizeInBytes(m_influences);
-    r += ::sizeInBytes(m_influences_vector);
     return r;
 }
 
@@ -140,8 +138,6 @@ void CalCoreSubmesh::addVertex(const Vertex& vertex, CalColor32 vertexColor, con
     inf[inf.size() - 1].lastInfluenceForThisVertex = 1;
 
     m_influences.insert(m_influences.end(), inf.begin(), inf.end());
-
-    m_influences_vector[vertexId].insert(m_influences_vector[vertexId].end(), inf.begin(), inf.end());
 }
 
 void CalCoreSubmesh::scale(float factor) {
@@ -673,8 +669,25 @@ void CalCoreSubmesh::sortTris(CalCoreSubmesh& submeshTo) {
     }
 }
 
+typedef std::vector<std::vector<CalCoreSubmesh::Influence>> InfluenceVectorVector;
+
+static InfluenceVectorVector extractInfluenceVector(const CalCoreSubmesh::InfluenceVector& iv) {
+    InfluenceVectorVector result;
+    std::vector<CalCoreSubmesh::Influence> current;
+    for (size_t i = 0; i < iv.size(); ++i) {
+        auto& inf = iv[i];
+        current.push_back(inf);
+        if (inf.lastInfluenceForThisVertex) {
+            result.push_back(current);
+            current.clear();
+        }
+    }
+    return result;
+}
 
 CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc) {
+    auto influencesVector = extractInfluenceVector(m_influences);
+
     typedef std::map<int, int> VertexMap;
     VertexMap vertexMapper;
     int vIdx = 0;
@@ -701,7 +714,7 @@ CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, 
     for (std::set<int>::iterator it = verticesSetThisSplit.begin(); it != verticesSetThisSplit.end(); ++it) {
         int v = *it;
         struct Vertex originalVertex = m_vertices[v];
-        newSubmesh->addVertex(originalVertex, m_vertexColors[v], m_influences_vector[v]);
+        newSubmesh->addVertex(originalVertex, m_vertexColors[v], influencesVector[v]);
         newSubmesh->setTextureCoordinate(vIdx, m_textureCoordinates[v]);
         ++vIdx;
     }
@@ -713,28 +726,30 @@ CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, 
     return newSubmesh;
 }
 
-void CalCoreSubmesh::getBoneIndicesFromFace(std::set<int> &bSet, Face& t) {
-        for (int i = 0; i < 3; ++i) {
-            InfluenceVector& iv = m_influences_vector[t.vertexId[i]];
-            InfluenceVector::size_type iv_sz = iv.size();
-            for (InfluenceVector::size_type indx = 0; indx < iv_sz; ++indx) {
-                bSet.insert(iv[indx].boneId);
-            }
+static void getBoneIndicesFromFace(InfluenceVectorVector& influences, std::set<int>& bSet, CalCoreSubmesh::Face& t) {
+    for (int i = 0; i < 3; ++i) {
+        auto& iv = influences[t.vertexId[i]];
+        for (size_t indx = 0; indx < iv.size(); ++indx) {
+            bSet.insert(iv[indx].boneId);
         }
+    }
 }
 
 SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit) {
-    std::set<int> boneIndicesThisMesh_New, boneIndicesTemp;
+    std::set<int> boneIndicesThisMesh_New;
+    std::set<int> boneIndicesTemp;
     std::set<int> boneIndicesThisMesh;
     VerticesSet verticesForThisSplit;
     std::vector<Face> trianglesForThisSplit;
     SplitMeshBasedOnBoneLimitType rc;
     CalCoreSubmesh *newSubmesh;
 
+    auto influencesVector = extractInfluenceVector(m_influences);
+
     VectorFace::size_type sz = m_faces.size();
     for (unsigned i = 0; i < sz; i++) {
         Face& t = m_faces[i];
-        getBoneIndicesFromFace(boneIndicesTemp, t);
+        getBoneIndicesFromFace(influencesVector, boneIndicesTemp, t);
         boneIndicesThisMesh_New.insert(boneIndicesTemp.begin(), boneIndicesTemp.end());
 
         if (boneIndicesThisMesh_New.size() > (unsigned)boneLimit) {
