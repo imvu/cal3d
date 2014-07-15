@@ -786,4 +786,6 @@ void CalCoreSubmesh::optimizeVertexCache() {
         m_vertices.size(), 
         newFaces[0].vertexId,
         32);
+
+    m_faces.swap(newFaces);
 }
