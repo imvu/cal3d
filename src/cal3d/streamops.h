@@ -68,3 +68,7 @@ inline std::ostream& operator<<(std::ostream& os, const CalCoreTrack& track) {
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Vertex& vertex) {
     return os << "Vertex(" << vertex.position << ", " << vertex.normal << ")";
 }
+
+inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::TextureCoordinate& tc) {
+    return os << "TextureCoordinate(" << tc.u << ", " << tc.v << ")";
+}

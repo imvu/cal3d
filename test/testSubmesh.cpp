@@ -426,11 +426,59 @@ TEST(renumber_renumberIndices_without_texcoords) {
     CHECK_EQUAL(0u, csm.getInfluences()[3].boneId);
 }
 
+CalCoreSubmesh::TextureCoordinate makeTextureCoordinate(int i) {
+    return CalCoreSubmesh::TextureCoordinate(i, i);
+}
+
 TEST(renumber_vertices_with_texcoords) {
-    CalCoreSubmesh csm(6, true, 2);
+    CalCoreSubmesh csm(4, true, 2);
+    csm.addFace(CalCoreSubmesh::Face(3, 2, 1));
+    csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
+
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].weight = 1.0f;
+    inf[0].boneId = 0;
+
+    csm.addVertex(makeVertex(0), 0, inf);
+    csm.setTextureCoordinate(0, makeTextureCoordinate(0));
+    csm.addVertex(makeVertex(1), 0, inf);
+    csm.setTextureCoordinate(1, makeTextureCoordinate(1));
+    csm.addVertex(makeVertex(2), 0, inf);
+    csm.setTextureCoordinate(2, makeTextureCoordinate(2));
+    csm.addVertex(makeVertex(3), 0, inf);
+    csm.setTextureCoordinate(3, makeTextureCoordinate(3));
+
+    csm.renumberIndices();
+
+    CHECK_EQUAL(makeTextureCoordinate(3), csm.getTextureCoordinates()[0]);
+    CHECK_EQUAL(makeTextureCoordinate(2), csm.getTextureCoordinates()[1]);
+    CHECK_EQUAL(makeTextureCoordinate(1), csm.getTextureCoordinates()[2]);
+    CHECK_EQUAL(makeTextureCoordinate(0), csm.getTextureCoordinates()[3]);
 }
 
 TEST(renumber_morphs) {
+    CalCoreSubmesh csm(3, false, 1);
+    csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
+
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].weight = 1.0f;
+
+    inf[0].boneId = 0;
+    csm.addVertex(makeVertex(0), 0, inf);
+    inf[0].boneId = 1;
+    csm.addVertex(makeVertex(1), 1, inf);
+    inf[0].boneId = 2;
+    csm.addVertex(makeVertex(2), 2, inf);
+
+    CalCoreMorphTarget::VertexOffsetArray offsets;
+    offsets.push_back(VertexOffset(2, CalPoint4(), CalVector4()));
+    csm.addMorphTarget(CalCoreMorphTargetPtr(new CalCoreMorphTarget("morph", 3, offsets)));
+
+    csm.renumberIndices();
+
+    CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
+
+    CHECK_EQUAL(0u, csm.getMorphTargets()[0]->vertexOffsets[0].vertexId);
 }
 
 TEST(ignore_unused_vertices) {

@@ -849,13 +849,13 @@ void CalCoreSubmesh::renumberIndices() {
     std::vector<CalIndex> mapping(indexCount, UNKNOWN); // old -> new
     const CalIndex* oldIndices = m_faces[0].vertexId;
     CalIndex* newIndices = newFaces[0].vertexId;
-    CalIndex output = 0;
+    CalIndex outputVertexCount = 0;
 
     for (size_t i = 0; i < indexCount; ++i) {
         CalIndex oldIndex = oldIndices[i];
         CalIndex newIndex = mapping[oldIndex];
         if (newIndex == UNKNOWN) {
-            newIndex = output++;
+            newIndex = outputVertexCount++;
             mapping[oldIndex] = newIndex;
         }
         *newIndices++ = newIndex;
@@ -869,9 +869,10 @@ void CalCoreSubmesh::renumberIndices() {
     assert(m_vertices.size() == m_vertexColors.size());
     assert(m_vertices.size() == oldInfluences.size());
 
-    VectorVertex newVertices(m_vertices.size());
-    std::vector<CalColor32> newColors(m_vertexColors.size());
-    InfluenceVectorVector newInfluences(m_vertices.size());
+    VectorVertex newVertices(outputVertexCount);
+    std::vector<CalColor32> newColors(outputVertexCount);
+    InfluenceVectorVector newInfluences(outputVertexCount);
+    VectorTextureCoordinate newTexCoords(hasTextureCoordinates() ? outputVertexCount : 0); // may be empty
 
     for (size_t oldIndex = 0; oldIndex < mapping.size(); ++oldIndex) {
         CalIndex newIndex = mapping[oldIndex];
@@ -882,14 +883,25 @@ void CalCoreSubmesh::renumberIndices() {
         newVertices[newIndex] = m_vertices[oldIndex];
         newColors[newIndex] = m_vertexColors[oldIndex];
         newInfluences[newIndex] = oldInfluences[oldIndex];
+        if (!newTexCoords.empty()) {
+            newTexCoords[newIndex] = m_textureCoordinates[oldIndex];
+        }
+    }
+
+    MorphTargetArray newMorphTargets;
+
+    for (size_t i = 0; i < m_morphTargets.size(); ++i) {
+        const auto& mt = m_morphTargets[i];
+        CalCoreMorphTarget::VertexOffsetArray newOffsets;
+        for (auto vo = mt->vertexOffsets.begin(); vo != mt->vertexOffsets.end(); ++vo) {
+            newOffsets.push_back(VertexOffset(mapping[vo->vertexId], vo->position, vo->normal));
+        }
+        newMorphTargets.push_back(CalCoreMorphTargetPtr(new CalCoreMorphTarget(mt->name, m_vertices.size(), newOffsets)));
     }
 
     m_vertices.swap(newVertices);
     m_vertexColors.swap(newColors);
     m_influences = generateInfluenceVector(newInfluences);
-
-        //m_textureCoordinates
-
-        // morphs
-
+    m_textureCoordinates.swap(newTexCoords);
+    m_morphTargets.swap(newMorphTargets);
 }
