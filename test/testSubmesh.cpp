@@ -477,9 +477,29 @@ TEST(renumber_morphs) {
     csm.renumberIndices();
 
     CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
-
     CHECK_EQUAL(0u, csm.getMorphTargets()[0]->vertexOffsets[0].vertexId);
 }
 
-TEST(ignore_unused_vertices) {
+TEST(drop_morph_offsets_for_unused_vertices) {
+    CalCoreSubmesh csm(4, false, 1);
+    csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
+
+    std::vector<CalCoreSubmesh::Influence> inf(1);
+    inf[0].boneId = 0;
+    inf[0].weight = 1.0f;
+
+    csm.addVertex(makeVertex(0), 0, inf);
+    csm.addVertex(makeVertex(1), 1, inf);
+    csm.addVertex(makeVertex(2), 2, inf);
+    csm.addVertex(makeVertex(3), 3, inf);
+
+    CalCoreMorphTarget::VertexOffsetArray offsets;
+    offsets.push_back(VertexOffset(3, CalPoint4(), CalVector4()));
+    csm.addMorphTarget(CalCoreMorphTargetPtr(new CalCoreMorphTarget("morph", csm.getVertexCount(), offsets)));
+
+    csm.renumberIndices();
+
+    CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
+    CHECK_EQUAL(3u, csm.getVectorVertex().size());
+    CHECK_EQUAL(0u, csm.getMorphTargets()[0]->vertexOffsets.size());
 }

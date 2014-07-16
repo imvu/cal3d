@@ -846,7 +846,7 @@ void CalCoreSubmesh::renumberIndices() {
 
     const CalIndex UNKNOWN = -1;
 
-    std::vector<CalIndex> mapping(indexCount, UNKNOWN); // old -> new
+    std::vector<CalIndex> mapping(m_vertices.size(), UNKNOWN); // old -> new
     const CalIndex* oldIndices = m_faces[0].vertexId;
     CalIndex* newIndices = newFaces[0].vertexId;
     CalIndex outputVertexCount = 0;
@@ -894,9 +894,14 @@ void CalCoreSubmesh::renumberIndices() {
         const auto& mt = m_morphTargets[i];
         CalCoreMorphTarget::VertexOffsetArray newOffsets;
         for (auto vo = mt->vertexOffsets.begin(); vo != mt->vertexOffsets.end(); ++vo) {
-            newOffsets.push_back(VertexOffset(mapping[vo->vertexId], vo->position, vo->normal));
+            printf("oldIndex: %u\n", CalIndex(vo->vertexId));
+            CalIndex newIndex = mapping[vo->vertexId];
+            printf("newIndex: %u\n", newIndex);
+            if (UNKNOWN != newIndex) {
+                newOffsets.push_back(VertexOffset(newIndex, vo->position, vo->normal));
+            }
         }
-        newMorphTargets.push_back(CalCoreMorphTargetPtr(new CalCoreMorphTarget(mt->name, m_vertices.size(), newOffsets)));
+        newMorphTargets.push_back(CalCoreMorphTargetPtr(new CalCoreMorphTarget(mt->name, newVertices.size(), newOffsets)));
     }
 
     m_vertices.swap(newVertices);
