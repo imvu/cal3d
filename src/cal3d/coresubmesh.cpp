@@ -894,9 +894,7 @@ void CalCoreSubmesh::renumberIndices() {
         const auto& mt = m_morphTargets[i];
         CalCoreMorphTarget::VertexOffsetArray newOffsets;
         for (auto vo = mt->vertexOffsets.begin(); vo != mt->vertexOffsets.end(); ++vo) {
-            printf("oldIndex: %u\n", CalIndex(vo->vertexId));
             CalIndex newIndex = mapping[vo->vertexId];
-            printf("newIndex: %u\n", newIndex);
             if (UNKNOWN != newIndex) {
                 newOffsets.push_back(VertexOffset(newIndex, vo->position, vo->normal));
             }
