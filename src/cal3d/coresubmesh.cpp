@@ -907,4 +907,6 @@ void CalCoreSubmesh::renumberIndices() {
     m_influences = generateInfluenceVector(newInfluences);
     m_textureCoordinates.swap(newTexCoords);
     m_morphTargets.swap(newMorphTargets);
+
+    m_minimumVertexBufferSize = outputVertexCount;
 }
