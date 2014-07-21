@@ -216,10 +216,10 @@ public:
     void duplicateTriangles();
     void sortTris(CalCoreSubmesh&);
 
-    CalCoreSubmesh* emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
+    boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
     /*The function is called by Source.imvu.assetserver.meshprocesstest.py for performance improvement*/
-    SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit);
+    SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, size_t boneLimit);
 
     void optimizeVertexCache();
     void renumberIndices();

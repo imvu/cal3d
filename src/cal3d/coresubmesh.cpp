@@ -714,7 +714,7 @@ static CalCoreSubmesh::InfluenceVector generateInfluenceVector(const InfluenceVe
     return result;
 }
 
-CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc) {
+CalCoreSubmeshPtr CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc) {
     auto influencesVector = extractInfluenceVector(m_influences);
 
     typedef std::map<int, int> VertexMap;
@@ -730,14 +730,15 @@ CalCoreSubmesh* CalCoreSubmesh::emitSubmesh(VerticesSet & verticesSetThisSplit, 
             || verticesSetThisSplit.find(trianglesThisSplit[x].vertexId[1]) == verticesSetThisSplit.end()
             || verticesSetThisSplit.find(trianglesThisSplit[x].vertexId[2]) == verticesSetThisSplit.end()) {
             rc = SplitMeshBoneLimitVtxTrglMismatch;
-            return NULL;
+            CalCoreSubmeshPtr newSubmesh;
+            return newSubmesh;
         }
         trianglesThisSplit[x].vertexId[0] = vertexMapper[trianglesThisSplit[x].vertexId[0]];
         trianglesThisSplit[x].vertexId[1] = vertexMapper[trianglesThisSplit[x].vertexId[1]];
         trianglesThisSplit[x].vertexId[2] = vertexMapper[trianglesThisSplit[x].vertexId[2]];
     }
 
-    CalCoreSubmesh* newSubmesh = new CalCoreSubmesh(verticesSetThisSplit.size(), m_textureCoordinates.size() > 0, numTris); 
+    CalCoreSubmeshPtr newSubmesh(new CalCoreSubmesh(verticesSetThisSplit.size(), m_textureCoordinates.size() > 0, numTris)); 
 
     vIdx = 0;
     for (auto it = verticesSetThisSplit.begin(); it != verticesSetThisSplit.end(); ++it) {
@@ -764,14 +765,14 @@ static void getBoneIndicesFromFace(InfluenceVectorVector& influences, std::set<i
     }
 }
 
-SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, int boneLimit) {
+SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, size_t boneLimit) {
     std::set<int> boneIndicesThisMesh_New;
     std::set<int> boneIndicesTemp;
     std::set<int> boneIndicesThisMesh;
     VerticesSet verticesForThisSplit;
     std::vector<Face> trianglesForThisSplit;
     SplitMeshBasedOnBoneLimitType rc;
-    CalCoreSubmesh *newSubmesh;
+    CalCoreSubmeshPtr newSubmeshSP;
 
     auto influencesVector = extractInfluenceVector(m_influences);
 
@@ -781,8 +782,8 @@ SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreS
         getBoneIndicesFromFace(influencesVector, boneIndicesTemp, t);
         boneIndicesThisMesh_New.insert(boneIndicesTemp.begin(), boneIndicesTemp.end());
 
-        if (boneIndicesThisMesh_New.size() > (unsigned)boneLimit) {
-            newSubmesh = emitSubmesh(verticesForThisSplit, trianglesForThisSplit, rc);
+        if (boneIndicesThisMesh_New.size() > boneLimit) {
+            newSubmeshSP = emitSubmesh(verticesForThisSplit, trianglesForThisSplit, rc);
             if (rc != SplitMeshBoneLimitOK) {
                 return rc;
             }
@@ -790,7 +791,6 @@ SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreS
             boneIndicesThisMesh_New.insert(boneIndicesTemp.begin(), boneIndicesTemp.end());
             verticesForThisSplit.clear();
             trianglesForThisSplit.clear();
-            CalCoreSubmeshPtr newSubmeshSP(newSubmesh);
             newSubmeshes.push_back(newSubmeshSP);
         }
         verticesForThisSplit.insert(t.vertexId[0]);
@@ -803,14 +803,13 @@ SplitMeshBasedOnBoneLimitType CalCoreSubmesh::splitMeshBasedOnBoneLimit(CalCoreS
         if (verticesForThisSplit.empty()) {
             return SplitMeshBoneLimitEmptyVertices;
         }
-        newSubmesh = emitSubmesh(verticesForThisSplit, trianglesForThisSplit, rc);
+        newSubmeshSP = emitSubmesh(verticesForThisSplit, trianglesForThisSplit, rc);
         if (rc != SplitMeshBoneLimitOK) {
             return rc;
         }
         verticesForThisSplit.clear();
         trianglesForThisSplit.clear();
         boneIndicesThisMesh_New.clear();
-        CalCoreSubmeshPtr newSubmeshSP(newSubmesh);
         newSubmeshes.push_back(newSubmeshSP);
     }
 
