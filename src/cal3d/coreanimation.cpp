@@ -114,7 +114,7 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTr
     if (doFingerFix) {
 
         //  need to have all four finger bones to perform the fingerectomy
-        doFingerFix = doFingerFix && (trkIndexRing02>=0) && (trkIndexRing03>=0) && (trkIndexPnky02>0) && (trkIndexPnky03>0);
+        doFingerFix = doFingerFix && (trkIndexRing02>=0) && (trkIndexRing03>=0) && (trkIndexPnky02>=0) && (trkIndexPnky03>=0);
 
         //  phantom Ring finger anim tracks usually have 100-200 keyframes, but I'm just checking for >2 to be conservative
         doFingerFix = doFingerFix &&
@@ -142,12 +142,6 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTr
 
             //  ok - problem confirmed. apply fix.
             if (!normal) {
-                //printf("CalCoreAnimation::fixup: applying finger anim fix: mid2.keys=%zu, mid3.keys=%zu, pnk2.keys=%zu, pnk3.keys=%zu\n",
-                //    output[trkIndexRing02].keyframes.size(),
-                //    output[trkIndexRing03].keyframes.size(),
-                //    output[trkIndexPnky02].keyframes.size(),
-                //    output[trkIndexPnky03].keyframes.size());
-
                 CalQuaternion rot180;
                 rot180.setAxisAngle(CalVector(1, 0, 0), 3.1415927410125732421875f);
 
