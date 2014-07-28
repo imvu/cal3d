@@ -83,7 +83,7 @@ class materialTestData:
         rgb = chr(r) + chr(g) + chr(b)
         s = size.x * size.y * rgb
         self.stringToTextureMap[name] = avatarwindow.ModelTextureData(
-            avatarwindow.AssetSource("", name),
+            avatarwindow.AssetSource(0, "", name),
             s,
             size.x,
             size.y,
