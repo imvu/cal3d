@@ -22,6 +22,7 @@
 #include "cal3d/vector4.h"
 #include "cal3d/bonetransform.h"
 
+// Whitespce change to attempt a recompile of cal3d headers
 CAL3D_PTR(CalCoreMorphTarget);
 CAL3D_PTR(CalCoreSkeleton);
 class CalQuaternion;
