@@ -17,6 +17,7 @@
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
 #include <cal3d/error.h>
+#include <boost/python/overloads.hpp>
 
 using namespace boost::python;
 using namespace cal3d;
@@ -35,23 +36,27 @@ private:
     PyThreadState* m_thread_state;
 };
 
-CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer) {
+CalCoreAnimationPtr loadCoreAnimationFromBuffer(const cal3d::Buffer& buffer, bool negateW = false) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalLoader::loadCoreAnimation(cbs);
+    return CalLoader::loadCoreAnimation(cbs, negateW);
 }
+BOOST_PYTHON_FUNCTION_OVERLOADS(loadCoreAnimationFromBuffer_overloads, loadCoreAnimationFromBuffer,  1, 2);
 
-bool saveCoreAnimation(const CalCoreAnimationPtr& animation, const std::string& path) {
-    return CalSaver::saveCoreAnimation(path, animation.get());
+bool saveCoreAnimation(const CalCoreAnimationPtr& animation, const std::string& path, bool negateW = false ) {
+    return CalSaver::saveCoreAnimation(path, animation.get(), negateW);
 }
+BOOST_PYTHON_FUNCTION_OVERLOADS(saveCoreAnimation_overloads, saveCoreAnimation, 2, 3);
 
-CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const cal3d::Buffer& buffer) {
+CalCoreSkeletonPtr loadCoreSkeletonFromBuffer(const cal3d::Buffer& buffer, bool negateW = false) {
     CalBufferSource cbs(buffer.data(), buffer.size());
-    return CalLoader::loadCoreSkeleton(cbs);
+    return CalLoader::loadCoreSkeleton(cbs, negateW);
 }
+BOOST_PYTHON_FUNCTION_OVERLOADS(loadCoreSkeletonFromBuffer_overloads, loadCoreSkeletonFromBuffer, 1, 2);
 
-bool saveCoreSkeleton(const CalCoreSkeletonPtr& skeleton, const std::string& path) {
-    return CalSaver::saveCoreSkeleton(path, skeleton.get());
+bool saveCoreSkeleton(const CalCoreSkeletonPtr& skeleton, const std::string& path, bool negateW = false) {
+    return CalSaver::saveCoreSkeleton(path, skeleton.get(), negateW);
 }
+BOOST_PYTHON_FUNCTION_OVERLOADS(saveCoreSkeleton_overloads, saveCoreSkeleton, 2, 3)
 
 CalCoreMaterialPtr loadCoreMaterialFromBuffer(const cal3d::Buffer& buffer) {
     CalBufferSource cbs(buffer.data(), buffer.size());
@@ -293,7 +298,7 @@ std::string VectorRepr(const CalVector& v) {
 }
 
 std::string QuaternionRepr(const CalQuaternion& q) {
-    float h2 = acos(-q.w);
+    float h2 = acos(q.w);
     float angle = h2 * 360 / boost::math::constants::pi<float>();
     float s = sin(h2);
 
@@ -319,6 +324,9 @@ float CalVectorDot(const CalVector& v, const CalVector& u) {
 CalVector CalVectorCross(const CalVector& a, const CalVector &u) {
     return cross(a, u);
 }
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(saveCoreAnimationToBuffer_overloads, CalSaver::saveCoreAnimationToBuffer, 1, 2)
+BOOST_PYTHON_FUNCTION_OVERLOADS(saveCoreAnimationXmlToBuffer_overloads, CalSaver::saveCoreAnimationXmlToBuffer, 1, 2)
 
 #ifndef NDEBUG
 BOOST_PYTHON_MODULE(_cal3d_debug)
@@ -353,6 +361,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def(init<float, float, float, float>())
         .def(init<CalMatrix>())
         .def("__repr__", &QuaternionRepr)
+        .def("qmul", &CalQuaternion::qMul)
         .def_readwrite("x", &CalQuaternion::x)
         .def_readwrite("y", &CalQuaternion::y)
         .def_readwrite("z", &CalQuaternion::z)
@@ -373,6 +382,7 @@ BOOST_PYTHON_MODULE(_cal3d)
     class_<cal3d::RotateTranslate>("Transform")
         .def(init<CalQuaternion, CalVector>())
         .def("__repr__", &RotateTranslateRepr)
+        .def("multiple", &cal3d::RotateTranslate::multiple)
         .def_readwrite("translation", &cal3d::RotateTranslate::translation)
         .def_readwrite("rotation", &cal3d::RotateTranslate::rotation)
         .def(self * self)
@@ -567,13 +577,14 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def_readwrite("tracks", &CalCoreMorphAnimation::tracks)
         ;
 
-    def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer);
-    def("saveCoreAnimation", &saveCoreAnimation);
-    def("saveCoreAnimationToBuffer", &CalSaver::saveCoreAnimationToBuffer);
-    def("saveCoreAnimationXmlToBuffer", &CalSaver::saveCoreAnimationXmlToBuffer);
+    
+    def("loadCoreAnimationFromBuffer", &loadCoreAnimationFromBuffer, loadCoreAnimationFromBuffer_overloads(args("buffer", "negateW"), "return CalCoreAnimationPtr"));
+    def("saveCoreAnimation", &saveCoreAnimation, saveCoreAnimation_overloads(args("animation", "path", "negateW"), "return bool"));
+    def("saveCoreAnimationToBuffer", &CalSaver::saveCoreAnimationToBuffer, saveCoreAnimationToBuffer_overloads(args("pCoreAnimation", "negateW"), "return string"));
+    def("saveCoreAnimationXmlToBuffer", &CalSaver::saveCoreAnimationXmlToBuffer, saveCoreAnimationXmlToBuffer_overloads(args("pCoreAnimation", "negateW"), "return string"));
 
-    def("loadCoreSkeletonFromBuffer", &loadCoreSkeletonFromBuffer);
-    def("saveCoreSkeleton", &saveCoreSkeleton);
+    def("loadCoreSkeletonFromBuffer", &loadCoreSkeletonFromBuffer, loadCoreSkeletonFromBuffer_overloads(args("buffer", "negateW"), "return CalCoreSkeletonPtr"));
+    def("saveCoreSkeleton", &saveCoreSkeleton, saveCoreSkeleton_overloads(args("skeleton", "path", "negateW"), "return bool"));
     def("saveCoreSkeletonToBuffer", &CalSaver::saveCoreSkeletonToBuffer);
 
     def("loadCoreMaterialFromBuffer", &loadCoreMaterialFromBuffer);

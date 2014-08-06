@@ -177,8 +177,31 @@ RV tryBothLoaders(
     }
 }
 
-CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc) {
-    return tryBothLoaders(inputSrc, &loadBinaryCoreAnimation, &loadXmlCoreAnimation);
+template<typename RV>
+RV tryBothLoaders(
+    CalBufferSource& inputSource,
+    bool& negateW,
+    RV(*binaryLoader)(CalBufferSource&, bool),
+    RV(*xmlLoader)(char*, bool)
+) {
+    try {
+        if (RV anim = binaryLoader(inputSource, negateW)) {
+            return anim;
+        }
+        // make a copy to null-terminate and allow the xml parser to modify memory in-place
+        ScopedArray<char> data(inputSource.size() + 1);
+        memcpy(data.ptr, inputSource.data(), inputSource.size());
+        data.ptr[inputSource.size()] = 0;
+
+        ForceCLocale fcl;
+        return xmlLoader(data.ptr, negateW);
+    } catch (const CalError&) {
+        return RV();
+    }
+}
+
+CalCoreAnimationPtr CalLoader::loadCoreAnimation(CalBufferSource& inputSrc, bool negateW) {
+    return tryBothLoaders(inputSrc, negateW, &loadBinaryCoreAnimation, &loadXmlCoreAnimation);
 }
 
 CalCoreMorphAnimationPtr CalLoader::loadCoreMorphAnimation(CalBufferSource& inputSrc) {
@@ -193,11 +216,11 @@ CalCoreMeshPtr CalLoader::loadCoreMesh(CalBufferSource& inputSrc) {
     return tryBothLoaders(inputSrc, &loadBinaryCoreMesh, &loadXmlCoreMesh);
 }
 
-CalCoreSkeletonPtr CalLoader::loadCoreSkeleton(CalBufferSource& inputSrc) {
-    return tryBothLoaders(inputSrc, &loadBinaryCoreSkeleton, &loadXmlCoreSkeleton);
+CalCoreSkeletonPtr CalLoader::loadCoreSkeleton(CalBufferSource& inputSrc, bool negateW) {
+    return tryBothLoaders(inputSrc, negateW, &loadBinaryCoreSkeleton, &loadXmlCoreSkeleton);
 }
 
-CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc) {
+CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc, bool negateW) {
     const CalCoreAnimationPtr null;
 
     // check if this is a valid file
@@ -226,7 +249,7 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc)
     }
 
 
-    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
+    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation(negateW));
 
     float duration;
     if (!dataSrc.readFloat(duration)) {
@@ -252,7 +275,7 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc)
     // load all core bones
     for (int trackId = 0; trackId < trackCount; ++trackId) {
         // load the core track
-        CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc, version, useAnimationCompression));
+        CalCoreTrackPtr pCoreTrack(loadCoreTrack(dataSrc, version, useAnimationCompression, negateW));
         if (!pCoreTrack) {
             return null;
         }
@@ -476,7 +499,7 @@ CalCoreMeshPtr CalLoader::loadBinaryCoreMesh(CalBufferSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
+CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc, bool negateW) {
     const CalCoreSkeletonPtr null;
 
     char magic[4];
@@ -511,7 +534,7 @@ CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
     std::vector<CalCoreBonePtr> bones;
 
     for (int boneId = 0; boneId < boneCount; ++boneId) {
-        CalCoreBonePtr pCoreBone(loadCoreBones(dataSrc, version));
+        CalCoreBonePtr pCoreBone(loadCoreBones(dataSrc, version, negateW));
         if (!pCoreBone) {
             return null;
         }
@@ -519,7 +542,7 @@ CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
         bones.push_back(pCoreBone);
     }
 
-    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton(bones));
+    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton(bones, negateW));
     if (sceneAmbientColor) {
         pCoreSkeleton->sceneAmbientColor = *sceneAmbientColor;
     }
@@ -540,7 +563,7 @@ CalCoreSkeletonPtr CalLoader::loadBinaryCoreSkeleton(CalBufferSource& dataSrc) {
  *         \li \b 0 if an error happened
  *****************************************************************************/
 
-CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
+CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version, bool negateW) {
     const CalCoreBonePtr null;
 
     bool hasNodeLights = (version >= cal3d::FIRST_FILE_VERSION_WITH_NODE_LIGHTS);
@@ -587,7 +610,10 @@ CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
         CalVectorFromDataSrc(dataSrc, &lightColor);
     }
 
-
+    if (negateW) {
+        rw = -rw;
+        rwBoneSpace = -rwBoneSpace;
+    }
     CalQuaternion rot(rx, ry, rz, rw);
     CalQuaternion rotbs(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
     CalVector trans(tx, ty, tz);
@@ -637,7 +663,7 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
     CalBufferSource& dataSrc, int version,
     CalCoreKeyframe* prevCoreKeyframe,
     bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-    bool useAnimationCompression
+    bool useAnimationCompression, bool negateW
 ) {
     const CalCoreKeyframePtr null;
 
@@ -699,6 +725,9 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(rw);
     }
 
+    if (negateW) {
+        rw = -rw;
+    }
     CalCoreKeyframePtr pCoreKeyframe(new CalCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw)));
     return pCoreKeyframe;
 }
@@ -1024,7 +1053,8 @@ CalCoreSubmeshPtr CalLoader::loadCoreSubmesh(CalBufferSource& dataSrc, int versi
 CalCoreTrackPtr CalLoader::loadCoreTrack(
     CalBufferSource& dataSrc,
     int version,
-    bool useAnimationCompression
+    bool useAnimationCompression,
+    bool negateW
 ) {
     const CalCoreTrackPtr null;
 
@@ -1077,7 +1107,8 @@ CalCoreTrackPtr CalLoader::loadCoreTrack(
             translationRequired,
             highRangeRequired,
             translationIsDynamic,
-            useAnimationCompression);
+            useAnimationCompression,
+            negateW);
         if (!pCoreKeyframe) {
             return null;
         }

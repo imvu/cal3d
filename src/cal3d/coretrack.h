@@ -35,11 +35,12 @@ public:
 
     size_t sizeInBytes() const;
     void scale(float factor);
-    void zeroTransforms();
+    void zeroTransforms(bool negateW = false);
     void fixup(
         const CalCoreBone& bone,
-        const cal3d::RotateTranslate& adjustedRootTransform);
-    void rotateTranslate(cal3d::RotateTranslate &rt);
+        const cal3d::RotateTranslate& adjustedRootTransform,
+        bool negateW = false);
+    void rotateTranslate(cal3d::RotateTranslate &rt, bool negateW = false);
 
     cal3d::RotateTranslate getCurrentTransform(float time) const;
 

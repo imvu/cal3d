@@ -54,8 +54,8 @@ std::vector<CalCoreBonePtr> findInvalidParents(
     return knownInvalid;
 }
 
-CalCoreSkeleton::CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones)
-    : coreBones(m_coreBones)
+CalCoreSkeleton::CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones, bool negateW)
+    : coreBones(m_coreBones), negateW(negateW)
 {
     m_coreBones.reserve(bones.size());
 
@@ -110,10 +110,23 @@ size_t CalCoreSkeleton::addCoreBone(const CalCoreBonePtr& coreBone) {
     if (coreBone->parentId == -1) {
         if (m_coreBones.empty()) {
             inverseOriginalRootTransform = invert(coreBone->relativeTransform);
+            if (negateW) {
+                transform_negate_w(inverseOriginalRootTransform);
+            }
             coreBone->relativeTransform = cal3d::RotateTranslate();
+            if (negateW) {
+                transform_negate_w(coreBone->relativeTransform);
+            }
         } else {
             coreBone->parentId = 0;
-            coreBone->relativeTransform = inverseOriginalRootTransform * coreBone->relativeTransform;
+            cal3d::RotateTranslate& ts = coreBone->relativeTransform;
+            if (negateW) {
+                transform_negate_w(ts);
+            }
+            ts = inverseOriginalRootTransform * ts;
+            if (negateW) {
+                transform_negate_w(ts);
+            }
         }
         adjustedRoots.insert(m_coreBones.size());
     }
@@ -174,7 +187,7 @@ std::vector<int> CalCoreSkeleton::getChildIds(const CalCoreBone* coreBone) const
  void CalCoreSkeleton::rotateTranslate(cal3d::RotateTranslate& rt) {
     for (size_t i = 0; i < m_coreBones.size(); ++i) {
         if (m_coreBones[i]->parentId == -1) {
-            m_coreBones[i]->rotateTranslate(rt);
+            m_coreBones[i]->rotateTranslate(rt, negateW);
         }
     }
     inverseOriginalRootTransform = inverseOriginalRootTransform * rt;

@@ -260,7 +260,7 @@ static inline void ReadQuadFloat(char const* buffer, float* f1, float* f2, float
     *f4 = d;
 }
 
-CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(char* dataSrc) {
+CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(char* dataSrc, bool negateW) {
     rapidxml::xml_document<> document;
     try {
         document.parse<rapidxml::parse_no_data_nodes | rapidxml::parse_no_entity_translation>(dataSrc);
@@ -268,7 +268,7 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeleton(char* dataSrc) {
         return InvalidFileFormat();
     }
 
-    return loadXmlCoreSkeletonDoc(document);
+    return loadXmlCoreSkeletonDoc(document, negateW);
 }
 
 CalCoreMeshPtr CalLoader::loadXmlCoreMesh(char* dataSrc) {
@@ -294,7 +294,7 @@ CalCoreMaterialPtr CalLoader::loadXmlCoreMaterial(char* dataSrc) {
     return loadXmlCoreMaterialDoc(doc);
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc, bool negateW) {
     rapidxml::xml_document<> doc;
 
     try {
@@ -305,7 +305,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimation(char* dataSrc) {
         return InvalidFileFormat();
     }
 
-    return loadXmlCoreAnimationDoc(doc);
+    return loadXmlCoreAnimationDoc(doc, negateW);
 }
 
 CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
@@ -320,7 +320,7 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
     return loadXmlCoreMorphAnimationDoc(doc);
 }
 
-CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_document<>& doc) {
+CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_document<>& doc, bool negateW) {
     typedef rapidxml::xml_node<> TiXmlNode;
     typedef rapidxml::xml_node<> TiXmlElement;
 
@@ -428,6 +428,10 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
 
         CalCoreBonePtr pCoreBone(new CalCoreBone(strName, parentId));
 
+        if (negateW) {
+            rw = -rw;
+            rwBoneSpace = -rwBoneSpace;
+        }
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, rw);
 
@@ -449,14 +453,14 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
         bones.push_back(pCoreBone);
     }
 
-    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton(bones));
+    CalCoreSkeletonPtr pCoreSkeleton(new CalCoreSkeleton(bones, negateW));
     if (sceneAmbientColor) {
         pCoreSkeleton->sceneAmbientColor = *sceneAmbientColor;
     }
     return pCoreSkeleton;
 }
 
-CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(const rapidxml::xml_document<>& doc) {
+CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(const rapidxml::xml_document<>& doc, bool negateW) {
     typedef rapidxml::xml_node<> TiXmlNode;
     typedef rapidxml::xml_node<> TiXmlElement;
 
@@ -487,7 +491,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(const rapidxml::xml_docum
         return InvalidFileFormat();
     }
 
-    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation);
+    CalCoreAnimationPtr pCoreAnimation(new CalCoreAnimation(negateW));
     pCoreAnimation->duration = duration;
 
     for (
@@ -578,6 +582,9 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(const rapidxml::xml_docum
             float rx, ry, rz, rw;
             ReadQuadFloat(get_string_value(rotation), &rx, &ry, &rz, &rw);
 
+            if (negateW) {
+                rw = -rw;
+            }
             CalCoreKeyframe pCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw));
             hasLastKeyframe = true;
             prevCoreKeyframe = pCoreKeyframe;

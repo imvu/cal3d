@@ -39,7 +39,7 @@ public:
 
     CalCoreBone(const std::string& name, int parentId = -1);
     void scale(float factor);
-    void rotateTranslate(cal3d::RotateTranslate &rt);
+    void rotateTranslate(cal3d::RotateTranslate &rt, bool negateW = false);
 
     bool hasLightingData() const {
         return lightType != LIGHT_TYPE_NONE;

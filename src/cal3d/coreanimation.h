@@ -19,8 +19,8 @@ class CalQuaternion;
 
 class CAL3D_API CalCoreAnimation {
 public:
-    CalCoreAnimation()
-        : duration(0.0f)
+    CalCoreAnimation(bool negW = false)
+        : duration(0.0f), negateW(negW)
     {}
 
     size_t sizeInBytes() const;
@@ -32,6 +32,7 @@ public:
     float duration;
     typedef std::vector<CalCoreTrack> TrackList;
     TrackList tracks;
+    bool negateW;
 };
 CAL3D_PTR(CalCoreAnimation);
 

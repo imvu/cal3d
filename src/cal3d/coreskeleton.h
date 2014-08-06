@@ -23,7 +23,7 @@ class CalQuaternion;
 
 class CAL3D_API CalCoreSkeleton : private boost::noncopyable {
 public:
-    CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones = std::vector<CalCoreBonePtr>());
+    CalCoreSkeleton(const std::vector<CalCoreBonePtr>& bones = std::vector<CalCoreBonePtr>(), bool negateW = false);
 
     size_t addCoreBone(const CalCoreBonePtr& coreBone);
     int getBoneId(const CalCoreBone* coreBone) const;
@@ -46,10 +46,15 @@ public:
 
     CalVector sceneAmbientColor;
 
+    bool getNegateW() const { 
+        return negateW;
+    }
+
 private:
     cal3d::RotateTranslate inverseOriginalRootTransform;
     std::set<size_t> adjustedRoots;
     std::vector<CalCoreBonePtr> m_coreBones;
+    bool negateW;
 };
 
 CAL3D_PTR(CalCoreSkeleton);

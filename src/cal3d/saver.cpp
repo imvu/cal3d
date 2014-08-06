@@ -44,13 +44,23 @@ std::string save(const boost::shared_ptr<T>& t, bool (saveBinary)(std::ostream&,
     }
 }
 
-std::string CalSaver::saveCoreAnimationToBuffer(CalCoreAnimationPtr pCoreAnimation) {
-    return save(pCoreAnimation, &saveCoreAnimation);
+template<typename T>
+std::string save(const boost::shared_ptr<T>& t, bool (saveBinary)(std::ostream&, T*, bool), bool negateW) {
+    std::ostringstream os;
+    if (saveBinary(os, t.get(), negateW)) {
+        return os.str();
+    } else {
+        return "";
+    }
 }
 
-std::string CalSaver::saveCoreAnimationXmlToBuffer(CalCoreAnimationPtr pCoreAnimation) {
+std::string CalSaver::saveCoreAnimationToBuffer(CalCoreAnimationPtr pCoreAnimation, bool negateW) {
+    return save(pCoreAnimation, &saveCoreAnimation, negateW);
+}
+
+std::string CalSaver::saveCoreAnimationXmlToBuffer(CalCoreAnimationPtr pCoreAnimation, bool negateW) {
     std::ostringstream os;
-    if (saveXmlCoreAnimation(os, pCoreAnimation.get())) {
+    if (saveXmlCoreAnimation(os, pCoreAnimation.get(), negateW)) {
         return os.str();
     } else {
         return "";
@@ -79,15 +89,15 @@ std::string CalSaver::saveCoreMeshToBuffer(CalCoreMeshPtr pCoreMesh) {
 }
 
 std::string CalSaver::saveCoreSkeletonToBuffer(CalCoreSkeletonPtr pCoreSkeleton) {
-    return save(pCoreSkeleton, &saveCoreSkeleton);
+    return save(pCoreSkeleton, &saveCoreSkeleton, false);
 }
 
-bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation) {
+bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation, bool negateW) {
     if (
         strFilename.size() >= 3 &&
         cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), cal3d::ANIMATION_XMLFILE_EXTENSION) == 0
     ) {
-        return saveXmlCoreAnimation(strFilename, pCoreAnimation);
+        return saveXmlCoreAnimation(strFilename, pCoreAnimation, negateW);
     }
 
     // open the file
@@ -98,10 +108,10 @@ bool CalSaver::saveCoreAnimation(const std::string& strFilename, CalCoreAnimatio
         return false;
     }
 
-    return saveCoreAnimation(file, pCoreAnimation);
+    return saveCoreAnimation(file, pCoreAnimation, negateW);
 }
 
-bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnimation) {
+bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnimation, bool negateW) {
     const char* strFilename = ""; // do we care?
 
     // write magic tag
@@ -144,7 +154,7 @@ bool CalSaver::saveCoreAnimation(std::ostream& file, CalCoreAnimation* pCoreAnim
     CalCoreAnimation::TrackList::iterator iteratorCoreTrack;
     for (iteratorCoreTrack = listCoreTrack.begin(); iteratorCoreTrack != listCoreTrack.end(); ++iteratorCoreTrack) {
         // save core track
-        if (!saveCoreTrack(file, strFilename, &*iteratorCoreTrack)) {
+        if (!saveCoreTrack(file, strFilename, &*iteratorCoreTrack, negateW)) {
             return false;
         }
     }
@@ -212,7 +222,7 @@ bool CalSaver::saveCoreMorphAnimation(std::ostream& file, CalCoreMorphAnimation*
     return true;
 }
 
-bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkeleton, const CalCoreBone* pCoreBone) {
+bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkeleton, const CalCoreBone* pCoreBone, bool negateW) {
     if (!file) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, "");
         return false;
@@ -225,9 +235,17 @@ bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkele
     }
 
     CalPlatform::writeVector(file, pCoreBone->relativeTransform.translation);
-    CalPlatform::writeQuat(file, pCoreBone->relativeTransform.rotation);
+    CalQuaternion rq = pCoreBone->relativeTransform.rotation; 
+    if (negateW) {
+        rq.w = -rq.w;
+    }
+    CalPlatform::writeQuat(file, rq);
     CalPlatform::writeVector(file, pCoreBone->inverseBindPoseTransform.translation);
-    CalPlatform::writeQuat(file, pCoreBone->inverseBindPoseTransform.rotation);
+    CalQuaternion iq = pCoreBone->relativeTransform.rotation; 
+    if (negateW) {
+        iq.w = -iq.w;
+    }
+    CalPlatform::writeQuat(file, iq);
 
     // write the parent bone id
     if (!CalPlatform::writeInteger(file, pCoreBone->parentId)) {
@@ -275,7 +293,8 @@ bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkele
 bool CalSaver::saveCoreKeyframe(
     std::ostream& file,
     const std::string& strFilename,
-    const CalCoreKeyframe* pCoreKeyframe
+    const CalCoreKeyframe* pCoreKeyframe,
+    bool negateW
 ) {
     if (!file) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, strFilename);
@@ -284,7 +303,11 @@ bool CalSaver::saveCoreKeyframe(
 
     CalPlatform::writeFloat(file, pCoreKeyframe->time);
     CalPlatform::writeVector(file, pCoreKeyframe->transform.translation);
-    CalPlatform::writeQuat(file, pCoreKeyframe->transform.rotation);
+    CalQuaternion rt = pCoreKeyframe->transform.rotation;
+    if (negateW) {
+        rt.w = -rt.w;
+    }
+    CalPlatform::writeQuat(file, rt);
 
     // check if an error happend
     if (!file) {
@@ -497,9 +520,9 @@ bool CalSaver::saveCoreMesh(std::ostream& os, CalCoreMesh* pCoreMesh) {
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton) {
+bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton, bool negateW) {
     if (strFilename.size() >= 3 && cal3d_stricmp(strFilename.substr(strFilename.size() - 3, 3).c_str(), cal3d::SKELETON_XMLFILE_EXTENSION) == 0) {
-        return saveXmlCoreSkeleton(strFilename, pCoreSkeleton);
+        return saveXmlCoreSkeleton(strFilename, pCoreSkeleton, negateW);
     }
 
     // open the file
@@ -510,10 +533,10 @@ bool CalSaver::saveCoreSkeleton(const std::string& strFilename, CalCoreSkeleton*
         return false;
     }
 
-    return saveCoreSkeleton(file, pCoreSkeleton);
+    return saveCoreSkeleton(file, pCoreSkeleton, negateW);
 }
 
-bool CalSaver::saveCoreSkeleton(std::ostream& file, CalCoreSkeleton* pCoreSkeleton) {
+bool CalSaver::saveCoreSkeleton(std::ostream& file, CalCoreSkeleton* pCoreSkeleton, bool negateW) {
     // write magic tag
     if (!CalPlatform::writeBytes(file, &cal3d::SKELETON_FILE_MAGIC, sizeof(cal3d::SKELETON_FILE_MAGIC))) {
         CalError::setLastError(CalError::FILE_WRITING_FAILED, __FILE__, __LINE__, "");
@@ -540,7 +563,7 @@ bool CalSaver::saveCoreSkeleton(std::ostream& file, CalCoreSkeleton* pCoreSkelet
 
 
     for (size_t boneId = 0; boneId < pCoreSkeleton->coreBones.size(); ++boneId) {
-        if (!saveCoreBone(file, pCoreSkeleton, pCoreSkeleton->coreBones[boneId].get())) {
+        if (!saveCoreBone(file, pCoreSkeleton, pCoreSkeleton->coreBones[boneId].get(), negateW)) {
             return false;
         }
     }
@@ -722,7 +745,7 @@ bool CalSaver::saveCoreSubmesh(std::ostream& os, CalCoreSubmesh* pCoreSubmesh) {
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack* pCoreTrack) {
+bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename, CalCoreTrack* pCoreTrack, bool negateW) {
     if (!file) {
         CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__, strFilename);
         return false;
@@ -741,7 +764,7 @@ bool CalSaver::saveCoreTrack(std::ostream& file, const std::string& strFilename,
     }
 
     for (size_t i = 0; i < pCoreTrack->keyframes.size(); ++i) {
-        if (!saveCoreKeyframe(file, strFilename, &pCoreTrack->keyframes[i])) {
+        if (!saveCoreKeyframe(file, strFilename, &pCoreTrack->keyframes[i], negateW)) {
             return false;
         }
     }
@@ -793,7 +816,7 @@ bool CalSaver::saveCoreMorphTrack(std::ostream& file, const std::string& strFile
   *         \li \b false if an error happend
   *****************************************************************************/
 
-bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton) {
+bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkeleton* pCoreSkeleton, bool negateW) {
     std::stringstream str;
 
     TiXmlDocument doc(strFilename);
@@ -844,11 +867,17 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         const CalQuaternion& rotationQuad = pCoreBone->relativeTransform.rotation;
 
 
+        float w;
+        if (negateW) {
+            w = -rotationQuad.w;
+        } else {
+            w = rotationQuad.w;
+        }
         str.str("");
         str << rotationQuad.x << " "
             << rotationQuad.y << " "
             << rotationQuad.z << " "
-            << rotationQuad.w;
+            << w;
 
         TiXmlText rotationdata(str.str());
         rotation.InsertEndChild(rotationdata);
@@ -872,11 +901,17 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         TiXmlElement localrotation("LOCALROTATION");
         const CalQuaternion& localrotationQuad = pCoreBone->inverseBindPoseTransform.rotation;
 
+        float lw;
+        if (negateW) {
+            lw = -localrotationQuad.w;
+        } else {
+            lw = localrotationQuad.w;
+        }
         str.str("");
         str << localrotationQuad.x << " "
             << localrotationQuad.y << " "
             << localrotationQuad.z << " "
-            << localrotationQuad.w;
+            << lw;
 
         TiXmlText localrotationdata(str.str());
         localrotation.InsertEndChild(localrotationdata);
@@ -915,13 +950,13 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
 }
 
 
-bool CalSaver::saveXmlCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation) {
+bool CalSaver::saveXmlCoreAnimation(const std::string& strFilename, CalCoreAnimation* pCoreAnimation, bool negateW) {
     std::ofstream of(strFilename.c_str());
-    return saveXmlCoreAnimation(of, pCoreAnimation);
+    return saveXmlCoreAnimation(of, pCoreAnimation, negateW);
 }
 
 
-bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAnimation) {
+bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAnimation, bool negateW) {
 
     std::stringstream str;
 
@@ -993,11 +1028,17 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
             TiXmlElement rotation("ROTATION");
             const CalQuaternion& rotationQuad = pCoreKeyframe.transform.rotation;
 
+            float w;
+            if (negateW) {
+                w = -rotationQuad.w;
+            } else {
+                w = rotationQuad.w;
+            }
             str.str("");
             str << rotationQuad.x << " "
                 << rotationQuad.y << " "
                 << rotationQuad.z << " "
-                << rotationQuad.w;
+                << w;
 
             TiXmlText rotationdata(str.str());
             rotation.InsertEndChild(rotationdata);

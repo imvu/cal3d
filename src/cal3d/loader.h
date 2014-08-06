@@ -56,27 +56,27 @@ public:
     static float const keyframePosRangeSmall;
     static unsigned int const keyframePosBytesSmall;
 
-    static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc);
+    static CalCoreAnimationPtr loadCoreAnimation(CalBufferSource& inputSrc, bool negateW = false);
     static CalCoreMorphAnimationPtr loadCoreMorphAnimation(CalBufferSource& inputSrc);
     static CalCoreMaterialPtr loadCoreMaterial(CalBufferSource& inputSrc);
     static CalCoreMeshPtr loadCoreMesh(CalBufferSource& inputSrc);
-    static CalCoreSkeletonPtr loadCoreSkeleton(CalBufferSource& inputSrc);
+    static CalCoreSkeletonPtr loadCoreSkeleton(CalBufferSource& inputSrc, bool negateW = false);
 
 private:
-    static CalCoreAnimationPtr loadBinaryCoreAnimation(CalBufferSource& inputSrc);
+    static CalCoreAnimationPtr loadBinaryCoreAnimation(CalBufferSource& inputSrc, bool negateW = false);
     static CalCoreMorphAnimationPtr loadBinaryCoreMorphAnimation(CalBufferSource& inputSrc);
     static CalCoreMaterialPtr loadBinaryCoreMaterial(CalBufferSource& inputSrc);
     static CalCoreMeshPtr loadBinaryCoreMesh(CalBufferSource& inputSrc);
-    static CalCoreSkeletonPtr loadBinaryCoreSkeleton(CalBufferSource& inputSrc);
+    static CalCoreSkeletonPtr loadBinaryCoreSkeleton(CalBufferSource& inputSrc, bool negateW = false);
 
-    static CalCoreAnimationPtr loadXmlCoreAnimation(char*);
-    static CalCoreAnimationPtr loadXmlCoreAnimationDoc(const rapidxml::xml_document<char>& doc);
+    static CalCoreAnimationPtr loadXmlCoreAnimation(char*, bool negateW = false);
+    static CalCoreAnimationPtr loadXmlCoreAnimationDoc(const rapidxml::xml_document<char>& doc, bool negateW);
 
     static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimation(char*);
     static CalCoreMorphAnimationPtr loadXmlCoreMorphAnimationDoc(const rapidxml::xml_document<char>& doc);
 
-    static CalCoreSkeletonPtr loadXmlCoreSkeleton(char*);
-    static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(const rapidxml::xml_document<char>& doc);
+    static CalCoreSkeletonPtr loadXmlCoreSkeleton(char*, bool negateW = false);
+    static CalCoreSkeletonPtr loadXmlCoreSkeletonDoc(const rapidxml::xml_document<char>& doc, bool negateW);
 
     static CalCoreMeshPtr loadXmlCoreMesh(char*);
     static CalCoreMeshPtr loadXmlCoreMeshDoc(const rapidxml::xml_document<char>& doc);
@@ -86,14 +86,14 @@ private:
 
     static bool isHeaderWellFormed(const rapidxml::xml_node<char>* node);
 
-    static CalCoreBonePtr loadCoreBones(CalBufferSource& dataSrc, int version);
+    static CalCoreBonePtr loadCoreBones(CalBufferSource& dataSrc, int version, bool negateW);
     static CalCoreKeyframePtr loadCoreKeyframe(CalBufferSource& dataSrc,
             int version, CalCoreKeyframe* lastCoreKeyframe,
             bool translationRequired, bool highRangeRequired, bool translationIsDynamic,
-            bool useAnimationCompression);
+            bool useAnimationCompression, bool negateW);
     static CalCoreMorphKeyframePtr loadCoreMorphKeyframe(CalBufferSource& dataSrc);
     static CalCoreSubmeshPtr loadCoreSubmesh(CalBufferSource& dataSrc, int version);
-    static CalCoreTrackPtr loadCoreTrack(CalBufferSource& dataSrc, int version, bool useAnimationCompresssion);
+    static CalCoreTrackPtr loadCoreTrack(CalBufferSource& dataSrc, int version, bool useAnimationCompresssion, bool negateW);
     static CalCoreMorphTrackPtr loadCoreMorphTrack(CalBufferSource& dataSrc);
 
     static bool usesAnimationCompression(int version);
