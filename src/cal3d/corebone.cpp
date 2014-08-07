@@ -31,10 +31,6 @@ void CalCoreBone::scale(float factor) {
     inverseBindPoseTransform.translation *= factor;
 }
 
-void CalCoreBone::rotateTranslate(cal3d::RotateTranslate &rt, bool negateW) {
-    if (negateW) {
-        relativeTransform = relativeTransform.multiple(rt);
-    } else {
-        relativeTransform = relativeTransform * rt;
-    }
+void CalCoreBone::rotateTranslate(cal3d::RotateTranslate &rt) {
+    relativeTransform = relativeTransform * rt;
 }

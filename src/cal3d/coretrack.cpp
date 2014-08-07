@@ -48,16 +48,13 @@ void CalCoreTrack::scale(float factor) {
     std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
 }
 
-void CalCoreTrack::zeroTransforms(bool negateW) {
+void CalCoreTrack::zeroTransforms() {
     for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
         i->transform = cal3d::RotateTranslate();
-        if (negateW) {
-            transform_negate_w(i->transform);
-        }
     }
 }
 
-void CalCoreTrack::fixup(const CalCoreBone& bone, const cal3d::RotateTranslate& adjustedRootTransform, bool negateW) {
+void CalCoreTrack::fixup(const CalCoreBone& bone, const cal3d::RotateTranslate& adjustedRootTransform) {
     for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
         if (exactlyEqual(i->transform.translation, InvalidTranslation)) {
             /**
@@ -74,23 +71,10 @@ void CalCoreTrack::fixup(const CalCoreBone& bone, const cal3d::RotateTranslate& 
              *
              * we simply need to update the rotation.
              */
-
-            if (negateW) {
-                transform_negate_w(i->transform);
-            }
             i->transform.rotation = adjustedRootTransform.rotation * i->transform.rotation;
-            if (negateW) {
-                transform_negate_w(i->transform);
-            }
             i->transform.translation = bone.relativeTransform.translation;
         } else {
-            if (negateW) {
-                transform_negate_w(i->transform);
-            }
             i->transform = adjustedRootTransform * i->transform;
-            if (negateW) {
-                transform_negate_w(i->transform);
-            }
         }
     }
 }
@@ -340,12 +324,8 @@ CalCoreTrack::KeyframeList::const_iterator CalCoreTrack::getUpperBound(float tim
         CalCoreKeyframe(time, CalVector(), CalQuaternion()));
 }
 
-void CalCoreTrack::rotateTranslate(cal3d::RotateTranslate &rt, bool negateW) {
+void CalCoreTrack::rotateTranslate(cal3d::RotateTranslate &rt) {
     for (auto i = keyframes.begin(); i != keyframes.end(); ++i) {
-        if (negateW) {
-            i->transform = (i->transform).multiple(rt);
-        } else {
-            i->transform = i->transform * rt;
-        }
+        i->transform = i->transform * rt;
     }
 }

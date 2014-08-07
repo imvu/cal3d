@@ -87,22 +87,6 @@ public:
         y = s * axis.y;
         z = s * axis.z;
     }
-
-    CalQuaternion qMul(const CalQuaternion& inner) {
-        float qx = inner.x;
-        float qy = inner.y;
-        float qz = inner.z;
-        float qw = inner.w;
-
-        float outw = -w;
-        CalQuaternion obj(
-            qw * x + qx * outw + qy * z - qz * y,
-            qw * y - qx * z + qy * outw + qz * x,
-            qw * z + qx * y - qy * x + qz * outw,
-            qw * w + qx * x + qy * y + qz * z);
-
-        return obj;
-    }
 };
 
 inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {

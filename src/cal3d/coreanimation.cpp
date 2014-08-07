@@ -78,12 +78,12 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTr
         const auto& coreBone = *coreBones[i->coreBoneId];
 
         if (coreBone.parentId == -1) {
-            i->zeroTransforms(negateW);
-            i->rotateTranslate(rt, negateW);
+            i->zeroTransforms();
+            i->rotateTranslate(rt);
         } else {
             i->fixup(
                 coreBone,
-                skeleton->getAdjustedRootTransform(i->coreBoneId), negateW);
+                skeleton->getAdjustedRootTransform(i->coreBoneId));
         }
 
         //  check for the bones required to fix lfFingerRing
@@ -157,11 +157,7 @@ void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTr
                 for( size_t k=0; k<output[trkIndexPnky03].keyframes.size(); k++) {
                     CalCoreKeyframe key = output[trkIndexPnky03].keyframes[k];
                     //  lfFingerPinky03 has an annoying 180 rotation that needs to be removed
-                    if (negateW) {
-                        key.transform.rotation = key.transform.rotation.qMul(rot180);
-                    } else {
-                        key.transform.rotation = key.transform.rotation * rot180;
-                    }
+                    key.transform.rotation = key.transform.rotation * rot180;
                     //  ring finger should be just a tad bit longer than the pinkey
                     key.transform.translation *= 1.1f;
                     output[trkIndexRing03].keyframes.push_back(key);

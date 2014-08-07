@@ -39,25 +39,9 @@ namespace cal3d {
             , translation(t)
         {}
 
-        RotateTranslate multiple(const RotateTranslate& inner) {
-            CalQuaternion q = rotation;
-            q.w = -q.w;
-            RotateTranslate obj(
-                rotation.qMul(inner.rotation),
-                q * inner.translation + translation);
-
-            return obj;
-        }
-
         CalQuaternion rotation;
         CalVector translation;
     };
-
-    inline void transform_negate_w(RotateTranslate& rt) {
-        CalQuaternion& q = rt.rotation;
-        float w = q.w;
-        q.w = -w;
-    }
 
     inline bool operator==(const RotateTranslate& lhs, const RotateTranslate& rhs) {
         return lhs.rotation == rhs.rotation && lhs.translation == rhs.translation;

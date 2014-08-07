@@ -258,7 +258,7 @@ const char animation_with_translations[] =
 
 TEST(load_animation_with_translation) {
     CalBufferSource cbs(fromString(animation_with_translations));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, true);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -269,12 +269,12 @@ TEST(load_animation_with_translation) {
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k1.transform.rotation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.transform.rotation);
     CHECK_EQUAL(CalVector(1, 2, 3), k1.transform.translation);
 
     const CalCoreKeyframe& k2 = track->keyframes[1];
     CHECK_EQUAL(40.0f, k2.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k2.transform.rotation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.transform.rotation);
     CHECK_EQUAL(CalVector(4, 5, 6), k2.transform.translation);
 }
 
@@ -295,7 +295,7 @@ const char animation_with_static_translations[] =
 
 TEST(load_animation_with_static_translations) {
     CalBufferSource cbs(fromString(animation_with_static_translations));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, true);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -306,12 +306,12 @@ TEST(load_animation_with_static_translations) {
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k1.transform.rotation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.transform.rotation);
     CHECK_EQUAL(CalVector(1, 2, 3), k1.transform.translation);
 
     const CalCoreKeyframe& k2 = track->keyframes[1];
     CHECK_EQUAL(40.0f, k2.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k2.transform.rotation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.transform.rotation);
     CHECK_EQUAL(CalVector(1, 2, 3), k2.transform.translation);
 }
 
@@ -332,7 +332,7 @@ const char animation_with_mismatched_track_and_keyframe_count[] =
 
 TEST(load_animation_with_mismatched_counts) {
     CalBufferSource cbs(fromString(animation_with_mismatched_track_and_keyframe_count));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, true);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
 
     CHECK_EQUAL(anim->tracks.size(), 1u);
@@ -343,12 +343,12 @@ TEST(load_animation_with_mismatched_counts) {
 
     const CalCoreKeyframe& k1 = track->keyframes[0];
     CHECK_EQUAL(0.0f, k1.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k1.transform.rotation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k1.transform.rotation);
     CHECK_EQUAL(CalVector(1, 2, 3), k1.transform.translation);
 
     const CalCoreKeyframe& k2 = track->keyframes[1];
     CHECK_EQUAL(40.0f, k2.time);
-    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, -0.5), k2.transform.rotation);
+    CHECK_EQUAL(CalQuaternion(0.5, 0.5, 0.5, 0.5), k2.transform.rotation);
     CHECK_EQUAL(CalVector(1, 2, 3), k2.transform.translation);
 }
 
@@ -377,7 +377,7 @@ const char simple_two_bone_skeleton[] =
 TEST(simple_two_bone_skeleton) {
     float tol = 0.001f;
     CalBufferSource cbs(fromString(simple_two_bone_skeleton));
-    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs, true));
+    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
     CHECK(skel);
     CHECK_EQUAL(skel->coreBones.size(), 2u);
     CalVector sceneAmbientClr = skel->sceneAmbientColor;
@@ -394,12 +394,12 @@ TEST(simple_two_bone_skeleton) {
     CHECK_CLOSE(rot.x, 0, tol);
     CHECK_CLOSE(rot.y, 0, tol);
     CHECK_CLOSE(rot.z, 0, tol);
-    CHECK_CLOSE(rot.w, -1, tol);
+    CHECK_CLOSE(rot.w, 1, tol);
     const CalQuaternion& boneSpaceRot = rootBone->inverseBindPoseTransform.rotation;
     CHECK_CLOSE(boneSpaceRot.x, 0.706778, tol);
     CHECK_CLOSE(boneSpaceRot.y, -0.0217732, tol);
     CHECK_CLOSE(boneSpaceRot.z, 0.706766, tol);
-    CHECK_CLOSE(boneSpaceRot.w, 0.0217552, tol);
+    CHECK_CLOSE(boneSpaceRot.w, -0.0217552, tol);
     const CalVector& trans = rootBone->relativeTransform.translation;
     CHECK_CLOSE(trans.x, 0, tol);
     CHECK_CLOSE(trans.y, 0, tol);
@@ -437,7 +437,7 @@ const char nontopological_two_bone_skeleton[] =
 TEST(two_bone_skeleton_with_bones_in_nontopological_order) {
     float tol = 0.001f;
     CalBufferSource cbs(fromString(nontopological_two_bone_skeleton));
-    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs, true));
+    CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
     CHECK(skel);
     CHECK_EQUAL(skel->coreBones.size(), 2u);
     CalVector sceneAmbientClr = skel->sceneAmbientColor;
@@ -454,12 +454,12 @@ TEST(two_bone_skeleton_with_bones_in_nontopological_order) {
     CHECK_CLOSE(rot.x, 0, tol);
     CHECK_CLOSE(rot.y, 0, tol);
     CHECK_CLOSE(rot.z, 0, tol);
-    CHECK_CLOSE(rot.w, -1, tol);
+    CHECK_CLOSE(rot.w, 1, tol);
     const CalQuaternion& boneSpaceRot = rootBone->inverseBindPoseTransform.rotation;
     CHECK_CLOSE(boneSpaceRot.x, 0.706778, tol);
     CHECK_CLOSE(boneSpaceRot.y, -0.0217732, tol);
     CHECK_CLOSE(boneSpaceRot.z, 0.706766, tol);
-    CHECK_CLOSE(boneSpaceRot.w, 0.0217552, tol);
+    CHECK_CLOSE(boneSpaceRot.w, -0.0217552, tol);
     const CalVector& trans = rootBone->relativeTransform.translation;
     CHECK_CLOSE(trans.x, 0, tol);
     CHECK_CLOSE(trans.y, 0, tol);
@@ -570,24 +570,24 @@ BOOST_STATIC_ASSERT(sizeof(hmmmAnimation) == hmmmLength);
 
 TEST(load_hmmm) {
     CalBufferSource cbs(fromString(hmmmAnimation));
-    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs, true);
+    CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK_EQUAL(anim->tracks.size(), 70u);
 
     CalCoreKeyframe expected[14] = {
-        CalCoreKeyframe(0, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(0, 0, -0.179775f, -0.983708f)),
-        CalCoreKeyframe(0.0333333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.00048852f, -0.00048852f, -0.178798f, -0.983886f)),
-        CalCoreKeyframe(0.1f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.00195408f, -0.00390816f, -0.172936f, -0.984923f)),
-        CalCoreKeyframe(0.233333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.00879336f, -0.0161212f, -0.153395f, -0.987994f)),
-        CalCoreKeyframe(0.3f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.012213f, -0.0229604f, -0.147044f, -0.988788f)),
-        CalCoreKeyframe(0.366667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0146556f, -0.0283341f, -0.144113f, -0.989047f)),
-        CalCoreKeyframe(0.5f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0151441f, -0.0337079f, -0.144113f, -0.988871f)),
-        CalCoreKeyframe(0.633333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0136786f, -0.036639f, -0.146067f, -0.988501f)),
-        CalCoreKeyframe(0.9f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0127015f, -0.037616f, -0.148999f, -0.98804f)),
-        CalCoreKeyframe(1.43333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.01319f, -0.0361505f, -0.150464f, -0.987866f)),
-        CalCoreKeyframe(1.96667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0146556f, -0.0317538f, -0.150464f, -0.987997f)),
-        CalCoreKeyframe(3.56667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0146556f, -0.0312653f, -0.149976f, -0.988087f)),
-        CalCoreKeyframe(3.63333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0136786f, -0.0317538f, -0.14851f, -0.988306f)),
-        CalCoreKeyframe(3.66667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0107474f, -0.0312653f, -0.147533f, -0.988504f)),
+        CalCoreKeyframe(0, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(0, 0, -0.179775f, 0.983708f)),
+        CalCoreKeyframe(0.0333333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.00048852f, -0.00048852f, -0.178798f, 0.983886f)),
+        CalCoreKeyframe(0.1f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.00195408f, -0.00390816f, -0.172936f, 0.984923f)),
+        CalCoreKeyframe(0.233333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.00879336f, -0.0161212f, -0.153395f, 0.987994f)),
+        CalCoreKeyframe(0.3f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.012213f, -0.0229604f, -0.147044f, 0.988788f)),
+        CalCoreKeyframe(0.366667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0146556f, -0.0283341f, -0.144113f, 0.989047f)),
+        CalCoreKeyframe(0.5f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0151441f, -0.0337079f, -0.144113f, 0.988871f)),
+        CalCoreKeyframe(0.633333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0136786f, -0.036639f, -0.146067f, 0.988501f)),
+        CalCoreKeyframe(0.9f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0127015f, -0.037616f, -0.148999f, 0.98804f)),
+        CalCoreKeyframe(1.43333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.01319f, -0.0361505f, -0.150464f, 0.987866f)),
+        CalCoreKeyframe(1.96667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0146556f, -0.0317538f, -0.150464f, 0.987997f)),
+        CalCoreKeyframe(3.56667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0146556f, -0.0312653f, -0.149976f, 0.988087f)),
+        CalCoreKeyframe(3.63333f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0136786f, -0.0317538f, -0.14851f, 0.988306f)),
+        CalCoreKeyframe(3.66667f, CalVector(1e+010, 1e+010, 1e+010), CalQuaternion(-0.0107474f, -0.0312653f, -0.147533f, 0.988504f)),
     };
 
     CalCoreTrack* track2 = &anim->tracks[2];
