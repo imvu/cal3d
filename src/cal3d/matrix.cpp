@@ -27,12 +27,12 @@ CalMatrix::CalMatrix(const CalQuaternion& q) {
     float yz2 = q.y * q.z * 2;
     float xw2 = q.x * q.w * 2;
     cx.x = 1 - yy2 - zz2;
-    cy.x = xy2 - zw2;
-    cz.x = xz2 + yw2;
-    cx.y = xy2 + zw2;
+    cy.x = xy2 + zw2;
+    cz.x = xz2 - yw2;
+    cx.y = xy2 - zw2;
     cy.y = 1 - xx2 - zz2;
-    cz.y = yz2 - xw2;
-    cx.z = xz2 - yw2;
-    cy.z = yz2 + xw2;
+    cz.y = yz2 + xw2;
+    cx.z = xz2 + yw2;
+    cy.z = yz2 - xw2;
     cz.z = 1 - xx2 - yy2;
 }
