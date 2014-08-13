@@ -82,7 +82,7 @@ public:
     void setAxisAngle(const CalVector& axis, float angle) {
         float h2 = angle * 0.5f;
         float s = sin(h2);
-        w = -cos(h2); // left-handed
+        w = cos(h2); 
         x = s * axis.x;
         y = s * axis.y;
         z = s * axis.z;
