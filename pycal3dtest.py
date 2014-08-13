@@ -286,9 +286,9 @@ class Test(imvu.test.TestCase):
         self.assertAlmostEqual(m1.cx.z, 0, places=4)
         self.assertAlmostEqual(m1.cy.x, 0, places=4)
         self.assertAlmostEqual(m1.cy.y, 0, places=4)
-        self.assertAlmostEqual(m1.cy.z, 1, places=4)
+        self.assertAlmostEqual(m1.cy.z, -1, places=4)
         self.assertAlmostEqual(m1.cz.x, 0, places=4)
-        self.assertAlmostEqual(m1.cz.y, -1, places=4)
+        self.assertAlmostEqual(m1.cz.y, 1, places=4)
         self.assertAlmostEqual(m1.cz.z, 0, places=4)
 
     def test_matrix_construction_from_vectors(self):
