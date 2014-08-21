@@ -233,134 +233,127 @@ void CalCoreSubmesh::replaceMeshWithMorphTarget(const std::string& morphTargetNa
 */
 
  
-CalCoreSubmeshPtr MakeCube() {
+CalCoreSubmeshPtr MakeCubeScale(float scale) {
     CalCoreSubmeshPtr cube(new CalCoreSubmesh(24, true, 12));
     
     const CalColor32 black = 0;
-
     
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-
+    
     int curVertexId=0;
     CalCoreSubmesh::TextureCoordinate texCoord;
     CalCoreSubmesh::Vertex vertex;
     //triangle face f0, f1 vertices
     //v0
     curVertexId = 0;
-    vertex.position = CalPoint4(0, 0, 1);
+    vertex.position = CalPoint4(0, 0, scale);
     vertex.normal = CalVector4(0, 0, 1);
-    cube->addVertex(vertex, black, inf);        
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 0.0f;
     cube->setTextureCoordinate(curVertexId, texCoord);
     //v1
     ++curVertexId;
-    vertex.position = CalPoint4(1,1,1);
-    cube->addVertex(vertex, black, inf);           
+    vertex.position = CalPoint4(scale,scale,scale);
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
-    texCoord.v = 1.0f;    
+    texCoord.v = 1.0f;
     cube->setTextureCoordinate(curVertexId,  texCoord);
     //v2
     ++curVertexId;
-    vertex.position = CalPoint4(0,1,1);
-    cube->addVertex(vertex, black, inf);         
+    vertex.position = CalPoint4(0,scale,scale);
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);    
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v3
     ++curVertexId;
-    vertex.position = CalPoint4(1,0,1);
-    cube->addVertex(vertex, black, inf);       
+    vertex.position = CalPoint4(scale,0,scale);
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     
     cube->addFace(CalCoreSubmesh::Face(0, 1, 2));
     cube->addFace(CalCoreSubmesh::Face(0, 3, 1));
-
-
-
-
+    
     //triangle faces f2, f3 vertices
     //v4
     
     ++curVertexId;
-    vertex.position = CalPoint4(1, 0, 1);
+    vertex.position = CalPoint4(scale, 0, scale);
     vertex.normal = CalVector4(1, 0, 0);
-    cube->addVertex(vertex, black, inf);      
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v5
     ++curVertexId;
-    vertex.position = CalPoint4(1,1,0);
-    cube->addVertex(vertex, black, inf);  
+    vertex.position = CalPoint4(scale,scale,0);
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v6
     ++curVertexId;
-    vertex.position = CalPoint4(1,1,1);
-    cube->addVertex( vertex, black, inf);  
+    vertex.position = CalPoint4(scale,scale,scale);
+    cube->addVertex( vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v7
     ++curVertexId;
-    vertex.position = CalPoint4(1,0,0);
-    cube->addVertex(vertex, black, inf);  
+    vertex.position = CalPoint4(scale,0,0);
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     
     cube->addFace(CalCoreSubmesh::Face(4, 5, 6));
     cube->addFace(CalCoreSubmesh::Face(4, 7, 5));
-
-
-
-    //triangle faces f4, f5 vertices    
+    
+    //triangle faces f4, f5 vertices
     //v8
     ++curVertexId;
-    vertex.position = CalPoint4(1, 0, 0);
+    vertex.position = CalPoint4(scale, 0, 0);
     vertex.normal = CalVector4(0, 0, -1);
-    cube->addVertex(vertex, black, inf);  
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v9
     ++curVertexId;
-    vertex.position = CalPoint4(0,1,0);
-    cube->addVertex(vertex, black, inf);  
+    vertex.position = CalPoint4(0,scale,0);
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v10
     ++curVertexId;
-    vertex.position = CalPoint4(1,1,0);
-    cube->addVertex( vertex, black, inf);  
+    vertex.position = CalPoint4(scale,scale,0);
+    cube->addVertex( vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v11
     ++curVertexId;
     vertex.position = CalPoint4(0,0,0);
-    cube->addVertex(vertex, black, inf);  
+    cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     
     CalCoreSubmesh::Face f4(8, 9, 10);
     cube->addFace(f4);
-    CalCoreSubmesh::Face f5(8, 11, 9);    
+    CalCoreSubmesh::Face f5(8, 11, 9);
     cube->addFace(f5);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
 
-    
-    //triangle faces f6, f7 vertices    
+    //triangle faces f6, f7 vertices
     //v12
     ++curVertexId;
     vertex.position = CalPoint4(0, 0, 0);
@@ -368,106 +361,110 @@ CalCoreSubmeshPtr MakeCube() {
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v13
     ++curVertexId;
-    vertex.position = CalPoint4(0,1,1);
+    vertex.position = CalPoint4(0,scale,scale);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 1.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v14
     ++curVertexId;
-    vertex.position = CalPoint4(0,1,0);
+    vertex.position = CalPoint4(0,scale,0);
     cube->addVertex( vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v15
     ++curVertexId;
-    vertex.position = CalPoint4(0,0,1);
+    vertex.position = CalPoint4(0,0,scale);
     cube->addVertex(vertex, black,inf);
     texCoord.u = 1.0f;
     texCoord.v = 0.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
-
+    cube->setTextureCoordinate(curVertexId,  texCoord);
+    
     CalCoreSubmesh::Face f6(12, 13, 14);
     cube->addFace(f6);
-    CalCoreSubmesh::Face f7(12, 15, 13);    
+    CalCoreSubmesh::Face f7(12, 15, 13);
     cube->addFace(f7);
-  
-    //triangle faces f8, f9 vertices       
-    //v16    
+    
+    //triangle faces f8, f9 vertices
+    //v16
     ++curVertexId;
-    vertex.position = CalPoint4(0, 1, 1);
+    vertex.position = CalPoint4(0, scale, scale);
     vertex.normal = CalVector4(0, 1, 0);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
-    //v17    
+    cube->setTextureCoordinate(curVertexId,  texCoord);
+    //v17
     ++curVertexId;
-    vertex.position = CalPoint4(1,1,0);
+    vertex.position = CalPoint4(scale,scale,0);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v18
     ++curVertexId;
-    vertex.position = CalPoint4(0,1,0);
+    vertex.position = CalPoint4(0,scale,0);
     cube->addVertex( vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v19
     ++curVertexId;
-    vertex.position = CalPoint4(1,1,1);
+    vertex.position = CalPoint4(scale,scale,scale);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     
     CalCoreSubmesh::Face f8(16, 17, 18);
-    cube->addFace(f8); 
-    CalCoreSubmesh::Face f9(16, 19, 17);    
+    cube->addFace(f8);
+    CalCoreSubmesh::Face f9(16, 19, 17);
     cube->addFace(f9);
     
-    //triangle faces f10, f11 vertices     
+    //triangle faces f10, f11 vertices
     //v20
     ++curVertexId;
-    vertex.position = CalPoint4(1, 0, 0);
+    vertex.position = CalPoint4(scale, 0, 0);
     vertex.normal = CalVector4(0, -1, 0);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v21
     ++curVertexId;
-    vertex.position = CalPoint4(0,0,1);
+    vertex.position = CalPoint4(0,0,scale);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v22
     ++curVertexId;
     vertex.position = CalPoint4(0,0,0);
     cube->addVertex( vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId,  texCoord);  
+    cube->setTextureCoordinate(curVertexId,  texCoord);
     //v23
     ++curVertexId;
-    vertex.position = CalPoint4(1,0,1);
+    vertex.position = CalPoint4(scale,0,scale);
     cube->addVertex(vertex, black, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
-    cube->setTextureCoordinate(curVertexId, texCoord);  
+    cube->setTextureCoordinate(curVertexId, texCoord);
     
     CalCoreSubmesh::Face f10(20, 21, 22);
     cube->addFace(f10);
-    CalCoreSubmesh::Face f11(20, 23, 21);    
+    CalCoreSubmesh::Face f11(20, 23, 21);
     cube->addFace(f11);
     return cube;
+}
+
+CalCoreSubmeshPtr MakeCube() {
+    return MakeCubeScale(1.0f);
 }
 
 #define PRINT_MOD 200
@@ -500,6 +497,12 @@ void CalCoreSubmesh::addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVe
         }
         c++;
     }
+}
+
+CalCoreSubmeshPtr CalCoreSubmesh::simplifySubmesh(float percent, bool preserveEdges) {
+    assert(getMorphTargets().empty());
+ 
+    return MakeCubeScale(percent/100.0f);
 }
 
 void CalCoreSubmesh::duplicateTriangles() {
@@ -909,3 +912,4 @@ void CalCoreSubmesh::renumberIndices() {
 
     m_minimumVertexBufferSize = outputVertexCount;
 }
+

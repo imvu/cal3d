@@ -510,6 +510,7 @@ BOOST_PYTHON_MODULE(_cal3d)
 
         .def("duplicateTriangles", &CalCoreSubmesh::duplicateTriangles)
         .def("sortTris", &CalCoreSubmesh::sortTris)
+        .def("simplifySubmesh", &CalCoreSubmesh::simplifySubmesh)
         .def("isStatic", &CalCoreSubmesh::isStatic)
         .def("splitMeshBasedOnBoneLimit", &CalCoreSubmesh::splitMeshBasedOnBoneLimit)
         .def("optimizeVertexCache", &CalCoreSubmesh::optimizeVertexCache)

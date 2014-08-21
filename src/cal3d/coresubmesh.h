@@ -40,6 +40,8 @@ enum SplitMeshBasedOnBoneLimitType {
     SplitMeshBoneLimitEmptyVertices
 };
 
+CAL3D_PTR(CalCoreSubmesh);
+
 class CAL3D_API CalCoreSubmesh {
 public:
     // TODO: replace with Vec2f
@@ -216,6 +218,7 @@ public:
     
     void duplicateTriangles();
     void sortTris(CalCoreSubmesh&);
+    CalCoreSubmeshPtr simplifySubmesh(float percent, bool preserveEdges);
 
     boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
@@ -247,8 +250,13 @@ private:
     size_t m_minimumVertexBufferSize;
 
     void addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVertexOffset, float normalMul);
+    
+    //std::vector<VertexRemovalInfo> m_vertexRemovalInfoVector;
+    //std::vector<FaceRemovalInfo> m_faceRemovalInfoVector;
+    //void computeVertexLocalErrors();
+    //int removeVertexWithSmallestError();
+    //CalCoreSubmeshPtr createOutputSubmesh();
 };
-CAL3D_PTR(CalCoreSubmesh);
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Influence& influence) {
     return os << "CalCoreSubmesh::Influence(" << influence.boneId << ", " << influence.weight << ", " << influence.lastInfluenceForThisVertex << ")";
