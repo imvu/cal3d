@@ -82,7 +82,7 @@ public:
     void setAxisAngle(const CalVector& axis, float angle) {
         float h2 = angle * 0.5f;
         float s = sin(h2);
-        w = -cos(h2); // left-handed
+        w = cos(h2); 
         x = s * axis.x;
         y = s * axis.y;
         z = s * axis.z;
@@ -90,40 +90,40 @@ public:
 };
 
 inline CalQuaternion operator*(const CalQuaternion& outer, const CalQuaternion& inner) {
-    float qx = inner.x;
-    float qy = inner.y;
-    float qz = inner.z;
-    float qw = inner.w;
+    float qx = outer.x;
+    float qy = outer.y;
+    float qz = outer.z;
+    float qw = outer.w;
 
     return CalQuaternion(
-        qw * outer.x + qx * outer.w + qy * outer.z - qz * outer.y,
-        qw * outer.y - qx * outer.z + qy * outer.w + qz * outer.x,
-        qw * outer.z + qx * outer.y - qy * outer.x + qz * outer.w,
-        qw * outer.w - qx * outer.x - qy * outer.y - qz * outer.z);
+        qw * inner.x + qx * inner.w + qy * inner.z - qz * inner.y,
+        qw * inner.y - qx * inner.z + qy * inner.w + qz * inner.x,
+        qw * inner.z + qx * inner.y - qy * inner.x + qz * inner.w,
+        qw * inner.w - qx * inner.x - qy * inner.y - qz * inner.z);
 }
 
 // Implicitly convert vector to quaternion (w=0), multiply times q
 inline CalQuaternion operator*(const CalVector& v, const CalQuaternion& q) {
     CalQuaternion quatV(v.x, v.y, v.z, 0.0f);
-    return quatV * q;
+    return q * quatV;
 }
 
 // Implicitly convert vector to quaternion (w=0), multiply times q
 inline CalQuaternion operator*(const CalVector4& v, const CalQuaternion& q) {
     CalQuaternion quatV(v.x, v.y, v.z, v.w);
-    return quatV * q;
+    return q * quatV;
 }
 
 // Implicitly convert point to quaternion (w=0), multiply times q
 inline CalQuaternion operator*(const CalPoint4& p, const CalQuaternion& q) {
     CalQuaternion quatP(p.x, p.y, p.z, p.w);
-    return quatP * q;
+    return q * quatP;
 }
 
 // left-multiply, rotate v by quaternion and produce rotated vector
 inline CalVector operator*(const CalQuaternion& q, const CalVector& v) {
     CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
-    temp = q * temp;
+    temp = temp * q;
 
     return CalVector(
         temp.x,
@@ -134,7 +134,7 @@ inline CalVector operator*(const CalQuaternion& q, const CalVector& v) {
 // left-multiply, rotate v by quaternion and produce rotated vector
 inline CalVector4 operator*(const CalQuaternion& q, const CalVector4& v) {
     CalQuaternion temp = v * CalQuaternion(-q.x, -q.y, -q.z, q.w);
-    temp = q * temp;
+    temp = temp * q;
 
     return CalVector4(
         temp.x,
@@ -145,7 +145,7 @@ inline CalVector4 operator*(const CalQuaternion& q, const CalVector4& v) {
 
 inline CalPoint4 operator*(const CalQuaternion& q, const CalPoint4& p) {
     CalQuaternion temp = p * CalQuaternion(-q.x, -q.y, -q.z, q.w);
-    temp = q * temp;
+    temp = temp * q;
 
     return CalPoint4(
         temp.x,

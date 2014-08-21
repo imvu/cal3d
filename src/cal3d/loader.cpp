@@ -588,8 +588,8 @@ CalCoreBonePtr CalLoader::loadCoreBones(CalBufferSource& dataSrc, int version) {
     }
 
 
-    CalQuaternion rot(rx, ry, rz, rw);
-    CalQuaternion rotbs(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
+    CalQuaternion rot(rx, ry, rz, -rw);
+    CalQuaternion rotbs(rxBoneSpace, ryBoneSpace, rzBoneSpace, -rwBoneSpace);
     CalVector trans(tx, ty, tz);
 
     // allocate a new core bone instance
@@ -699,7 +699,7 @@ CalCoreKeyframePtr CalLoader::loadCoreKeyframe(
         dataSrc.readFloat(rw);
     }
 
-    CalCoreKeyframePtr pCoreKeyframe(new CalCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw)));
+    CalCoreKeyframePtr pCoreKeyframe(new CalCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, -rw)));
     return pCoreKeyframe;
 }
 
