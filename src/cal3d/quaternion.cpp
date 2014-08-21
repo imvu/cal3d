@@ -45,6 +45,4 @@ CalQuaternion::CalQuaternion(CalMatrix m) {
         z = 0.25f * s;
         w = (m.cy.x - m.cx.y) / s;
     }
-    //change to right-handed
-    w = -w;
 }

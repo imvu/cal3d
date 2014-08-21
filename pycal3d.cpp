@@ -293,7 +293,7 @@ std::string VectorRepr(const CalVector& v) {
 }
 
 std::string QuaternionRepr(const CalQuaternion& q) {
-    float h2 = acos(q.w);
+    float h2 = acos(-q.w);
     float angle = h2 * 360 / boost::math::constants::pi<float>();
     float s = sin(h2);
 
