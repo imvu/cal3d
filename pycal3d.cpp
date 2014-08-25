@@ -100,32 +100,6 @@ void setCoreSkeletonSceneAmbientColor(const CalCoreSkeletonPtr& skel, tuple c) {
     skel->sceneAmbientColor.z = extract<float>(c[2]);
 }
 
-list getKeyframes(const CalCoreMorphTrack* t) {
-    list rv;
-    const std::vector<CalCoreMorphKeyframe>& keyframes = t->keyframes;
-    for (
-        std::vector<CalCoreMorphKeyframe>::const_iterator i = keyframes.begin();
-        i != keyframes.end();
-        ++i
-    ) {
-        rv.append(*i);
-    }
-    return rv;
-}
-
-list getTracks(const CalCoreMorphAnimation* m) {
-    list rv;
-    const std::vector<CalCoreMorphTrack>& tracks = m->tracks;
-    for (
-        std::vector<CalCoreMorphTrack>::const_iterator i = tracks.begin();
-        i != tracks.end();
-        ++i
-    ) {
-        rv.append(*i);
-    }
-    return rv;
-}
-
 namespace cal3d {
     struct PythonBuffer : public Buffer {
     public:
