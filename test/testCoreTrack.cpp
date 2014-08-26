@@ -39,6 +39,26 @@ TEST_F(TrackFixture, getState_blends_keyframes) {
     CHECK_EQUAL(CalVector(4, 4, 4), t.translation);
 }
 
+TEST_F(TrackFixture, optimize_removes_identical_frames) {
+    CalCoreTrack::KeyframeList keyframes;
+    keyframes.push_back(CalCoreKeyframe(0, CalVector(2, 2, 2), CalQuaternion()));
+    keyframes.push_back(CalCoreKeyframe(1, CalVector(2, 2, 2), CalQuaternion()));
+    CalCoreTrack track(0, keyframes);
+    track.optimize();
+
+    CHECK_EQUAL(1u, track.keyframes.size());
+    CHECK_EQUAL(CalVector(2, 2, 2), track.keyframes[0].transform.translation);
+}
+
+TEST_F(TrackFixture, optimize_leaves_different_frames) {
+    CalCoreTrack::KeyframeList keyframes;
+    keyframes.push_back(CalCoreKeyframe(0, CalVector(2, 2, 2), CalQuaternion()));
+    keyframes.push_back(CalCoreKeyframe(1, CalVector(4, 4, 4), CalQuaternion()));
+    CalCoreTrack track(0, keyframes);
+    track.optimize();
+    CHECK_EQUAL(2u, track.keyframes.size());
+}
+
 TEST_F(TrackFixture, getState_with_one_keyframe_always_returns_that_keyframe) {
     CalCoreTrack::KeyframeList keyframes;
     keyframes.push_back(CalCoreKeyframe(0, CalVector(2, 2, 2), CalQuaternion()));

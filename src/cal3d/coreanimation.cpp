@@ -49,7 +49,17 @@ const CalCoreTrack* CalCoreAnimation::getCoreTrack(unsigned coreBoneId) const {
 }
 
 void CalCoreAnimation::scale(float factor) {
-    std::for_each(tracks.begin(), tracks.end(), std::bind2nd(std::mem_fun_ref(&CalCoreTrack::scale), factor));
+    std::for_each(
+        tracks.begin(),
+        tracks.end(),
+        std::bind2nd(std::mem_fun_ref(&CalCoreTrack::scale), factor));
+}
+
+void CalCoreAnimation::optimize() {
+    std::for_each(
+        tracks.begin(),
+        tracks.end(),
+        std::mem_fun_ref(&CalCoreTrack::optimize));
 }
 
 void CalCoreAnimation::fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTranslate rt, bool doFingerFix) {

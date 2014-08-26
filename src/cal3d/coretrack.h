@@ -35,6 +35,7 @@ public:
 
     size_t sizeInBytes() const;
     void scale(float factor);
+    void optimize();
     void zeroTransforms();
     void fixup(
         const CalCoreBone& bone,

@@ -45,7 +45,22 @@ size_t CalCoreTrack::sizeInBytes() const {
 }
 
 void CalCoreTrack::scale(float factor) {
-    std::for_each(keyframes.begin(), keyframes.end(), std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
+    std::for_each(
+        keyframes.begin(),
+        keyframes.end(),
+        std::bind2nd(std::mem_fun_ref(&CalCoreKeyframe::scale), factor));
+}
+
+void CalCoreTrack::optimize() {
+    // if an animation is bracketed by two keyframes, and the
+    // keyframes have the same transform, then the animation is
+    // equivalent to an animation with one keyframe.
+    //
+    // this optimization is worth doing because the catalog is full of
+    // static pose animation that have two keyframes.
+    if (2u == keyframes.size() && keyframes[0].transform == keyframes[1].transform) {
+        keyframes.resize(1);
+    }
 }
 
 void CalCoreTrack::zeroTransforms() {

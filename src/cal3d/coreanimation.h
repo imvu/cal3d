@@ -26,8 +26,12 @@ public:
     size_t sizeInBytes() const;
     const CalCoreTrack* getCoreTrack(unsigned coreBoneId) const;
 
-    void fixup(const CalCoreSkeletonPtr& skeleton, cal3d::RotateTranslate rt=cal3d::RotateTranslate(), bool doFingerFix=false);
     void scale(float factor);
+    void fixup(
+        const CalCoreSkeletonPtr& skeleton,
+        cal3d::RotateTranslate rt = cal3d::RotateTranslate(),
+        bool doFingerFix = false);
+    void optimize();
 
     float duration;
     typedef std::vector<CalCoreTrack> TrackList;
