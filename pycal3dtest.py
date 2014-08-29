@@ -241,7 +241,7 @@ class Test(imvu.test.TestCase):
             q1.y = -q1.y
             q1.z = -q1.z
             q1.w = -q1.w
-        self.assertAlmostEqual(q1.x, -.70710678, places=4)
+        self.assertAlmostEqual(q1.x, .70710678, places=4)
         self.assertAlmostEqual(q1.y, 0, places=4)
         self.assertAlmostEqual(q1.z, 0, places=4)
         self.assertAlmostEqual(q1.w, .70710678, places=4)
@@ -260,7 +260,7 @@ class Test(imvu.test.TestCase):
             q3.w = -q3.w
         self.assertAlmostEqual(q3.x, 0.5, places=4)
         self.assertAlmostEqual(q3.y, 0.5, places=4)
-        self.assertAlmostEqual(q3.z, 0.5, places=4)
+        self.assertAlmostEqual(q3.z, -0.5, places=4)
         self.assertAlmostEqual(q3.w, 0.5, places=4)
 
     def test_quaternion_inversion(self):
@@ -286,9 +286,9 @@ class Test(imvu.test.TestCase):
         self.assertAlmostEqual(m1.cx.z, 0, places=4)
         self.assertAlmostEqual(m1.cy.x, 0, places=4)
         self.assertAlmostEqual(m1.cy.y, 0, places=4)
-        self.assertAlmostEqual(m1.cy.z, 1, places=4)
+        self.assertAlmostEqual(m1.cy.z, -1, places=4)
         self.assertAlmostEqual(m1.cz.x, 0, places=4)
-        self.assertAlmostEqual(m1.cz.y, -1, places=4)
+        self.assertAlmostEqual(m1.cz.y, 1, places=4)
         self.assertAlmostEqual(m1.cz.z, 0, places=4)
 
     def test_matrix_construction_from_vectors(self):
