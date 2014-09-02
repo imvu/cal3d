@@ -225,9 +225,13 @@ bool CalSaver::saveCoreBone(std::ostream& file, const CalCoreSkeleton* coreSkele
     }
 
     CalPlatform::writeVector(file, pCoreBone->relativeTransform.translation);
-    CalPlatform::writeQuat(file, pCoreBone->relativeTransform.rotation);
+    CalQuaternion rq = pCoreBone->relativeTransform.rotation; 
+    rq.w = -rq.w;
+    CalPlatform::writeQuat(file, rq);
     CalPlatform::writeVector(file, pCoreBone->inverseBindPoseTransform.translation);
-    CalPlatform::writeQuat(file, pCoreBone->inverseBindPoseTransform.rotation);
+    CalQuaternion iq = pCoreBone->relativeTransform.rotation; 
+    iq.w = -iq.w;
+    CalPlatform::writeQuat(file, iq);
 
     // write the parent bone id
     if (!CalPlatform::writeInteger(file, pCoreBone->parentId)) {
@@ -284,7 +288,9 @@ bool CalSaver::saveCoreKeyframe(
 
     CalPlatform::writeFloat(file, pCoreKeyframe->time);
     CalPlatform::writeVector(file, pCoreKeyframe->transform.translation);
-    CalPlatform::writeQuat(file, pCoreKeyframe->transform.rotation);
+    CalQuaternion rt = pCoreKeyframe->transform.rotation;
+    rt.w = -rt.w;
+    CalPlatform::writeQuat(file, rt);
 
     // check if an error happend
     if (!file) {
@@ -848,7 +854,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         str << rotationQuad.x << " "
             << rotationQuad.y << " "
             << rotationQuad.z << " "
-            << rotationQuad.w;
+            << -rotationQuad.w;
 
         TiXmlText rotationdata(str.str());
         rotation.InsertEndChild(rotationdata);
@@ -876,7 +882,7 @@ bool CalSaver::saveXmlCoreSkeleton(const std::string& strFilename, CalCoreSkelet
         str << localrotationQuad.x << " "
             << localrotationQuad.y << " "
             << localrotationQuad.z << " "
-            << localrotationQuad.w;
+            << -localrotationQuad.w;
 
         TiXmlText localrotationdata(str.str());
         localrotation.InsertEndChild(localrotationdata);
@@ -997,7 +1003,7 @@ bool CalSaver::saveXmlCoreAnimation(std::ostream& os, CalCoreAnimation* pCoreAni
             str << rotationQuad.x << " "
                 << rotationQuad.y << " "
                 << rotationQuad.z << " "
-                << rotationQuad.w;
+                << -rotationQuad.w;
 
             TiXmlText rotationdata(str.str());
             rotation.InsertEndChild(rotationdata);

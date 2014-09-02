@@ -429,12 +429,12 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
         CalCoreBonePtr pCoreBone(new CalCoreBone(strName, parentId));
 
         CalVector trans = CalVector(tx, ty, tz);
-        CalQuaternion rot = CalQuaternion(rx, ry, rz, rw);
+        CalQuaternion rot = CalQuaternion(rx, ry, rz, -rw);
 
         pCoreBone->relativeTransform.translation = trans;
         pCoreBone->relativeTransform.rotation = rot;
         pCoreBone->inverseBindPoseTransform.translation = CalVector(txBoneSpace, tyBoneSpace, tzBoneSpace);
-        pCoreBone->inverseBindPoseTransform.rotation = CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, rwBoneSpace);
+        pCoreBone->inverseBindPoseTransform.rotation = CalQuaternion(rxBoneSpace, ryBoneSpace, rzBoneSpace, -rwBoneSpace);
 
         pCoreBone->lightType = lightType;
         pCoreBone->lightColor = lightColor;
@@ -578,6 +578,7 @@ CalCoreAnimationPtr CalLoader::loadXmlCoreAnimationDoc(const rapidxml::xml_docum
             float rx, ry, rz, rw;
             ReadQuadFloat(get_string_value(rotation), &rx, &ry, &rz, &rw);
 
+            rw = -rw;
             CalCoreKeyframe pCoreKeyframe(time, t, CalQuaternion(rx, ry, rz, rw));
             hasLastKeyframe = true;
             prevCoreKeyframe = pCoreKeyframe;
