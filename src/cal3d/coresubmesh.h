@@ -218,8 +218,7 @@ public:
     
     void duplicateTriangles();
     void sortTris(CalCoreSubmesh&);
-    void simplifySubmesh(float percent, bool preserveEdges);
-    void ApplyFaces(const CalCoreSubmesh::VectorFace &tris);
+    CalCoreSubmeshPtr simplifySubmesh(float percent, bool preserveEdges);
 
     boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
