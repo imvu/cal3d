@@ -22,10 +22,10 @@ CalQuaternion::CalQuaternion(CalMatrix m) {
     t = m.cx.x + m.cy.y + m.cz.z;
     if (t > 0.00000001f) {
         s = 2.0f * sqrt(t + 1.0f);
-        x = (m.cz.y - m.cy.z) / s;
-        y = (m.cx.z - m.cz.x) / s;
-        z = (m.cy.x - m.cx.y) / s;
-        w = -(0.25f * s);
+        x = (-m.cz.y + m.cy.z) / s;
+        y = (-m.cx.z + m.cz.x) / s;
+        z = (-m.cy.x + m.cx.y) / s;
+        w = 0.25f * s;
     } else if (m.cx.x > m.cy.y && m.cx.x > m.cz.z) {
         s = 2.0f * sqrt(1.0f + m.cx.x - m.cy.y - m.cz.z);
         x = 0.25f * s;

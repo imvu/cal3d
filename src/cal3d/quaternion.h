@@ -14,13 +14,6 @@
 #include "cal3d/vector4.h"
 #include "cal3d/matrix.h"
 
-// Note that cal3d quaternions, following the 3ds max C++ API, are based on left-handed rotations, meaning that positive
-// rotations are clockwise, looking from positive to negative along the axis of rotation. This means that the
-// x, y, z and w components do not have the conventional values for a specified axis and rotation angle. To convert
-// a conventional quaternion to a cal3d quaternion, it is necessary to negate the x, y, and z values.
-//
-// As a consequence of this non-standard representation, the algorithms for quaternion multiplication and for
-// conversion of quaternion to matrix given here are also non-standard.
 
 class CAL3D_API CalQuaternion {
 public:
@@ -78,7 +71,6 @@ public:
         return rv;
     }
 
-    // right-handed API
     void setAxisAngle(const CalVector& axis, float angle) {
         float h2 = angle * 0.5f;
         float s = sin(h2);
