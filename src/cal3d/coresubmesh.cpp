@@ -1204,13 +1204,13 @@ void Collapse(reduxVertex *u, reduxVertex *v){
 
 void AddVertices(const CalCoreSubmesh::VectorVertex &vert){
     for (unsigned int i = 0; i<vert.size(); i++) {
-        reduxVertex *v = new reduxVertex(vert[i].position, i);
+        new reduxVertex(vert[i].position, i);
     }
 }
 
 void AddFaces(const CalCoreSubmesh::VectorFace &tri){
     for (unsigned int i = 0; i<tri.size(); i++) {
-        Triangle *t = new Triangle(
+        new Triangle(
             vertices[tri[i].vertexId[0]],
             vertices[tri[i].vertexId[1]],
             vertices[tri[i].vertexId[2]]);
