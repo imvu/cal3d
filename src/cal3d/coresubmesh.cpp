@@ -21,7 +21,7 @@
 
 #include <iostream>
 #include <cstring>
-#ifndef _WIN32
+#ifdef __linux__
 #include <mutex>
 #endif
 
@@ -504,18 +504,18 @@ void CalCoreSubmesh::addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVe
 
 void ProgressiveMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count);
 
-#ifndef _WIN32
+#ifdef __linux__
 std::mutex simplify_mutex;
 #endif
 void CalCoreSubmesh::simplifySubmesh(unsigned int tri_count) {
     assert(getMorphTargets().empty());
     
     if(tri_count < m_faces.size()) {
-#ifndef _WIN32
+#ifdef __linux__
         simplify_mutex.lock(); // mutex until I fix these crazy globals
 #endif
         ProgressiveMesh(*this, tri_count);
-#ifndef _WIN32
+#ifdef __linux__
         simplify_mutex.unlock();
 #endif
     }
