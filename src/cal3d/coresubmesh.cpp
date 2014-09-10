@@ -21,7 +21,9 @@
 
 #include <iostream>
 #include <cstring>
+#ifndef _WIN32
 #include <mutex>
+#endif
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
     : coreMaterialThreadId(0)
