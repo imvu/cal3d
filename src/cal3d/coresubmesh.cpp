@@ -1090,7 +1090,6 @@ reduxVertex::~reduxVertex(){
 
 bool reduxVertex::isBorder() {
     unsigned int i, j;
-    bool onedge = false;
     
     for(i=0; i< neighbor.size(); i++) {
         int count = 0;
