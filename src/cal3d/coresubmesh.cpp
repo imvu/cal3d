@@ -970,6 +970,7 @@ public:
     std::vector<Triangle *> face;     // adjacent triangles
     float            objdist;  // cached cost of collapsing edge
     reduxVertex *         collapse; // candidate vertex for collapse
+    bool isBorder(); // test if vertex is on border
     reduxVertex(float x, float y, float z, int _id);
     reduxVertex(CalVector v, int _id);
     reduxVertex(const CalPoint4 &p, int _id);
@@ -1086,6 +1087,26 @@ reduxVertex::~reduxVertex(){
     }
     VECTOR_REMOVE_VALUE(vertices, this);
 }
+
+bool reduxVertex::isBorder() {
+    unsigned int i, j;
+    bool onedge = false;
+    
+    for(i=0; i< neighbor.size(); i++) {
+        int count = 0;
+        for(j=0; j< face.size(); j++) {
+            if(face[j]->HasVertex(neighbor[i])) {
+                count++;
+            }
+        }
+        assert(count > 0);
+        if(count==1) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void reduxVertex::RemoveIfNonNeighbor(reduxVertex *n) {
     // removes n from neighbor list if n isn't a neighbor.
     if (!VECTOR_CONTAINS(neighbor, n)) return;
@@ -1131,7 +1152,16 @@ float ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
         }
         curvature = std::max(curvature, mincurv);
     }
-    // the more coplanar the lower the curvature term   
+    // the more coplanar the lower the curvature term 
+    // but ignore curvature if u is on a border but v isn't
+    bool uedge = u->isBorder();
+    bool vedge = v->isBorder();
+    if(uedge /*&& sides.size() > 1*/) {
+        curvature = 20.0;
+    }
+    if(uedge && vedge /*&& sides.size() > 1*/) {
+        curvature = 10.0;
+    }
     return edgelength * curvature;
 }
 

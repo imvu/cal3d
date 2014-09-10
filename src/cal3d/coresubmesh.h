@@ -251,12 +251,6 @@ private:
     size_t m_minimumVertexBufferSize;
 
     void addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVertexOffset, float normalMul);
-    
-    //std::vector<VertexRemovalInfo> m_vertexRemovalInfoVector;
-    //std::vector<FaceRemovalInfo> m_faceRemovalInfoVector;
-    //void computeVertexLocalErrors();
-    //int removeVertexWithSmallestError();
-    //CalCoreSubmeshPtr createOutputSubmesh();
 };
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Influence& influence) {
