@@ -1156,10 +1156,10 @@ float ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     bool uedge = u->isBorder();
     bool vedge = v->isBorder();
     if(uedge /*&& sides.size() > 1*/) {
-        curvature += 3.0;
-        if(vedge) {
-            curvature -= 1.5;
-        }
+        curvature = 20.0;
+    }
+    if(uedge && vedge /*&& sides.size() > 1*/) {
+        curvature = 10.0;
     }
     return edgelength * curvature;
 }
@@ -1282,13 +1282,13 @@ void ProgressiveMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count)
     AddFaces(inputmesh.getFaces());
 
     ComputeAllEdgeCollapseCosts(); // cache all edge collapse costs
-    //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
-    while (triangles.size() > target_tri_count || vertices.size() > 65535) {
+    std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
+    while (triangles.size() > target_tri_count) {
         // get the next vertex to collapse
         reduxVertex *mn = MinimumCostEdge();
         Collapse(mn, mn->collapse);
     }
-    //std::cout << "****# reduced to " << triangles.size() << "\n";
+    std::cout << "****# reduced to " << triangles.size() << "\n";
     
     CalCoreSubmesh::VectorFace tris;
     tris.reserve(triangles.size());
