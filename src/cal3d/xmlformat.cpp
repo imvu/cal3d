@@ -320,6 +320,12 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
     return loadXmlCoreMorphAnimationDoc(doc);
 }
 
+static inline void xmlfmt_float_nan_to_zero(float& x) {
+    if (x != x) {
+        x = 0;
+    }
+}
+
 CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_document<>& doc) {
     typedef rapidxml::xml_node<> TiXmlNode;
     typedef rapidxml::xml_node<> TiXmlElement;
@@ -428,6 +434,10 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
 
         CalCoreBonePtr pCoreBone(new CalCoreBone(strName, parentId));
 
+        xmlfmt_float_nan_to_zero(rx);
+        xmlfmt_float_nan_to_zero(ry);
+        xmlfmt_float_nan_to_zero(rz);
+        xmlfmt_float_nan_to_zero(rw);
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, -rw);
 
