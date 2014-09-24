@@ -320,6 +320,15 @@ CalCoreMorphAnimationPtr CalLoader::loadXmlCoreMorphAnimation(char* dataSrc) {
     return loadXmlCoreMorphAnimationDoc(doc);
 }
 
+/*Some customers' products have NAN value for rotation of transform. In order to make those products
+ * survive in Pure, we replace NAN value with 0 such that those products can be loaded, 
+ * but still the animations wouldn't work. Customers are the most important.*/
+static inline void xmlfmt_quaternion_nan_to_zero(float& x, float& y, float& z, float& w) {
+    if (x != x && y != y && z != z && w != w) {
+        x = y = z = w = 0;
+    }
+}
+
 CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_document<>& doc) {
     typedef rapidxml::xml_node<> TiXmlNode;
     typedef rapidxml::xml_node<> TiXmlElement;
@@ -428,6 +437,7 @@ CalCoreSkeletonPtr CalLoader::loadXmlCoreSkeletonDoc(const rapidxml::xml_documen
 
         CalCoreBonePtr pCoreBone(new CalCoreBone(strName, parentId));
 
+        xmlfmt_quaternion_nan_to_zero(rx, ry, rz, rw);
         CalVector trans = CalVector(tx, ty, tz);
         CalQuaternion rot = CalQuaternion(rx, ry, rz, -rw);
 
