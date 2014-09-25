@@ -502,19 +502,18 @@ void CalCoreSubmesh::addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVe
     }
 }
 
-void ProgressiveMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count);
+void SimplifyMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count);
 
 #ifdef __linux__
 std::mutex simplify_mutex;
 #endif
 void CalCoreSubmesh::simplifySubmesh(unsigned int tri_count) {
-    assert(getMorphTargets().empty());
     
     if(tri_count < m_faces.size()) {
 #ifdef __linux__
         simplify_mutex.lock(); // mutex until I fix these crazy globals
 #endif
-        ProgressiveMesh(*this, tri_count);
+        SimplifyMesh(*this, tri_count);
 #ifdef __linux__
         simplify_mutex.unlock();
 #endif
@@ -862,21 +861,23 @@ void CalCoreSubmesh::renumberIndices() {
     std::vector<Face> newFaces(m_faces.size());
     size_t indexCount = m_faces.size() * 3;
 
-    const CalIndex UNKNOWN = -1;
-
-    std::vector<CalIndex> mapping(m_vertices.size(), UNKNOWN); // old -> new
+    std::vector<CalIndex> mapping(m_vertices.size(), -1); // old -> new
+    std::vector<bool> populated(m_vertices.size(), false); // used index
     const CalIndex* oldIndices = m_faces[0].vertexId;
     CalIndex* newIndices = newFaces[0].vertexId;
-    CalIndex outputVertexCount = 0;
+    unsigned int outputVertexCount = 0;
 
     for (size_t i = 0; i < indexCount; ++i) {
         CalIndex oldIndex = oldIndices[i];
         CalIndex newIndex = mapping[oldIndex];
-        if (newIndex == UNKNOWN) {
-            newIndex = outputVertexCount++;
-            mapping[oldIndex] = newIndex;
+        if (!populated[oldIndex]) {
+            populated[oldIndex] = true;
+            mapping[oldIndex] = static_cast<CalIndex> (outputVertexCount);
+            newIndex = static_cast<CalIndex> (outputVertexCount);
+            outputVertexCount++;
         }
-        *newIndices++ = newIndex;
+        *newIndices = newIndex;
+        newIndices++;
     }
 
     m_faces.swap(newFaces);
@@ -894,7 +895,7 @@ void CalCoreSubmesh::renumberIndices() {
 
     for (size_t oldIndex = 0; oldIndex < mapping.size(); ++oldIndex) {
         CalIndex newIndex = mapping[oldIndex];
-        if (newIndex == UNKNOWN) {
+        if (!populated[oldIndex]) {
             continue;
         }
 
@@ -913,7 +914,7 @@ void CalCoreSubmesh::renumberIndices() {
         CalCoreMorphTarget::VertexOffsetArray newOffsets;
         for (auto vo = mt->vertexOffsets.begin(); vo != mt->vertexOffsets.end(); ++vo) {
             CalIndex newIndex = mapping[vo->vertexId];
-            if (UNKNOWN != newIndex) {
+            if (populated[vo->vertexId]) {
                 newOffsets.push_back(VertexOffset(newIndex, vo->position, vo->normal));
             }
         }
@@ -1274,7 +1275,7 @@ reduxVertex *MinimumCostEdge(){
     return mn;
 }
 
-void ProgressiveMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count)
+void SimplifyMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count)
 {
     vertices.clear();
     triangles.clear();
