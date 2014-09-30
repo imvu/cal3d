@@ -1240,10 +1240,14 @@ void AddVertices(const CalCoreSubmesh::VectorVertex &vert){
 
 void AddFaces(const CalCoreSubmesh::VectorFace &tri){
     for (unsigned int i = 0; i<tri.size(); i++) {
-        new Triangle(
-            vertices[tri[i].vertexId[0]],
-            vertices[tri[i].vertexId[1]],
-            vertices[tri[i].vertexId[2]]);
+        if(!(tri[i].vertexId[0] == tri[i].vertexId[1] ||
+             tri[i].vertexId[1] == tri[i].vertexId[2] ||
+             tri[i].vertexId[2] == tri[i].vertexId[0])) {
+                    new Triangle(
+                        vertices[tri[i].vertexId[0]],
+                        vertices[tri[i].vertexId[1]],
+                        vertices[tri[i].vertexId[2]]);
+        }
     }
 }
 
@@ -1290,7 +1294,7 @@ void SimplifyMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count)
         Collapse(mn, mn->collapse);
     }
     //std::cout << "****# reduced to " << triangles.size() << "\n";
-    
+
     CalCoreSubmesh::VectorFace tris;
     tris.reserve(triangles.size());
     for (unsigned int i = 0; i<triangles.size(); i++) {
@@ -1299,7 +1303,6 @@ void SimplifyMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count)
                                                 triangles[i]->vertex[2]->id ));
     }
     inputmesh.ApplyFaces(tris);
-    
     
     // cleanup memory
     //while (triangles.size() > 0) {
