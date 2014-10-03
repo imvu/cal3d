@@ -489,7 +489,6 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("splitMeshBasedOnBoneLimit", &CalCoreSubmesh::splitMeshBasedOnBoneLimit)
         .def("optimizeVertexCache", &CalCoreSubmesh::optimizeVertexCache)
         .def("renumberIndices", &CalCoreSubmesh::renumberIndices)
-        .def("normalizeNormals", &CalCoreSubmesh::normalizeNormals)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");
