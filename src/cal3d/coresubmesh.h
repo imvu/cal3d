@@ -228,6 +228,7 @@ public:
 
     void optimizeVertexCache();
     void renumberIndices();
+    void normalizeNormals();
 
 private:
     unsigned m_currentVertexId;

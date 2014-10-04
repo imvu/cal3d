@@ -11,6 +11,7 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/coremorphtarget.h>
 
+#include <limits>
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Face& f) {
     return os << '(' << f.vertexId[0] << ", " << f.vertexId[1] << ", " << f.vertexId[2] << ')';
@@ -523,4 +524,64 @@ TEST(minimumVertexBufferSize_is_changed_if_vertex_list_is_shrunk) {
     CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
     CHECK_EQUAL(3u, csm.getVectorVertex().size());
     CHECK_EQUAL(3u, csm.getMinimumVertexBufferSize());
+}
+
+static void s_checkNormalizedNormals(
+    const CalVector4& exp,
+    const CalVector4& in
+) {
+    CalCoreSubmesh csm(3, 0, 1);
+    CalCoreSubmesh::Vertex vertex;
+    vertex.position = CalPoint4(1, 1, 1, 0);
+    vertex.normal = in;
+    CalCoreSubmesh::InfluenceVector iv(1);
+    csm.addVertex(vertex, 0, iv);
+    csm.addVertex(vertex, 0, iv);
+    csm.addVertex(vertex, 0, iv);
+
+    csm.normalizeNormals();
+    const CalCoreSubmesh::VectorVertex& vertices =  csm.getVectorVertex();
+    CHECK_EQUAL(3u, vertices.size());
+    const CalVector4& normal = vertices[0].normal; 
+    CHECK_CLOSE(exp.x, normal.x, 0.001);
+    CHECK_CLOSE(exp.y, normal.y, 0.001);
+    CHECK_CLOSE(exp.z, normal.z, 0.001);
+}
+
+TEST(can_normalize_bad_normals) {
+    s_checkNormalizedNormals(
+        CalVector4(0.707106781187f, -0.707106781187f, 0.0f, 0.0f),
+        CalVector4(1000.0f, -1000.0f, 0.0f, 0.0f)
+    );
+}
+
+TEST(returns_a_default_when_asked_to_normalize_zero_normals) {
+    s_checkNormalizedNormals(
+        CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
+        CalVector4(0.0f, 0.0f, 0.0f, 0.0f)
+    );
+}
+
+TEST(returns_a_default_when_asked_to_normalize_inf_normals) {
+    float inf = std::numeric_limits<float>::infinity();
+    s_checkNormalizedNormals(
+        CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
+        CalVector4(inf, 1.0f, 0.0f, 0.0f)
+    );
+}
+
+TEST(returns_a_default_when_asked_to_normalize_negative_inf_normals) {
+    float inf = std::numeric_limits<float>::infinity();
+    s_checkNormalizedNormals(
+        CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
+        CalVector4(-inf, 1.0f, 0.0f, 0.0f)
+    );
+}
+
+TEST(returns_a_default_when_asked_to_normalize_nan_normals) {
+    float nan = std::numeric_limits<float>::quiet_NaN();
+    s_checkNormalizedNormals(
+        CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
+        CalVector4(nan, 1.0f, 0.0f, 0.0f)
+    );
 }

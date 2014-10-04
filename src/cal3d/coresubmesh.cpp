@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <limits>
 #ifdef __linux__
 #include <mutex>
 #endif
@@ -928,6 +929,23 @@ void CalCoreSubmesh::renumberIndices() {
     m_morphTargets.swap(newMorphTargets);
 
     m_minimumVertexBufferSize = outputVertexCount;
+}
+
+void CalCoreSubmesh::normalizeNormals() {
+    const float inf = std::numeric_limits<float>::infinity();
+    size_t numVertices = m_vertices.size();
+    for (size_t i = 0; i < numVertices; ++i) {
+        CalVector4& n = m_vertices[i].normal;
+        float length = n.length();
+        if (length > 0.0001f && length != inf) {
+            n *= 1.0f / length;
+        } else {
+            // We pick positive Y just because it's "up" in Northstar.  The
+            // caller really shouldn't care what value gets returned, since
+            // they gave us garbage.
+            n = CalVector4(0.0f, 1.0f, 0.0f, 0.0f);
+        }
+    }
 }
 
 /*
