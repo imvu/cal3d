@@ -22,9 +22,6 @@
 #include <iostream>
 #include <cstring>
 #include <limits>
-#ifdef __linux__
-#include <mutex>
-#endif
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
     : coreMaterialThreadId(0)
@@ -503,24 +500,6 @@ void CalCoreSubmesh::addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVe
     }
 }
 
-void SimplifyMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count);
-
-#ifdef __linux__
-std::mutex simplify_mutex;
-#endif
-void CalCoreSubmesh::simplifySubmesh(unsigned int tri_count) {
-    
-    if(tri_count < m_faces.size()) {
-#ifdef __linux__
-        simplify_mutex.lock(); // mutex until I fix these crazy globals
-#endif
-        SimplifyMesh(*this, tri_count);
-#ifdef __linux__
-        simplify_mutex.unlock();
-#endif
-    }
-}
-
 void CalCoreSubmesh::duplicateTriangles() {
     size_t faceCount = m_faces.size();
 
@@ -967,50 +946,14 @@ void CalCoreSubmesh::normalizeNormals() {
  *  neighbouring faces and vertices.
  */
 
-class Triangle;
-class reduxVertex;
-
-class Triangle {
-public:
-    reduxVertex *         vertex[3]; // the 3 points that make this tri
-    CalVector        normal;    // unit vector othogonal to this face
-    Triangle(reduxVertex *v0, reduxVertex *v1, reduxVertex *v2);
-    ~Triangle();
-    void             ComputeNormal();
-    void             ReplaceVertex(reduxVertex *vold, reduxVertex *vnew);
-    int              HasVertex(reduxVertex *v);
-};
-
-class reduxVertex {
-public:
-    CalVector        position; // location of point in euclidean space
-    int              id;       // place of vertex in original list
-    std::vector<reduxVertex *>   neighbor; // adjacent vertices
-    std::vector<Triangle *> face;     // adjacent triangles
-    float            objdist;  // cached cost of collapsing edge
-    reduxVertex *         collapse; // candidate vertex for collapse
-    bool isBorder(); // test if vertex is on border
-    reduxVertex(float x, float y, float z, int _id);
-    reduxVertex(CalVector v, int _id);
-    reduxVertex(const CalPoint4 &p, int _id);
-    ~reduxVertex();
-    void             RemoveIfNonNeighbor(reduxVertex *n);
-};
-
-std::vector<reduxVertex *> vertices;
-std::vector<Triangle *> triangles;
-
-#define VECTOR_CONTAINS(a, b)       (std::find(a.begin(), a.end(), b)!=a.end())
-#define VECTOR_REMOVE_VALUE(a, b)   (a.erase(std::find(a.begin(), a.end(), b)))
-#define VECTOR_ADD_UNIQUE(a, b)     do {  if(std::find(a.begin(), a.end(), b)==a.end())  a.push_back(b); } while(0)
-
-Triangle::Triangle(reduxVertex *v0, reduxVertex *v1, reduxVertex *v2){
-    assert(v0 != v1 && v1 != v2 && v2 != v0);
+CalCoreSubmesh::Triangle::Triangle(std::vector<reduxVertex *> &vertices, std::vector<Triangle *> &triangles, reduxVertex *v0, reduxVertex *v1, reduxVertex *v2)
+    : parent_vertices(vertices)
+    , parent_triangles(triangles)
+{
     vertex[0] = v0;
     vertex[1] = v1;
     vertex[2] = v2;
     ComputeNormal();
-    triangles.push_back(this);
     for (int i = 0; i<3; i++) {
         vertex[i]->face.push_back(this);
         for (int j = 0; j<3; j++) if (i != j) {
@@ -1019,9 +962,9 @@ Triangle::Triangle(reduxVertex *v0, reduxVertex *v1, reduxVertex *v2){
     }
 }
 
-Triangle::~Triangle(){
+CalCoreSubmesh::Triangle::~Triangle(){
     int i;
-    VECTOR_REMOVE_VALUE(triangles, this);
+    VECTOR_REMOVE_VALUE(parent_triangles, this);
     for (i = 0; i<3; i++) {
         if (vertex[i])
         {
@@ -1035,17 +978,17 @@ Triangle::~Triangle(){
         vertex[i2]->RemoveIfNonNeighbor(vertex[i]);
     }
 }
-int Triangle::HasVertex(reduxVertex *v) {
+int CalCoreSubmesh::Triangle::HasVertex(reduxVertex *v) {
     return (v == vertex[0] || v == vertex[1] || v == vertex[2]);
 }
-void Triangle::ComputeNormal(){
+void CalCoreSubmesh::Triangle::ComputeNormal(){
     CalVector v0 = vertex[0]->position;
     CalVector v1 = vertex[1]->position;
     CalVector v2 = vertex[2]->position;
     normal = cross((v1 - v0), (v2 - v1));
     normal.normalize();
 }
-void Triangle::ReplaceVertex(reduxVertex *vold, reduxVertex *vnew) {
+void CalCoreSubmesh::Triangle::ReplaceVertex(reduxVertex *vold, reduxVertex *vnew) {
     assert(vold && vnew);
     assert(vold == vertex[0] || vold == vertex[1] || vold == vertex[2]);
     assert(vnew != vertex[0] && vnew != vertex[1] && vnew != vertex[2]);
@@ -1076,38 +1019,25 @@ void Triangle::ReplaceVertex(reduxVertex *vold, reduxVertex *vnew) {
     ComputeNormal();
 }
 
-reduxVertex::reduxVertex(float x, float y, float z, int _id) {
-    position.x = x;
-    position.y = y;
-    position.z = z;
-    id = _id;
-    vertices.push_back(this);
-}
-
-reduxVertex::reduxVertex(CalVector v, int _id) {
-    position = v;
-    id = _id;
-    vertices.push_back(this);
-}
-
-reduxVertex::reduxVertex(const CalPoint4 &p, int _id) {
+CalCoreSubmesh::reduxVertex::reduxVertex(std::vector<reduxVertex *> &vertices, const CalPoint4 &p, int _id)
+    : parent_vertices(vertices)
+{
     position.x = p.x;
     position.y = p.y;
     position.z = p.z;
     id = _id;
-    vertices.push_back(this);
 }
 
-reduxVertex::~reduxVertex(){
+CalCoreSubmesh::reduxVertex::~reduxVertex(){
     assert(face.size() == 0);
     while (neighbor.size()) {
         VECTOR_REMOVE_VALUE(neighbor[0]->neighbor, this);
         VECTOR_REMOVE_VALUE(neighbor, neighbor[0]);
     }
-    VECTOR_REMOVE_VALUE(vertices, this);
+    VECTOR_REMOVE_VALUE(parent_vertices, this);
 }
 
-bool reduxVertex::isBorder() {
+bool CalCoreSubmesh::reduxVertex::isBorder() {
     unsigned int i, j;
     
     for(i=0; i< neighbor.size(); i++) {
@@ -1125,7 +1055,7 @@ bool reduxVertex::isBorder() {
     return false;
 }
 
-void reduxVertex::RemoveIfNonNeighbor(reduxVertex *n) {
+void CalCoreSubmesh::reduxVertex::RemoveIfNonNeighbor(reduxVertex *n) {
     // removes n from neighbor list if n isn't a neighbor.
     if (!VECTOR_CONTAINS(neighbor, n)) return;
     for (unsigned int i = 0; i<face.size(); i++) {
@@ -1134,7 +1064,7 @@ void reduxVertex::RemoveIfNonNeighbor(reduxVertex *n) {
     VECTOR_REMOVE_VALUE(neighbor, n);
 }
 
-float ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
+float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     // if we collapse edge uv by moving u to v then how 
     // much different will the model change, i.e. how much "error".
     // Texture, vertex normal, and border vertex code was removed
@@ -1183,7 +1113,7 @@ float ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     return edgelength * curvature;
 }
 
-void ComputeEdgeCostAtVertex(reduxVertex *v) {
+void CalCoreSubmesh::ComputeEdgeCostAtVertex(reduxVertex *v) {
     // compute the edge collapse cost for all edges that start
     // from vertex v.  Since we are only interested in reducing
     // the object by selecting the min cost edge at each step, we
@@ -1209,7 +1139,7 @@ void ComputeEdgeCostAtVertex(reduxVertex *v) {
     }
 }
 
-void ComputeAllEdgeCollapseCosts() {
+void CalCoreSubmesh::ComputeAllEdgeCollapseCosts() {
     // For all the edges, compute the difference it would make
     // to the model if it was collapsed.  The least of these
     // per vertex is cached in each vertex object.
@@ -1218,7 +1148,7 @@ void ComputeAllEdgeCollapseCosts() {
     }
 }
 
-void Collapse(reduxVertex *u, reduxVertex *v){
+void CalCoreSubmesh::Collapse(reduxVertex *u, reduxVertex *v){
     // Collapse the edge uv by moving vertex u onto v
     // Actually remove tris on uv, then update tris that
     // have u to have v, and then remove u.
@@ -1250,21 +1180,23 @@ void Collapse(reduxVertex *u, reduxVertex *v){
     }
 }
 
-void AddVertices(const CalCoreSubmesh::VectorVertex &vert){
+void CalCoreSubmesh::reduxAddVertices(const CalCoreSubmesh::VectorVertex &vert){
     for (unsigned int i = 0; i<vert.size(); i++) {
-        new reduxVertex(vert[i].position, i);
+        vertices.push_back(new reduxVertex(vertices, vert[i].position, i));
     }
 }
 
-void AddFaces(const CalCoreSubmesh::VectorFace &tri){
+void CalCoreSubmesh::reduxAddFaces(const CalCoreSubmesh::VectorFace &tri){
     for (unsigned int i = 0; i<tri.size(); i++) {
         if(!(tri[i].vertexId[0] == tri[i].vertexId[1] ||
              tri[i].vertexId[1] == tri[i].vertexId[2] ||
              tri[i].vertexId[2] == tri[i].vertexId[0])) {
-                    new Triangle(
+                    
+                triangles.push_back(
+                    new Triangle(vertices, triangles,
                         vertices[tri[i].vertexId[0]],
                         vertices[tri[i].vertexId[1]],
-                        vertices[tri[i].vertexId[2]]);
+                        vertices[tri[i].vertexId[2]]));
         }
     }
 }
@@ -1281,14 +1213,14 @@ void CalCoreSubmesh::ApplyFaces(const CalCoreSubmesh::VectorFace &tris){
     }
 }
 
-reduxVertex *MinimumCostEdge(){
+CalCoreSubmesh::reduxVertex *CalCoreSubmesh::MinimumCostEdge(){
     // Find the edge that when collapsed will affect model the least.
     // This funtion actually returns a reduxVertex, the second vertex
     // of the edge (collapse candidate) is stored in the vertex data.
     // Serious optimization opportunity here: this function currently
     // does a sequential search through an unsorted list :-(
     // Our algorithm could be O(n*lg(n)) instead of O(n*n)
-    reduxVertex *mn = vertices[0];
+    CalCoreSubmesh::reduxVertex *mn = vertices[0];
     for (unsigned int i = 0; i<vertices.size(); i++) {
         if (vertices[i]->objdist < mn->objdist) {
             mn = vertices[i];
@@ -1297,43 +1229,44 @@ reduxVertex *MinimumCostEdge(){
     return mn;
 }
 
-void SimplifyMesh(CalCoreSubmesh &inputmesh, unsigned int target_tri_count)
-{
-    vertices.clear();
-    triangles.clear();
-    AddVertices(inputmesh.getVectorVertex());  // put input data into our data structures
-    AddFaces(inputmesh.getFaces());
+void CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count) {
+    if(target_tri_count < m_faces.size()) {
+        vertices.clear();
+        triangles.clear();
+        reduxAddVertices(getVectorVertex());  // put input data into our data structures
+        reduxAddFaces(getFaces());
 
-    ComputeAllEdgeCollapseCosts(); // cache all edge collapse costs
-    //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
-    while (triangles.size() > target_tri_count || vertices.size() > 65535) {
-        // get the next vertex to collapse
-        reduxVertex *mn = MinimumCostEdge();
-        Collapse(mn, mn->collapse);
-    }
-    //std::cout << "****# reduced to " << triangles.size() << "\n";
+        ComputeAllEdgeCollapseCosts(); // cache all edge collapse costs
+        //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
+        while (triangles.size() > target_tri_count || vertices.size() > 65535) {
+            // get the next vertex to collapse
+            reduxVertex *mn = MinimumCostEdge();
+            Collapse(mn, mn->collapse);
+        }
+        //std::cout << "****# reduced to " << triangles.size() << "\n";
 
-    CalCoreSubmesh::VectorFace tris;
-    tris.reserve(triangles.size());
-    for (unsigned int i = 0; i<triangles.size(); i++) {
-        tris.push_back( CalCoreSubmesh::Face(   triangles[i]->vertex[0]->id,
-                                                triangles[i]->vertex[1]->id,
-                                                triangles[i]->vertex[2]->id ));
+        CalCoreSubmesh::VectorFace tris;
+        tris.reserve(triangles.size());
+        for (unsigned int i = 0; i<triangles.size(); i++) {
+            tris.push_back( CalCoreSubmesh::Face(   triangles[i]->vertex[0]->id,
+                                                    triangles[i]->vertex[1]->id,
+                                                    triangles[i]->vertex[2]->id ));
+        }
+        ApplyFaces(tris);
+        
+        // cleanup memory
+        //while (triangles.size() > 0) {
+            // get the next vertex to collapse
+        //    reduxVertex *mn = MinimumCostEdge();
+        //    Collapse(mn, mn->collapse);
+        //}
+        for(unsigned int i = 0; i < triangles.size(); i++)
+        {
+            delete triangles[i];
+        }
+        vertices.clear();
+        triangles.clear();
     }
-    inputmesh.ApplyFaces(tris);
-    
-    // cleanup memory
-    //while (triangles.size() > 0) {
-        // get the next vertex to collapse
-    //    reduxVertex *mn = MinimumCostEdge();
-    //    Collapse(mn, mn->collapse);
-    //}
-    for(unsigned int i = 0; i < triangles.size(); i++)
-    {
-        delete triangles[i];
-    }
-    vertices.clear();
-    triangles.clear();
 }
 
  

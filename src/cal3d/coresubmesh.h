@@ -42,6 +42,11 @@ enum SplitMeshBasedOnBoneLimitType {
 
 CAL3D_PTR(CalCoreSubmesh);
 
+#define VECTOR_CONTAINS(a, b)       (std::find(a.begin(), a.end(), b)!=a.end())
+#define VECTOR_REMOVE_VALUE(a, b)   (a.erase(std::find(a.begin(), a.end(), b)))
+#define VECTOR_ADD_UNIQUE(a, b)     do {  if(std::find(a.begin(), a.end(), b)==a.end())  a.push_back(b); } while(0)
+
+
 class CAL3D_API CalCoreSubmesh {
 public:
     // TODO: replace with Vec2f
@@ -123,6 +128,38 @@ public:
         }
     };
 
+    struct Triangle;
+    struct reduxVertex;
+
+    struct reduxVertex {
+    public:
+        CalVector        position; // location of point in euclidean space
+        int              id;       // place of vertex in original list
+        std::vector<reduxVertex *>   neighbor; // adjacent vertices
+        std::vector<Triangle *> face;     // adjacent triangles
+        float            objdist;  // cached cost of collapsing edge
+        reduxVertex *         collapse; // candidate vertex for collapse
+        std::vector<reduxVertex *> &parent_vertices;
+        bool isBorder(); // test if vertex is on border
+        reduxVertex(std::vector<reduxVertex *> &vertices, const CalPoint4 &p, int _id);
+        ~reduxVertex();
+        void             RemoveIfNonNeighbor(reduxVertex *n);
+    };
+
+    struct Triangle {
+    public:
+        reduxVertex *         vertex[3]; // the 3 points that make this tri
+        CalVector        normal;    // unit vector othogonal to this face
+        std::vector<reduxVertex *> &parent_vertices;
+        std::vector<Triangle *> &parent_triangles;
+        Triangle(std::vector<reduxVertex *> &vertices, std::vector<Triangle *> &triangles, reduxVertex *v0, reduxVertex *v1, reduxVertex *v2);
+        ~Triangle();
+        void             ComputeNormal();
+        void             ReplaceVertex(reduxVertex *vold, reduxVertex *vnew);
+        int              HasVertex(reduxVertex *v);
+    };
+
+    
     CAL3D_ALIGN_HEAD(16)
     struct Vertex {
         CalPoint4 position;
@@ -219,7 +256,6 @@ public:
     void duplicateTriangles();
     void sortTris(CalCoreSubmesh&);
     void simplifySubmesh(unsigned int tri_count);
-    void ApplyFaces(const CalCoreSubmesh::VectorFace &tris);
 
     boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
@@ -232,6 +268,9 @@ public:
 
 private:
     unsigned m_currentVertexId;
+    std::vector<reduxVertex *> vertices;
+    std::vector<Triangle *> triangles;
+
 
     // The following arrays should always be the same size.
     VectorVertex m_vertices;
@@ -252,6 +291,16 @@ private:
     size_t m_minimumVertexBufferSize;
 
     void addVertices(CalCoreSubmesh& submeshTo, unsigned submeshToVertexOffset, float normalMul);
+
+    // internal simplification prototypes
+    float ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v);
+    void ComputeEdgeCostAtVertex(reduxVertex *v);
+    void ComputeAllEdgeCollapseCosts();
+    void Collapse(reduxVertex *u, reduxVertex *v);
+    void reduxAddFaces(const VectorFace &tri);
+    void reduxAddVertices(const VectorVertex &vert);
+    void ApplyFaces(const VectorFace &tris);
+    reduxVertex *MinimumCostEdge();
 };
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Influence& influence) {
