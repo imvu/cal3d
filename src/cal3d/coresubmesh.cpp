@@ -1089,8 +1089,6 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     }
     // use the triangle facing most away from the sides 
     // to determine our curvature term
-#undef min
-#undef max
     for (i = 0; i<u->face.size(); i++) {
         float mincurv = 1.0f; // curve for face i and closer side to it
         for (unsigned int j = 0; j<sides.size(); j++) {

@@ -46,7 +46,6 @@ CAL3D_PTR(CalCoreSubmesh);
 #define VECTOR_REMOVE_VALUE(a, b)   (a.erase(std::find(a.begin(), a.end(), b)))
 #define VECTOR_ADD_UNIQUE(a, b)     do {  if(std::find(a.begin(), a.end(), b)==a.end())  a.push_back(b); } while(0)
 
-
 class CAL3D_API CalCoreSubmesh {
 public:
     // TODO: replace with Vec2f
