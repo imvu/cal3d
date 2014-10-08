@@ -203,6 +203,23 @@ def _composeSubmeshesIntoMesh(submeshes):
         + meshDataSuffix
     )
 
+def makeLargeMeshTestData():
+    numVertices = 40000
+    numFaces = 33000
+    final = '<SUBMESH NUMVERTICES="%d" NUMFACES="%d" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="1" MATERIAL="0">'
+    string = '<VERTEX NUMINFLUENCES="1" ID="%d"><POS>-5759.05 -1176.88 -0.000413365</POS><NORM>1.55047e-008 -2.86491e-008 -1</NORM><COLOR>0 0 0</COLOR><TEXCOORD>0.99311 0.982444</TEXCOORD><INFLUENCE ID="0">1</INFLUENCE></VERTEX>'
+    final = final % (numVertices, numFaces)
+    for i in range(numVertices):
+        tmp = string % i
+        final = final + tmp
+    stringFace = '<FACE VERTEXID="%d %d %d"/>'
+    for i in range(numFaces):
+        tmp = stringFace % (i, i + 1, i + 2)
+        final = final + tmp
+    final = final + '</SUBMESH>'
+    final = dedent(final)
+    return _composeSubmeshesIntoMesh([final])
+
 def makeMeshTestData(materialId):
     return _composeSubmeshesIntoMesh([submeshTemplate % (materialId,)])
 
