@@ -1127,7 +1127,6 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     // to determine our curvature term
     for (i = 0; i<u->face.size(); i++) {
         float mincurv = 1.0f; // curve for face i and closer side to it
-        float mintex = 1.0f; // du dv for face i and closer side to it
         for (unsigned int j = 0; j<sides.size(); j++) {
             // use dot product of face normals.
             float dotprod = dot(u->face[i]->normal, sides[j]->normal);
