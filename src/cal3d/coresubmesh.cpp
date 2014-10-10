@@ -954,7 +954,6 @@ CalCoreSubmesh::Triangle::Triangle(std::vector<reduxVertex *> &vertices, std::ve
     vertex[1] = v1;
     vertex[2] = v2;
     ComputeNormal();
-    ComputeTB();
     for (int i = 0; i<3; i++) {
         vertex[i]->face.push_back(this);
         for (int j = 0; j<3; j++) if (i != j) {
@@ -989,29 +988,6 @@ void CalCoreSubmesh::Triangle::ComputeNormal(){
     normal = cross((v1 - v0), (v2 - v1));
     normal.normalize();
 }
-void CalCoreSubmesh::Triangle::ComputeTB(){
-    //Calculate Tangent and Bitangent (AKA binormal)
-
-    float dx1 = vertex[1]->position.x - vertex[0]->position.x;
-    float dx2 = vertex[2]->position.x - vertex[0]->position.x;
-    float dy1 = vertex[1]->position.y - vertex[0]->position.y;
-    float dy2 = vertex[2]->position.y - vertex[0]->position.y;
-    float dz1 = vertex[1]->position.z - vertex[0]->position.z;
-    float dz2 = vertex[2]->position.z - vertex[0]->position.z;
-    
-    float du1 = vertex[1]->u - vertex[0]->u;
-    float du2 = vertex[2]->u - vertex[0]->u;
-    float dv1 = vertex[1]->u - vertex[0]->v;
-    float dv2 = vertex[2]->v - vertex[0]->v;
-        
-    float recip = 1.0f / (du1 * dv2 - du2 * dv1);
-    T = CalVector((dv2 * dx1 - dv1 * dx2) * recip, (dv2 * dy1 - dv1 * dy2) * recip, (dv2 * dz1 - dv1 * dz2) * recip);
-    B = CalVector((du1 * dx2 - du2 * dx1) * recip, (du1 * dy2 - du2 * dy1) * recip, (du1 * dz2 - du2 * dz1) * recip);
-    // this means dot product later only accounts for angular changes
-    // in texture derivative, that'll do for now
-    T.normalize();
-    B.normalize();
-}
 void CalCoreSubmesh::Triangle::ReplaceVertex(reduxVertex *vold, reduxVertex *vnew) {
     assert(vold && vnew);
     assert(vold == vertex[0] || vold == vertex[1] || vold == vertex[2]);
@@ -1041,7 +1017,6 @@ void CalCoreSubmesh::Triangle::ReplaceVertex(reduxVertex *vold, reduxVertex *vne
         }
     }
     ComputeNormal();
-    ComputeTB();
 }
 
 CalCoreSubmesh::reduxVertex::reduxVertex(std::vector<reduxVertex *> &vertices, const CalPoint4 &p, int _id)
@@ -1050,17 +1025,6 @@ CalCoreSubmesh::reduxVertex::reduxVertex(std::vector<reduxVertex *> &vertices, c
     position.x = p.x;
     position.y = p.y;
     position.z = p.z;
-    u = v = 0.0f;
-    id = _id;
-}
-CalCoreSubmesh::reduxVertex::reduxVertex(std::vector<reduxVertex *> &vertices, const CalPoint4 &p, float _u, float _v, int _id)
-    : parent_vertices(vertices)
-{
-    position.x = p.x;
-    position.y = p.y;
-    position.z = p.z;
-    u = _u;
-    v = _v;
     id = _id;
 }
 
@@ -1130,21 +1094,18 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
         for (unsigned int j = 0; j<sides.size(); j++) {
             // use dot product of face normals.
             float dotprod = dot(u->face[i]->normal, sides[j]->normal);
-            float dotprodT = dot(u->face[i]->T, sides[j]->T);
-            float dotprodB = dot(u->face[i]->B, sides[j]->B);
-            mincurv = std::min(mincurv, (1.0f - dotprodT) / 8.0f + (1.0f - dotprodB) / 8.0f + (1.0f - dotprod) / 2.0f);
+            mincurv = std::min(mincurv, (1.0f - dotprod) / 2.0f);
         }
         curvature = std::max(curvature, mincurv);
     }
-    
     // the more coplanar the lower the curvature term 
-    // but adjust for border adjacency
+    // but ignore curvature if u is on a border but v isn't
     bool uedge = u->isBorder();
     bool vedge = v->isBorder();
     if(uedge /*&& sides.size() > 1*/) {
-        curvature += 4.5;
+        curvature += 3.0;
         if(vedge) {
-            curvature -= 2.75;
+            curvature -= 1.5;
         }
     }
     return edgelength * curvature;
@@ -1217,17 +1178,9 @@ void CalCoreSubmesh::Collapse(reduxVertex *u, reduxVertex *v){
     }
 }
 
-void CalCoreSubmesh::reduxAddVertices(const CalCoreSubmesh::VectorVertex &vert, const CalCoreSubmesh::VectorTextureCoordinate &tex){
-    if(tex.size() == vert.size()) {
-        for (unsigned int i = 0; i<vert.size(); i++) {
-            vertices.push_back(new reduxVertex(vertices, vert[i].position, tex[i].u, tex[i].v, i));
-        }
-    }
-    else
-    { 
-        for (unsigned int i = 0; i<vert.size(); i++) {
-            vertices.push_back(new reduxVertex(vertices, vert[i].position, i));
-        }
+void CalCoreSubmesh::reduxAddVertices(const CalCoreSubmesh::VectorVertex &vert){
+    for (unsigned int i = 0; i<vert.size(); i++) {
+        vertices.push_back(new reduxVertex(vertices, vert[i].position, i));
     }
 }
 
@@ -1278,7 +1231,7 @@ void CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count) {
     if(target_tri_count < m_faces.size()) {
         vertices.clear();
         triangles.clear();
-        reduxAddVertices(getVectorVertex(), getTextureCoordinates());  // put input data into our data structures
+        reduxAddVertices(getVectorVertex());  // put input data into our data structures
         reduxAddFaces(getFaces());
 
         ComputeAllEdgeCollapseCosts(); // cache all edge collapse costs
