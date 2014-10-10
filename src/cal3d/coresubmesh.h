@@ -132,8 +132,9 @@ public:
 
     struct reduxVertex {
     public:
-        CalVector        position; // location of point in euclidean space
-        int              id;       // place of vertex in original list
+        CalVector       position; // location of point in euclidean space
+        float           u, v; // texture coordinates
+        int             id;       // place of vertex in original list
         std::vector<reduxVertex *>   neighbor; // adjacent vertices
         std::vector<Triangle *> face;     // adjacent triangles
         float            objdist;  // cached cost of collapsing edge
@@ -141,6 +142,7 @@ public:
         std::vector<reduxVertex *> &parent_vertices;
         bool isBorder(); // test if vertex is on border
         reduxVertex(std::vector<reduxVertex *> &vertices, const CalPoint4 &p, int _id);
+        reduxVertex(std::vector<reduxVertex *> &vertices, const CalPoint4 &p, float _u, float _v, int _id);
         ~reduxVertex();
         void             RemoveIfNonNeighbor(reduxVertex *n);
     };
@@ -149,11 +151,14 @@ public:
     public:
         reduxVertex *         vertex[3]; // the 3 points that make this tri
         CalVector        normal;    // unit vector othogonal to this face
+        CalVector        T;    // vector tangent (delta u)
+        CalVector        B;    // vector bitangent (delta v)
         std::vector<reduxVertex *> &parent_vertices;
         std::vector<Triangle *> &parent_triangles;
         Triangle(std::vector<reduxVertex *> &vertices, std::vector<Triangle *> &triangles, reduxVertex *v0, reduxVertex *v1, reduxVertex *v2);
         ~Triangle();
         void             ComputeNormal();
+        void             ComputeTB();
         void             ReplaceVertex(reduxVertex *vold, reduxVertex *vnew);
         int              HasVertex(reduxVertex *v);
     };
@@ -297,7 +302,7 @@ private:
     void ComputeAllEdgeCollapseCosts();
     void Collapse(reduxVertex *u, reduxVertex *v);
     void reduxAddFaces(const VectorFace &tri);
-    void reduxAddVertices(const VectorVertex &vert);
+    void reduxAddVertices(const VectorVertex &vert, const VectorTextureCoordinate &tex);
     void ApplyFaces(const VectorFace &tris);
     reduxVertex *MinimumCostEdge();
 };
