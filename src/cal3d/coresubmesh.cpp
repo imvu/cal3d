@@ -1150,7 +1150,7 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     return edgelength * curvature;
 }
 
-void CalCoreSubmesh::ComputeEdgeCostAtVertex(reduxVertex *v) {
+bool CalCoreSubmesh::ComputeEdgeCostAtVertex(reduxVertex *v) {
     // compute the edge collapse cost for all edges that start
     // from vertex v.  Since we are only interested in reducing
     // the object by selecting the min cost edge at each step, we
@@ -1161,10 +1161,13 @@ void CalCoreSubmesh::ComputeEdgeCostAtVertex(reduxVertex *v) {
         // v doesn't have neighbors so it costs nothing to collapse
         v->collapse = NULL;
         v->objdist = -0.01f;
-        return;
+        return true;
     }
     v->objdist = 1000000;
     v->collapse = NULL;
+    if(v->neighbor.size() > 25) {
+        return false; // abort
+    }
     // search all neighboring edges for "least cost" edge
     for (unsigned int i = 0; i<v->neighbor.size(); i++) {
         float dist;
@@ -1174,15 +1177,19 @@ void CalCoreSubmesh::ComputeEdgeCostAtVertex(reduxVertex *v) {
             v->objdist = dist;             // cost of the collapse
         }
     }
+    return true;
 }
 
-void CalCoreSubmesh::ComputeAllEdgeCollapseCosts() {
+bool CalCoreSubmesh::ComputeAllEdgeCollapseCosts() {
     // For all the edges, compute the difference it would make
     // to the model if it was collapsed.  The least of these
     // per vertex is cached in each vertex object.
     for (unsigned int i = 0; i<vertices.size(); i++) {
-        ComputeEdgeCostAtVertex(vertices[i]);
+        if(! ComputeEdgeCostAtVertex(vertices[i])) {
+            return false; // abort
+        }
     }
+    return true;
 }
 
 void CalCoreSubmesh::Collapse(reduxVertex *u, reduxVertex *v){
@@ -1274,30 +1281,33 @@ CalCoreSubmesh::reduxVertex *CalCoreSubmesh::MinimumCostEdge(){
     return mn;
 }
 
-void CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count) {
+bool CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count) {
+    bool retval = false;
     if(target_tri_count < m_faces.size()) {
         vertices.clear();
         triangles.clear();
         reduxAddVertices(getVectorVertex(), getTextureCoordinates());  // put input data into our data structures
         reduxAddFaces(getFaces());
 
-        ComputeAllEdgeCollapseCosts(); // cache all edge collapse costs
-        //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
-        while (triangles.size() > target_tri_count || vertices.size() > 65535) {
-            // get the next vertex to collapse
-            reduxVertex *mn = MinimumCostEdge();
-            Collapse(mn, mn->collapse);
-        }
-        //std::cout << "****# reduced to " << triangles.size() << "\n";
+        if (ComputeAllEdgeCollapseCosts()) { // cache all edge collapse costs
+            //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
+            while (triangles.size() > target_tri_count || vertices.size() > 65535) {
+                // get the next vertex to collapse
+                reduxVertex *mn = MinimumCostEdge();
+                Collapse(mn, mn->collapse);
+            }
+            //std::cout << "****# reduced to " << triangles.size() << "\n";
 
-        CalCoreSubmesh::VectorFace tris;
-        tris.reserve(triangles.size());
-        for (unsigned int i = 0; i<triangles.size(); i++) {
-            tris.push_back( CalCoreSubmesh::Face(   triangles[i]->vertex[0]->id,
-                                                    triangles[i]->vertex[1]->id,
-                                                    triangles[i]->vertex[2]->id ));
+            CalCoreSubmesh::VectorFace tris;
+            tris.reserve(triangles.size());
+            for (unsigned int i = 0; i<triangles.size(); i++) {
+                tris.push_back( CalCoreSubmesh::Face(   triangles[i]->vertex[0]->id,
+                                                        triangles[i]->vertex[1]->id,
+                                                        triangles[i]->vertex[2]->id ));
+            }
+            ApplyFaces(tris);
+            retval = true;
         }
-        ApplyFaces(tris);
         
         // cleanup memory
         //while (triangles.size() > 0) {
@@ -1312,6 +1322,7 @@ void CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count) {
         vertices.clear();
         triangles.clear();
     }
+    return retval;
 }
 
  

@@ -259,7 +259,7 @@ public:
     
     void duplicateTriangles();
     void sortTris(CalCoreSubmesh&);
-    void simplifySubmesh(unsigned int tri_count);
+    bool simplifySubmesh(unsigned int tri_count);
 
     boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
@@ -298,8 +298,8 @@ private:
 
     // internal simplification prototypes
     float ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v);
-    void ComputeEdgeCostAtVertex(reduxVertex *v);
-    void ComputeAllEdgeCollapseCosts();
+    bool ComputeEdgeCostAtVertex(reduxVertex *v);
+    bool ComputeAllEdgeCollapseCosts();
     void Collapse(reduxVertex *u, reduxVertex *v);
     void reduxAddFaces(const VectorFace &tri);
     void reduxAddVertices(const VectorVertex &vert, const VectorTextureCoordinate &tex);
