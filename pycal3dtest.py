@@ -20,7 +20,13 @@ class Test(imvu.test.TestCase):
         self.hereAndBackAgain(origData=animmorph1, calCoreType="CoreMorphAnimation")
 
     def testComments(self):
-        self.hereAndBackAgain(origData=xml_with_hash_mark_comments, calCoreType="CoreMesh")
+        origData=xml_with_hash_mark_comments
+        calCoreType="CoreMesh"
+        data = self.cal3d_.convertToBinary(calCoreType=calCoreType, data=origData)
+        data4 = self.cal3d_.convertToXml(calCoreType=calCoreType, data=data)
+        data4 = re.sub("\s+", "", data4)
+        testData4 = '<MESHNUMSUBMESH="1"><SUBMESHNUMVERTICES="1"NUMFACES="1"NUMLODSTEPS="0"NUMSPRINGS="0"NUMMORPHS="0"NUMTEXCOORDS="1"MATERIAL="1">' in data4
+        self.assertEqual(testData4, True)
 
     def assertEqual(self, a, b):
         f = open(os.path.join(tempfile.gettempdir(), "dataA"), "w")
@@ -1254,10 +1260,11 @@ animmorph1 = """<HEADER VERSION="910" MAGIC="XPF" />
     </TRACK>
 </ANIMATION>"""
 
-xml_with_hash_mark_comments = """<HEADER VERSION="910" MAGIC="XMF" />
+xml_with_hash_mark_comments = """<HEADER VERSION="919" MAGIC="XMF" />
+whatever comments
 # a comment
 <MESH NUMSUBMESH="1">
-    <SUBMESH NUMVERTICES="1" NUMFACES="1" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="2" NUMTEXCOORDS="1" MATERIAL="1">
+    <SUBMESH NUMVERTICES="1" NUMFACES="1" NUMLODSTEPS="0" NUMSPRINGS="0" NUMMORPHS="0" NUMTEXCOORDS="1" MATERIAL="1">
         <VERTEX NUMINFLUENCES="3" ID="0">
             <POS>5759.05 -1176.88 -0.00023478</POS>
             <NORM>1.27676e-008 2.40249e-008 -1</NORM>
@@ -1267,19 +1274,10 @@ xml_with_hash_mark_comments = """<HEADER VERSION="910" MAGIC="XMF" />
             <INFLUENCE ID="1">0.3</INFLUENCE>
             <INFLUENCE ID="2">0.5</INFLUENCE>
         </VERTEX>
-        <MORPH NAME="used" NUMBLENDVERTS="1" MORPHID="0">
-            <BLENDVERTEX VERTEXID="0">
-                <POSITION>7.69704 -121.396 862.701</POSITION>
-                <NORMAL>0.475756 -0.861712 -0.176376</NORMAL>
-                <TEXCOORD>0.508674 0.275276</TEXCOORD>
-            </BLENDVERTEX>
-        </MORPH>
-        <MORPH NAME="empty" NUMBLENDVERTS="0" MORPHID="1">
-        </MORPH>
         <FACE VERTEXID="0 0 0" />
     </SUBMESH>
 </MESH>
-
+whatever comments
 # this is another comment :|"""
 
 xml_that_crashes_due_to_missing_header = """<imvu>
