@@ -240,6 +240,9 @@ CalCoreAnimationPtr CalLoader::loadBinaryCoreAnimation(CalBufferSource& dataSrc)
     }
 
     // set the duration in the core animation instance
+    if (duration != duration) {
+        duration = 0;
+    }
     pCoreAnimation->duration = duration;
 
     // read the number of tracks

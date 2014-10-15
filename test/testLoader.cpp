@@ -647,6 +647,25 @@ TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CHECK_EQUAL(*anim1, *anim2);
 }
 
+TEST(converting_xml_to_binary_then_test_nan_duration_animation) {
+    CalBufferSource cbs(fromString(animationText));
+    CalCoreAnimationPtr anim1 = CalLoader::loadCoreAnimation(cbs);
+    CHECK(anim1);
+
+    std::stringstream output;
+    unsigned long nan[2] = {0xffffffff, 0x7fffffff};
+    float g = *( float* )nan;
+    anim1->duration = g;
+    CalSaver::saveCoreAnimation(output, anim1.get());
+
+    std::string str = output.str();
+    CalBufferSource cbs2(str.data(), str.size());
+    CalCoreAnimationPtr anim2 = CalLoader::loadCoreAnimation(cbs2);
+    CHECK(anim2);
+
+    CHECK_EQUAL(anim2->duration, 0);
+}
+
 const char invalid_morph[] =
     "<HEADER MAGIC=\"XAF\" VERSION=\"919\" />"
     "<ANIMATION NUMTRACKS=\"85\" DURATION=\"4.8571429\">"
