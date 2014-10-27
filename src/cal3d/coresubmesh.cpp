@@ -1281,19 +1281,24 @@ CalCoreSubmesh::reduxVertex *CalCoreSubmesh::MinimumCostEdge(){
     return mn;
 }
 
-bool CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count) {
+bool CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count, unsigned int quality) {
     bool retval = false;
     if(target_tri_count < m_faces.size()) {
         vertices.clear();
         triangles.clear();
         reduxAddVertices(getVectorVertex(), getTextureCoordinates());  // put input data into our data structures
         reduxAddFaces(getFaces());
+        float lastError, error;
+        
+        lastError = error = (100.0f-quality ) * 0.00001f;
 
         if (ComputeAllEdgeCollapseCosts()) { // cache all edge collapse costs
             //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
-            while (triangles.size() > target_tri_count || vertices.size() > 65535) {
+            while (triangles.size() > target_tri_count || vertices.size() > 65535 ||
+                  ( lastError < error && triangles.size() > (target_tri_count/2)) ) {
                 // get the next vertex to collapse
                 reduxVertex *mn = MinimumCostEdge();
+                lastError = mn->objdist;
                 Collapse(mn, mn->collapse);
             }
             //std::cout << "****# reduced to " << triangles.size() << "\n";

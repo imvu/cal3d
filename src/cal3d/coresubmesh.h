@@ -259,7 +259,7 @@ public:
     
     void duplicateTriangles();
     void sortTris(CalCoreSubmesh&);
-    bool simplifySubmesh(unsigned int tri_count);
+    bool simplifySubmesh(unsigned int tri_count, unsigned int quality);
 
     boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
