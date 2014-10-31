@@ -271,7 +271,8 @@ public:
     void normalizeNormals();
 
 private:
-    unsigned m_currentVertexId;
+    unsigned int m_currentVertexId;
+    int m_isolateds;
     std::vector<reduxVertex *> vertices;
     std::vector<Triangle *> triangles;
 

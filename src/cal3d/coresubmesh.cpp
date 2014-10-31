@@ -1123,6 +1123,7 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
             sides.push_back(u->face[i]);
         }
     }
+
     // use the triangle facing most away from the sides 
     // to determine our curvature term
     for (i = 0; i<u->face.size(); i++) {
@@ -1141,7 +1142,11 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     // but adjust for border adjacency
     bool uedge = u->isBorder();
     bool vedge = v->isBorder();
-    if(uedge /*&& sides.size() > 1*/) {
+    if(u->face.size() == 1.0) {
+        curvature += 10.0;
+        m_isolateds++;
+    }
+    if(uedge) {
         curvature += 4.5;
         if(vedge) {
             curvature -= 2.75;
@@ -1289,29 +1294,34 @@ bool CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count, unsigned int
         reduxAddVertices(getVectorVertex(), getTextureCoordinates());  // put input data into our data structures
         reduxAddFaces(getFaces());
         float lastError, error;
+        m_isolateds = 0;
         
         lastError = error = (100.0f-quality ) * 0.00001f;
 
         if (ComputeAllEdgeCollapseCosts()) { // cache all edge collapse costs
-            //std::cout << "****# started with " << triangles.size() << "   Target: " << target_tri_count << "\n";
-            while (triangles.size() > target_tri_count || vertices.size() > 65535 ||
-                  ( lastError < error && triangles.size() > (target_tri_count/2)) ) {
-                // get the next vertex to collapse
-                reduxVertex *mn = MinimumCostEdge();
-                lastError = mn->objdist;
-                Collapse(mn, mn->collapse);
-            }
-            //std::cout << "****# reduced to " << triangles.size() << "\n";
+            //printf("isolated fraction: %.3f\n", m_isolateds / static_cast<float>(m_faces.size()));
+            if(m_isolateds / static_cast<float>(m_faces.size()) < 0.4f) {
+                if(m_isolateds / static_cast<float>(m_faces.size()) > 0.21f) { // boost poly count if isolateds are high
+                    target_tri_count += ( m_faces.size() - target_tri_count) /2;
+                }
+                while (triangles.size() > target_tri_count || vertices.size() > 65535 ||
+                      ( lastError < error && triangles.size() > (target_tri_count/2)) ) {
+                    // get the next vertex to collapse
+                    reduxVertex *mn = MinimumCostEdge();
+                    lastError = mn->objdist;
+                    Collapse(mn, mn->collapse);
+                }
 
-            CalCoreSubmesh::VectorFace tris;
-            tris.reserve(triangles.size());
-            for (unsigned int i = 0; i<triangles.size(); i++) {
-                tris.push_back( CalCoreSubmesh::Face(   triangles[i]->vertex[0]->id,
-                                                        triangles[i]->vertex[1]->id,
-                                                        triangles[i]->vertex[2]->id ));
+                CalCoreSubmesh::VectorFace tris;
+                tris.reserve(triangles.size());
+                for (unsigned int i = 0; i<triangles.size(); i++) {
+                    tris.push_back( CalCoreSubmesh::Face(   triangles[i]->vertex[0]->id,
+                                                            triangles[i]->vertex[1]->id,
+                                                            triangles[i]->vertex[2]->id ));
+                }
+                ApplyFaces(tris);
+                retval = true;
             }
-            ApplyFaces(tris);
-            retval = true;
         }
         
         // cleanup memory
