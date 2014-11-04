@@ -1142,9 +1142,15 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
     // but adjust for border adjacency
     bool uedge = u->isBorder();
     bool vedge = v->isBorder();
-    if(u->face.size() == 1.0) {
-        curvature += 10.0;
+    if(u->face.size() == 1) {
+        curvature += 5.0;
         m_isolateds++;
+    }
+    else if (u->face.size() == 2) {
+        if( matchFaces(u->face[0], u->face[1]) ) {
+            curvature += 5.0;
+            m_isolateds++;
+        }
     }
     if(uedge) {
         curvature += 4.5;
@@ -1153,6 +1159,16 @@ float CalCoreSubmesh::ComputeEdgeCollapseCost(reduxVertex *u, reduxVertex *v) {
         }
     }
     return edgelength * curvature;
+}
+
+bool CalCoreSubmesh::matchFaces(Triangle *t0, Triangle *t1)
+{
+    if( (t0->vertex[0] == t1->vertex[0] || t0->vertex[0] == t1->vertex[1] || t0->vertex[0] == t1->vertex[2]) &&
+        (t0->vertex[1] == t1->vertex[0] || t0->vertex[1] == t1->vertex[1] || t0->vertex[1] == t1->vertex[2]) &&
+        (t0->vertex[2] == t1->vertex[0] || t0->vertex[2] == t1->vertex[1] || t0->vertex[2] == t1->vertex[2]) ) {
+        return true;
+    }
+    return false;
 }
 
 bool CalCoreSubmesh::ComputeEdgeCostAtVertex(reduxVertex *v) {
@@ -1299,7 +1315,7 @@ bool CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count, unsigned int
         lastError = error = (100.0f-quality ) * 0.00001f;
 
         if (ComputeAllEdgeCollapseCosts()) { // cache all edge collapse costs
-            //printf("isolated fraction: %.3f\n", m_isolateds / static_cast<float>(m_faces.size()));
+            printf("isolated fraction: %.3f\n", m_isolateds / static_cast<float>(m_faces.size()));
             if(m_isolateds / static_cast<float>(m_faces.size()) < 0.4f) {
                 if(m_isolateds / static_cast<float>(m_faces.size()) > 0.21f) { // boost poly count if isolateds are high
                     target_tri_count += ( m_faces.size() - target_tri_count) /2;

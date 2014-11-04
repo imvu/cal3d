@@ -305,6 +305,7 @@ private:
     void reduxAddFaces(const VectorFace &tri);
     void reduxAddVertices(const VectorVertex &vert, const VectorTextureCoordinate &tex);
     void ApplyFaces(const VectorFace &tris);
+    bool matchFaces(Triangle *t0, Triangle *t1);
     reduxVertex *MinimumCostEdge();
 };
 
