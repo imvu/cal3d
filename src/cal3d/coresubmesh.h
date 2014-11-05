@@ -267,7 +267,6 @@ public:
     SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, size_t boneLimit);
 
     void optimizeVertexCache();
-    void optimizeVertexCacheSubset(unsigned int faceStartIndex, unsigned int faceCount);
     void renumberIndices();
     void normalizeNormals();
 

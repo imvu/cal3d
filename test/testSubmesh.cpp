@@ -11,7 +11,6 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/coremorphtarget.h>
 
-#include <cmath>
 #include <limits>
 
 inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Face& f) {
@@ -23,48 +22,6 @@ static CalCoreSubmesh::Vertex s_makeVertex(int id) {
     v.position = CalPoint4(id, id, id);
     v.normal = CalVector4(id, id, id);
     return v;
-}
-
-static CalCoreSubmesh s_makeMeshWithUnoptimizedVertexCache() {
-    CalCoreSubmesh csm(7, true, 3);
-    // Faces 0 and 2 share vertices, while face 1 does not.  We expect vertex
-    // cache optimization will rearrange the triangles such that faces 0 and 2
-    // are together, either preceded or followed by face 1.
-    csm.addFace(CalCoreSubmesh::Face(0, 1, 2));
-    csm.addFace(CalCoreSubmesh::Face(3, 4, 5));
-    csm.addFace(CalCoreSubmesh::Face(2, 1, 6));
-
-    std::vector<CalCoreSubmesh::Influence> inf(1);
-    inf[0].weight = 1.0f;
-    inf[0].boneId = 0;
-
-    for (size_t i = 0; i < 7; ++i) {
-        csm.addVertex(s_makeVertex(i), 0, inf);
-    }
-
-    return csm;
-}
-
-static std::vector<CalIndex> s_getIndices(const CalCoreSubmesh& csm) {
-    std::vector<CalIndex> indices;
-    const auto& faces = csm.getFaces();
-    for (size_t i = 0; i < faces.size(); ++i) {
-        for (size_t j = 0; j < 3; ++j) {
-            indices.push_back(faces[i].vertexId[j]);
-        }
-    }
-    return indices;
-}
-
-static size_t s_getFaceIndexWithVertexIndex(const CalCoreSubmesh& csm, CalIndex vertexIndex) {
-    auto indices = s_getIndices(csm);
-    for (size_t i = 0; i < indices.size(); ++i) {
-        if (indices[i] == vertexIndex) {
-            return (i / 3);
-        }
-    }
-    assert(false);
-    return 0;
 }
 
 TEST(duplicate_triangles) {
@@ -430,50 +387,6 @@ TEST(minimumVertexBufferSize_emcompasses_face_range) {
     CalCoreSubmesh csm(1, false, 1);
     csm.addFace(CalCoreSubmesh::Face(1, 3, 2));
     CHECK_EQUAL(4u, csm.getMinimumVertexBufferSize());
-}
-
-TEST(can_optimize_vertex_cache) {
-    CalCoreSubmesh csm = s_makeMeshWithUnoptimizedVertexCache();
-
-    auto v0FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 0);
-    auto v6FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(2U, static_cast<unsigned int>(abs(v0FaceIndexBefore - v6FaceIndexBefore)));
-
-    csm.optimizeVertexCache();
-
-    // We expect vertex cache optimization to move the two faces that share
-    // vertices together.
-    auto v0FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 0);
-    auto v6FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(1U, static_cast<unsigned int>(abs(v0FaceIndexAfter - v6FaceIndexAfter)));
-}
-
-TEST(can_optimize_vertex_cache_subset) {
-    CalCoreSubmesh csm = s_makeMeshWithUnoptimizedVertexCache();
-
-    auto v0FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 0);
-    auto v6FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(2U, static_cast<unsigned int>(abs(v0FaceIndexBefore - v6FaceIndexBefore)));
-
-    csm.optimizeVertexCacheSubset(0, 3);
-
-    // We expect vertex cache optimization to move the two faces that share
-    // vertices together.
-    auto v0FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 0);
-    auto v6FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(1U, static_cast<unsigned int>(abs(v0FaceIndexAfter - v6FaceIndexAfter)));
-}
-
-TEST(optimizing_vertex_cache_subset_does_not_affect_verts_outside_of_subset) {
-    CalCoreSubmesh csm1 = s_makeMeshWithUnoptimizedVertexCache();
-    CHECK_EQUAL(2U, s_getFaceIndexWithVertexIndex(csm1, 6));
-    csm1.optimizeVertexCacheSubset(0, 2);
-    CHECK_EQUAL(2U, s_getFaceIndexWithVertexIndex(csm1, 6));
-
-    CalCoreSubmesh csm2 = s_makeMeshWithUnoptimizedVertexCache();
-    CHECK_EQUAL(0U, s_getFaceIndexWithVertexIndex(csm2, 0));
-    csm2.optimizeVertexCacheSubset(1, 2);
-    CHECK_EQUAL(0U, s_getFaceIndexWithVertexIndex(csm2, 0));
 }
 
 TEST(renumber_renumberIndices_without_texcoords) {
