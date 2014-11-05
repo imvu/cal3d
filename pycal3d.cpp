@@ -488,6 +488,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("isStatic", &CalCoreSubmesh::isStatic)
         .def("splitMeshBasedOnBoneLimit", &CalCoreSubmesh::splitMeshBasedOnBoneLimit)
         .def("optimizeVertexCache", &CalCoreSubmesh::optimizeVertexCache)
+        .def("optimizeVertexCacheSubset", &CalCoreSubmesh::optimizeVertexCacheSubset)
         .def("renumberIndices", &CalCoreSubmesh::renumberIndices)
         .def("normalizeNormals", &CalCoreSubmesh::normalizeNormals)
         ;

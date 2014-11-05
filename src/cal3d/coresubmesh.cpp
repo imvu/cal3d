@@ -19,8 +19,9 @@
 #include "cal3d/transform.h"
 #include "cal3d/forsythtriangleorderoptimizer.h"
 
-#include <iostream>
+#include <algorithm>
 #include <cstring>
+#include <iostream>
 #include <limits>
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
@@ -824,11 +825,36 @@ void CalCoreSubmesh::optimizeVertexCache() {
     Forsyth::OptimizeFaces(
         m_faces[0].vertexId,
         3 * m_faces.size(),
-        m_vertices.size(), 
+        m_vertices.size(),
         newFaces[0].vertexId,
         32);
 
     m_faces.swap(newFaces);
+}
+
+void CalCoreSubmesh::optimizeVertexCacheSubset(
+    unsigned int faceStartIndex,
+    unsigned int faceCount
+) {
+    if (m_faces.empty()) {
+        return;
+    }
+    assert(faceStartIndex + faceCount <= m_faces.size());
+
+    std::vector<Face> newFaces(faceCount);
+
+    Forsyth::OptimizeFaces(
+        m_faces[faceStartIndex].vertexId,
+        3 * faceCount,
+        m_vertices.size(),
+        newFaces[0].vertexId,
+        32);
+
+    std::copy(
+        newFaces[0].vertexId,
+        newFaces[0].vertexId + faceCount * 3,
+        m_faces[faceStartIndex].vertexId
+    );
 }
 
 void CalCoreSubmesh::renumberIndices() {
