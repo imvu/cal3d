@@ -17,6 +17,13 @@ inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Face& f)
     return os << '(' << f.vertexId[0] << ", " << f.vertexId[1] << ", " << f.vertexId[2] << ')';
 }
 
+static CalCoreSubmesh::Vertex s_makeVertex(int id) {
+    CalCoreSubmesh::Vertex v;
+    v.position = CalPoint4(id, id, id);
+    v.normal = CalVector4(id, id, id);
+    return v;
+}
+
 TEST(duplicate_triangles) {
     CalCoreSubmesh csm(3, 0, 1);
     CalCoreSubmesh::Vertex vertex;
@@ -382,13 +389,6 @@ TEST(minimumVertexBufferSize_emcompasses_face_range) {
     CHECK_EQUAL(4u, csm.getMinimumVertexBufferSize());
 }
 
-CalCoreSubmesh::Vertex makeVertex(int id) {
-    CalCoreSubmesh::Vertex v;
-    v.position = CalPoint4(id, id, id);
-    v.normal = CalVector4(id, id, id);
-    return v;
-}
-
 TEST(renumber_renumberIndices_without_texcoords) {
     CalCoreSubmesh csm(4, false, 2);
     csm.addFace(CalCoreSubmesh::Face(3, 2, 1));
@@ -398,23 +398,23 @@ TEST(renumber_renumberIndices_without_texcoords) {
     inf[0].weight = 1.0f;
 
     inf[0].boneId = 0;
-    csm.addVertex(makeVertex(0), 0, inf);
+    csm.addVertex(s_makeVertex(0), 0, inf);
     inf[0].boneId = 1;
-    csm.addVertex(makeVertex(1), 1, inf);
+    csm.addVertex(s_makeVertex(1), 1, inf);
     inf[0].boneId = 2;
-    csm.addVertex(makeVertex(2), 2, inf);
+    csm.addVertex(s_makeVertex(2), 2, inf);
     inf[0].boneId = 3;
-    csm.addVertex(makeVertex(3), 3, inf);
+    csm.addVertex(s_makeVertex(3), 3, inf);
 
     csm.renumberIndices();
 
     CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
     CHECK_EQUAL(CalCoreSubmesh::Face(1, 3, 2), csm.getFaces()[1]);
 
-    CHECK_EQUAL(makeVertex(3), csm.getVectorVertex()[0]);
-    CHECK_EQUAL(makeVertex(2), csm.getVectorVertex()[1]);
-    CHECK_EQUAL(makeVertex(1), csm.getVectorVertex()[2]);
-    CHECK_EQUAL(makeVertex(0), csm.getVectorVertex()[3]);
+    CHECK_EQUAL(s_makeVertex(3), csm.getVectorVertex()[0]);
+    CHECK_EQUAL(s_makeVertex(2), csm.getVectorVertex()[1]);
+    CHECK_EQUAL(s_makeVertex(1), csm.getVectorVertex()[2]);
+    CHECK_EQUAL(s_makeVertex(0), csm.getVectorVertex()[3]);
 
     CHECK_EQUAL(CalColor32(3), csm.getVertexColors()[0]);
     CHECK_EQUAL(CalColor32(2), csm.getVertexColors()[1]);
@@ -440,13 +440,13 @@ TEST(renumber_vertices_with_texcoords) {
     inf[0].weight = 1.0f;
     inf[0].boneId = 0;
 
-    csm.addVertex(makeVertex(0), 0, inf);
+    csm.addVertex(s_makeVertex(0), 0, inf);
     csm.setTextureCoordinate(0, makeTextureCoordinate(0));
-    csm.addVertex(makeVertex(1), 0, inf);
+    csm.addVertex(s_makeVertex(1), 0, inf);
     csm.setTextureCoordinate(1, makeTextureCoordinate(1));
-    csm.addVertex(makeVertex(2), 0, inf);
+    csm.addVertex(s_makeVertex(2), 0, inf);
     csm.setTextureCoordinate(2, makeTextureCoordinate(2));
-    csm.addVertex(makeVertex(3), 0, inf);
+    csm.addVertex(s_makeVertex(3), 0, inf);
     csm.setTextureCoordinate(3, makeTextureCoordinate(3));
 
     csm.renumberIndices();
@@ -465,11 +465,11 @@ TEST(renumber_morphs) {
     inf[0].weight = 1.0f;
 
     inf[0].boneId = 0;
-    csm.addVertex(makeVertex(0), 0, inf);
+    csm.addVertex(s_makeVertex(0), 0, inf);
     inf[0].boneId = 1;
-    csm.addVertex(makeVertex(1), 1, inf);
+    csm.addVertex(s_makeVertex(1), 1, inf);
     inf[0].boneId = 2;
-    csm.addVertex(makeVertex(2), 2, inf);
+    csm.addVertex(s_makeVertex(2), 2, inf);
 
     CalCoreMorphTarget::VertexOffsetArray offsets;
     offsets.push_back(VertexOffset(2, CalPoint4(), CalVector4()));
@@ -489,10 +489,10 @@ TEST(drop_morph_offsets_for_unused_vertices) {
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
 
-    csm.addVertex(makeVertex(0), 0, inf);
-    csm.addVertex(makeVertex(1), 1, inf);
-    csm.addVertex(makeVertex(2), 2, inf);
-    csm.addVertex(makeVertex(3), 3, inf);
+    csm.addVertex(s_makeVertex(0), 0, inf);
+    csm.addVertex(s_makeVertex(1), 1, inf);
+    csm.addVertex(s_makeVertex(2), 2, inf);
+    csm.addVertex(s_makeVertex(3), 3, inf);
 
     CalCoreMorphTarget::VertexOffsetArray offsets;
     offsets.push_back(VertexOffset(3, CalPoint4(), CalVector4()));
@@ -514,10 +514,10 @@ TEST(minimumVertexBufferSize_is_changed_if_vertex_list_is_shrunk) {
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
 
-    csm.addVertex(makeVertex(0), 0, inf);
-    csm.addVertex(makeVertex(1), 1, inf);
-    csm.addVertex(makeVertex(2), 2, inf);
-    csm.addVertex(makeVertex(3), 3, inf);
+    csm.addVertex(s_makeVertex(0), 0, inf);
+    csm.addVertex(s_makeVertex(1), 1, inf);
+    csm.addVertex(s_makeVertex(2), 2, inf);
+    csm.addVertex(s_makeVertex(3), 3, inf);
 
     csm.renumberIndices();
 
