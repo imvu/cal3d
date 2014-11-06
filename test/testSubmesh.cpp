@@ -453,6 +453,34 @@ TEST(can_optimize_vertex_cache) {
     CHECK_EQUAL(1U, s_getIndexDistance(v0FaceIndexAfter, v6FaceIndexAfter));
 }
 
+TEST(can_optimize_vertex_cache_subset) {
+    CalCoreSubmesh csm = s_makeMeshWithUnoptimizedVertexCache();
+
+    size_t v0FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 0);
+    size_t v6FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 6);
+    CHECK_EQUAL(2U, s_getIndexDistance(v0FaceIndexBefore, v6FaceIndexBefore));
+
+    csm.optimizeVertexCacheSubset(0, 3);
+
+    // We expect vertex cache optimization to move the two faces that share
+    // vertices together.
+    size_t v0FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 0);
+    size_t v6FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 6);
+    CHECK_EQUAL(1U,  s_getIndexDistance(v0FaceIndexAfter, v6FaceIndexAfter));
+}
+
+TEST(optimizing_vertex_cache_subset_does_not_affect_verts_outside_of_subset) {
+    CalCoreSubmesh csm1 = s_makeMeshWithUnoptimizedVertexCache();
+    CHECK_EQUAL(2U, s_getFaceIndexWithVertexIndex(csm1, 6));
+    csm1.optimizeVertexCacheSubset(0, 2);
+    CHECK_EQUAL(2U, s_getFaceIndexWithVertexIndex(csm1, 6));
+
+    CalCoreSubmesh csm2 = s_makeMeshWithUnoptimizedVertexCache();
+    CHECK_EQUAL(0U, s_getFaceIndexWithVertexIndex(csm2, 0));
+    csm2.optimizeVertexCacheSubset(1, 2);
+    CHECK_EQUAL(0U, s_getFaceIndexWithVertexIndex(csm2, 0));
+}
+
 TEST(renumber_renumberIndices_without_texcoords) {
     CalCoreSubmesh csm(4, false, 2);
     csm.addFace(CalCoreSubmesh::Face(3, 2, 1));

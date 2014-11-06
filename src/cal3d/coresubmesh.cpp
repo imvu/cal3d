@@ -19,8 +19,9 @@
 #include "cal3d/transform.h"
 #include "cal3d/forsythtriangleorderoptimizer.h"
 
-#include <iostream>
+#include <algorithm>
 #include <cstring>
+#include <iostream>
 #include <limits>
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
@@ -824,11 +825,38 @@ void CalCoreSubmesh::optimizeVertexCache() {
     Forsyth::OptimizeFaces(
         m_faces[0].vertexId,
         3 * m_faces.size(),
-        m_vertices.size(), 
+        m_vertices.size(),
         newFaces[0].vertexId,
         32);
 
     m_faces.swap(newFaces);
+}
+
+void CalCoreSubmesh::optimizeVertexCacheSubset(
+    unsigned int faceStartIndex,
+    unsigned int faceCount
+) {
+    if (m_faces.empty()) {
+        return;
+    }
+    assert(faceStartIndex + faceCount <= m_faces.size());
+
+    std::vector<Face> newFaces(faceCount);
+
+    Forsyth::OptimizeFaces(
+        m_faces[faceStartIndex].vertexId,
+        3 * faceCount,
+        m_vertices.size(),
+        newFaces[0].vertexId,
+        32);
+
+    // Without these temp variable castings, MSVC 2010 will insert bounds
+    // asserts into std::copy() in debug builds, to keep us from abusing our
+    // fixed length arrays.  Presumably this will be better in C++11.
+    const CalIndex* srcStart = &(newFaces[0].vertexId[0]);
+    const CalIndex* srcEnd = srcStart + faceCount * 3;
+    CalIndex* destStart = &(m_faces[faceStartIndex].vertexId[0]);
+    std::copy(srcStart, srcEnd, destStart);
 }
 
 void CalCoreSubmesh::renumberIndices() {
