@@ -1343,7 +1343,6 @@ bool CalCoreSubmesh::simplifySubmesh(unsigned int target_tri_count, unsigned int
         lastError = error = (100.0f-quality ) * 0.00001f;
 
         if (ComputeAllEdgeCollapseCosts()) { // cache all edge collapse costs
-            printf("isolated fraction: %.3f\n", m_isolateds / static_cast<float>(m_faces.size()));
             if(m_isolateds / static_cast<float>(m_faces.size()) < 0.4f) {
                 if(m_isolateds / static_cast<float>(m_faces.size()) > 0.21f) { // boost poly count if isolateds are high
                     target_tri_count += ( m_faces.size() - target_tri_count) /2;
