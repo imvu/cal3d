@@ -40,7 +40,7 @@ sources = Split('''
 
 sources = ['src/cal3d/' + s for s in sources]
 
-shared_lib_env = env.Clone(tools=['boost', 'rapidxml'])
+shared_lib_env = env.Clone(tools=['boost', 'rapidjson', 'rapidxml'])
 if '/Zc:wchar_t-' in shared_lib_env['CCFLAGS']:
     shared_lib_env['CCFLAGS'].remove('/Zc:wchar_t-')
 shared_lib_env.Append(
