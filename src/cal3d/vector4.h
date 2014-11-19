@@ -258,7 +258,4 @@ struct CalPoint4 : CalBase4 {
     }
 };
 
-#define CHECK_CALVECTOR4_CLOSE(v1, v2, tolerance)   CHECK_CLOSE(0.0f, ((v1)-(v2)).length(), tolerance)
-#define CHECK_CALPOINT4_CLOSE(p1, p2, tolerance)    CHECK_CALVECTOR4_CLOSE(p1.asCalVector4(), p2.asCalVector4(), tolerance)
-
 class CalQuaternion;

@@ -157,5 +157,3 @@ inline CalVector cross(const CalVector& a, const CalVector& u) {
 inline CalVector lerp(float f, CalVector left, CalVector right) {
     return (1 - f) * left + f * right;
 }
-
-#define CHECK_CALVECTOR_CLOSE(v1, v2, tolerance)   CHECK_CLOSE(0.0f, ((v1)-(v2)).length(), tolerance)

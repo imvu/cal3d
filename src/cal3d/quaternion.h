@@ -188,5 +188,3 @@ inline CalQuaternion slerp(float d, const CalQuaternion& left, const CalQuaterni
         inv_d * left.z + d * right.z,
         inv_d * left.w + d * right.w);
 }
-
-#define CHECK_CALQUATERNION_CLOSE(q1, q2, tolerance)    CHECK_CALVECTOR4_CLOSE(q1.asCalVector4(), q2.asCalVector4(), tolerance)
