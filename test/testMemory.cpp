@@ -73,3 +73,14 @@ TEST(sized_initializer_uses_constructor) {
     CHECK_EQUAL(1u, v.size());
     CHECK_EQUAL(10u, v[0].value);
 }
+
+TEST(can_initialize_with_array_iterators) {
+    CalVector4 arr[] = {
+        CalVector4(1, 2, 3),
+        CalVector4(4, 5, 6)
+    };
+    cal3d::SSEArray<CalVector4> sseArray(arrayBegin(arr), arrayEnd(arr));
+    CHECK_EQUAL(2U, sseArray.size());
+    CHECK_EQUAL(CalVector4(1, 2, 3), sseArray[0]);
+    CHECK_EQUAL(CalVector4(4, 5, 6), sseArray[1]);
+}
