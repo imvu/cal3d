@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cstddef>
-#include <iterator>
+#include <stddef.h>
 #include <vector>
 #include <list>
 #include <map>
@@ -50,19 +49,6 @@ namespace cal3d {
             for (T* d = _data; d != _data + _size; ++d) {
                 void* p = d;
                 new(p) T;
-            }
-        }
-
-        template <typename IteratorT>
-        SSEArray(const IteratorT& beginIt, const IteratorT& endIt)
-            : _data(reinterpret_cast<T*>(allocate_aligned_data(sizeof(T) * std::distance(beginIt, endIt))))
-            , _size(std::distance(beginIt, endIt))
-            , _capacity(std::distance(beginIt, endIt))
-        {
-            auto it = beginIt;
-            for (T* d = _data; d != _data + _size; ++d, ++it) {
-                void* p = d;
-                new(p) T(*it);
             }
         }
 
