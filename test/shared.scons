@@ -23,7 +23,11 @@ env = env.Clone(tools=['cal3d', 'rapidjson', 'testframework'])
 env.Append(CPPPATH=['../../..',
                     '../../../avatarwindow'])
 
-imvu_test_program(
+test_cal3d = imvu_test_program(
     env,
     'test_cal3d${IMVU_LIBRARY_SUFFIX}',
     sources)
+
+# test_cal3d executable depends on cal3d shared library.
+# TODO: Is there a way to get imvu_test_program to infer this dependency directly?
+Depends(test_cal3d, env.File('#/Binaries/${SHLIBPREFIX}cal3d${IMVU_LIBRARY_SUFFIX}${SHLIBSUFFIX}'))
