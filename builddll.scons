@@ -28,6 +28,7 @@ sources = Split('''
     quaternion.cpp
     saver.cpp
     skeleton.cpp
+    streamops.cpp
     submesh.cpp
     tinyxml.cpp
     tinyxmlerror.cpp
