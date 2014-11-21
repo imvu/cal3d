@@ -3,7 +3,10 @@
 #include "cal3d/streamops.h"
 #include "cal3d/vector4.h"
 
-TEST(can_grow_SSEArray) {
+FIXTURE(MemoryFixture) {
+};
+
+TEST_F(MemoryFixture, can_grow_SSEArray) {
     cal3d::SSEArray<CalVector4> v;
 
     v.push_back(CalVector4(1, 2, 3, 4));
@@ -30,7 +33,7 @@ TEST(can_grow_SSEArray) {
     CHECK_EQUAL(CalVector4(8, 6, 4, 2), v[3]);
 }
 
-TEST(can_copy_SSEArray) {
+TEST_F(MemoryFixture, can_copy_SSEArray) {
     cal3d::SSEArray<CalVector4> v;
     v.push_back(CalVector4(1, 2, 3, 4));
     v.push_back(CalVector4(5, 6, 7, 8));
@@ -45,7 +48,7 @@ TEST(can_copy_SSEArray) {
     CHECK_EQUAL(CalVector4(8, 6, 4, 2), u[3]);
 }
 
-TEST(can_copy_empty_SSEArray) {
+TEST_F(MemoryFixture, can_copy_empty_SSEArray) {
     cal3d::SSEArray<CalVector4> v;
     cal3d::SSEArray<CalVector4> u(v);
     CHECK_EQUAL(0u, u.size());
@@ -68,13 +71,13 @@ struct MagicValue {
     unsigned value;
 };
 
-TEST(sized_initializer_uses_constructor) {
+TEST_F(MemoryFixture, sized_initializer_uses_constructor) {
     cal3d::SSEArray<MagicValue> v(1);
     CHECK_EQUAL(1u, v.size());
     CHECK_EQUAL(10u, v[0].value);
 }
 
-TEST(can_initialize_with_array_iterators) {
+TEST_F(MemoryFixture, can_initialize_with_array_iterators) {
     CalVector4 arr[] = {
         CalVector4(1, 2, 3),
         CalVector4(4, 5, 6)

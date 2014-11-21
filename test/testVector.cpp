@@ -5,14 +5,15 @@
 #include <cal3d/quaternion.h>
 #include <cal3d/streamops.h>
 
+FIXTURE(VectorFixture) {
+};
 
-TEST(Vector) {
+TEST_F(VectorFixture, Vector) {
     CalVector s, t;
     s = t = CalVector(0, 0, 0);
     CHECK_EQUAL(s, CalVector(0, 0, 0));
     CHECK_EQUAL(t, CalVector(0, 0, 0));
 }
-
 
 #define CHECK_COLOR(uint32, float3) \
     do { \
@@ -20,8 +21,7 @@ TEST(Vector) {
         CHECK_EQUAL(float3, CalVectorFromColor(uint32)); \
     } while (0)
 
-
-TEST(ColorFromVector) {
+TEST_F(VectorFixture, ColorFromVector) {
     CHECK_COLOR(0xff000000, CalVector(0.0f, 0.0f, 0.0f));
     CHECK_COLOR(0xffff0000, CalVector(1.0f, 0.0f, 0.0f));
     CHECK_COLOR(0xff00ff00, CalVector(0.0f, 1.0f, 0.0f));
@@ -29,7 +29,7 @@ TEST(ColorFromVector) {
     CHECK_COLOR(0xffffffff, CalVector(1.0f, 1.0f, 1.0f));
 }
 
-TEST(Vector4_default) {
+TEST_F(VectorFixture, Vector4_default) {
     CAL3D_ALIGN_HEAD(16)
         float f[4]
     CAL3D_ALIGN_TAIL(16);
@@ -42,7 +42,7 @@ TEST(Vector4_default) {
     CHECK_EQUAL(0.0, CalVector4().w);
 }
 
-TEST(Point4_default) {
+TEST_F(VectorFixture, Point4_default) {
     CAL3D_ALIGN_HEAD(16)
         float f[4]
     CAL3D_ALIGN_TAIL(16);

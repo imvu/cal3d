@@ -10,27 +10,11 @@
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
 #include <libzero/Math.h>
-#include "testCoreSkeleton.h"
 
-    CalCoreSkeletonPtr makeFakeSkeleton() {
-        CalCoreBonePtr actualRoot(new CalCoreBone("actualRoot"));
+FIXTURE(CoreSkeletonFixture) {
+};
 
-        CalCoreBonePtr coreRoot(new CalCoreBone("root", 0));
-        coreRoot->relativeTransform.translation.x = 1;
-        coreRoot->inverseBindPoseTransform.translation = CalVector(10, 10, 10);
-
-        CalCoreBonePtr coreBone(new CalCoreBone("bone", 1));
-        coreBone->relativeTransform.translation.x = 2;
-        coreBone->inverseBindPoseTransform.translation = CalVector(20, 20, 20);
-
-        CalCoreSkeletonPtr cs(new CalCoreSkeleton);
-        cs->addCoreBone(actualRoot);
-        cs->addCoreBone(coreRoot);
-        cs->addCoreBone(coreBone);
-        return cs;
-    }
-
-TEST(coreskeleton_can_only_have_one_root) {
+TEST_F(CoreSkeletonFixture, can_only_have_one_root) {
     CalCoreBonePtr root1(new CalCoreBone("root1"));
     CalCoreBonePtr root2(new CalCoreBone("root2"));
     
@@ -44,7 +28,7 @@ TEST(coreskeleton_can_only_have_one_root) {
     CHECK_EQUAL(0, root2->parentId);
 }
 
-TEST(coreskeleton_second_roots_are_transformed_relative_to_first_root) {
+TEST_F(CoreSkeletonFixture, second_roots_are_transformed_relative_to_first_root) {
     CalCoreBonePtr root1(new CalCoreBone("root1"));
     root1->relativeTransform.translation = CalVector(1, 1, 1);
     CalCoreBonePtr root2(new CalCoreBone("root2"));
@@ -59,7 +43,7 @@ TEST(coreskeleton_second_roots_are_transformed_relative_to_first_root) {
     CHECK_EQUAL(CalVector(-2, -2, -2), root2->relativeTransform.translation);
 }
 
-TEST(coreskeleton_second_root_animations_are_transformed_relative_to_first_root) {
+TEST_F(CoreSkeletonFixture, second_root_animations_are_transformed_relative_to_first_root) {
     CalCoreBonePtr root1(new CalCoreBone("root1"));
     root1->relativeTransform.translation = CalVector(1, 1, 1);
     CalCoreBonePtr root2(new CalCoreBone("root2"));
@@ -91,7 +75,7 @@ TEST(coreskeleton_second_root_animations_are_transformed_relative_to_first_root)
     CHECK_EQUAL(CalVector(-2, -2, -2), skeleton.bones[1].absoluteTransform.translation);
 }
 
-TEST(loader_topologically_sorts) {
+TEST_F(CoreSkeletonFixture, loader_topologically_sorts) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
     bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
@@ -104,7 +88,7 @@ TEST(loader_topologically_sorts) {
     CHECK_EQUAL(0u, cs.boneIdTranslation[1]);
 }
 
-TEST(addCoreBone_adds_id_translation_to_table) {
+TEST_F(CoreSkeletonFixture, addCoreBone_adds_id_translation_to_table) {
     CalCoreSkeleton skeleton;
     CalCoreBonePtr bone(new CalCoreBone("a"));
     skeleton.addCoreBone(bone);
@@ -112,7 +96,7 @@ TEST(addCoreBone_adds_id_translation_to_table) {
     CHECK_EQUAL(0u, skeleton.boneIdTranslation[0]);
 }
 
-TEST(loader_disregards_self_parents) {
+TEST_F(CoreSkeletonFixture, loader_disregards_self_parents) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 0)));
     CalCoreSkeleton cs(bones);
@@ -121,7 +105,7 @@ TEST(loader_disregards_self_parents) {
     CHECK_EQUAL(-1, cs.coreBones[0]->parentId);
 }
 
-TEST(loader_disregards_out_of_range_parents) {
+TEST_F(CoreSkeletonFixture, loader_disregards_out_of_range_parents) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
     CalCoreSkeleton cs(bones);
@@ -130,7 +114,7 @@ TEST(loader_disregards_out_of_range_parents) {
     CHECK_EQUAL(-1, cs.coreBones[0]->parentId);
 }
 
-TEST(loader_disregards_cyclic_parents) {
+TEST_F(CoreSkeletonFixture, loader_disregards_cyclic_parents) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
     bones.push_back(CalCoreBonePtr(new CalCoreBone("b", 0)));
@@ -141,7 +125,7 @@ TEST(loader_disregards_cyclic_parents) {
     CHECK_EQUAL(0, cs.coreBones[1]->parentId);
 }
 
-TEST(loader_disregards_paths_to_out_of_range) {
+TEST_F(CoreSkeletonFixture, loader_disregards_paths_to_out_of_range) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 2)));
     bones.push_back(CalCoreBonePtr(new CalCoreBone("b", 0)));
@@ -152,7 +136,7 @@ TEST(loader_disregards_paths_to_out_of_range) {
     CHECK_EQUAL(0, cs.coreBones[1]->parentId);
 }
 
-TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
+TEST_F(CoreSkeletonFixture, topologically_sorted_skeletons_can_fixup_mesh_references) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
     bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
@@ -186,7 +170,7 @@ TEST(topologically_sorted_skeletons_can_fixup_mesh_references) {
     CHECK_EQUAL(0.0f, staticTransform.rowx.w);
 }
 
-TEST(fixup_out_of_range_influences_resets_to_zero) {
+TEST_F(CoreSkeletonFixture, fixup_out_of_range_influences_resets_to_zero) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
     bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
@@ -208,7 +192,7 @@ TEST(fixup_out_of_range_influences_resets_to_zero) {
     CHECK_EQUAL(0u, influences[0].boneId);
 }
 
-TEST(topologically_sorted_skeletons_can_fixup_animations) {
+TEST_F(CoreSkeletonFixture, topologically_sorted_skeletons_can_fixup_animations) {
     std::vector<CalCoreBonePtr> bones;
     bones.push_back(CalCoreBonePtr(new CalCoreBone("a", 1)));
     bones.push_back(CalCoreBonePtr(new CalCoreBone("b", -1)));
@@ -223,7 +207,7 @@ TEST(topologically_sorted_skeletons_can_fixup_animations) {
     CHECK_EQUAL(1u, ca.tracks[0].coreBoneId);
 }
 
-TEST(multiroot_skeletons_can_fixup_animation_transforms) {
+TEST_F(CoreSkeletonFixture, multiroot_skeletons_can_fixup_animation_transforms) {
     CalCoreBonePtr root0(new CalCoreBone("r0"));
     root0->relativeTransform.translation = CalVector(-1, -1, -1);
 
@@ -258,7 +242,7 @@ TEST(multiroot_skeletons_can_fixup_animation_transforms) {
     CHECK_EQUAL(CalVector(3, 3, 3), ca.tracks[1].keyframes[0].transform.translation);
 }
 
-TEST(fixup_zeroes_out_transforms_of_root_bone_keyframes) {
+TEST_F(CoreSkeletonFixture, fixup_zeroes_out_transforms_of_root_bone_keyframes) {
     CalCoreBonePtr root(new CalCoreBone("root"));
     CalCoreBonePtr bone(new CalCoreBone("bone", 0));
 
@@ -285,7 +269,7 @@ TEST(fixup_zeroes_out_transforms_of_root_bone_keyframes) {
     CHECK_EQUAL(CalVector(2, 2, 2), ca.tracks[1].keyframes[0].transform.translation);
 }
 
-TEST(loader_zeroes_out_root_transform_of_skeleton) {
+TEST_F(CoreSkeletonFixture, loader_zeroes_out_root_transform_of_skeleton) {
     CalCoreBonePtr root0(new CalCoreBone("root0"));
     CalCoreBonePtr root1(new CalCoreBone("root1"));
 
@@ -299,11 +283,3 @@ TEST(loader_zeroes_out_root_transform_of_skeleton) {
     CHECK_EQUAL(CalVector(0, 0, 0), root0->relativeTransform.translation);
     CHECK_EQUAL(CalVector(3, 3, 3), root1->relativeTransform.translation);
 }
-
-
-FIXTURE(SkeletonFixture) {
-    SETUP(SkeletonFixture)
-        : skeleton(makeFakeSkeleton())
-    {}
-    CalCoreSkeletonPtr skeleton;
-};

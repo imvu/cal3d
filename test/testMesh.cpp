@@ -4,7 +4,10 @@
 #include <cal3d/coremorphtarget.h>
 #include <cal3d/streamops.h>
 
-TEST(can_replace_base_mesh_with_morph_target) {
+FIXTURE(MeshFixture) {
+};
+
+TEST_F(MeshFixture, can_replace_base_mesh_with_morph_target) {
     CalCoreSubmesh::Face face(0, 0, 0);
 
     CalCoreSubmesh::Vertex vertex;

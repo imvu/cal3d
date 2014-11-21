@@ -1,7 +1,9 @@
 #include "TestPrologue.h"
 
+FIXTURE(TinyXmlFixture) {
+};
 
-TEST(printComment) {
+TEST_F(TinyXmlFixture, printComment) {
     TiXmlComment c;
     c.SetValue("Comment");
 
@@ -11,8 +13,7 @@ TEST(printComment) {
     CHECK_EQUAL(os.str(), "<!--Comment-->");
 }
 
-
-TEST(printAttribute) {
+TEST_F(TinyXmlFixture, printAttribute) {
     TiXmlAttribute a("name", "value");
 
     std::ostringstream os;
@@ -30,8 +31,7 @@ TEST(printAttribute) {
     CHECK_EQUAL(os.str(), c2);
 }
 
-
-TEST(printText) {
+TEST_F(TinyXmlFixture, printText) {
     const char* text = "text\"";
     TiXmlText t(text);
 
@@ -40,8 +40,7 @@ TEST(printText) {
     CHECK_EQUAL(os.str(), "text&quot;");
 }
 
-
-TEST(printDeclaration) {
+TEST_F(TinyXmlFixture, printDeclaration) {
     TiXmlDeclaration d("version", "encoding", "standalone");
 
     std::ostringstream os;

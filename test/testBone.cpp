@@ -5,10 +5,12 @@
 #include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
 #include <cal3d/streamops.h>
-#include "testCoreSkeleton.h"
 
-static cal3d::RotateTranslate makeTranslation(float x, float y, float z) {
-    return cal3d::RotateTranslate(CalQuaternion(), CalVector(x, y, z));
+inline CalVector transformPoint(const BoneTransform& bt, const CalVector& point) {
+    return CalVector(
+        bt.rowx.x * point.x + bt.rowx.y * point.y + bt.rowx.z * point.z + bt.rowx.w,
+        bt.rowy.x * point.x + bt.rowy.y * point.y + bt.rowy.z * point.z + bt.rowy.w,
+        bt.rowz.x * point.x + bt.rowz.y * point.y + bt.rowz.z * point.z + bt.rowz.w);
 }
 
 FIXTURE(BoneFixture) {
@@ -16,6 +18,10 @@ FIXTURE(BoneFixture) {
         : coreBone(testBone())
         , bone(coreBone)
     {}
+
+    static cal3d::RotateTranslate makeTranslation(float x, float y, float z) {
+        return cal3d::RotateTranslate(CalQuaternion(), CalVector(x, y, z));
+    }
 
     static CalCoreBone testBone() {
         CalCoreBone cb("test");
@@ -82,30 +88,41 @@ TEST_F(BoneFixture, bone_with_two_replacements_and_one_nonreplacement_blends_mor
     CHECK_EQUAL(lerp(1.0f / 7.0f, lerp(1.0f / 3.0f, 2, 10), 100), bt.rowx.w);
 }
 
-FIXTURE(MixerFixture) {
-    SETUP(MixerFixture)
+FIXTURE(BoneMixerFixture) {
+    SETUP(BoneMixerFixture)
         : skeleton(makeFakeSkeleton())
     {}
 
     CalSkeleton skeleton;
     CalMixer mixer;
+
+    static CalCoreSkeletonPtr makeFakeSkeleton() {
+        CalCoreBonePtr actualRoot(new CalCoreBone("actualRoot"));
+
+        CalCoreBonePtr coreRoot(new CalCoreBone("root", 0));
+        coreRoot->relativeTransform.translation.x = 1;
+        coreRoot->inverseBindPoseTransform.translation = CalVector(10, 10, 10);
+
+        CalCoreBonePtr coreBone(new CalCoreBone("bone", 1));
+        coreBone->relativeTransform.translation.x = 2;
+        coreBone->inverseBindPoseTransform.translation = CalVector(20, 20, 20);
+
+        CalCoreSkeletonPtr cs(new CalCoreSkeleton);
+        cs->addCoreBone(actualRoot);
+        cs->addCoreBone(coreRoot);
+        cs->addCoreBone(coreBone);
+        return cs;
+    }
 };
 
-TEST_F(MixerFixture, boneTransform_accumulates_transforms) {
+TEST_F(BoneMixerFixture, boneTransform_accumulates_transforms) {
     mixer.updateSkeleton(&skeleton, std::vector<BoneTransformAdjustment>(), std::vector<BoneScaleAdjustment>());
 
     CHECK_EQUAL(11, skeleton.boneTransforms[1].rowx.w);
     CHECK_EQUAL(23, skeleton.boneTransforms[2].rowx.w);
 }
 
-inline CalVector transformPoint(const BoneTransform& bt, const CalVector& point) {
-    return CalVector(
-        bt.rowx.x * point.x + bt.rowx.y * point.y + bt.rowx.z * point.z + bt.rowx.w,
-        bt.rowy.x * point.x + bt.rowy.y * point.y + bt.rowy.z * point.z + bt.rowy.w,
-        bt.rowz.x * point.x + bt.rowz.y * point.y + bt.rowz.z * point.z + bt.rowz.w);
-}
-
-TEST_F(MixerFixture, boneTransform_accumulates_transforms_and_scales) {
+TEST_F(BoneMixerFixture, boneTransform_accumulates_transforms_and_scales) {
     std::vector<BoneScaleAdjustment> boneScaleAdjustments;
     boneScaleAdjustments.push_back(BoneScaleAdjustment(1, CalVector(2, 2, 2)));
     boneScaleAdjustments.push_back(BoneScaleAdjustment(2, CalVector(0.5f, 0.5f, 0.5f)));
@@ -115,7 +132,10 @@ TEST_F(MixerFixture, boneTransform_accumulates_transforms_and_scales) {
     CHECK_EQUAL(CalVector(27, 24, 28), transformPoint(skeleton.boneTransforms[2], CalVector(2, 4, 8)));
 }
 
-TEST(scale_is_in_bone_space) {
+FIXTURE(BoneScaleFixture) {
+};
+
+TEST_F(BoneScaleFixture, scale_is_in_bone_space) {
     CalQuaternion aboutZ;
     aboutZ.setAxisAngle(CalVector(0, 0, 1), 3.1415927410125732421875f / 2.0f);
 

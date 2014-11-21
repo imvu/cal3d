@@ -18,61 +18,69 @@ inline std::ostream& operator<<(std::ostream& os, const CalCoreSubmesh::Face& f)
     return os << '(' << f.vertexId[0] << ", " << f.vertexId[1] << ", " << f.vertexId[2] << ')';
 }
 
-static CalCoreSubmesh::Vertex s_makeVertex(int id) {
-    CalCoreSubmesh::Vertex v;
-    v.position = CalPoint4(id, id, id);
-    v.normal = CalVector4(id, id, id);
-    return v;
-}
+const CalColor32 BLACK = 0;
 
-static CalCoreSubmesh s_makeMeshWithUnoptimizedVertexCache() {
-    CalCoreSubmesh csm(7, true, 3);
-    // Faces 0 and 2 share vertices, while face 1 does not.  We expect vertex
-    // cache optimization will rearrange the triangles such that faces 0 and 2
-    // are together, either preceded or followed by face 1.
-    csm.addFace(CalCoreSubmesh::Face(0, 1, 2));
-    csm.addFace(CalCoreSubmesh::Face(3, 4, 5));
-    csm.addFace(CalCoreSubmesh::Face(2, 1, 6));
-
-    std::vector<CalCoreSubmesh::Influence> inf(1);
-    inf[0].weight = 1.0f;
-    inf[0].boneId = 0;
-
-    for (size_t i = 0; i < 7; ++i) {
-        csm.addVertex(s_makeVertex(i), 0, inf);
+FIXTURE(SubmeshFixture) {
+    static CalCoreSubmesh::Vertex makeVertex(int id) {
+        CalCoreSubmesh::Vertex v;
+        v.position = CalPoint4(id, id, id);
+        v.normal = CalVector4(id, id, id);
+        return v;
     }
 
-    return csm;
-}
+    static CalCoreSubmesh makeMeshWithUnoptimizedVertexCache() {
+        CalCoreSubmesh csm(7, true, 3);
+        // Faces 0 and 2 share vertices, while face 1 does not.  We expect vertex
+        // cache optimization will rearrange the triangles such that faces 0 and 2
+        // are together, either preceded or followed by face 1.
+        csm.addFace(CalCoreSubmesh::Face(0, 1, 2));
+        csm.addFace(CalCoreSubmesh::Face(3, 4, 5));
+        csm.addFace(CalCoreSubmesh::Face(2, 1, 6));
 
-static std::vector<CalIndex> s_getIndices(const CalCoreSubmesh& csm) {
-    std::vector<CalIndex> indices;
-    const auto& faces = csm.getFaces();
-    for (size_t i = 0; i < faces.size(); ++i) {
-        for (size_t j = 0; j < 3; ++j) {
-            indices.push_back(faces[i].vertexId[j]);
+        std::vector<CalCoreSubmesh::Influence> inf(1);
+        inf[0].weight = 1.0f;
+        inf[0].boneId = 0;
+
+        for (size_t i = 0; i < 7; ++i) {
+            csm.addVertex(makeVertex(i), 0, inf);
         }
-    }
-    return indices;
-}
 
-static size_t s_getFaceIndexWithVertexIndex(const CalCoreSubmesh& csm, CalIndex vertexIndex) {
-    auto indices = s_getIndices(csm);
-    for (size_t i = 0; i < indices.size(); ++i) {
-        if (indices[i] == vertexIndex) {
-            return (i / 3);
+        return csm;
+    }
+
+    static std::vector<CalIndex> getIndices(const CalCoreSubmesh& csm) {
+        std::vector<CalIndex> indices;
+        const auto& faces = csm.getFaces();
+        for (size_t i = 0; i < faces.size(); ++i) {
+            for (size_t j = 0; j < 3; ++j) {
+                indices.push_back(faces[i].vertexId[j]);
+            }
         }
+        return indices;
     }
-    assert(false);
-    return 0;
-}
 
-static size_t s_getIndexDistance(size_t index1, size_t index2) {
-    // MSVC 2010 considers std::abs() ambiguous without a bunch of casts.
-    return static_cast<unsigned int>(std::abs(static_cast<int>(index1) - static_cast<int>(index2)));
-}
+    static size_t getFaceIndexWithVertexIndex(const CalCoreSubmesh& csm, CalIndex vertexIndex) {
+        auto indices = getIndices(csm);
+        for (size_t i = 0; i < indices.size(); ++i) {
+            if (indices[i] == vertexIndex) {
+                return (i / 3);
+            }
+        }
+        assert(false);
+        return 0;
+    }
 
-TEST(duplicate_triangles) {
+    static size_t getIndexDistance(size_t index1, size_t index2) {
+        // MSVC 2010 considers std::abs() ambiguous without a bunch of casts.
+        return static_cast<unsigned int>(std::abs(static_cast<int>(index1) - static_cast<int>(index2)));
+    }
+
+    static CalCoreSubmesh::TextureCoordinate makeTextureCoordinate(int i) {
+        return CalCoreSubmesh::TextureCoordinate(i, i);
+    }
+};
+
+TEST_F(SubmeshFixture, duplicate_triangles) {
     CalCoreSubmesh csm(3, 0, 1);
     CalCoreSubmesh::Vertex vertex;
     vertex.position = CalVector4(1, 1, 1, 0);
@@ -89,7 +97,7 @@ TEST(duplicate_triangles) {
     CHECK_EQUAL(CalCoreSubmesh::Face(0, 2, 1), csm.getFaces()[1]);
 }
 
-TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_absolute_in_file) {
+TEST_F(SubmeshFixture, saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_absolute_in_file) {
     CalCoreSubmeshPtr csm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex vertex;
     vertex.position = CalVector4(1, 1, 1, 0);
@@ -143,21 +151,19 @@ TEST(saving_and_loading_submesh_with_morph_stores_differences_in_memory_but_abso
     }
 }
 
-const CalColor32 black = 0;
-
-TEST(not_static_without_vertices) {
+TEST_F(SubmeshFixture, not_static_without_vertices) {
     CalCoreSubmesh csm(0, 0, 0);
     CHECK(!csm.isStatic());
 }
 
-TEST(is_static_if_all_vertices_are_influenced_by_same_bone) {
+TEST_F(SubmeshFixture, is_static_if_all_vertices_are_influenced_by_same_bone) {
     CalCoreSubmesh csm(1, 0, 0);
 
     CalCoreSubmesh::Vertex v;
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
 
     BoneTransform bts[1];
     bts[0].rowx.x = 1.0f;
@@ -177,7 +183,7 @@ TEST(is_static_if_all_vertices_are_influenced_by_same_bone) {
     CHECK_EQUAL(bts[0], csm.getStaticTransform(bts));
 }
 
-TEST(is_static_if_two_influences) {
+TEST_F(SubmeshFixture, is_static_if_two_influences) {
     CalCoreSubmesh csm(1, 0, 0);
 
     CalCoreSubmesh::Vertex v;
@@ -186,7 +192,7 @@ TEST(is_static_if_two_influences) {
     inf[0].weight = 0.5f;
     inf[1].boneId = 1;
     inf[1].weight = 0.5f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
 
     BoneTransform bts[2];
     bts[0].rowx.x = 1.0f;
@@ -214,40 +220,40 @@ TEST(is_static_if_two_influences) {
     CHECK_EQUAL(0.5f, staticTransform.rowz.w);
 }
 
-TEST(not_static_if_two_vertices_are_influenced_by_different_bones) {
+TEST_F(SubmeshFixture, not_static_if_two_vertices_are_influenced_by_different_bones) {
     CalCoreSubmesh csm(2, 0, 0);
 
     CalCoreSubmesh::Vertex v;
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
     inf[0].boneId = 1;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
 
     CHECK(!csm.isStatic());
 }
 
-TEST(is_not_static_if_first_and_third_vertices_have_same_influence) {
+TEST_F(SubmeshFixture, is_not_static_if_first_and_third_vertices_have_same_influence) {
     CalCoreSubmesh csm(3, 0, 0);
 
     CalCoreSubmesh::Vertex v;
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
     inf[0].boneId = 1;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
 
     CHECK(!csm.isStatic());
 }
 
-TEST(is_static_if_two_vertices_have_influences_in_different_order) {
+TEST_F(SubmeshFixture, is_static_if_two_vertices_have_influences_in_different_order) {
     CalCoreSubmesh csm(2, 0, 0);
 
     CalCoreSubmesh::Vertex v;
@@ -256,17 +262,17 @@ TEST(is_static_if_two_vertices_have_influences_in_different_order) {
     inf[0].weight = 1.0f;
     inf[1].boneId = 1;
     inf[1].weight = 0.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
     inf[0].boneId = 1;
     inf[0].weight = 0.0f;
     inf[1].boneId = 0;
     inf[1].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
 
     CHECK(csm.isStatic());
 }
 
-TEST(is_not_static_if_has_morph_targets) {
+TEST_F(SubmeshFixture, is_not_static_if_has_morph_targets) {
     CalCoreSubmesh csm(2, 0, 0);
 
     CalCoreSubmesh::Vertex v;
@@ -275,12 +281,12 @@ TEST(is_not_static_if_has_morph_targets) {
     inf[0].weight = 1.0f;
     inf[1].boneId = 1;
     inf[1].weight = 0.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
     inf[0].boneId = 1;
     inf[0].weight = 0.0f;
     inf[1].boneId = 0;
     inf[1].weight = 1.0f;
-    csm.addVertex(v, black, inf);
+    csm.addVertex(v, BLACK, inf);
 
     CalCoreMorphTarget::VertexOffsetArray vertexOffsets;
     VertexOffset mv;
@@ -295,14 +301,14 @@ TEST(is_not_static_if_has_morph_targets) {
     CHECK(!csm.isStatic());
 }
 
-TEST(CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
+TEST_F(SubmeshFixture, CalRenderer_getTextureCoordinates_when_there_are_no_texture_coordinates) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(0, 1, 0));
 
     const std::vector<CalCoreSubmesh::TextureCoordinate>& texCoords = coreSubmesh->getTextureCoordinates();
     CHECK_EQUAL(0u, texCoords.size());
 }
 
-TEST(CalRenderer_getNormals_when_there_are_no_normals) {
+TEST_F(SubmeshFixture, CalRenderer_getNormals_when_there_are_no_normals) {
     CalCoreSubmeshPtr coreSubmesh(new CalCoreSubmesh(0, 0, 0));
 
     CalCoreMeshPtr coreMesh(new CalCoreMesh);
@@ -319,12 +325,12 @@ TEST(CalRenderer_getNormals_when_there_are_no_normals) {
         0);
 }
 
-TEST(aabox_empty_without_vertices) {
+TEST_F(SubmeshFixture, aabox_empty_without_vertices) {
     CalCoreSubmesh csm(0, 0, 0);
     CHECK_EQUAL(CalAABox(), csm.getBoundingVolume());
 }
 
-TEST(aabox_is_single_point_with_one_vertex) {
+TEST_F(SubmeshFixture, aabox_is_single_point_with_one_vertex) {
     CalCoreSubmesh csm(1, 0, 0);
     CalVector pos(1.0f, 2.0f, 3.0f);
 
@@ -335,7 +341,7 @@ TEST(aabox_is_single_point_with_one_vertex) {
     CHECK_EQUAL(CalAABox(pos, pos), csm.getBoundingVolume());
 }
 
-TEST(aabox_is_min_max_of_all_vertices) {
+TEST_F(SubmeshFixture, aabox_is_min_max_of_all_vertices) {
     CalCoreSubmesh csm(3, 0, 0);
 
     CalCoreSubmesh::Vertex v;
@@ -353,18 +359,18 @@ TEST(aabox_is_min_max_of_all_vertices) {
         csm.getBoundingVolume());
 }
 
-TEST(face_constructors) {
-    CalCoreSubmesh::Face f2(20, 21, 22);    
+TEST_F(SubmeshFixture, face_constructors) {
+    CalCoreSubmesh::Face f2(20, 21, 22);
     CHECK_EQUAL(f2.vertexId[0],20);
     CHECK_EQUAL(f2.vertexId[1],21);
-    CHECK_EQUAL(f2.vertexId[2],22);  
+    CHECK_EQUAL(f2.vertexId[2],22);
 }
 
-TEST(make_cube) {
+TEST_F(SubmeshFixture, make_cube) {
     CalCoreSubmeshPtr submeshPtr = MakeCube();
     const CalCoreSubmesh::VectorVertex &vertices =  submeshPtr->getVectorVertex();
     CHECK_EQUAL(submeshPtr->getVertexCount(), static_cast<size_t>(24));
-    CHECK_EQUAL(CalVector(0,0,1), (vertices[0].position.asCalVector()));   
+    CHECK_EQUAL(CalVector(0,0,1), (vertices[0].position.asCalVector()));
     CHECK_EQUAL(CalVector(1,0,1), (vertices[23].position.asCalVector()));
     CHECK_EQUAL(CalVector(0,0,1), (vertices[0].normal.asCalVector()));
     CHECK_EQUAL(CalVector(0,-1,0), (vertices[23].normal.asCalVector()));
@@ -372,17 +378,14 @@ TEST(make_cube) {
     CHECK_EQUAL(submeshPtr->getFaces()[11], CalCoreSubmesh::Face(20, 23, 21));
 }
 
-TEST(make_cube_validate_submesh) {
+TEST_F(SubmeshFixture, make_cube_validate_submesh) {
     CalCoreSubmeshPtr submeshPtr = MakeCube();
     CHECK_EQUAL(submeshPtr->validateSubmesh(), true);
 }
 
-TEST(validate_submesh_is_failed) {
+TEST_F(SubmeshFixture, validate_submesh_is_failed) {
     CalCoreSubmeshPtr cube(new CalCoreSubmesh(4, true, 2));
-    
-    const CalColor32 black = 0;
 
-        
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
@@ -393,30 +396,30 @@ TEST(validate_submesh_is_failed) {
     //triangle face f0, f1 vertices
     //v0
     curVertexId = 0;
-    vertex.position = CalPoint4(0, 0, 1); 
-    vertex.normal = CalVector4(0, 0, 1); 
-    cube->addVertex(vertex, black, inf);    
+    vertex.position = CalPoint4(0, 0, 1);
+    vertex.normal = CalVector4(0, 0, 1);
+    cube->addVertex(vertex, BLACK, inf);
     texCoord.u = 0.0f;
     texCoord.v = 0.0f;
     cube->setTextureCoordinate(curVertexId, texCoord);
     //v1
     ++curVertexId;
     vertex.position = CalPoint4(1,1,1);
-    cube->addVertex(vertex, black, inf);    
+    cube->addVertex(vertex, BLACK, inf);
     texCoord.u = 1.0f;
-    texCoord.v = 1.0f;    
+    texCoord.v = 1.0f;
     cube->setTextureCoordinate(curVertexId,  texCoord);
     //v2
     ++curVertexId;
     vertex.position = CalPoint4(0,1,1);
-    cube->addVertex(vertex, black, inf);   
+    cube->addVertex(vertex, BLACK, inf);
     texCoord.u = 0.0f;
     texCoord.v = 1.0f;
     cube->setTextureCoordinate(curVertexId,  texCoord);
     //v3
     ++curVertexId;
     vertex.position = CalPoint4(1,0,1);
-    cube->addVertex(vertex, black, inf);
+    cube->addVertex(vertex, BLACK, inf);
     texCoord.u = 1.0f;
     texCoord.v = 0.0f;
     cube->setTextureCoordinate(curVertexId,  texCoord);
@@ -426,62 +429,62 @@ TEST(validate_submesh_is_failed) {
     CHECK_EQUAL(cube->validateSubmesh(), false);
 }
 
-TEST(minimumVertexBufferSize_starts_at_0) {
+TEST_F(SubmeshFixture, minimumVertexBufferSize_starts_at_0) {
     CalCoreSubmesh csm(1, false, 1);
     CHECK_EQUAL(0u, csm.getMinimumVertexBufferSize());
 }
 
-TEST(minimumVertexBufferSize_emcompasses_face_range) {
+TEST_F(SubmeshFixture, minimumVertexBufferSize_emcompasses_face_range) {
     CalCoreSubmesh csm(1, false, 1);
     csm.addFace(CalCoreSubmesh::Face(1, 3, 2));
     CHECK_EQUAL(4u, csm.getMinimumVertexBufferSize());
 }
 
-TEST(can_optimize_vertex_cache) {
-    CalCoreSubmesh csm = s_makeMeshWithUnoptimizedVertexCache();
+TEST_F(SubmeshFixture, can_optimize_vertex_cache) {
+    CalCoreSubmesh csm = makeMeshWithUnoptimizedVertexCache();
 
-    size_t v0FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 0);
-    size_t v6FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(2U, s_getIndexDistance(v0FaceIndexBefore, v6FaceIndexBefore));
+    size_t v0FaceIndexBefore = getFaceIndexWithVertexIndex(csm, 0);
+    size_t v6FaceIndexBefore = getFaceIndexWithVertexIndex(csm, 6);
+    CHECK_EQUAL(2U, getIndexDistance(v0FaceIndexBefore, v6FaceIndexBefore));
 
     csm.optimizeVertexCache();
 
     // We expect vertex cache optimization to move the two faces that share
     // vertices together.
-    size_t v0FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 0);
-    size_t v6FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(1U, s_getIndexDistance(v0FaceIndexAfter, v6FaceIndexAfter));
+    size_t v0FaceIndexAfter = getFaceIndexWithVertexIndex(csm, 0);
+    size_t v6FaceIndexAfter = getFaceIndexWithVertexIndex(csm, 6);
+    CHECK_EQUAL(1U, getIndexDistance(v0FaceIndexAfter, v6FaceIndexAfter));
 }
 
-TEST(can_optimize_vertex_cache_subset) {
-    CalCoreSubmesh csm = s_makeMeshWithUnoptimizedVertexCache();
+TEST_F(SubmeshFixture, can_optimize_vertex_cache_subset) {
+    CalCoreSubmesh csm = makeMeshWithUnoptimizedVertexCache();
 
-    size_t v0FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 0);
-    size_t v6FaceIndexBefore = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(2U, s_getIndexDistance(v0FaceIndexBefore, v6FaceIndexBefore));
+    size_t v0FaceIndexBefore = getFaceIndexWithVertexIndex(csm, 0);
+    size_t v6FaceIndexBefore = getFaceIndexWithVertexIndex(csm, 6);
+    CHECK_EQUAL(2U, getIndexDistance(v0FaceIndexBefore, v6FaceIndexBefore));
 
     csm.optimizeVertexCacheSubset(0, 3);
 
     // We expect vertex cache optimization to move the two faces that share
     // vertices together.
-    size_t v0FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 0);
-    size_t v6FaceIndexAfter = s_getFaceIndexWithVertexIndex(csm, 6);
-    CHECK_EQUAL(1U,  s_getIndexDistance(v0FaceIndexAfter, v6FaceIndexAfter));
+    size_t v0FaceIndexAfter = getFaceIndexWithVertexIndex(csm, 0);
+    size_t v6FaceIndexAfter = getFaceIndexWithVertexIndex(csm, 6);
+    CHECK_EQUAL(1U,  getIndexDistance(v0FaceIndexAfter, v6FaceIndexAfter));
 }
 
-TEST(optimizing_vertex_cache_subset_does_not_affect_verts_outside_of_subset) {
-    CalCoreSubmesh csm1 = s_makeMeshWithUnoptimizedVertexCache();
-    CHECK_EQUAL(2U, s_getFaceIndexWithVertexIndex(csm1, 6));
+TEST_F(SubmeshFixture, optimizing_vertex_cache_subset_does_not_affect_verts_outside_of_subset) {
+    CalCoreSubmesh csm1 = makeMeshWithUnoptimizedVertexCache();
+    CHECK_EQUAL(2U, getFaceIndexWithVertexIndex(csm1, 6));
     csm1.optimizeVertexCacheSubset(0, 2);
-    CHECK_EQUAL(2U, s_getFaceIndexWithVertexIndex(csm1, 6));
+    CHECK_EQUAL(2U, getFaceIndexWithVertexIndex(csm1, 6));
 
-    CalCoreSubmesh csm2 = s_makeMeshWithUnoptimizedVertexCache();
-    CHECK_EQUAL(0U, s_getFaceIndexWithVertexIndex(csm2, 0));
+    CalCoreSubmesh csm2 = makeMeshWithUnoptimizedVertexCache();
+    CHECK_EQUAL(0U, getFaceIndexWithVertexIndex(csm2, 0));
     csm2.optimizeVertexCacheSubset(1, 2);
-    CHECK_EQUAL(0U, s_getFaceIndexWithVertexIndex(csm2, 0));
+    CHECK_EQUAL(0U, getFaceIndexWithVertexIndex(csm2, 0));
 }
 
-TEST(renumber_renumberIndices_without_texcoords) {
+TEST_F(SubmeshFixture, renumber_renumberIndices_without_texcoords) {
     CalCoreSubmesh csm(4, false, 2);
     csm.addFace(CalCoreSubmesh::Face(3, 2, 1));
     csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
@@ -490,23 +493,23 @@ TEST(renumber_renumberIndices_without_texcoords) {
     inf[0].weight = 1.0f;
 
     inf[0].boneId = 0;
-    csm.addVertex(s_makeVertex(0), 0, inf);
+    csm.addVertex(makeVertex(0), 0, inf);
     inf[0].boneId = 1;
-    csm.addVertex(s_makeVertex(1), 1, inf);
+    csm.addVertex(makeVertex(1), 1, inf);
     inf[0].boneId = 2;
-    csm.addVertex(s_makeVertex(2), 2, inf);
+    csm.addVertex(makeVertex(2), 2, inf);
     inf[0].boneId = 3;
-    csm.addVertex(s_makeVertex(3), 3, inf);
+    csm.addVertex(makeVertex(3), 3, inf);
 
     csm.renumberIndices();
 
     CHECK_EQUAL(CalCoreSubmesh::Face(0, 1, 2), csm.getFaces()[0]);
     CHECK_EQUAL(CalCoreSubmesh::Face(1, 3, 2), csm.getFaces()[1]);
 
-    CHECK_EQUAL(s_makeVertex(3), csm.getVectorVertex()[0]);
-    CHECK_EQUAL(s_makeVertex(2), csm.getVectorVertex()[1]);
-    CHECK_EQUAL(s_makeVertex(1), csm.getVectorVertex()[2]);
-    CHECK_EQUAL(s_makeVertex(0), csm.getVectorVertex()[3]);
+    CHECK_EQUAL(makeVertex(3), csm.getVectorVertex()[0]);
+    CHECK_EQUAL(makeVertex(2), csm.getVectorVertex()[1]);
+    CHECK_EQUAL(makeVertex(1), csm.getVectorVertex()[2]);
+    CHECK_EQUAL(makeVertex(0), csm.getVectorVertex()[3]);
 
     CHECK_EQUAL(CalColor32(3), csm.getVertexColors()[0]);
     CHECK_EQUAL(CalColor32(2), csm.getVertexColors()[1]);
@@ -519,11 +522,7 @@ TEST(renumber_renumberIndices_without_texcoords) {
     CHECK_EQUAL(0u, csm.getInfluences()[3].boneId);
 }
 
-CalCoreSubmesh::TextureCoordinate makeTextureCoordinate(int i) {
-    return CalCoreSubmesh::TextureCoordinate(i, i);
-}
-
-TEST(renumber_vertices_with_texcoords) {
+TEST_F(SubmeshFixture, renumber_vertices_with_texcoords) {
     CalCoreSubmesh csm(4, true, 2);
     csm.addFace(CalCoreSubmesh::Face(3, 2, 1));
     csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
@@ -532,13 +531,13 @@ TEST(renumber_vertices_with_texcoords) {
     inf[0].weight = 1.0f;
     inf[0].boneId = 0;
 
-    csm.addVertex(s_makeVertex(0), 0, inf);
+    csm.addVertex(makeVertex(0), 0, inf);
     csm.setTextureCoordinate(0, makeTextureCoordinate(0));
-    csm.addVertex(s_makeVertex(1), 0, inf);
+    csm.addVertex(makeVertex(1), 0, inf);
     csm.setTextureCoordinate(1, makeTextureCoordinate(1));
-    csm.addVertex(s_makeVertex(2), 0, inf);
+    csm.addVertex(makeVertex(2), 0, inf);
     csm.setTextureCoordinate(2, makeTextureCoordinate(2));
-    csm.addVertex(s_makeVertex(3), 0, inf);
+    csm.addVertex(makeVertex(3), 0, inf);
     csm.setTextureCoordinate(3, makeTextureCoordinate(3));
 
     csm.renumberIndices();
@@ -549,7 +548,7 @@ TEST(renumber_vertices_with_texcoords) {
     CHECK_EQUAL(makeTextureCoordinate(0), csm.getTextureCoordinates()[3]);
 }
 
-TEST(renumber_morphs) {
+TEST_F(SubmeshFixture, renumber_morphs) {
     CalCoreSubmesh csm(3, false, 1);
     csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
 
@@ -557,11 +556,11 @@ TEST(renumber_morphs) {
     inf[0].weight = 1.0f;
 
     inf[0].boneId = 0;
-    csm.addVertex(s_makeVertex(0), 0, inf);
+    csm.addVertex(makeVertex(0), 0, inf);
     inf[0].boneId = 1;
-    csm.addVertex(s_makeVertex(1), 1, inf);
+    csm.addVertex(makeVertex(1), 1, inf);
     inf[0].boneId = 2;
-    csm.addVertex(s_makeVertex(2), 2, inf);
+    csm.addVertex(makeVertex(2), 2, inf);
 
     CalCoreMorphTarget::VertexOffsetArray offsets;
     offsets.push_back(VertexOffset(2, CalPoint4(), CalVector4()));
@@ -573,7 +572,7 @@ TEST(renumber_morphs) {
     CHECK_EQUAL(0u, csm.getMorphTargets()[0]->vertexOffsets[0].vertexId);
 }
 
-TEST(drop_morph_offsets_for_unused_vertices) {
+TEST_F(SubmeshFixture, drop_morph_offsets_for_unused_vertices) {
     CalCoreSubmesh csm(4, false, 1);
     csm.addFace(CalCoreSubmesh::Face(2, 0, 1));
 
@@ -581,10 +580,10 @@ TEST(drop_morph_offsets_for_unused_vertices) {
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
 
-    csm.addVertex(s_makeVertex(0), 0, inf);
-    csm.addVertex(s_makeVertex(1), 1, inf);
-    csm.addVertex(s_makeVertex(2), 2, inf);
-    csm.addVertex(s_makeVertex(3), 3, inf);
+    csm.addVertex(makeVertex(0), 0, inf);
+    csm.addVertex(makeVertex(1), 1, inf);
+    csm.addVertex(makeVertex(2), 2, inf);
+    csm.addVertex(makeVertex(3), 3, inf);
 
     CalCoreMorphTarget::VertexOffsetArray offsets;
     offsets.push_back(VertexOffset(3, CalPoint4(), CalVector4()));
@@ -597,7 +596,7 @@ TEST(drop_morph_offsets_for_unused_vertices) {
     CHECK_EQUAL(0u, csm.getMorphTargets()[0]->vertexOffsets.size());
 }
 
-TEST(minimumVertexBufferSize_is_changed_if_vertex_list_is_shrunk) {
+TEST_F(SubmeshFixture, minimumVertexBufferSize_is_changed_if_vertex_list_is_shrunk) {
     CalCoreSubmesh csm(4, false, 1);
     csm.addFace(CalCoreSubmesh::Face(1, 2, 3));
     CHECK_EQUAL(4u, csm.getMinimumVertexBufferSize());
@@ -606,10 +605,10 @@ TEST(minimumVertexBufferSize_is_changed_if_vertex_list_is_shrunk) {
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
 
-    csm.addVertex(s_makeVertex(0), 0, inf);
-    csm.addVertex(s_makeVertex(1), 1, inf);
-    csm.addVertex(s_makeVertex(2), 2, inf);
-    csm.addVertex(s_makeVertex(3), 3, inf);
+    csm.addVertex(makeVertex(0), 0, inf);
+    csm.addVertex(makeVertex(1), 1, inf);
+    csm.addVertex(makeVertex(2), 2, inf);
+    csm.addVertex(makeVertex(3), 3, inf);
 
     csm.renumberIndices();
 
@@ -618,61 +617,63 @@ TEST(minimumVertexBufferSize_is_changed_if_vertex_list_is_shrunk) {
     CHECK_EQUAL(3u, csm.getMinimumVertexBufferSize());
 }
 
-static void s_checkNormalizedNormals(
-    const CalVector4& exp,
-    const CalVector4& in
-) {
-    CalCoreSubmesh csm(3, 0, 1);
-    CalCoreSubmesh::Vertex vertex;
-    vertex.position = CalPoint4(1, 1, 1, 0);
-    vertex.normal = in;
-    CalCoreSubmesh::InfluenceVector iv(1);
-    csm.addVertex(vertex, 0, iv);
-    csm.addVertex(vertex, 0, iv);
-    csm.addVertex(vertex, 0, iv);
+FIXTURE(SubmeshNormalFixture) {
+    static void checkNormalizedNormals(
+        const CalVector4& exp,
+        const CalVector4& in
+    ) {
+        CalCoreSubmesh csm(3, 0, 1);
+        CalCoreSubmesh::Vertex vertex;
+        vertex.position = CalPoint4(1, 1, 1, 0);
+        vertex.normal = in;
+        CalCoreSubmesh::InfluenceVector iv(1);
+        csm.addVertex(vertex, 0, iv);
+        csm.addVertex(vertex, 0, iv);
+        csm.addVertex(vertex, 0, iv);
 
-    csm.normalizeNormals();
-    const CalCoreSubmesh::VectorVertex& vertices =  csm.getVectorVertex();
-    CHECK_EQUAL(3u, vertices.size());
-    const CalVector4& normal = vertices[0].normal; 
-    CHECK_CLOSE(exp.x, normal.x, 0.001);
-    CHECK_CLOSE(exp.y, normal.y, 0.001);
-    CHECK_CLOSE(exp.z, normal.z, 0.001);
-}
+        csm.normalizeNormals();
+        const CalCoreSubmesh::VectorVertex& vertices =  csm.getVectorVertex();
+        CHECK_EQUAL(3u, vertices.size());
+        const CalVector4& normal = vertices[0].normal;
+        CHECK_CLOSE(exp.x, normal.x, 0.001);
+        CHECK_CLOSE(exp.y, normal.y, 0.001);
+        CHECK_CLOSE(exp.z, normal.z, 0.001);
+    }
+};
 
-TEST(can_normalize_bad_normals) {
-    s_checkNormalizedNormals(
+TEST_F(SubmeshNormalFixture, can_normalize_bad_normals) {
+    checkNormalizedNormals(
         CalVector4(0.707106781187f, -0.707106781187f, 0.0f, 0.0f),
         CalVector4(1000.0f, -1000.0f, 0.0f, 0.0f)
     );
 }
 
-TEST(returns_a_default_when_asked_to_normalize_zero_normals) {
-    s_checkNormalizedNormals(
+TEST_F(SubmeshNormalFixture, returns_a_default_when_asked_to_normalize_zero_normals) {
+    checkNormalizedNormals(
         CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
         CalVector4(0.0f, 0.0f, 0.0f, 0.0f)
     );
 }
 
-TEST(returns_a_default_when_asked_to_normalize_inf_normals) {
+TEST_F(SubmeshNormalFixture, returns_a_default_when_asked_to_normalize_inf_normals) {
     float inf = std::numeric_limits<float>::infinity();
-    s_checkNormalizedNormals(
+    checkNormalizedNormals(
         CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
         CalVector4(inf, 1.0f, 0.0f, 0.0f)
     );
 }
 
-TEST(returns_a_default_when_asked_to_normalize_negative_inf_normals) {
+TEST_F(SubmeshNormalFixture, returns_a_default_when_asked_to_normalize_negative_inf_normals) {
     float inf = std::numeric_limits<float>::infinity();
-    s_checkNormalizedNormals(
+    checkNormalizedNormals(
         CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
         CalVector4(-inf, 1.0f, 0.0f, 0.0f)
     );
 }
 
-TEST(returns_a_default_when_asked_to_normalize_nan_normals) {
+TEST_F(SubmeshNormalFixture, returns_a_default_when_asked_to_normalize_nan_normals) {
     float nan = std::numeric_limits<float>::quiet_NaN();
-    s_checkNormalizedNormals(
+    checkNormalizedNormals(
         CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
         CalVector4(nan, 1.0f, 0.0f, 0.0f)
     );

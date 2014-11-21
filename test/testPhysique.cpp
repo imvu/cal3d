@@ -18,6 +18,9 @@ inline cal3d_uint64 __rdtsc(void) {
 
 #endif
 
+FIXTURE(PhysiqueFixture) {
+};
+
 FIXTURE(skin_x87) {
     CalPhysique::SkinRoutine skin;
     SETUP(skin_x87) {
@@ -260,7 +263,7 @@ static CalCoreMorphTargetPtr djinnMorphTarget(int N, const char* name) {
     return morphTarget;
 }
 
-TEST(morph_targets_performance_test) {
+TEST_F(PhysiqueFixture, morph_targets_performance_test) {
     const int N = 10000;
     const int TrialCount = 10;
 
@@ -292,7 +295,7 @@ TEST(morph_targets_performance_test) {
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
 
-TEST(bunch_of_unweighted_morph_targets_performance_test) {
+TEST_F(PhysiqueFixture, bunch_of_unweighted_morph_targets_performance_test) {
     const int N = 10000;
     const int M = 30;
     const int TrialCount = 10;
@@ -327,7 +330,7 @@ TEST(bunch_of_unweighted_morph_targets_performance_test) {
     printf("Cycles per vertex: %d\n", (int)(min / N));
 }
 
-TEST(single_morph_target) {
+TEST_F(PhysiqueFixture, single_morph_target) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
@@ -379,7 +382,7 @@ TEST(single_morph_target) {
     //CHECK_EQUAL(0.0, output[1].w);
 }
 
-TEST(two_morph_targets) {
+TEST_F(PhysiqueFixture, two_morph_targets) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;
@@ -443,7 +446,7 @@ TEST(two_morph_targets) {
     //CHECK_EQUAL(0.0, output[1].w);
 }
 
-TEST(two_disjoint_morph_targets) {
+TEST_F(PhysiqueFixture, two_disjoint_morph_targets) {
     std::vector<CalCoreSubmesh::Influence> inf(1);
     inf[0].boneId = 0;
     inf[0].weight = 1.0f;

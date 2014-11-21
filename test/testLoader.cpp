@@ -22,7 +22,6 @@ inline float* getFloatVecFromBuf(char* pbuf) {
     return reinterpret_cast<float*>(pbuf);
 }
 
-
 const char goodMeshData[] =
     "<HEADER MAGIC=\"XMF\" VERSION=\"919\" />"
     "<MESH NUMSUBMESH=\"1\">"
@@ -63,7 +62,10 @@ CalBufferSource fromString(const unsigned char(&p)[Length]) {
     return CalBufferSource(p, Length);
 }
 
-TEST(position_from_mesh_is_correct) {
+FIXTURE(LoaderFixture) {
+};
+
+TEST_F(LoaderFixture, position_from_mesh_is_correct) {
     char* old = setlocale(LC_ALL, "");
     CHECK(old);
 
@@ -76,7 +78,7 @@ TEST(position_from_mesh_is_correct) {
     setlocale(LC_ALL, old);
 }
 
-TEST(loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
+TEST_F(LoaderFixture, loads_mesh_which_causes_vector_Xlen_exception_and_not_crash) {
     CalBufferSource cbs(fromString(goodMeshData));
     CalCoreMeshPtr goodMesh(CalLoader::loadCoreMesh(cbs));
     CalCoreSubmeshPtr subMesh(goodMesh->submeshes[0]);
@@ -162,7 +164,7 @@ const char unsortedInfluences[] =
     "</MESH>"
     ;
 
-TEST(loading_mesh_sorts_influences) {
+TEST_F(LoaderFixture, loading_mesh_sorts_influences) {
     CalBufferSource cbs(fromString(unsortedInfluences));
     CalCoreMeshPtr mesh(CalLoader::loadCoreMesh(cbs));
     CalCoreSubmeshPtr submesh(mesh->submeshes[0]);
@@ -186,7 +188,7 @@ const char animationText[] =
     "</ANIMATION>\n"
     ;
 
-TEST(LoadSimpleXmlAnimation) {
+TEST_F(LoaderFixture, LoadSimpleXmlAnimation) {
     CalBufferSource cbs(fromString(animationText));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
@@ -222,7 +224,7 @@ const char animation_with_out_of_order_keyframes[] =
     "</ANIMATION>\n"
     ;
 
-TEST(sorts_keyframes_upon_load) {
+TEST_F(LoaderFixture, sorts_keyframes_upon_load) {
     CalBufferSource cbs(fromString(animation_with_out_of_order_keyframes));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
@@ -256,7 +258,7 @@ const char animation_with_translations[] =
     "</ANIMATION>\n"
     ;
 
-TEST(load_animation_with_translation) {
+TEST_F(LoaderFixture, load_animation_with_translation) {
     CalBufferSource cbs(fromString(animation_with_translations));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
@@ -293,7 +295,7 @@ const char animation_with_static_translations[] =
     "</ANIMATION>\n"
     ;
 
-TEST(load_animation_with_static_translations) {
+TEST_F(LoaderFixture, load_animation_with_static_translations) {
     CalBufferSource cbs(fromString(animation_with_static_translations));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
@@ -330,7 +332,7 @@ const char animation_with_mismatched_track_and_keyframe_count[] =
     "</ANIMATION>\n"
     ;
 
-TEST(load_animation_with_mismatched_counts) {
+TEST_F(LoaderFixture, load_animation_with_mismatched_counts) {
     CalBufferSource cbs(fromString(animation_with_mismatched_track_and_keyframe_count));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim);
@@ -374,7 +376,7 @@ const char simple_two_bone_skeleton[] =
     "</SKELETON>"
     ;
 
-TEST(simple_two_bone_skeleton) {
+TEST_F(LoaderFixture, simple_two_bone_skeleton) {
     float tol = 0.001f;
     CalBufferSource cbs(fromString(simple_two_bone_skeleton));
     CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
@@ -434,7 +436,7 @@ const char nontopological_two_bone_skeleton[] =
     "</SKELETON>"
     ;
 
-TEST(two_bone_skeleton_with_bones_in_nontopological_order) {
+TEST_F(LoaderFixture, two_bone_skeleton_with_bones_in_nontopological_order) {
     float tol = 0.001f;
     CalBufferSource cbs(fromString(nontopological_two_bone_skeleton));
     CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
@@ -501,7 +503,7 @@ const char animation_for_a_nonexistent_bone[] =
     "</ANIMATION>\n"
     ;
 
-TEST(load_animation_for_non_existent_bone) {
+TEST_F(LoaderFixture, load_animation_for_non_existent_bone) {
     CalBufferSource cbs(fromString(one_bone_skeleton));
     CalCoreSkeletonPtr skel(CalLoader::loadCoreSkeleton(cbs));
     CHECK(skel);
@@ -568,7 +570,7 @@ unsigned char hmmmAnimation[] = {
 
 BOOST_STATIC_ASSERT(sizeof(hmmmAnimation) == hmmmLength);
 
-TEST(load_hmmm) {
+TEST_F(LoaderFixture, load_hmmm) {
     CalBufferSource cbs(fromString(hmmmAnimation));
     CalCoreAnimationPtr anim = CalLoader::loadCoreAnimation(cbs);
     CHECK_EQUAL(anim->tracks.size(), 70u);
@@ -599,7 +601,7 @@ TEST(load_hmmm) {
 
 // non-track siblings
 
-TEST(CalVectorFromDataSrc) {
+TEST_F(LoaderFixture, CalVectorFromDataSrc) {
     char buf[7];
     CalBufferSource bs(buf, sizeof(buf) / sizeof(char));
 
@@ -608,7 +610,7 @@ TEST(CalVectorFromDataSrc) {
 }
 
 
-TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
+TEST_F(LoaderFixture, loading_mesh_without_vertex_colors_defaults_to_white) {
     CalCoreSubmeshPtr sm(new CalCoreSubmesh(1, 0, 0));
     CalCoreSubmesh::Vertex v;
     sm->addVertex(v, CalMakeColor(CalVector(1, 1, 1)), std::vector<CalCoreSubmesh::Influence>());
@@ -628,7 +630,7 @@ TEST(loading_mesh_without_vertex_colors_defaults_to_white) {
 
 }
 
-TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
+TEST_F(LoaderFixture, converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CalBufferSource cbs(fromString(animationText));
     CalCoreAnimationPtr anim1 = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim1);
@@ -647,7 +649,7 @@ TEST(converting_xml_to_binary_then_back_to_xml_does_not_modify_animation) {
     CHECK_EQUAL(*anim1, *anim2);
 }
 
-TEST(converting_xml_to_binary_then_test_nan_duration_animation) {
+TEST_F(LoaderFixture, converting_xml_to_binary_then_test_nan_duration_animation) {
     CalBufferSource cbs(fromString(animationText));
     CalCoreAnimationPtr anim1 = CalLoader::loadCoreAnimation(cbs);
     CHECK(anim1);
@@ -692,7 +694,7 @@ const char header_only_without_magic[] =
     "</ANIMATION>"
     ;
 
-TEST(morph_loader_doesnt_crash_on_invalid_data) {
+TEST_F(LoaderFixture, morph_loader_doesnt_crash_on_invalid_data) {
     CalBufferSource cbs1(fromString(invalid_morph));
     CHECK(!CalLoader::loadCoreMorphAnimation(cbs1));
 
