@@ -1,10 +1,10 @@
 #include "TestPrologue.h"
-#include <cal3d/bone.h>
+#include <cal3d/bonetransform.h>
 #include <cal3d/coremorphtarget.h>
 #include <cal3d/submesh.h>
-#include <cal3d/skeleton.h>
 #include <cal3d/physique.h>
-#include <cal3d/mixer.h>
+
+#include <cstring>
 
 #if defined(_MSC_VER)
 #   include <intrin.h>

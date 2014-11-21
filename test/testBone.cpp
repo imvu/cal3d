@@ -4,7 +4,6 @@
 #include <cal3d/coreskeleton.h>
 #include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
-#include <cal3d/streamops.h>
 
 inline CalVector transformPoint(const BoneTransform& bt, const CalVector& point) {
     return CalVector(

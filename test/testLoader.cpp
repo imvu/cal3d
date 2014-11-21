@@ -1,8 +1,4 @@
 #include "TestPrologue.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <limits>
 #include <cal3d/buffersource.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/corekeyframe.h>
@@ -13,7 +9,12 @@
 #include <cal3d/corebone.h>
 #include <cal3d/loader.h>
 #include <cal3d/saver.h>
-#include <cal3d/streamops.h>
+
+#include <cstring>
+#include <limits>
+#include <string>
+#include <sstream>
+#include <vector>
 
 inline int getIntFromBuf(char* pbuf) {
     return *reinterpret_cast<int*>(pbuf);

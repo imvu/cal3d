@@ -1,10 +1,9 @@
 #include "TestPrologue.h"
-#include <cal3d/mixer.h>
 #include <cal3d/corebone.h>
 #include <cal3d/coreanimation.h>
 #include <cal3d/coreskeleton.h>
+#include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
-#include <cal3d/streamops.h>
 
 FIXTURE(MixerFixture) {
     SETUP(MixerFixture)

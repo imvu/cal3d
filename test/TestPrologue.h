@@ -1,7 +1,7 @@
 #pragma once
 
 #include <TestFramework/TestFramework.h>
-#include <cal3d/tinyxml.h>
+#include <cal3d/streamops.h>
 #include <cal3d/vector4.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -19,10 +19,4 @@ inline bool AreClose(
     float tolerance
 ) {
     return (p1.asCalVector4() - p2.asCalVector4()).length() < tolerance;
-}
-
-namespace std { // :(
-    inline std::ostream& operator<<(std::ostream& os, const CalPoint4& v) {
-        return os << "[" << v.x << ", " << v.y << ", " << v.z << "]";
-    }
 }

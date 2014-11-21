@@ -1,4 +1,7 @@
 #include "TestPrologue.h"
+#include <cal3d/tinyxml.h>
+
+#include <iostream>
 
 FIXTURE(TinyXmlFixture) {
 };

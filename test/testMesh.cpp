@@ -2,7 +2,6 @@
 #include <cal3d/coremesh.h>
 #include <cal3d/coresubmesh.h>
 #include <cal3d/coremorphtarget.h>
-#include <cal3d/streamops.h>
 
 FIXTURE(MeshFixture) {
 };

@@ -7,7 +7,6 @@
 #include <cal3d/submesh.h>
 #include <cal3d/physique.h>
 #include <cal3d/vector4.h>
-#include <cal3d/streamops.h>
 #include <cal3d/coreskeleton.h>
 #include <cal3d/coremorphtarget.h>
 

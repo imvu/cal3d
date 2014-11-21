@@ -19,6 +19,10 @@ inline std::ostream& operator<<(std::ostream& os, const BoneTransform& bt) {
     return os << "[rowx=" << bt.rowx << " rowy=" << bt.rowy << " rowz=" << bt.rowz << "]";
 }
 
+inline std::ostream& operator<<(std::ostream& os, const CalPoint4& v) {
+    return os << "CalPoint4(" << v.x << ", " << v.y << ", " << v.z << ")";
+}
+
 inline std::ostream& operator<<(std::ostream& os, const CalVector& v) {
     return os << "CalVector(" << v.x << "," << v.y << "," << v.z << ")";
 }

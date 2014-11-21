@@ -1,7 +1,6 @@
-#include <TestFramework/TestFramework.h>
-#include "cal3d/memory.h"
-#include "cal3d/streamops.h"
-#include "cal3d/vector4.h"
+#include "TestPrologue.h"
+#include <cal3d/memory.h>
+#include <cal3d/vector4.h>
 
 FIXTURE(MemoryFixture) {
 };
