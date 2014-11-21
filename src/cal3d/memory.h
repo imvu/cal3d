@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 #include <boost/noncopyable.hpp>
-#include "cal3d/platform.h"
+#include "cal3d/global.h"
 
 namespace cal3d {
     CAL3D_API void* allocate_aligned_data(size_t size);

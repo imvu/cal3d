@@ -1,4 +1,3 @@
-#include "cal3d/global.h"
 #include "cal3d/memory.h"
 
 void* cal3d::allocate_aligned_data(size_t size) {
