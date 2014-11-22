@@ -1,7 +1,11 @@
 #pragma once
 
-#include <TestFramework/TestFramework.h>
+// The old version of clang currently used on the Mac builder requires some
+// operator<<() declarations to precede their use in the UnitTest++
+// templates/macros. -- jlee - 2014-11-21
 #include <cal3d/streamops.h>
+
+#include <TestFramework/TestFramework.h>
 #include <cal3d/vector4.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
