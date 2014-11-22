@@ -462,6 +462,20 @@ BOOST_PYTHON_MODULE(_cal3d)
     
     exportVector<CalCoreMorphTargetPtr>("MorphTargetVector");
 
+    exportVector<float>("FloatVector");
+
+    class_<CalWeightsBoneIdsPair>("WeightsBoneIdsPair")
+        .def_readonly("weights", &CalWeightsBoneIdsPair::weights)
+        .def_readonly("boneIds", &CalWeightsBoneIdsPair::boneIds)
+        ;
+    exportVector<CalWeightsBoneIdsPair>("WeightsBoneIdsPairVector");
+
+    class_<CalExportedInfluences>("ExportedInfluences")
+        .def_readonly("maximumInfluenceCount", &CalExportedInfluences::maximumInfluenceCount)
+        .def_readonly("weightsBoneIdsPairs", &CalExportedInfluences::weightsBoneIdsPairs)
+        .def_readonly("usedBoneIds", &CalExportedInfluences::usedBoneIds)
+        ;
+
     class_<CalCoreSubmesh, CalCoreSubmeshPtr, boost::noncopyable>("CoreSubmesh", no_init)
         .def(init<int, int, int>())
         .def_readwrite("coreMaterialThreadId", &CalCoreSubmesh::coreMaterialThreadId)
@@ -491,6 +505,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("optimizeVertexCacheSubset", &CalCoreSubmesh::optimizeVertexCacheSubset)
         .def("renumberIndices", &CalCoreSubmesh::renumberIndices)
         .def("normalizeNormals", &CalCoreSubmesh::normalizeNormals)
+        .def("exportInfluences", &CalCoreSubmesh::exportInfluences)
         ;
 
     exportVector<CalCoreSubmeshPtr>("CoreSubmeshVector");

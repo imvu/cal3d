@@ -20,9 +20,11 @@
 #include "cal3d/forsythtriangleorderoptimizer.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <set>
 
 CalCoreSubmesh::CalCoreSubmesh(int vertexCount, bool hasTextureCoordinates, int faceCount)
     : coreMaterialThreadId(0)
@@ -953,6 +955,58 @@ void CalCoreSubmesh::normalizeNormals() {
             n = CalVector4(0.0f, 1.0f, 0.0f, 0.0f);
         }
     }
+}
+
+CalExportedInfluences CalCoreSubmesh::exportInfluences(unsigned int influenceLimit) {
+    fflush(stdout);
+    CalExportedInfluences outInfluenceData;
+
+    // NOTE: May be a bit more efficient to use a sorted vector, hash map, or
+    // array of bools or something.
+    std::set<unsigned int> usedBoneIds;
+
+    unsigned int maxInfluenceCount = 0;
+    CalWeightsBoneIdsPair pair;
+    for (auto it = m_influences.begin(); it != m_influences.end(); ++it) {
+        const auto& influence = *it;
+
+        if (pair.weights.size() < influenceLimit) {
+            pair.weights.push_back(influence.weight);
+            pair.boneIds.push_back(influence.boneId);
+            usedBoneIds.insert(influence.boneId);
+        }
+
+        if (influence.lastInfluenceForThisVertex) {
+            unsigned int influenceCount = pair.weights.size();
+            maxInfluenceCount = std::max(maxInfluenceCount, influenceCount);
+
+            for (unsigned int i = pair.weights.size(); i < influenceLimit; ++i) {
+                pair.weights.push_back(0);
+                pair.boneIds.push_back(0);
+            }
+
+            float total = 0;
+            for (unsigned int i = 0; i < pair.weights.size(); ++i) {
+                total += pair.weights[i];
+            }
+            if (std::fabs(total - 1.0) >= 0.001 && std::fabs(total) >= 0.001) {
+                for (unsigned int i = 0; i < pair.weights.size(); ++i) {
+                    pair.weights[i] /= total;
+                }
+            }
+
+            outInfluenceData.weightsBoneIdsPairs.push_back(pair);
+            pair = CalWeightsBoneIdsPair();
+        }
+    }
+    outInfluenceData.maximumInfluenceCount = maxInfluenceCount;
+
+    if (m_vertices.size() != outInfluenceData.weightsBoneIdsPairs.size()) {
+        throw std::runtime_error("Influence count must match vertex count");
+    }
+    outInfluenceData.usedBoneIds = std::vector<unsigned int>(usedBoneIds.begin(), usedBoneIds.end());
+
+    return outInfluenceData;
 }
 
 /*

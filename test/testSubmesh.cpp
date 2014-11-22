@@ -47,6 +47,22 @@ FIXTURE(SubmeshFixture) {
         return csm;
     }
 
+    static CalCoreSubmesh makeSubmeshWithMultipleInfluences(unsigned int influenceCount) {
+        CalCoreSubmesh csm(3, false, 1);
+        CalCoreSubmesh::Vertex v = makeVertex(0);
+        CalCoreSubmesh::InfluenceVector influenceVector;
+        float weight = 1.0f / influenceCount;
+        for (size_t i = 0 ; i < influenceCount; ++i) {
+            bool isLast = (i == influenceCount - 1);
+            influenceVector.push_back(CalCoreSubmesh::Influence(i, weight, isLast));
+        }
+        csm.addVertex(v, 0, influenceVector);
+        csm.addVertex(v, 0, influenceVector);
+        csm.addVertex(v, 0, influenceVector);
+        csm.addFace(CalCoreSubmesh::Face(0, 1, 2));
+        return csm;
+    }
+
     static std::vector<CalIndex> getIndices(const CalCoreSubmesh& csm) {
         std::vector<CalIndex> indices;
         const auto& faces = csm.getFaces();
@@ -676,4 +692,94 @@ TEST_F(SubmeshNormalFixture, returns_a_default_when_asked_to_normalize_nan_norma
         CalVector4(0.0f, 1.0f, 0.0f, 0.0f),
         CalVector4(nan, 1.0f, 0.0f, 0.0f)
     );
+}
+
+TEST_F(SubmeshFixture, can_export_influences) {
+    CalCoreSubmesh csm(4, 0, 1);
+    CalCoreSubmesh::Vertex vertex;
+
+    CalCoreSubmesh::InfluenceVector iv0;
+    iv0.push_back(CalCoreSubmesh::Influence(0, 1.0f, true));
+
+    CalCoreSubmesh::InfluenceVector iv1;
+    iv1.push_back(CalCoreSubmesh::Influence(0, 0.5f, false));
+    iv1.push_back(CalCoreSubmesh::Influence(1, 0.5f, true));
+
+    CalCoreSubmesh::InfluenceVector iv2;
+    iv2.push_back(CalCoreSubmesh::Influence(2, 1.0f, true));
+
+    CalCoreSubmesh::InfluenceVector iv3;
+    iv3.push_back(CalCoreSubmesh::Influence(3, 1.0f, true));
+
+    csm.addVertex(makeVertex(0), 0, iv0);
+    csm.addVertex(makeVertex(0), 0, iv1);
+    csm.addVertex(makeVertex(0), 0, iv2);
+    csm.addVertex(makeVertex(0), 0, iv3);
+
+    csm.addFace(CalCoreSubmesh::Face(0, 1, 2));
+    csm.addFace(CalCoreSubmesh::Face(2, 1, 3));
+
+    auto influences = csm.exportInfluences(4);
+    CHECK_EQUAL(2U, influences.maximumInfluenceCount);
+
+    CHECK_EQUAL(4U, influences.weightsBoneIdsPairs.size());
+
+    float expWeights0Arr[] = {1.0f, 0.0f, 0.0f, 0.0f};
+    CHECK_VECTOR_CLOSE(arrayToVector(expWeights0Arr), influences.weightsBoneIdsPairs[0].weights, 0.001f);
+
+    unsigned int expBoneIds0Arr[] = {0, 0, 0, 0};
+    CHECK_EQUAL(arrayToVector(expBoneIds0Arr), influences.weightsBoneIdsPairs[0].boneIds);
+
+    float expWeights1Arr[] = {0.5f, 0.5f, 0.0f, 0.0f};
+    CHECK_VECTOR_CLOSE(arrayToVector(expWeights1Arr), influences.weightsBoneIdsPairs[1].weights, 0.001f);
+
+    unsigned int expBoneIds1Arr[] = {0, 1, 0, 0};
+    CHECK_EQUAL(arrayToVector(expBoneIds1Arr), influences.weightsBoneIdsPairs[1].boneIds);
+
+    unsigned int expBoneIdsArr[] = {0, 1, 2, 3};
+    CHECK_EQUAL(arrayToVector(expBoneIdsArr), influences.usedBoneIds);
+}
+
+TEST_F(SubmeshFixture, exportInfluences_raises_exception_on_incomplete_mesh) {
+    CalCoreSubmesh csm(4, 0, 1);
+    CalCoreSubmesh::Vertex vertex;
+    CalCoreSubmesh::InfluenceVector influenceVector;
+    // We declared two verts in the constructor, but we only add one, so the
+    // vertex and influence counts don't match:
+    csm.addVertex(vertex, 0, influenceVector);
+    CHECK_THROW(csm.exportInfluences(4), std::runtime_error);
+}
+
+TEST_F(SubmeshFixture, exportInfluences_handles_empty_mesh) {
+    CalCoreSubmesh csm(0, 0, 0);
+    auto influences = csm.exportInfluences(4);
+    CHECK_EQUAL(0U, influences.maximumInfluenceCount);
+    CHECK(influences.weightsBoneIdsPairs.empty());
+    CHECK(influences.usedBoneIds.empty());
+}
+
+TEST_F(SubmeshFixture, exportInfluences_limits_influences_and_renormalizes) {
+    auto csm = makeSubmeshWithMultipleInfluences(8);
+
+    auto influences2 = csm.exportInfluences(2);
+
+    float expWeights2Arr[] = {0.5f, 0.5f};
+    CHECK_VECTOR_CLOSE(arrayToVector(expWeights2Arr), influences2.weightsBoneIdsPairs[0].weights, 0.001f);
+
+    unsigned int expBoneIds2Arr[] = {0, 1};
+    CHECK_EQUAL(arrayToVector(expBoneIds2Arr), influences2.weightsBoneIdsPairs[0].boneIds);
+
+    unsigned int expUsedBoneIds2Arr[] = {0, 1};
+    CHECK_EQUAL(arrayToVector(expUsedBoneIds2Arr), influences2.usedBoneIds);
+
+    auto influences4 = csm.exportInfluences(4);
+
+    float expWeights4Arr[] = {0.25f, 0.25f, 0.25f, 0.25f};
+    CHECK_VECTOR_CLOSE(arrayToVector(expWeights4Arr), influences4.weightsBoneIdsPairs[0].weights, 0.001f);
+
+    unsigned int expBoneIds4Arr[] = {0, 1, 2, 3};
+    CHECK_EQUAL(arrayToVector(expBoneIds4Arr), influences4.weightsBoneIdsPairs[0].boneIds);
+
+    unsigned int expUsedBoneIds4Arr[] = {0, 1, 2, 3};
+    CHECK_EQUAL(arrayToVector(expUsedBoneIds4Arr), influences4.usedBoneIds);
 }

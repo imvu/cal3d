@@ -46,6 +46,25 @@ CAL3D_PTR(CalCoreSubmesh);
 #define VECTOR_REMOVE_VALUE(a, b)   (a.erase(std::find(a.begin(), a.end(), b)))
 #define VECTOR_ADD_UNIQUE(a, b)     do {  if(std::find(a.begin(), a.end(), b)==a.end())  a.push_back(b); } while(0)
 
+// NOTE: Influence extraction could probably be done more efficiently with fixed-length
+// arrays, if we're willing to settle on a fixed number of influences.
+class CAL3D_API CalWeightsBoneIdsPair {
+public:
+    std::vector<float> weights;
+    std::vector<unsigned int> boneIds;
+
+    bool operator==(const CalWeightsBoneIdsPair& rhs) const {
+        return weights == rhs.weights && boneIds == rhs.boneIds;
+    }
+};
+
+class CAL3D_API CalExportedInfluences {
+public:
+    unsigned int maximumInfluenceCount;
+    std::vector<CalWeightsBoneIdsPair> weightsBoneIdsPairs;
+    std::vector<unsigned int> usedBoneIds;
+};
+
 class CAL3D_API CalCoreSubmesh {
 public:
     // TODO: replace with Vec2f
@@ -263,13 +282,14 @@ public:
 
     boost::shared_ptr<CalCoreSubmesh> emitSubmesh(VerticesSet & verticesSetThisSplit, VectorFace & trianglesThisSplit, SplitMeshBasedOnBoneLimitType& rc);
 
-    /*The function is called by Source.imvu.assetserver.meshprocesstest.py for performance improvement*/
     SplitMeshBasedOnBoneLimitType splitMeshBasedOnBoneLimit(CalCoreSubmeshPtrVector& newSubmeshes, size_t boneLimit);
 
     void optimizeVertexCache();
     void optimizeVertexCacheSubset(unsigned int faceStartIndex, unsigned int faceCount);
     void renumberIndices();
     void normalizeNormals();
+
+    CalExportedInfluences exportInfluences(unsigned int influenceLimit);
 
 private:
     unsigned int m_currentVertexId;
