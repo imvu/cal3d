@@ -958,7 +958,6 @@ void CalCoreSubmesh::normalizeNormals() {
 }
 
 CalExportedInfluences CalCoreSubmesh::exportInfluences(unsigned int influenceLimit) {
-    fflush(stdout);
     CalExportedInfluences outInfluenceData;
 
     // NOTE: May be a bit more efficient to use a sorted vector, hash map, or
