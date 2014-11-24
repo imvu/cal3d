@@ -9,8 +9,6 @@
 #include <cal3d/mixer.h>
 #include <cal3d/skeleton.h>
 
-#include <libzero/Math.h>
-
 FIXTURE(CoreSkeletonFixture) {
 };
 

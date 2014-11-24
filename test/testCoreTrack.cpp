@@ -1,8 +1,6 @@
 #include "TestPrologue.h"
 #include <cal3d/coretrack.h>
 
-#include <libzero/Math.h>
-
 FIXTURE(TrackFixture) {
     cal3d::RotateTranslate t;
 };

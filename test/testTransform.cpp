@@ -1,7 +1,6 @@
 #include "TestPrologue.h"
 #include <cal3d/transform.h>
-
-#include <libzero/Math.h>
+#include <cmath>
 
 FIXTURE(TransformFixture) {
 };
