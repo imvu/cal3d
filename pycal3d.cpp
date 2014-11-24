@@ -253,6 +253,22 @@ void addVertexOffset(CalCoreMorphTarget& target, int vertexId, const PythonVerte
     return target.addVertexOffset(vertexId, vertex.asVertex());
 }
 
+list CalWeightsBoneIdsPair_getWeights(const CalWeightsBoneIdsPair& target) {
+    list pWeights;
+    for (auto it = target.weights.begin(); it != target.weights.end(); ++it) {
+        pWeights.append(*it);
+    }
+    return pWeights;
+}
+
+list CalWeightsBoneIdsPair_getBoneIds(const CalWeightsBoneIdsPair& target) {
+    list pBoneIds;
+    for (auto it = target.boneIds.begin(); it != target.boneIds.end(); ++it) {
+        pBoneIds.append(*it);
+    }
+    return pBoneIds;
+}
+
 template<typename T>
 static void exportVector(const char* name) {
     class_<std::vector<T>>(name)
@@ -465,8 +481,8 @@ BOOST_PYTHON_MODULE(_cal3d)
     exportVector<float>("FloatVector");
 
     class_<CalWeightsBoneIdsPair>("WeightsBoneIdsPair")
-        .def_readonly("weights", &CalWeightsBoneIdsPair::weights)
-        .def_readonly("boneIds", &CalWeightsBoneIdsPair::boneIds)
+        .add_property("weights", &CalWeightsBoneIdsPair_getWeights)
+        .add_property("boneIds", &CalWeightsBoneIdsPair_getBoneIds)
         ;
     exportVector<CalWeightsBoneIdsPair>("WeightsBoneIdsPairVector");
 
