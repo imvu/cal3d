@@ -159,7 +159,7 @@ private:
         return plane_a * p.x + plane_b * p.y + plane_c * p.z >= plane_d;
     }
 
-    bool isFacing(size_t a, size_t b) {
+    bool isFacing(unsigned a, unsigned b) {
         return inFront(getPosition(triangles[b].v0), triangles[a])
             && inFront(getPosition(triangles[b].v1), triangles[a])
             && inFront(getPosition(triangles[b].v2), triangles[a]);
@@ -211,7 +211,7 @@ void sortTrianglesBackToFront(
     unsigned triangleCount,
     unsigned short* indices,
     const float* positions,
-    size_t positionStride
+    unsigned positionStride
 ) {
     // so we can count on there being at least one entry in all the arrays
     if (!triangleCount) {

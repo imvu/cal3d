@@ -37,6 +37,7 @@ SOURCES="
     src/cal3d/tinyxml.cpp
     src/cal3d/tinyxmlerror.cpp
     src/cal3d/tinyxmlparser.cpp
+    src/cal3d/trisort.cpp
     src/cal3d/vector.cpp
     src/cal3d/xmlformat.cpp"
 
