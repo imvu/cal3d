@@ -13,6 +13,7 @@ sources = Split('''
     testSubmesh.cpp
     testTinyXml.cpp
     testTransform.cpp
+    testTriSort.cpp
     testVector.cpp
 ''')
 

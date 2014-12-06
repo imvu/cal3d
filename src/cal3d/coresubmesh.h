@@ -288,6 +288,7 @@ public:
     void optimizeVertexCacheSubset(unsigned int faceStartIndex, unsigned int faceCount);
     void renumberIndices();
     void normalizeNormals();
+    void sortForBlending();
 
     CalExportedInfluences exportInfluences(unsigned int influenceLimit);
 

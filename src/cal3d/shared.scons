@@ -39,4 +39,5 @@ env.Library('cal3d', Split("""
     tinyxml.cpp
     tinyxmlerror.cpp
     tinyxmlparser.cpp
+    trisort.cpp
     vector.cpp"""))

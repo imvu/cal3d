@@ -18,6 +18,7 @@
 #include "cal3d/vector4.h"
 #include "cal3d/transform.h"
 #include "cal3d/forsythtriangleorderoptimizer.h"
+#include "cal3d/trisort.h"
 
 #include <algorithm>
 #include <cmath>
@@ -955,6 +956,18 @@ void CalCoreSubmesh::normalizeNormals() {
             n = CalVector4(0.0f, 1.0f, 0.0f, 0.0f);
         }
     }
+}
+
+void CalCoreSubmesh::sortForBlending() {
+    if (m_faces.empty()) {
+        return;
+    }
+
+    sortTrianglesBackToFront(
+        m_faces.size(),
+        m_faces[0].vertexId,
+        &m_vertices[0].position.x,
+        sizeof(Vertex) / sizeof(float));
 }
 
 CalExportedInfluences CalCoreSubmesh::exportInfluences(unsigned int influenceLimit) {

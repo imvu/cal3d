@@ -521,6 +521,7 @@ BOOST_PYTHON_MODULE(_cal3d)
         .def("optimizeVertexCacheSubset", &CalCoreSubmesh::optimizeVertexCacheSubset)
         .def("renumberIndices", &CalCoreSubmesh::renumberIndices)
         .def("normalizeNormals", &CalCoreSubmesh::normalizeNormals)
+        .def("sortForBlending", &CalCoreSubmesh::sortForBlending)
         .def("exportInfluences", &CalCoreSubmesh::exportInfluences)
         ;
 
